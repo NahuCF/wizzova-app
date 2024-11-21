@@ -28,7 +28,7 @@
           >
         </div>
         <div class="flex flex-col gap-1">
-          <label for="businessWebsite">{{ $t('businessWebsite') }}</label>
+          <label for="businessWebsite">{{ $t('business_website') }}</label>
           <InputText
             v-model="form.businessWebsite"
             name="businessWebsite"
@@ -163,19 +163,25 @@ const resolver = zodResolver(
     businessName: z
       .string()
       .refine((value) => value.length > 0, {
-        message: t('business_name_is_required'),
+        message: computed(() => t('business_name_is_required')),
       })
       .refine((value) => value.length >= 3, {
-        message: t('minimun_characters', { charactersCount: 3 }),
+        message: computed(() => t('minimun_characters', { charactersCount: 3 })),
       }),
     businessWebsite: z
       .string()
-      .min(1, t('business_website_is_required'))
-      .url(t('invalid_url'))
-      .regex(/^https?:\/\//i, {
-        message: t('invalid_url'),
+      .refine((value) => value.length > 0, {
+        message: computed(() => t('business_website_is_required')),
+      })
+      .refine((value) => z.string().url().safeParse(value).success, {
+        message: computed(() => t('invalid_url')),
+      })
+      .refine((value) => /^https?:\/\//i.test(value), {
+        message: computed(() => t('invalid_url')),
       }),
-    name: z.string().min(1, t('name_is_required')),
+    name: z.string().refine((value) => value.length > 0, {
+      message: computed(() => t('name_is_required')),
+    }),
     cellphone: z.string().refine(
       (value) => {
         let phoneNumber = null
@@ -191,16 +197,16 @@ const resolver = zodResolver(
         return phoneNumber.isValid()
       },
       {
-        message: t('invalid_cellphone'),
+        message: computed(() => t('invalid_cellphone')),
       },
     ),
     workEmail: z
       .string()
       .refine((value) => value.length > 0, {
-        message: t('work_email_is_required'),
+        message: computed(() => t('work_email_is_required')),
       })
       .refine((value) => z.string().email().safeParse(value).success, {
-        message: t('invalid_email'),
+        message: computed(() => t('invalid_email')),
       })
       .refine(
         (value) => {
@@ -220,7 +226,7 @@ const resolver = zodResolver(
           return !personalDomains.includes(domain)
         },
         {
-          message: t('only_business_emails_allowed'),
+          message: computed(() => t('only_business_emails_allowed')),
         },
       ),
   }),

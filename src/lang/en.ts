@@ -1,7 +1,7 @@
 export default {
   business_name: 'Company Name',
   enter_your_business_ame: "Enter your company's name",
-  businessWebsite: 'Company Website',
+  business_website: 'Company Website',
   enter_your_business_website: "Enter your company's website",
   your_name: 'Your name',
   enter_your_full_name: 'Enter your full name',
