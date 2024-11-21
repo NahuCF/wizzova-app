@@ -4,4 +4,9 @@
 
 html {
     font-size: 14px;
+    font-family: 'Inter', sans-serif;
+}
+
+label {
+    @apply text-slate-800;
 }

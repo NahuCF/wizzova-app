@@ -1,5 +1,5 @@
 <template>
-  <main class="flex items-center justify-center">
+  <main class="flex items-center justify-center p-5 gap-2">
     <Button label="Button" />
     <InputText></InputText>
   </main>
