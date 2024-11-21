@@ -143,7 +143,6 @@ const form = ref({
   cellphone: '',
   workEmail: '',
 })
-const errorCellphone = ref(false)
 const selectCountry = (country) => {
   selectedCountry.value = country.code
   cellphonePopover.value.hide()
@@ -163,7 +162,13 @@ const resolver = zodResolver(
       .refine((value) => value.length >= 3, {
         message: t('minimun_characters', { charactersCount: 3 }),
       }),
-    businessWebsite: z.string().min(1, t('business_website_is_required')),
+    businessWebsite: z
+      .string()
+      .min(1, t('business_website_is_required'))
+      .url(t('invalid_url'))
+      .regex(/^https?:\/\//i, {
+        message: t('invalid_url'),
+      }),
     name: z.string().min(1, t('name_is_required')),
     cellphone: z.string().refine(
       (value) => {

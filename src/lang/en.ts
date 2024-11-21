@@ -18,4 +18,5 @@ export default {
   invalid_email: 'Invalid email.',
   minimun_characters: 'Minimum {charactersCount} characters required.',
   only_business_emails_allowed: 'Only business emails are allowed.',
+  invalid_url: 'Invalid URL.',
 }
