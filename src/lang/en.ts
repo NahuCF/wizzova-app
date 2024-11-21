@@ -1,11 +1,11 @@
 export default {
-  businessName: 'Company Name',
-  enter_your_businessName: "Enter your company's name",
+  business_name: 'Company Name',
+  enter_your_business_ame: "Enter your company's name",
   businessWebsite: 'Company Website',
-  enter_your_businessWebsite: "Enter your company's website",
+  enter_your_business_website: "Enter your company's website",
   your_name: 'Your name',
   enter_your_full_name: 'Enter your full name',
-  workEmail: 'Work email',
+  work_email: 'Work email',
   enter_your_workEmail: 'Enter your work email',
   your_cellphone_number: 'Your cellphone number',
   sign_up: 'Sign up',
@@ -19,4 +19,8 @@ export default {
   minimun_characters: 'Minimum {charactersCount} characters required.',
   only_business_emails_allowed: 'Only business emails are allowed.',
   invalid_url: 'Invalid URL.',
+  languages: {
+    spanish: 'Spanish',
+    english: 'English',
+  },
 }

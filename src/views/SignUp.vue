@@ -1,99 +1,104 @@
 <template>
-  <div class="border rounded-lg bg-white p-4 shadow-sm w-[30rem]">
-    <Form
-      v-slot="$form"
-      class="flex flex-col gap-3"
-      :initialValues="form"
-      :resolver
-      @submit="onFormSubmit"
-    >
-      <div class="flex flex-col gap-1">
-        <label for="businessName">{{ $t('businessName') }}</label>
-        <InputText
-          v-model="form.businessName"
-          name="businessName"
-          id="businessName"
-          :placeholder="$t('enter_your_businessName')"
-        />
-        <Message
-          v-if="$form.businessName?.invalid"
-          severity="error"
-          size="small"
-          variant="simple"
-          >{{ $form.businessName.error?.message }}</Message
-        >
-      </div>
-      <div class="flex flex-col gap-1">
-        <label for="businessWebsite">{{ $t('businessWebsite') }}</label>
-        <InputText
-          v-model="form.businessWebsite"
-          name="businessWebsite"
-          id="businessWebsite"
-          :placeholder="$t('enter_your_businessWebsite')"
-        />
-        <Message
-          v-if="$form.businessWebsite?.invalid"
-          severity="error"
-          size="small"
-          variant="simple"
-          >{{ $form.businessWebsite.error?.message }}</Message
-        >
-      </div>
-      <div class="flex flex-col gap-1">
-        <label for="your_name">{{ $t('your_name') }}</label>
-        <InputText
-          v-model="form.name"
-          name="name"
-          id="your_name"
-          :placeholder="$t('enter_your_full_name')"
-        />
-        <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{
-          $form.name.error?.message
-        }}</Message>
-      </div>
-      <div class="flex flex-col gap-1">
-        <label for="your_cellphone">{{ $t('your_cellphone_number') }}</label>
-        <div class="flex gap-2">
-          <div
-            @click="cellphonePopover.toggle($event)"
-            class="flex items-center border border-slate-300 rounded-md p-2 hover:cursor-pointer"
+  <div class="grid w-full h-screen grid-rows-[auto,1fr]">
+    <div class="flex p-3">
+      <LanguageSelector class="ml-auto" />
+    </div>
+    <div class="w-full flex items-center justify-center">
+      <Form
+        v-slot="$form"
+        class="flex flex-col gap-3 border rounded-lg bg-white p-4 shadow-sm w-[30rem]"
+        :initialValues="form"
+        :resolver
+        @submit="onFormSubmit"
+      >
+        <div class="flex flex-col gap-1">
+          <label for="businessName">{{ $t('business_name') }}</label>
+          <InputText
+            v-model="form.businessName"
+            name="businessName"
+            id="businessName"
+            :placeholder="$t('enter_your_business_ame')"
+          />
+          <Message
+            v-if="$form.businessName?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ $form.businessName.error?.message }}</Message
           >
-            <img
-              src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png"
-              :class="`flag flag-${selectedCountry.toLowerCase()} w-8`"
-            />
-          </div>
-          <InputGroup>
-            <InputGroupAddon
-              :class="{
-                '!border-red-400': $form.cellphone?.invalid,
-              }"
-              >{{ getSelectedCountry.prefix }}</InputGroupAddon
-            >
-            <InputText v-model="form.cellphone" name="cellphone" class="grow" />
-          </InputGroup>
         </div>
-        <Message v-if="$form.cellphone?.invalid" severity="error" size="small" variant="simple">{{
-          $form.cellphone.error?.message
-        }}</Message>
-      </div>
-      <div class="flex flex-col gap-1">
-        <label for="workEmail">{{ $t('workEmail') }}</label>
-        <InputText
-          v-model="form.workEmail"
-          name="workEmail"
-          id="workEmail"
-          :placeholder="$t('work_email_is_required')"
-        />
-        <Message v-if="$form.workEmail?.invalid" severity="error" size="small" variant="simple">{{
-          $form.workEmail.error?.message
-        }}</Message>
-      </div>
-      <Button class="mt-3" type="submit" :disabled="loading">
-        <span v-if="!loading">{{ $t('sign_up') }}</span>
-        <IconLoader2 v-else class="animate-spin w-6 h-6" />
-      </Button>
-    </Form>
+        <div class="flex flex-col gap-1">
+          <label for="businessWebsite">{{ $t('businessWebsite') }}</label>
+          <InputText
+            v-model="form.businessWebsite"
+            name="businessWebsite"
+            id="businessWebsite"
+            :placeholder="$t('enter_your_business_website')"
+          />
+          <Message
+            v-if="$form.businessWebsite?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ $form.businessWebsite.error?.message }}</Message
+          >
+        </div>
+        <div class="flex flex-col gap-1">
+          <label for="your_name">{{ $t('your_name') }}</label>
+          <InputText
+            v-model="form.name"
+            name="name"
+            id="your_name"
+            :placeholder="$t('enter_your_full_name')"
+          />
+          <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{
+            $form.name.error?.message
+          }}</Message>
+        </div>
+        <div class="flex flex-col gap-1">
+          <label for="your_cellphone">{{ $t('your_cellphone_number') }}</label>
+          <div class="flex gap-2">
+            <div
+              @click="cellphonePopover.toggle($event)"
+              class="flex items-center border border-slate-300 rounded-md p-2 hover:cursor-pointer"
+            >
+              <img
+                src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png"
+                :class="`flag flag-${selectedCountry.toLowerCase()} w-8`"
+              />
+            </div>
+            <InputGroup>
+              <InputGroupAddon
+                :class="{
+                  '!border-red-400': $form.cellphone?.invalid,
+                }"
+                >{{ getSelectedCountry.prefix }}</InputGroupAddon
+              >
+              <InputText v-model="form.cellphone" name="cellphone" class="grow" />
+            </InputGroup>
+          </div>
+          <Message v-if="$form.cellphone?.invalid" severity="error" size="small" variant="simple">{{
+            $form.cellphone.error?.message
+          }}</Message>
+        </div>
+        <div class="flex flex-col gap-1">
+          <label for="workEmail">{{ $t('work_email') }}</label>
+          <InputText
+            v-model="form.workEmail"
+            name="workEmail"
+            id="workEmail"
+            :placeholder="$t('work_email_is_required')"
+          />
+          <Message v-if="$form.workEmail?.invalid" severity="error" size="small" variant="simple">{{
+            $form.workEmail.error?.message
+          }}</Message>
+        </div>
+        <Button class="mt-3" type="submit" :disabled="loading">
+          <span v-if="!loading">{{ $t('sign_up') }}</span>
+          <IconLoader2 v-else class="animate-spin w-6 h-6" />
+        </Button>
+      </Form>
+    </div>
 
     <Popover ref="cellphonePopover" class="!p-0">
       <div class="flex flex-col">
@@ -123,6 +128,7 @@ import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
 import { Form } from '@primevue/forms'
 import { parsePhoneNumber } from 'libphonenumber-js/min'
+import LanguageSelector from '~/components/LanguageSelector.vue'
 
 const { t } = useI18n()
 const cellphonePopover = ref()
