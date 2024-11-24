@@ -32,6 +32,7 @@ export default {
   enter_your_password: 'Ingresa tu contraseña',
   enter_your_email: 'Ingresa tu email',
   password: 'Contraseña',
+  invalid_password: 'Contraseña invalida.',
   password_rules: {
     password_require_lowercase: 'Una letra minuscula',
     password_require_uppercase: 'Una letra mayuscula',

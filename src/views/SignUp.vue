@@ -125,6 +125,9 @@
               </ul>
             </template>
           </Password>
+          <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">{{
+            $t('invalid_password')
+          }}</Message>
         </div>
         <Button class="mt-3" type="submit" :disabled="loading">
           <span v-if="!loading">{{ $t('sign_up') }}</span>
@@ -299,6 +302,7 @@ const resolver = zodResolver(
 
 const onFormSubmit = ({ valid }) => {
   //loading.value = true
+
   router.push({
     name: 'verify-account',
   })
