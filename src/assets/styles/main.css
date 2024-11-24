@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 html {
-    font-size: 14px;
+    font-size: 15px;
     font-family: 'Inter', sans-serif;
 }
 
 label {
-    @apply text-slate-800;
+    @apply text-slate-500 font-medium;
 }
