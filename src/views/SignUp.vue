@@ -6,7 +6,7 @@
     <div class="w-full flex items-center justify-center">
       <Form
         v-slot="$form"
-        class="flex flex-col gap-3 border rounded-lg bg-white p-4 shadow-sm w-[30rem]"
+        class="flex flex-col gap-3 border rounded-lg bg-white p-5 shadow-sm w-[30rem]"
         :initialValues="form"
         :resolver
         @submit="onFormSubmit"
@@ -63,6 +63,7 @@
               class="flex items-center border border-slate-300 rounded-md p-2 hover:cursor-pointer"
             >
               <img
+                :alt="`Country flag selected imagen ${selectedCountry}`"
                 src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png"
                 :class="`flag flag-${selectedCountry.toLowerCase()} w-8`"
               />
@@ -110,6 +111,7 @@
         >
           <img
             src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png"
+            :alt="`Country flag imagen ${country.name}`"
             :class="`flag flag-${country.code.toLowerCase()} !w-6`"
           />
           <span>{{ country.name }}</span>
@@ -129,7 +131,9 @@ import { z } from 'zod'
 import { Form } from '@primevue/forms'
 import { parsePhoneNumber } from 'libphonenumber-js/min'
 import LanguageSelector from '~/components/LanguageSelector.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const { t } = useI18n()
 const cellphonePopover = ref()
 const selectedCountry = ref('US')
@@ -234,6 +238,9 @@ const resolver = zodResolver(
 
 const onFormSubmit = ({ valid }) => {
   //loading.value = true
+  router.push({
+    name: 'verify-account',
+  })
 }
 </script>
 

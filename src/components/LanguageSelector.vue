@@ -9,7 +9,7 @@
     <template #value="slotProps">
       <div v-if="slotProps.value" class="flex items-center">
         <img
-          :alt="slotProps.value.label"
+          :alt="`Country flag selected imagen ${slotProps.value.label}`"
           src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png"
           :class="`mr-2 flag flag-${slotProps.value.flag.toLowerCase()}`"
           style="width: 18px"
@@ -23,7 +23,7 @@
     <template #option="slotProps">
       <div class="flex items-center">
         <img
-          :alt="slotProps.option.label"
+          :alt="`Country flag selected imagen ${slotProps.option.label}`"
           src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png"
           :class="`mr-2 flag flag-${slotProps.option.flag.toLowerCase()}`"
           style="width: 18px"
