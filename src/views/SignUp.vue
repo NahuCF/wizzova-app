@@ -88,11 +88,43 @@
             v-model="form.workEmail"
             name="workEmail"
             id="workEmail"
-            :placeholder="$t('work_email_is_required')"
+            :placeholder="$t('enter_your_email')"
           />
           <Message v-if="$form.workEmail?.invalid" severity="error" size="small" variant="simple">{{
             $form.workEmail.error?.message
           }}</Message>
+        </div>
+        <div class="flex flex-col gap-1">
+          <label for="password">{{ $t('password') }}</label>
+          <Password
+            v-model="form.password"
+            class="w-full"
+            :placeholder="$t('enter_your_password')"
+            name="password"
+            id="password"
+            :toggleMask="true"
+          >
+            <template #content>
+              <ul class="pl-2 ml-2 my-0 leading-normal">
+                <li
+                  class="flex gap-1 items-center"
+                  v-for="(rule, index) in passwordRules"
+                  :key="index"
+                >
+                  <IconCircleX
+                    class="text-red-500"
+                    size="22"
+                    v-if="
+                      $form.password?.errors?.some((error) => error.message === rule) ||
+                      form.password == ''
+                    "
+                  />
+                  <IconCircleCheck size="22" class="text-green-500" v-else />
+                  {{ $t(`password_rules.${rule}`) }}
+                </li>
+              </ul>
+            </template>
+          </Password>
         </div>
         <Button class="mt-3" type="submit" :disabled="loading">
           <span v-if="!loading">{{ $t('sign_up') }}</span>
@@ -122,9 +154,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, reactive } from 'vue'
-import { Popover, InputText, Message, Button, InputGroup, InputGroupAddon } from 'primevue'
-import { IconLoader2 } from '@tabler/icons-vue'
+import { computed, ref, reactive, watch } from 'vue'
+import {
+  Popover,
+  InputText,
+  Password,
+  Message,
+  Button,
+  InputGroup,
+  InputGroupAddon,
+} from 'primevue'
+import { IconLoader2, IconCircleX, IconCircleCheck } from '@tabler/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
@@ -137,6 +177,12 @@ const router = useRouter()
 const { t } = useI18n()
 const cellphonePopover = ref()
 const selectedCountry = ref('US')
+const passwordRules = ref([
+  'password_min_length',
+  'password_require_lowercase',
+  'password_require_uppercase',
+  'password_require_numeric',
+])
 const countries = ref([
   { name: 'Argentina', code: 'AR', prefix: '+54' },
   { name: 'Brazil', code: 'BR', prefix: '+55' },
@@ -152,6 +198,7 @@ const form = ref({
   name: '',
   cellphone: '',
   workEmail: '',
+  password: '',
 })
 const selectCountry = (country) => {
   selectedCountry.value = country.code
@@ -233,6 +280,20 @@ const resolver = zodResolver(
           message: computed(() => t('only_business_emails_allowed')),
         },
       ),
+    password: z
+      .string()
+      .refine((value) => value.length >= 8, {
+        message: computed(() => t('password_min_length', { length: 8 })),
+      })
+      .refine((value) => /[a-z]/.test(value), {
+        message: computed(() => t('password_require_lowercase')),
+      })
+      .refine((value) => /[A-Z]/.test(value), {
+        message: computed(() => t('password_require_uppercase')),
+      })
+      .refine((value) => /\d/.test(value), {
+        message: computed(() => t('password_require_numeric')),
+      }),
   }),
 )
 
@@ -247,5 +308,8 @@ const onFormSubmit = ({ valid }) => {
 <style>
 .p-popover-content {
   padding: 0 !important;
+}
+.p-password-input {
+  width: 100% !important;
 }
 </style>
