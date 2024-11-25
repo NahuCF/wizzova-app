@@ -56,7 +56,7 @@
           }}</Message>
         </div>
         <div class="flex flex-col gap-1">
-          <label for="your_cellphone">{{ $t('your_cellphone_number') }}</label>
+          <label for="cellphone">{{ $t('your_cellphone_number') }}</label>
           <div class="flex gap-2">
             <div
               @click="cellphonePopover.toggle($event)"
@@ -75,7 +75,7 @@
                 }"
                 >{{ getSelectedCountry.prefix }}</InputGroupAddon
               >
-              <InputText v-model="form.cellphone" name="cellphone" class="grow" />
+              <InputText v-model="form.cellphone" name="cellphone" id="cellphone" class="grow" />
             </InputGroup>
           </div>
           <Message v-if="$form.cellphone?.invalid" severity="error" size="small" variant="simple">{{
