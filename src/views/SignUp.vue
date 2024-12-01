@@ -6,7 +6,7 @@
     <div class="w-full flex items-center justify-center">
       <Form
         v-slot="$form"
-        class="flex flex-col gap-3 border rounded-lg bg-white p-5 shadow-sm w-[30rem]"
+        class="flex flex-col gap-3 border rounded-lg bg-white p-8 shadow-sm w-[32rem]"
         :initialValues="form"
         :resolver
         @submit="onFormSubmit"
@@ -75,7 +75,13 @@
                 }"
                 >{{ getSelectedCountry.prefix }}</InputGroupAddon
               >
-              <InputText v-model="form.cellphone" name="cellphone" id="cellphone" class="grow" />
+              <InputText
+                v-model="form.cellphone"
+                name="cellphone"
+                id="cellphone"
+                class="grow"
+                :formControl="{ validateOnValueUpdate: false }"
+              />
             </InputGroup>
           </div>
           <Message v-if="$form.cellphone?.invalid" severity="error" size="small" variant="simple">{{
@@ -90,6 +96,9 @@
             id="workEmail"
             :placeholder="$t('enter_your_email')"
           />
+          <Message v-if="errors?.work_email" severity="error" size="small" variant="simple">{{
+            errors.work_email[0]
+          }}</Message>
           <Message v-if="$form.workEmail?.invalid" severity="error" size="small" variant="simple">{{
             $form.workEmail.error?.message
           }}</Message>
@@ -175,6 +184,11 @@ import { Form } from '@primevue/forms'
 import { parsePhoneNumber } from 'libphonenumber-js/min'
 import LanguageSelector from '~/components/LanguageSelector.vue'
 import { useRouter } from 'vue-router'
+import AuthService from '~/services/AuthService'
+import { useSessionStore } from '~/stores/session'
+import type { Tenant } from '~/types/Tenant'
+
+const session = useSessionStore()
 
 const router = useRouter()
 const { t } = useI18n()
@@ -203,6 +217,7 @@ const form = ref({
   workEmail: '',
   password: '',
 })
+const errors = ref({})
 const selectCountry = (country) => {
   selectedCountry.value = country.code
   cellphonePopover.value.hide()
@@ -300,8 +315,43 @@ const resolver = zodResolver(
   }),
 )
 
-const onFormSubmit = ({ valid }) => {
-  //loading.value = true
+const onFormSubmit = async ({ valid }) => {
+  if (!valid) return
+
+  errors.value = {}
+
+  loading.value = true
+  try {
+    let response = await AuthService.register({
+      business_name: form.value.businessName,
+      business_website: form.value.businessWebsite,
+      name: form.value.name,
+      cellphone: form.value.cellphone,
+      cellphone_prefix: getSelectedCountry.value.prefix,
+      work_email: form.value.workEmail,
+      password: form.value.password,
+    })
+    let data = response.data.data
+
+    let tenant = {
+      id: data.id,
+      name: data.name,
+      businessName: data.business_name,
+      website: data.website,
+      email: data.email,
+      verifiedEmail: data.verified_email,
+      accountActive: data.account_active,
+    } as Tenant
+
+    session.setTenant(tenant)
+  } catch (error) {
+    loading.value = false
+    if (error.isValidationError) {
+      errors.value = error.validationErrors
+    }
+    return
+  }
+  loading.value = false
 
   router.push({
     name: 'verify-account',
