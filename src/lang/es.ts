@@ -39,4 +39,10 @@ export default {
     password_require_numeric: 'Un numero',
     password_min_length: 'Al menos 8 caracteres',
   },
+  didnt_receive_code: '¿No recibiste el codigo?',
+  resend: 'Reenviar',
+  code_will_expire_in_one_day: 'El codigo expirará en un dia.',
+  invalid_code: 'El código ingresado es invalido.',
+  error: 'Error',
+  otp_code_has_expired: 'El códito OTP ha expirado.',
 }
