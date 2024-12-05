@@ -45,4 +45,6 @@ export default {
   invalid_code: 'The code is invalid.',
   error: 'Error',
   otp_code_has_expired: 'The code has expired.',
+  code_can_not_be_sent_again: 'The code can not be sent again.',
+  an_error_occurred: 'An error occurred.',
 }

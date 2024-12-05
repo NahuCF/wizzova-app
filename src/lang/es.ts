@@ -17,7 +17,7 @@ export default {
   work_email_is_required: 'Email es requerido.',
   invalid_email: 'Email invalido.',
   minimun_characters: 'Minimo {charactersCount} caracteres requeridos.',
-  only_business_emails_allowed: 'Solo emails de la compania son permitidos.',
+  only_business_emails_allowed: 'Solo emails de compañia son permitidos.',
   invalid_url: 'URL invalida.',
   languages: {
     spanish: 'Español',
@@ -45,4 +45,6 @@ export default {
   invalid_code: 'El código ingresado es invalido.',
   error: 'Error',
   otp_code_has_expired: 'El códito OTP ha expirado.',
+  code_can_not_be_sent_again: 'El codigo no puede ser enviado de nuevo.',
+  an_error_occurred: 'Ocurrio un error.',
 }
