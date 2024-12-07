@@ -50,9 +50,11 @@
 <script lang="ts" setup>
 import { Button, Badge, InputOtp, useToast } from 'primevue'
 import { IconMailOpened } from '@tabler/icons-vue'
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useSessionStore } from '~/stores/session'
 import AuthService from '~/services/AuthService'
+import { useRouter } from 'vue-router'
+import { IconLoader2 } from '@tabler/icons-vue'
 import { useI18n } from 'vue-i18n'
 
 const session = useSessionStore()
@@ -64,6 +66,7 @@ const countdown = ref(60)
 const interval = ref(null)
 const showCountdown = ref(false)
 const loading = ref(false)
+const router = useRouter()
 
 watch(otpCode, (code) => {
   if (code.length === otpLength.value) {
@@ -74,10 +77,14 @@ watch(otpCode, (code) => {
 const verify = async () => {
   loading.value = true
   try {
-    await AuthService.verifyOtp({
+    let result = await AuthService.verifyOtp({
       email: session.tenant.email,
       code: otpCode.value,
     })
+    if (result.status === 200) {
+      session.setTenantVerified(true)
+      router.replace({ name: 'basic-information' })
+    }
   } catch (error) {
     otpCode.value = ''
     if (error.isValidationError) {
@@ -102,7 +109,22 @@ const resend = async () => {
   try {
     await AuthService.resendOtp(session.tenant.email)
     startCountdown()
-  } catch (error) {}
+  } catch (error) {
+    if (error.isValidationError) {
+      if (error.validationErrors?.is_verified) {
+        router.replace('/basic-information')
+      }
+      if (error.validationErrors?.cannot_send) {
+        toast.add({
+          severity: 'error',
+          summary: t('error'),
+          detail: t('code_can_not_be_sent_again'),
+          life: 3000,
+        })
+      }
+    }
+  }
+  session.lastOtpSentAt = new Date()
 }
 
 const startCountdown = () => {
@@ -116,4 +138,22 @@ const startCountdown = () => {
     }
   }, 1000)
 }
+
+const secondsSinceLastSend = () => {
+  const now = new Date()
+
+  return Math.round(Math.abs((now.getTime() - new Date(session.lastOtpSentAt).getTime()) / 1000))
+}
+
+onMounted(() => {
+  if (session.isTenantVerified) {
+    router.push({ name: 'basic-information' })
+  }
+
+  let seconds = secondsSinceLastSend()
+  if (seconds < 60) {
+    countdown.value = countdown.value - seconds
+    startCountdown()
+  }
+})
 </script>

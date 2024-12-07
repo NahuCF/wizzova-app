@@ -344,6 +344,7 @@ const onFormSubmit = async ({ valid }) => {
     } as Tenant
 
     session.setTenant(tenant)
+    session.lastOtpSentAt = new Date()
   } catch (error) {
     loading.value = false
     if (error.isValidationError) {
