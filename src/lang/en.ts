@@ -47,4 +47,13 @@ export default {
   otp_code_has_expired: 'The code has expired.',
   code_can_not_be_sent_again: 'The code can not be sent again.',
   an_error_occurred: 'An error occurred.',
+  required_field: 'Required field',
+  country: 'Country',
+  currency: 'Currency',
+  timezone: 'Timezone',
+  employees: 'Employees',
+  industry: 'Industry',
+  select_dot: 'Select...',
+  where_did_you_know_us: 'Where did you know us?',
+  complete: 'Complete',
 }
