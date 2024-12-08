@@ -10,8 +10,14 @@ export default {
   async resendOtp(email: string) {
     return Http.post('/resend-otp', { email })
   },
-
   async verifyOtp(payload: any) {
     return Http.post('/verify-otp', payload)
+  },
+  async storeBasicInformation(tenantId: string, payload: any) {
+    return Http.put(`/store-basic-information/${tenantId}`, payload, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
   },
 }
