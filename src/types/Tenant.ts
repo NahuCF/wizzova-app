@@ -6,5 +6,6 @@ export interface Tenant {
   email: string
   database: string
   verifiedEmail: boolean
-  accountActive: boolean
+  verifiedWhatsapp: boolean
+  filledBasicInformation: boolean
 }
