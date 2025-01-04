@@ -166,7 +166,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, reactive, watch } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import {
   Popover,
   InputText,
@@ -187,6 +187,7 @@ import { useRouter } from 'vue-router'
 import AuthService from '~/services/AuthService'
 import { useSessionStore } from '~/stores/session'
 import type { Tenant } from '~/types/Tenant'
+import { useProfileCreationStore } from '~/stores/profileCreation'
 
 const session = useSessionStore()
 
@@ -340,7 +341,8 @@ const onFormSubmit = async ({ valid }) => {
       website: data.website,
       email: data.email,
       verifiedEmail: data.verified_email,
-      accountActive: data.account_active,
+      verifiedWhatsapp: data.verified_whatsapp,
+      filledBasicInformation: data.filled_basic_information,
     } as Tenant
 
     session.setTenant(tenant)
@@ -358,6 +360,10 @@ const onFormSubmit = async ({ valid }) => {
     name: 'verify-account',
   })
 }
+
+onMounted(() => {
+  session.$reset()
+})
 </script>
 
 <style>

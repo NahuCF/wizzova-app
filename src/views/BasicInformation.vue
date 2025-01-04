@@ -1,5 +1,5 @@
 <template>
-  <div class="grid w-full justify-center items-center h-screen">
+  <div>
     <Form
       v-slot="$form"
       class="flex flex-col gap-3 border rounded-lg bg-white p-8 shadow-sm w-[32rem]"
@@ -9,7 +9,7 @@
     >
       <h1 class="text-2xl font-semibold">Basic information</h1>
       <div class="flex gap-2">
-        <div class="flex flex-col gap-1 basis-1/2">
+        <div class="flex flex-col gap-1 basis-1/2 w-[40%]">
           <label for="country">{{ $t('country') }}</label>
           <Select
             v-model="form.countryId"
@@ -25,7 +25,7 @@
             $form.country.error?.message
           }}</Message>
         </div>
-        <div class="flex flex-col gap-1 basis-1/2">
+        <div class="flex flex-col gap-1 basis-1/2 w-[40%]">
           <label for="currency">{{ $t('currency') }}</label>
           <Select
             v-model="form.currencyId"
@@ -115,6 +115,7 @@
         <span v-if="!loading">{{ $t('complete') }}</span>
         <IconLoader2 v-else class="animate-spin w-6 h-6" />
       </Button>
+      <div @click="setTenantUser">asdasd</div>
     </Form>
   </div>
 </template>
@@ -134,7 +135,9 @@ import IndustryService from '~/services/IndustryService'
 import AuthService from '~/services/AuthService'
 import { useSessionStore } from '~/stores/session'
 import { useRouter } from 'vue-router'
+import { useProfileCreationStore } from '~/stores/profileCreation'
 
+const profileCreation = useProfileCreationStore()
 const countries = ref([])
 const currencies = ref([])
 const timezones = ref([])
@@ -272,6 +275,21 @@ const fetchIndustry = async () => {
   }
 }
 
+const setTenantUser = async () => {
+  try {
+    session.tenant.filledBasicInformation = true
+    const response = await AuthService.getTenantUser(session.tenant.id)
+    session.setUser(response.data.data)
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: t('an_error_occurred'),
+      life: 3000,
+    })
+  }
+}
+
 const onFormSubmit = async ({ valid }) => {
   if (!valid) return
 
@@ -284,11 +302,20 @@ const onFormSubmit = async ({ valid }) => {
       employees_amount: form.value.employeesAmount,
       known_place_id: form.value.knowUs,
     })
-
-    router.replace({ name: 'verify-whatsapp' })
+    const subdomain = session.tenant.email.split('@')[1].split('.')[0]
+    const companyDomain = import.meta.env.VITE_COMPANY_EMAIL_NAME
 
     session.tenant.filledBasicInformation = true
+
+    await setTenantUser()
+
+    if (subdomain == companyDomain) {
+      router.replace({ name: 'chats' })
+    } else {
+      router.replace({ name: 'verify-whatsapp' })
+    }
   } catch (error) {
+    console.error(error)
     toast.add({
       severity: 'error',
       summary: 'Error',
@@ -305,6 +332,9 @@ onMounted(() => {
     router.replace({ name: 'verify-whatsapp' })
     return
   }
+
+  profileCreation.incrementProgress(2)
+
   fetchCountries()
   fetchCurrencies()
   fetchTimezones()

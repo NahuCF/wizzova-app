@@ -20,4 +20,7 @@ export default {
       },
     })
   },
+  async getTenantUser(tenantId: string) {
+    return Http.get(`/tenant-user`, { params: { tenant_id: tenantId } })
+  },
 }

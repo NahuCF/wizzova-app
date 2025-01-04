@@ -1,6 +1,8 @@
 <template>
-  <div class="grid w-full justify-center items-center h-screen">
-    <div class="flex flex-col gap-3 border rounded-lg bg-white p-8 shadow-sm w-[30rem]">
+  <div>
+    <div
+      class="flex flex-col gap-3 border rounded-lg bg-white p-8 shadow-sm w-[30rem] rounded-t-none"
+    >
       <div class="flex">
         <div class="relative">
           <IconMailOpened class="w-12 h-12 text-blue-500" />
@@ -56,8 +58,11 @@ import AuthService from '~/services/AuthService'
 import { useRouter } from 'vue-router'
 import { IconLoader2 } from '@tabler/icons-vue'
 import { useI18n } from 'vue-i18n'
+import { useProfileCreationStore } from '~/stores/profileCreation'
 
 const session = useSessionStore()
+const profileCreation = useProfileCreationStore()
+
 const toast = useToast()
 const { t } = useI18n()
 const otpCode = ref('')
@@ -67,12 +72,6 @@ const interval = ref(null)
 const showCountdown = ref(false)
 const loading = ref(false)
 const router = useRouter()
-
-watch(otpCode, (code) => {
-  if (code.length === otpLength.value) {
-    verify()
-  }
-})
 
 const verify = async () => {
   loading.value = true
@@ -149,6 +148,8 @@ onMounted(() => {
   if (session.isTenantVerified) {
     router.push({ name: 'basic-information' })
   }
+
+  profileCreation.incrementProgress(1)
 
   let seconds = secondsSinceLastSend()
   if (seconds < 60) {
