@@ -22,6 +22,7 @@ const routes = [
         path: '/signup',
         name: 'signup',
         component: SignUp,
+        meta: { titleKey: 'sign_up' },
       },
       {
         path: '/chats',
