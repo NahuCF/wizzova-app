@@ -77,7 +77,7 @@
               v-model="form.workEmail"
               name="workEmail"
               id="workEmail"
-              :placeholder="$t('business_email_placeholder')"
+              :placeholder="$t('business').toLowerCase() + '@email.com'"
             />
             <Message
               v-if="$form.workEmail?.invalid"

@@ -57,7 +57,7 @@ export default {
   where_did_you_know_us: '¿De donde nos conoces?',
   complete: 'Completar',
   business_email: 'Email de la compañia',
-  business_email_placeholder: 'compañia@email.com ',
+  business: 'Compañia',
   already_have_an_account: '¿Ya tienes una cuenta?',
   login: 'Iniciar sesion',
   grow_your_business_with: 'Crecer tu negocio con',

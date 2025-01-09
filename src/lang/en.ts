@@ -57,8 +57,8 @@ export default {
   where_did_you_know_us: 'Where did you know us?',
   complete: 'Complete',
   business_email: 'Business email',
-  business_email_placeholder: 'business@email.com',
   already_have_an_account: 'Already have an account?',
+  business: 'Business',
   login: 'Login',
   grow_your_business_with: 'Grow your business with',
 }
