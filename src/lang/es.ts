@@ -61,4 +61,10 @@ export default {
   already_have_an_account: '¿Ya tienes una cuenta?',
   login: 'Iniciar sesion',
   grow_your_business_with: 'Crecer tu negocio con',
+  confirm_account: 'Confirmar cuenta',
+  check_your_email: 'Revisa tu email',
+  we_have_sent_email_to: 'Hemos enviado un email a',
+  remember_check_your_spam: 'Recuerda revisar tu spam',
+  didnt_receive_email: '¿No recibiste el email?',
+  verification_email_sent: 'El email de verificacion ha sido enviado.',
 }

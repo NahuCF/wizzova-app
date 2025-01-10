@@ -334,7 +334,7 @@ const onFormSubmit = async ({ valid }) => {
   loading.value = false
 
   router.push({
-    name: 'verify-account',
+    name: 'confirm-account',
   })
 }
 

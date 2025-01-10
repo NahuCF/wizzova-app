@@ -61,4 +61,10 @@ export default {
   business: 'Business',
   login: 'Login',
   grow_your_business_with: 'Grow your business with',
+  confirm_account: 'Confirm account',
+  check_your_email: 'Check your email',
+  we_have_sent_email_to: 'We have sent an email to',
+  remember_check_your_spam: 'Remember to check your spam folder',
+  didnt_receive_email: "Didn't receive the email?",
+  verification_email_sent: 'Verification email sent',
 }

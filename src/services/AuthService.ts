@@ -7,6 +7,9 @@ export default {
   async register(data: any) {
     return Http.post('/register', data)
   },
+  async sendVerifyAccount(data: any) {
+    return Http.post('/send-verify-account', data)
+  },
   async resendOtp(email: string) {
     return Http.post('/resend-otp', { email })
   },
