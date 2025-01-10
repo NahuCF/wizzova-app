@@ -10,6 +10,11 @@ export default {
   async sendVerifyAccount(data: any) {
     return Http.post('/send-verify-account', data)
   },
+  async verifyAccount(token: string) {
+    return Http.post('/verify-account', {
+      token,
+    })
+  },
   async resendOtp(email: string) {
     return Http.post('/resend-otp', { email })
   },

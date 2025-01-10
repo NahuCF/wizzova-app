@@ -6,7 +6,6 @@ import ConfirmAccount from '~/views/ConfirmAccount.vue'
 import LogIn from '~/views/LogIn.vue'
 import SignUp from '~/views/SignUp.vue'
 import VerifyAccount from '~/views/VerifyAccount.vue'
-import VerifyWhatsapp from '~/views/VerifyWhatsapp.vue'
 
 const routes = [
   {
@@ -30,6 +29,12 @@ const routes = [
         name: 'confirm-account',
         component: ConfirmAccount,
         meta: { titleKey: 'confirm_account' },
+      },
+      {
+        path: '/verify-account',
+        name: 'verify-account',
+        component: VerifyAccount,
+        meta: { titleKey: 'verify_account' },
       },
       {
         path: '/chats',

@@ -67,4 +67,5 @@ export default {
   remember_check_your_spam: 'Recuerda revisar tu spam',
   didnt_receive_email: '¿No recibiste el email?',
   verification_email_sent: 'El email de verificacion ha sido enviado.',
+  verify_account: 'Verificar cuenta',
 }
