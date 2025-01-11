@@ -336,7 +336,7 @@ export default definePreset(Aura, {
         paddingX: '0.875rem',
         paddingY: '0.625rem',
       },
-      borderRadius: '{border.radius.md}',
+      borderRadius: '{border.radius.sm}',
       focusRing: {
         width: '1px',
         style: 'solid',
