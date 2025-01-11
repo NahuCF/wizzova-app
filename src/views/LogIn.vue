@@ -4,7 +4,7 @@
       <LanguageSelector class="ml-auto" />
     </div>
     <div class="w-full flex items-center justify-center">
-      <div class="border rounded-lg bg-white p-16 shadow-sm w-[38rem]">
+      <div class="border rounded-md bg-white p-16 shadow-sm w-[38rem]">
         <h1 class="text-4xl text-center mb-8 font-bold mb-18 text-neutral-800">
           {{ $t('log_in_to_your_account') }}
         </h1>
