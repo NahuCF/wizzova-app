@@ -92,7 +92,8 @@ import LanguageSelector from '~/components/LanguageSelector.vue'
 import { useRouter } from 'vue-router'
 import AuthService from '~/services/AuthService'
 import { useSessionStore } from '~/stores/session'
-import type { Tenant } from '~/types/Tenant'
+import type { Tenant} from '~/types/Tenant'
+import type { User} from '~/types/Tenant'
 import { useProfileCreationStore } from '~/stores/profileCreation'
 import { useToast } from 'primevue'
 
@@ -148,11 +149,12 @@ const onFormSubmit = async ({ valid }) => {
     let userData = {
       id: user.id,
       email: user.email,
+      name: user.name,
       cellphonePrefix: user.cellphone_prefix,
       cellphoneNumber: user.cellphone_number,
-    }
+    } as User
 
-    sessionStore.setTenant(tenant)
+    sessionStore.setTenant(tenantData)
     sessionStore.setUser(userData)
 
     router.push({ name: 'conversations' })
