@@ -18,7 +18,7 @@ import { Toast } from 'primevue'
 <style lang="css">
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.7s;
+  transition: opacity 0.17s;
 }
 
 .fade-enter,
