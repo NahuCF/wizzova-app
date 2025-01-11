@@ -92,8 +92,8 @@ import LanguageSelector from '~/components/LanguageSelector.vue'
 import { useRouter } from 'vue-router'
 import AuthService from '~/services/AuthService'
 import { useSessionStore } from '~/stores/session'
-import type { Tenant} from '~/types/Tenant'
-import type { User} from '~/types/Tenant'
+import type { Tenant } from '~/types/Tenant'
+import type { User } from '~/types/User'
 import { useProfileCreationStore } from '~/stores/profileCreation'
 import { useToast } from 'primevue'
 
@@ -157,7 +157,7 @@ const onFormSubmit = async ({ valid }) => {
     sessionStore.setTenant(tenantData)
     sessionStore.setUser(userData)
 
-    router.push({ name: 'conversations' })
+    router.replace({ name: 'conversations' })
   } catch (error) {
     let errroMessage = t('an_error_occurred')
 
