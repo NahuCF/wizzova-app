@@ -68,4 +68,11 @@ export default {
   didnt_receive_email: '¿No recibiste el email?',
   verification_email_sent: 'El email de verificacion ha sido enviado.',
   verify_account: 'Verificar cuenta',
+  your: 'Tu',
+  email: 'Correo',
+  log_in_to_your_account: 'Inicia sesion en tu cuenta',
+  the_email_is_required: 'El email es requerido.',
+  password_is_required: 'La contraseña es requerida.',
+  dont_you_have_an_account: '¿No tienes una cuenta?',
+  conversations: 'Conversaciones',
 }

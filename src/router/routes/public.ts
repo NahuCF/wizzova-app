@@ -1,7 +1,6 @@
 import AuthLayout from '~/components/layouts/AuthLayout.vue'
-import CompleteProfileLayout from '~/components/layouts/CompleteProfileLayout.vue'
 import BasicInformation from '~/views/BasicInformation.vue'
-import Chats from '~/views/Chats.vue'
+import Chats from '~/views/Conversations.vue'
 import ConfirmAccount from '~/views/ConfirmAccount.vue'
 import LogIn from '~/views/LogIn.vue'
 import SignUp from '~/views/SignUp.vue'
@@ -16,6 +15,7 @@ const routes = [
       {
         path: '/login',
         name: 'login',
+        meta: { titleKey: 'login' },
         component: LogIn,
       },
       {
@@ -35,11 +35,6 @@ const routes = [
         name: 'verify-account',
         component: VerifyAccount,
         meta: { titleKey: 'verify_account' },
-      },
-      {
-        path: '/chats',
-        name: 'chats',
-        component: Chats,
       },
     ],
   },

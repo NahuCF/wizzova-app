@@ -4,20 +4,20 @@ import type { User } from '~/types/User'
 
 export const useSessionStore = defineStore('session', {
   state: () => {
-    return { user: {} as User, tenant: {} as Tenant, lastOtpSentAt: null as Date | null }
+    return { user: {} as User, tenant: {} as Tenant }
   },
   actions: {
     setTenant(tenant: Tenant) {
       this.tenant = tenant
-    },
-    setTenantVerified(verified: boolean) {
-      this.tenant.verifiedEmail = verified
     },
     setUser(user: User) {
       this.user = user
     },
   },
   getters: {
+    isAuthenticated(): boolean {
+      return this.user.id != null && this.tenant.id != null
+    },
     isTenantVerified(): boolean {
       return this.tenant.verifiedEmail
     },

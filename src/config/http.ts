@@ -9,33 +9,11 @@ const Http = axios.create({
   },
 })
 
-// Define types for our error structure
-interface ValidationErrors {
-  [field: string]: string[]
-}
-
-interface CustomError {
-  isValidationError: boolean
-  validationErrors: ValidationErrors
-}
-
 Http.interceptors.response.use(
   (response) => {
-    let token = response?.data?.data?.token
-    if (token) {
-      sessionStorage.setItem('apiToken', token)
-    }
     return response
   },
   function (error) {
-    if (error.response.status === 422) {
-      const validationErrors: ValidationErrors = (error.response.data as any).errors || {}
-      Object.entries(validationErrors).forEach(([field, messages]) => {})
-      return Promise.reject<CustomError>({
-        isValidationError: true,
-        validationErrors,
-      })
-    }
     return Promise.reject(error)
   },
 )
@@ -54,7 +32,6 @@ Http.interceptors.request.use((config) => {
     config.headers['X-Tenant'] = tenant.id
   }
 
-  config.headers.Authorization = `Bearer 2|Ei9Mrd8SPCsNEsw6PeTZcYF8FKiYRx6SEcuFwLet8c461264`
   return config
 })
 

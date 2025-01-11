@@ -128,7 +128,7 @@
               >{{ $t('invalid_password') }}</Message
             >
           </div>
-          <Button class="mt-3" type="submit" :disabled="loading">
+          <Button class="mt-6" type="submit" :disabled="loading">
             <span v-if="!loading">{{ $t('sign_up') }}</span>
             <IconLoader2 v-else class="animate-spin w-6 h-6" />
           </Button>
@@ -186,11 +186,13 @@ import AuthService from '~/services/AuthService'
 import { useSessionStore } from '~/stores/session'
 import type { Tenant } from '~/types/Tenant'
 import { useProfileCreationStore } from '~/stores/profileCreation'
+import { useToast } from 'primevue'
 
 const session = useSessionStore()
 
 const router = useRouter()
 const { t } = useI18n()
+const toast = useToast()
 const cellphonePopover = ref()
 const selectedCountry = ref('US')
 const passwordRules = ref([
@@ -298,8 +300,8 @@ const onFormSubmit = async ({ valid }) => {
 
   errors.value = {}
 
-  loading.value = true
   try {
+    loading.value = true
     let response = await AuthService.register({
       business_name: form.value.businessName,
       business_website: form.value.businessWebsite,
@@ -325,13 +327,15 @@ const onFormSubmit = async ({ valid }) => {
     session.setTenant(tenant)
     session.lastOtpSentAt = new Date()
   } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: t('an_error_occurred'),
+      life: 3000,
+    })
+  } finally {
     loading.value = false
-    if (error.isValidationError) {
-      errors.value = error.validationErrors
-    }
-    return
   }
-  loading.value = false
 
   router.push({
     name: 'confirm-account',

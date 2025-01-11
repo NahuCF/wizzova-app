@@ -1,8 +1,8 @@
 import Http from '~/config/http'
 
 export default {
-  async login(email: string, password: string) {
-    return Http.post('/login', { email, password })
+  async login(data: any) {
+    return Http.post('/login', data)
   },
   async register(data: any) {
     return Http.post('/register', data)

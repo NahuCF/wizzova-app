@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import publicRoutes from './routes/public'
 import i18n from '~/config/i18n'
+import privateRoutes from './routes/private'
+import { useSessionStore } from '~/stores/session'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [...publicRoutes],
+  routes: [...publicRoutes, ...privateRoutes],
 })
 
 const updateTitle = (route) => {
@@ -18,6 +20,17 @@ const updateTitle = (route) => {
 
 router.beforeEach((to, from, next) => {
   updateTitle(to)
+
+  const sessionStore = useSessionStore()
+
+  if (to.meta.public == true && sessionStore.isAuthenticated) {
+    next({ name: 'conversations' })
+  }
+
+  if (to.meta.public == false && !sessionStore.isAuthenticated) {
+    next({ name: 'login' })
+  }
+
   next()
 })
 
