@@ -159,16 +159,15 @@ const onFormSubmit = async ({ valid }) => {
 
     router.replace({ name: 'conversations' })
   } catch (error) {
-    let errroMessage = t('an_error_occurred')
-
+    let errorMessage = t('an_error_occurred')
     if (error.status == 422) {
-      errroMessage = error.response.data.message
+      errorMessage = t('validation_errors.' + error.response.data.message.replace('.', ''))
     }
 
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: errroMessage,
+      detail: errorMessage,
       life: 3000,
     })
   } finally {

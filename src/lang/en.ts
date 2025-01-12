@@ -75,4 +75,8 @@ export default {
   password_is_required: 'Password is required.',
   dont_you_have_an_account: "Don't have an account?",
   conversations: 'Conversations',
+  validation_errors: {
+    'The work email has already been taken': 'The email has already been taken.',
+    'The provided credentials are incorrect': 'The provided credentials are incorrect'
+  },
 }

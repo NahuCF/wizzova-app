@@ -325,21 +325,24 @@ const onFormSubmit = async ({ valid }) => {
     } as Tenant
 
     session.setTenant(tenant)
-    session.lastOtpSentAt = new Date()
+    router.push({
+      name: 'confirm-account',
+    })
   } catch (error) {
+    let errorMessage = t('an_error_occurred')
+    if (error.status == 422) {
+      errorMessage = t('validation_errors.' + error.response.data.message.replace('.', ''))
+    }
+
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: t('an_error_occurred'),
+      detail: errorMessage,
       life: 3000,
     })
   } finally {
     loading.value = false
   }
-
-  router.push({
-    name: 'confirm-account',
-  })
 }
 
 onMounted(() => {
