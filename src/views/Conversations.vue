@@ -1,59 +1,60 @@
 <template>
-  <h1>chats</h1>
-
-  <Button @click="launchWhatsAppSignup">Click</Button>
+  <h1>Chats</h1>
+  <button @click="launchWhatsAppSignup">Connect WhatsApp</button>
 </template>
 
 <script setup>
-import { Button } from 'primevue'
-window.fbAsyncInit = function () {
-  FB.init({
-    appId: '2480654665657413', // your app ID goes here
-    autoLogAppEvents: true,
-    xfbml: true,
-    version: 'v21.0', // Graph API version goes here
+import { onMounted } from 'vue'
+
+const loadFacebookSDK = () => {
+  return new Promise((resolve, reject) => {
+    if (document.getElementById('facebook-jssdk')) {
+      resolve()
+      return
+    }
+    const js = document.createElement('script')
+    js.id = 'facebook-jssdk'
+    js.src = 'https://connect.facebook.net/en_US/sdk.js'
+    js.onload = resolve
+    js.onerror = () => reject(new Error('Failed to load Facebook SDK'))
+    document.body.appendChild(js)
   })
 }
 
-// Session logging message event listener
-window.addEventListener('message', (event) => {
-  if (event.origin !== 'https://www.facebook.com' && event.origin !== 'https://web.facebook.com')
-    return
+const initializeFacebookSDK = () => {
+  window.fbAsyncInit = function () {
+    FB.init({
+      appId: '2480654665657413', // Replace with your App ID
+      autoLogAppEvents: true,
+      xfbml: true,
+      version: 'v21.0', // Ensure the version is valid
+    })
+    console.log('Facebook SDK initialized')
+  }
+}
+
+const launchWhatsAppSignup = () => {
+  FB.login(
+    (response) => {
+      if (response.authResponse) {
+        console.log('Login successful:', response)
+      } else {
+        console.error('Login failed:', response)
+      }
+    },
+    {
+      scope: 'business_management,whatsapp_business_management',
+    },
+  )
+}
+
+onMounted(async () => {
   try {
-    const data = JSON.parse(event.data)
-    if (data.type === 'WA_EMBEDDED_SIGNUP') {
-      console.log('message event: ', data) // remove after testing
-      // your code goes here
-    }
-  } catch {
-    console.log('message event: ', event.data) // remove after testing
-    // your code goes here
+    initializeFacebookSDK()
+    await loadFacebookSDK()
+    console.log('Facebook SDK loaded and initialized')
+  } catch (error) {
+    console.error('Error initializing Facebook SDK:', error)
   }
 })
-
-// Response callback
-const fbLoginCallback = (response) => {
-  if (response.authResponse) {
-    const code = response.authResponse.code
-    console.log('response: ', code) // remove after testing
-    // your code goes here
-  } else {
-    console.log('response: ', response) // remove after testing
-    // your code goes here
-  }
-}
-
-// Launch method and callback registration
-const launchWhatsAppSignup = () => {
-  FB.login(fbLoginCallback, {
-    config_id: '<CONFIGURATION_ID>', // your configuration ID goes here
-    response_type: 'code',
-    override_default_response_type: true,
-    extras: {
-      setup: {},
-      featureType: '',
-      sessionInfoVersion: '3',
-    },
-  })
-}
 </script>
