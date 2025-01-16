@@ -21,6 +21,10 @@ const updateTitle = (route) => {
 router.beforeEach((to, from, next) => {
   updateTitle(to)
 
+  if (to.path === '/') {
+    next({ name: 'login' })
+  }
+
   const sessionStore = useSessionStore()
 
   if (to.meta.public == true && sessionStore.isAuthenticated) {
