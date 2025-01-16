@@ -1,9 +1,11 @@
 <template>
   <div class="flex h-screen bg-slate-100">
-    123
+    <TheSidebar />
     <RouterView v-slot="{ Component, route }">
       <transition name="fade" mode="out-in">
-        <component :is="Component" :key="route.path" />
+        <div class="px-5 pt-3">
+          <component :is="Component" :key="route.path" />
+        </div>
       </transition>
     </RouterView>
     <Toast position="bottom-right" />
@@ -13,6 +15,7 @@
 <script lang="ts" setup>
 import { RouterView } from 'vue-router'
 import { Toast } from 'primevue'
+import TheSidebar from '../TheSidebar.vue'
 </script>
 
 <style lang="css">
