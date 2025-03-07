@@ -4,7 +4,7 @@
       <LanguageSelector class="ml-auto" />
     </div>
     <div class="w-full flex items-center justify-center">
-      <div class="border rounded-md bg-white p-16 shadow-sm w-[38rem]">
+      <div class="border rounded-md bg-white p-16 shadow-md w-[38rem]">
         <h1 class="text-4xl font-semibold text-center mb-8">
           {{ $t('grow_your_business_with') }}
           <span class="text-green-500">WhatsApp</span>

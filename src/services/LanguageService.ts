@@ -1,7 +1,7 @@
 import Http from '~/config/http'
 
 export default {
-  index() {
-    return Http.get('/countries')
+  async index() {
+    return Http.get('/languages')
   },
 }

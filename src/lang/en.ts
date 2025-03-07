@@ -77,6 +77,34 @@ export default {
   conversations: 'Conversations',
   validation_errors: {
     'The work email has already been taken': 'The email has already been taken.',
-    'The provided credentials are incorrect': 'The provided credentials are incorrect'
+    'The provided credentials are incorrect': 'The provided credentials are incorrect',
   },
+  submit_for_review: 'Submit for review',
+  template_name: 'Template name',
+  category: 'Category',
+  allow_category_change: 'Allow category change',
+  language: 'Language',
+  body: 'Body',
+  footer: 'Footer',
+  help_text_category_change:
+    'Enabling this option will prevent the template from being rejected due to miscategorization.',
+  example_footer_text: 'Ex: Thank you for choosing us!',
+  yes: 'Yes',
+  no: 'No',
+  complete_mandatory_fields: 'Complete mandatory fields',
+  quick_answer_buttons: 'Quick answer buttons',
+  custom_reply: 'Custom reply',
+  cto_button: 'Call to action buttons',
+  URL: 'URL',
+  call_to_number: 'Call to number',
+  max_2_buttons: '2 buttons maximum',
+  max_1_buttons: '1 button maximun',
+  add_button: 'Add button',
+  help_text_buttons:
+    'Create buttons so customers can reply to your message or take an action. If you add more than 3 buttons, they will appear as a list.',
+  button_limit_reached: 'You have reached the maximum number of buttons',
+  first_delete_a_button: 'To add a different type of button, first delete a button.',
+  example_body_text_template: `Hello {{name}}!\n\nYour amazing products from {{site_name}} are ready for you!
+Grab them today!`,
+  new_template: 'New template',
 }

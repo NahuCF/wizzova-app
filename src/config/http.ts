@@ -27,8 +27,7 @@ Http.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`
   }
 
-  if (tenant && tenant.verifiedEmail) {
-    console.log('here')
+  if (tenant) {
     config.headers['X-Tenant'] = tenant.id
   }
 

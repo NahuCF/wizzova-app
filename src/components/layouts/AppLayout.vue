@@ -3,7 +3,7 @@
     <TheSidebar />
     <RouterView v-slot="{ Component, route }">
       <transition name="fade" mode="out-in">
-        <div class="px-5 pt-3">
+        <div class="px-5 pt-3 w-full">
           <component :is="Component" :key="route.path" />
         </div>
       </transition>

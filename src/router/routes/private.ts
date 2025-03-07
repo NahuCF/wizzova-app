@@ -1,5 +1,7 @@
 import AppLayout from '~/components/layouts/AppLayout.vue'
 import Conversations from '~/views/Conversations.vue'
+import NewTemplate from '~/views/NewTemplate.vue'
+import Templates from '~/views/Templates.vue'
 
 const routes = [
   {
@@ -12,6 +14,23 @@ const routes = [
         name: 'conversations',
         meta: { titleKey: 'conversations' },
         component: Conversations,
+      },
+      {
+        path: '/templates',
+        children: [
+          {
+            path: '',
+            name: 'templates',
+            meta: { titleKey: 'templates' },
+            component: Templates,
+          },
+          {
+            path: 'new',
+            name: 'new-template',
+            meta: { titleKey: 'new_template' },
+            component: NewTemplate,
+          },
+        ],
       },
     ],
   },
