@@ -53,7 +53,7 @@
               :class="[
                 'flex items-center gap-2 px-2 py-3 hover:bg-slate-100 cursor-pointer rounded-border',
                 {
-                  'opacity-50 cursor-not-allowed ': !canAddButton(option.type, option.maximun),
+                  'opacity-50 !cursor-not-allowed ': !canAddButton(option.type, option.maximun),
                 },
               ]"
               @click="addButton(option)"
@@ -126,6 +126,8 @@ const canAddMoreButtons = computed(() => {
 })
 
 const addButton = (option) => {
+  if (!canAddButton(option.type, option.maximun)) return
+
   newTemplateStore.template.buttons.push({
     type: option.type,
   })
@@ -138,7 +140,7 @@ const openPopoverButton = (event) => {
 }
 const canAddButton = (btnType, max) => {
   let buttonsOfType = newTemplateStore.template.buttons.filter((btn) => btn.type === btnType)
-  console.log(buttonsOfType, btnType)
+
   return buttonsOfType.length < max
 }
 </script>
