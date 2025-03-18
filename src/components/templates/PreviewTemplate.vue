@@ -1,5 +1,5 @@
 <template>
-  <div class="border flex flex-col w-[23rem] preview rounded-lg overflow-hidden">
+  <div class="border border-slate-200 flex flex-col w-[23rem] preview rounded-lg overflow-hidden">
     <div class="bg-[#00A884] h-[3rem] flex justify-between items-center px-3">
       <div class="flex gap-2 items-center">
         <IconArrowLeft color="white" size="18" />

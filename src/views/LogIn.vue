@@ -1,10 +1,10 @@
 <template>
-  <div class="grid w-full h-screen grid-rows-[auto,1fr]">
-    <div class="flex p-3">
+  <div class="flex flex-col w-full h-screen relative">
+    <div class="flex absolute right-0 hidden md:block p-3">
       <LanguageSelector class="ml-auto" />
     </div>
-    <div class="w-full flex items-center justify-center">
-      <div class="border rounded-md bg-white p-16 shadow-sm w-[38rem]">
+    <div class="w-full flex items-center justify-center flex-1">
+      <div class="rounded-md bg-white p-16 shadow-md w-full md:w-[38rem] h-screen md:h-auto">
         <h1 class="text-4xl text-center mb-8 font-bold mb-18 text-neutral-800">
           {{ $t('log_in_to_your_account') }}
         </h1>
