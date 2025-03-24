@@ -1,6 +1,6 @@
 <template>
   <div class="w-full flex items-center justify-center">
-    <div class="border rounded-lg bg-white p-16 shadow-sm w-[38rem]">
+    <div class="rounded-lg bg-white p-16 shadow-sm w-[38rem]">
       <div class="text-center">
         <div class="flex justify-center">
           <div class="relative">
