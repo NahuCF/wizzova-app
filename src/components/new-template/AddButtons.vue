@@ -35,7 +35,7 @@
                   'opacity-50 cursor-not-allowed ': !canAddMoreButtons,
                 },
               ]"
-              @click="addButton({ type: 'custom_reply' })"
+              @click="addButton({ type: 'custom_reply', maximun: 999 })"
             >
               <div class="flex gap-1">
                 <IconArrowBackUp size="18" />
@@ -50,6 +50,7 @@
           <ul class="list-none p-0 m-0 flex flex-col">
             <li
               v-for="option in ctoButtonOptions"
+              :key="option.id"
               :class="[
                 'flex items-center gap-2 px-2 py-3 hover:bg-slate-100 cursor-pointer rounded-border',
                 {
@@ -75,23 +76,12 @@
   </div>
 </template>
 
-<script setup>
-import { LanguageService, TemplateCategoryService, ComponentTypeService } from '~/services'
-import { onMounted, ref, watch, computed } from 'vue'
-import { Button, InputText, Select, Textarea, useToast, Popover, Divider } from 'primevue'
-import {
-  IconPhone,
-  IconAsterisk,
-  IconInfoCircle,
-  IconLoader2,
-  IconPlus,
-  IconArrowBackUp,
-  IconExternalLink,
-} from '@tabler/icons-vue'
+<script lang="ts" setup>
+import { ref, computed } from 'vue'
+import { Button, Popover, Divider } from 'primevue'
+import { IconPhone, IconPlus, IconArrowBackUp, IconExternalLink } from '@tabler/icons-vue'
 import { useNewTemplateStore } from '~/stores'
 import { useI18n } from 'vue-i18n'
-import PreviewTemplate from '~/components/templates/PreviewTemplate.vue'
-import TemplateService from '~/services/TemplateService'
 
 const newTemplateStore = useNewTemplateStore()
 const { t } = useI18n()
@@ -138,8 +128,9 @@ const addButton = (option) => {
 const openPopoverButton = (event) => {
   popoverButton.value.toggle(event)
 }
+
 const canAddButton = (btnType, max) => {
-  let buttonsOfType = newTemplateStore.template.buttons.filter((btn) => btn.type === btnType)
+  const buttonsOfType = newTemplateStore.template.buttons.filter((btn) => btn.type === btnType)
 
   return buttonsOfType.length < max
 }

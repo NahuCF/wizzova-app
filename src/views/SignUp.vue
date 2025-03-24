@@ -164,7 +164,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import {
   Popover,
   InputText,
@@ -185,7 +185,6 @@ import { useRouter } from 'vue-router'
 import AuthService from '~/services/AuthService'
 import { useSessionStore } from '~/stores/session'
 import type { Tenant } from '~/types/Tenant'
-import { useProfileCreationStore } from '~/stores/profileCreation'
 import { useToast } from 'primevue'
 
 const session = useSessionStore()
@@ -302,7 +301,7 @@ const onFormSubmit = async ({ valid }) => {
 
   try {
     loading.value = true
-    let response = await AuthService.register({
+    const response = await AuthService.register({
       business_name: form.value.businessName,
       business_website: form.value.businessWebsite,
       name: form.value.name,
@@ -311,9 +310,9 @@ const onFormSubmit = async ({ valid }) => {
       work_email: form.value.workEmail,
       password: form.value.password,
     })
-    let data = response.data.data
+    const data = response.data.data
 
-    let tenant = {
+    const tenant = {
       id: data.id,
       name: data.name,
       businessName: data.business_name,

@@ -9,8 +9,6 @@ import i18n from '~/config/i18n'
 import ToastService from 'primevue/toastservice'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import Tooltip from 'primevue/tooltip'
-import { useRoute } from 'vue-router'
-import { watchEffect } from 'vue'
 
 import App from './App.vue'
 import router from '../router'

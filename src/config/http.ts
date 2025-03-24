@@ -19,9 +19,9 @@ Http.interceptors.response.use(
 )
 
 Http.interceptors.request.use((config) => {
-  let session = useSessionStore()
-  let token = sessionStorage.apiToken
-  let tenant = session.getTenant
+  const session = useSessionStore()
+  const token = sessionStorage.apiToken
+  const tenant = session.getTenant
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`

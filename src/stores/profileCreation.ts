@@ -15,7 +15,7 @@ export const useProfileCreationStore = defineStore('profileCreation', {
   },
   actions: {
     incrementProgress(step: number) {
-      let percentage = 100 / this.steps
+      const percentage = 100 / this.steps
       this.progress = step * percentage
     },
   },

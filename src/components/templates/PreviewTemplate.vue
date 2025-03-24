@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, onMounted, ref, watch } from 'vue'
+import { defineProps } from 'vue'
 import {
   IconArrowLeft,
   IconDotsVertical,

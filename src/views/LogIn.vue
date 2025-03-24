@@ -71,30 +71,24 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref } from 'vue'
 import {
-  Popover,
   InputText,
   Password,
   Message,
   Button,
-  InputGroup,
-  Checkbox,
-  InputGroupAddon,
 } from 'primevue'
-import { IconLoader2, IconCircleX, IconCircleCheck } from '@tabler/icons-vue'
+import { IconLoader2 } from '@tabler/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
 import { Form } from '@primevue/forms'
-import { parsePhoneNumber } from 'libphonenumber-js/min'
 import LanguageSelector from '~/components/LanguageSelector.vue'
 import { useRouter } from 'vue-router'
 import AuthService from '~/services/AuthService'
 import { useSessionStore } from '~/stores/session'
 import type { Tenant } from '~/types/Tenant'
 import type { User } from '~/types/User'
-import { useProfileCreationStore } from '~/stores/profileCreation'
 import { useToast } from 'primevue'
 
 const sessionStore = useSessionStore()
@@ -129,24 +123,24 @@ const onFormSubmit = async ({ valid }) => {
 
   try {
     loading.value = true
-    let response = await AuthService.login({
+    const response = await AuthService.login({
       email: form.value.email,
       password: form.value.password,
     })
-    let tenant = response.data.data
-    let user = response.data.meta.user
+    const tenant = response.data.data
+    const user = response.data.meta.user
 
     if (tenant.verified_email === false) {
       router.push({ name: 'confirm-account' })
     }
 
-    let tenantData = {
+    const tenantData = {
       id: tenant.id,
       email: tenant.email,
       verifiedEmail: tenant.verified_email,
     } as Tenant
 
-    let userData = {
+    const userData = {
       id: user.id,
       email: user.email,
       name: user.name,

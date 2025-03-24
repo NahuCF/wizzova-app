@@ -1,6 +1,4 @@
 import AuthLayout from '~/components/layouts/AuthLayout.vue'
-import BasicInformation from '~/views/BasicInformation.vue'
-import Chats from '~/views/Conversations.vue'
 import ConfirmAccount from '~/views/ConfirmAccount.vue'
 import LogIn from '~/views/LogIn.vue'
 import SignUp from '~/views/SignUp.vue'
