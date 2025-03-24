@@ -12,7 +12,7 @@
         <h1 class="font-bold text-2xl mb-2">{{ $t('check_your_email') }}</h1>
 
         <div class="flex gap-1 justify-center">
-          <span>{{ $t('we_have_sent_email_to') }}</span>
+          <span class="whitespace-nowrap">{{ $t('we_have_sent_email_to') }}</span>
           <strong>{{ session.tenant.email }}</strong>
         </div>
         <div>{{ $t('remember_check_your_spam') }}</div>
