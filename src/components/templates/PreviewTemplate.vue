@@ -42,7 +42,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { defineProps } from 'vue'
 import {
   IconArrowLeft,
