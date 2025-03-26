@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useNewTemplateStore = defineStore('newTemplate', {
+export const useTemplateStore = defineStore('template', {
   state: () => {
     return {
       template: {

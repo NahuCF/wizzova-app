@@ -25,7 +25,7 @@
           </div>
           <div class="relative">
             <InputText
-              v-model="newTemplateStore.template.name"
+              v-model="templateStore.template.name"
               class="!pr-[5.5rem]"
               name="name"
               id="name"
@@ -35,7 +35,7 @@
               :placeholder="$t('welcome_template')"
             />
             <div class="absolute right-3 top-2 text-slate-400">
-              {{ newTemplateStore.template.name.length }} / 512
+              {{ templateStore.template.name.length }} / 512
             </div>
           </div>
         </div>
@@ -49,7 +49,7 @@
                   <IconAsterisk color="red" class="mt-1" size="8  " />
                 </div>
                 <Select
-                  v-model="newTemplateStore.template.templateCategoryId"
+                  v-model="templateStore.template.templateCategoryId"
                   :options="templateCategories"
                   optionLabel="name"
                   optionValue="id"
@@ -64,7 +64,7 @@
                   <IconAsterisk color="red" class="mt-1" size="8  " />
                 </div>
                 <Select
-                  v-model="newTemplateStore.template.languageId"
+                  v-model="templateStore.template.languageId"
                   :options="languages"
                   optionLabel="name"
                   optionValue="id"
@@ -83,7 +83,7 @@
                   />
                 </div>
                 <Select
-                  v-model="newTemplateStore.template.allowCategoryChange"
+                  v-model="templateStore.template.allowCategoryChange"
                   :options="categoryChangeOptions"
                   optionLabel="name"
                   optionValue="id"
@@ -103,7 +103,7 @@
                 <div class="flex flex-col gap-1 relative">
                   <div class="relative">
                     <Textarea
-                      v-model="newTemplateStore.template.body.text"
+                      v-model="templateStore.template.body.text"
                       rows="8"
                       cols="30"
                       fluid
@@ -113,7 +113,7 @@
                       :placeholder="t('example_body_text_template')"
                     />
                     <div class="absolute right-3 bottom-2 text-slate-400">
-                      {{ newTemplateStore.template.body.text.length }} / 1024
+                      {{ templateStore.template.body.text.length }} / 1024
                     </div>
                   </div>
                 </div>
@@ -122,7 +122,7 @@
                 <h2 class="font-medium mb-1 text-lg">{{ $t('footer') }}</h2>
                 <div class="relative">
                   <InputText
-                    v-model="newTemplateStore.template.footer.text"
+                    v-model="templateStore.template.footer.text"
                     class="!pr-[5.5rem]"
                     name="name"
                     id="name"
@@ -131,7 +131,7 @@
                     :placeholder="$t('example_footer_text')"
                   />
                   <div class="absolute right-3 top-2 text-slate-400">
-                    {{ newTemplateStore.template.footer.text.length }} / 60
+                    {{ templateStore.template.footer.text.length }} / 60
                   </div>
                 </div>
               </div>
@@ -142,8 +142,8 @@
 
           <div>
             <PreviewTemplate
-              :bodyText="newTemplateStore.template.body.text"
-              :footer="newTemplateStore.template.footer.text"
+              :bodyText="templateStore.template.body.text"
+              :footer="templateStore.template.footer.text"
             />
           </div>
         </div>
@@ -152,81 +152,68 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { LanguageService, TemplateCategoryService, ComponentTypeService } from '~/services'
-import type { Language, TemplateCategory, HeaderComponentType } from '~/types'
 import { onMounted, ref, watch, computed } from 'vue'
-import { Button, InputText, Select, Textarea, useToast, Popover, Divider } from 'primevue'
-import {
-  IconPhone,
-  IconAsterisk,
-  IconInfoCircle,
-  IconLoader2,
-  IconPlus,
-  IconArrowBackUp,
-  IconExternalLink,
-} from '@tabler/icons-vue'
-import { useNewTemplateStore } from '~/stores'
+import { useToast } from 'primevue'
+import { IconAsterisk, IconInfoCircle, IconLoader2 } from '@tabler/icons-vue'
+import { useTemplateStore } from '~/stores'
 import { useI18n } from 'vue-i18n'
 import PreviewTemplate from '~/components/templates/PreviewTemplate.vue'
 import TemplateService from '~/services/TemplateService'
 import AddButtons from '~/components/new-template/AddButtons.vue'
 
-const newTemplateStore = useNewTemplateStore()
+const templateStore = useTemplateStore()
 const { t } = useI18n()
 const toast = useToast()
 
-const tooltipContent = ref(
-  `<strong class="font-semibold break-keep whitespace-nowrap">${t('button_limit_reached')}</strong>
-    <span class="text-slate-200">${t('first_delete_a_button')}</span>`,
-)
-const languages = ref<Language[]>([])
-const templateCategories = ref<TemplateCategory[]>([])
+const languages = ref([])
+const templateCategories = ref([])
 const categoryChangeOptions = ref([
   { name: t('yes'), id: true },
   { name: t('no'), id: false },
 ])
-const componentHeaderTypes = ref<HeaderComponentType[]>([])
+const componentHeaderTypes = ref([])
 const loading = ref(false)
 const formatInputName = (event) => {
   event.target.value = event.target.value.replace(/[^a-zA-Z0-9]/g, '_')
 
-  newTemplateStore.template.name = event.target.value
+  templateStore.template.name = event.target.value
 }
 
 const fetchLanguages = async () => {
-  let response = await LanguageService.index()
+  const response = await LanguageService.index()
   languages.value = response.data.data
 
-  let englishLanguage = languages.value.find((item) => item.name === 'English')
+  const englishLanguage = languages.value.find((item) => item.name === 'English')
 
   if (!englishLanguage) return
 
-  newTemplateStore.template.languageId = englishLanguage.id
+  templateStore.template.languageId = englishLanguage.id
 }
 
 const fetchTemplateCategories = async () => {
-  let response = await TemplateCategoryService.index()
+  const response = await TemplateCategoryService.index()
   templateCategories.value = response.data.data
 
-  let categoryMarketing = templateCategories.value.find((item) => item.name === 'Marketing')
+  const categoryMarketing = templateCategories.value.find((item) => item.name === 'Marketing')
 
   if (!categoryMarketing) return
 
-  newTemplateStore.template.templateCategoryId = categoryMarketing.id
+  templateStore.template.templateCategoryId = categoryMarketing.id
 }
 
 const storeTemplate = async () => {
-  let template = newTemplateStore.template
+  const template = templateStore.template
 
-  let payload = {
+  const payload = {
     name: template.name,
     language_id: template.languageId,
     template_category_id: template.templateCategoryId,
     body: template.body.text,
   }
 
-  let footerText = template.footer.text
+  const footerText = template.footer.text
   if (footerText) {
     payload.footer = footerText
   }
@@ -252,12 +239,12 @@ const storeTemplate = async () => {
 }
 
 const fetchHeaderComponentTypes = async () => {
-  let response = await ComponentTypeService.headerTypes()
+  const response = await ComponentTypeService.headerTypes()
   componentHeaderTypes.value = response.data.data
 }
 
 const validateLineJump = (event) => {
-  let text = event.target.value
+  const text = event.target.value
 
   // Prevent more than 2 white spaces
   if (text.length > 0 && text.endsWith('\n\n')) {
@@ -272,17 +259,17 @@ const validateLineJump = (event) => {
 
 const canSubmit = computed(() => {
   return (
-    newTemplateStore.template.name &&
-    newTemplateStore.template.languageId &&
-    newTemplateStore.template.templateCategoryId &&
-    newTemplateStore.template.body.text
+    templateStore.template.name &&
+    templateStore.template.languageId &&
+    templateStore.template.templateCategoryId &&
+    templateStore.template.body.text
   )
 })
 
 watch(
-  () => newTemplateStore.template.body.text,
+  () => templateStore.template.body.text,
   (newValue) => {
-    newTemplateStore.template.body.text = newValue.replace(/\n{2,}/g, '\n\n')
+    templateStore.template.body.text = newValue.replace(/\n{2,}/g, '\n\n')
   },
 )
 
