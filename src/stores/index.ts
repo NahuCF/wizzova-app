@@ -1,1 +1,1 @@
-export * from './newTemplate'
+export * from './template'
