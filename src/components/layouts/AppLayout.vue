@@ -3,9 +3,9 @@
     <TheSidebar />
     <RouterView v-slot="{ Component, route }">
       <transition name="fade" mode="out-in">
-        <div class="px-5 pt-3 w-full">
+        <main class="px-5 py-3 w-full overflow-y-scroll">
           <component :is="Component" :key="route.path" />
-        </div>
+        </main>
       </transition>
     </RouterView>
     <Toast position="bottom-right" />
