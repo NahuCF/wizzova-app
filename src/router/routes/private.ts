@@ -27,7 +27,7 @@ const routes = [
           {
             path: 'new',
             name: 'new-template',
-            meta: { titleKey: 'new_template' },
+            meta: { titleKey: 'new_template.title' },
             component: NewTemplate,
           },
         ],

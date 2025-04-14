@@ -105,5 +105,31 @@ export default {
   button_limit_reached: 'Has alcanzado el limite de botones.',
   first_delete_a_button: 'Para añadir un boton diferente, primero borra un botón.',
   example_body_text_template: `¡Hola, {{name}}!\n\n¡Tus increíbles productos de {{site_name}} están listos para ti!`,
-  new_template: 'Nueva plantilla',
+  cta: 'Llamada a la accion',
+  new_template: {
+    title: 'Nuevo template',
+    button_text: 'Texto del botón',
+    buttons: {
+      quick_reply: {
+        placeholder: 'ej. Quiero el descuento',
+        description: 'Ingresar texto personalizado',
+      },
+      url: {
+        static_url: 'URL estatica',
+        dynamic_url: 'URL dinamica',
+        placeholder_text: 'ej. Visitar Sitio',
+        placeholder_url: 'https://ejemplo.com',
+        label: 'Url del sitio',
+        example_label: 'URL de ejemplo',
+        example_placeholder: 'https://ejemplo.com/tortas',
+        example_description:
+          'Una URL dinámica te permite incluir una variable al final, creando un enlace personalizado para un cliente para acceder a su información. Solo se puede agregar una variable.',
+      },
+      phone_number: {
+        title: 'Llamar a número de telefono',
+        placeholder: 'ej: Call Us',
+        label: 'Numero de telefono',
+      },
+    },
+  },
 }

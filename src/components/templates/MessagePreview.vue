@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="body.length || (body.length > 0 && footer.length)"
-    class="bg-white p-3 pb-6 message rounded-lg self-start break-all relative shadow min-w-[8rem]"
+    class="bg-white p-3 message rounded-lg self-start break-all relative shadow min-w-[18rem]"
   >
     <span v-if="body.length > 0" v-html="formattedBodyText"></span>
 
@@ -9,7 +9,8 @@
       {{ footer }}
     </div>
     <div class="triangle"></div>
-    <div class="text-slate-400 absolute font-light text-sm right-2 bottom-2">8:30 AM</div>
+    <Divider v-if="true" />
+    {{ buttons }}
   </div>
 </template>
 
@@ -25,6 +26,10 @@ const props = defineProps({
     type: String,
     required: false,
     default: '',
+  },
+  buttons: {
+    type: Array,
+    required: false,
   },
 })
 

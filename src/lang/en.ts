@@ -106,5 +106,31 @@ export default {
   first_delete_a_button: 'To add a different type of button, first delete a button.',
   example_body_text_template: `Hello {{name}}!\n\nYour amazing products from {{site_name}} are ready for you!
 Grab them today!`,
-  new_template: 'New template',
+  cta: 'Call to action',
+  new_template: {
+    title: 'New template',
+    button_text: 'Button text',
+    buttons: {
+      quick_reply: {
+        placeholder: 'e.g. Get Discount',
+        description: 'Enter custom button text',
+      },
+      url: {
+        static_url: 'Static URL',
+        dynamic_url: 'Dynamic URL',
+        placeholder_text: 'e.g. Visit Website',
+        placeholder_url: 'https://example.com',
+        label: 'Website URL',
+        example_label: 'Example URL',
+        example_placeholder: 'https://example.com/cakes',
+        example_description:
+          'A dynamic URL lets you include a variable at the end, creating a personalized link for a customer to access their information. Only one variable can be added.',
+      },
+      phone_number: {
+        title: 'Call Phone Number',
+        placeholder: 'e.g: Call Us',
+        label: 'Phone Number',
+      },
+    },
+  },
 }

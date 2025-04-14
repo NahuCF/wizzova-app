@@ -8,8 +8,8 @@
       <Button
         severity="secondary"
         @click="openPopoverButton"
-        class="self-start !border !border-slate-300 mt-2"
-        :disabled="newTemplateStore.template.buttons.length >= 10"
+        class="self-start !border !border-slate-300 my-4"
+        :disabled="templateStore.template.buttons.length >= 10"
         v-tooltip:bottom="{
           value: canAddMoreButtons ? '' : tooltipContent,
           escape: false,
@@ -20,8 +20,42 @@
         {{ t('add_button') }}
       </Button>
 
-      <div v-for="btn in newTemplateStore.template.buttons">
-        {{ btn }}
+      <div class="flex flex-col gap-2">
+        <div v-for="(buttons, category) in templateStore.buttonsByCategory" :key="category">
+          <div class="bg-[#F7FAFC] p-4 rounded-md">
+            <div class="flex gap-2 items-center font-medium">
+              <button
+                class="p-2 hover:cursor-pointer hover:bg-slate-200 transition rounded-md text-slate-600"
+                @click="templateStore.switchCategoryOrder(category)"
+              >
+                <IconSwitchVertical class="w-5 h-5" />
+              </button>
+              <h3>{{ t(category) }}</h3>
+            </div>
+            <draggable
+              v-model="templateStore.buttonsByCategory[category]"
+              :group="{ name: category, pull: false, put: false }"
+              :sort="true"
+              item-key="id"
+              handle=".drag-handle"
+              @end="templateStore.updateButtons()"
+              class="mt-8 flex flex-col gap-2"
+              v-bind="dragOptions"
+            >
+              <template #item="{ element, index }">
+                <div class="drag-handle flex gap-2">
+                  <IconGripVertical class="text-slate-400 hover:cursor-grab mt-4" />
+                  <TemplateButton
+                    class="w-full"
+                    :type="element.type"
+                    :category="category"
+                    :index="index"
+                  />
+                </div>
+              </template>
+            </draggable>
+          </div>
+        </div>
       </div>
 
       <Popover ref="popoverButton">
@@ -35,7 +69,14 @@
                   'opacity-50 cursor-not-allowed ': !canAddMoreButtons,
                 },
               ]"
-              @click="addButton({ type: 'custom_reply', maximun: 999 })"
+              @click="
+                addButton({
+                  type: 'QUICK_REPLY',
+                  maximun: 999,
+                  category: 'custom_reply',
+                  text: 'text',
+                })
+              "
             >
               <div class="flex gap-1">
                 <IconArrowBackUp size="18" />
@@ -49,7 +90,7 @@
           <div class="font-semibold mb-2">{{ t('cto_button') }}</div>
           <ul class="list-none p-0 m-0 flex flex-col">
             <li
-              v-for="option in ctoButtonOptions"
+              v-for="option in ctaButtonOptions"
               :key="option.id"
               :class="[
                 'flex items-center gap-2 px-2 py-3 hover:bg-slate-100 cursor-pointer rounded-border',
@@ -76,21 +117,32 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { ref, computed } from 'vue'
+<script setup>
+import { ref, computed, watch } from 'vue'
 import { Button, Popover, Divider } from 'primevue'
-import { IconPhone, IconPlus, IconArrowBackUp, IconExternalLink } from '@tabler/icons-vue'
-import { useNewTemplateStore } from '~/stores'
+import {
+  IconPhone,
+  IconPlus,
+  IconGripVertical,
+  IconArrowBackUp,
+  IconExternalLink,
+  IconSwitchVertical,
+} from '@tabler/icons-vue'
+import { useTemplateStore } from '~/stores'
 import { useI18n } from 'vue-i18n'
+import draggable from 'vuedraggable'
+import Templates from '~/views/Templates.vue'
+import TemplateButton from './TemplateButton.vue'
 
-const newTemplateStore = useNewTemplateStore()
+const templateStore = useTemplateStore()
 const { t } = useI18n()
 
 const popoverButton = ref(null)
-const ctoButtonOptions = ref([
+const ctaButtonOptions = ref([
   {
     id: 'url',
-    type: 'url',
+    type: 'URL',
+    category: 'cta',
     name: 'URL',
     icon: 'IconExternalLink',
     description: 'max_2_buttons',
@@ -98,7 +150,8 @@ const ctoButtonOptions = ref([
   },
   {
     id: 'ctn',
-    type: 'phone_number',
+    type: 'PHONE_NUMBER',
+    category: 'cta',
     name: 'call_to_number',
     icon: 'IconPhone',
     description: 'max_1_buttons',
@@ -110,17 +163,29 @@ const tooltipContent = ref(
   `<strong class="font-semibold break-keep whitespace-nowrap">${t('button_limit_reached')}</strong>
     <span class="text-slate-200">${t('first_delete_a_button')}</span>`,
 )
+const dragOptions = ref({
+  animation: 200,
+  ghostClass: 'dragging',
+  revertOnSpill: true,
+})
 
 const canAddMoreButtons = computed(() => {
-  return newTemplateStore.template.buttons.length < 10
+  return templateStore.template.buttons.length < 10
 })
 
 const addButton = (option) => {
   if (!canAddButton(option.type, option.maximun)) return
 
-  newTemplateStore.template.buttons.push({
+  let button = {
     type: option.type,
-  })
+    category: option.category,
+  }
+
+  if (option.type == 'URL') {
+    button.type_url = 'static_url'
+  }
+
+  templateStore.template.buttons.push(button)
 
   popoverButton.value.hide()
 }
@@ -130,8 +195,21 @@ const openPopoverButton = (event) => {
 }
 
 const canAddButton = (btnType, max) => {
-  const buttonsOfType = newTemplateStore.template.buttons.filter((btn) => btn.type === btnType)
+  const buttonsOfType = templateStore.template.buttons.filter((btn) => btn.type === btnType)
 
   return buttonsOfType.length < max
 }
+
+watch(
+  () => templateStore.buttonsByType,
+  () => {
+    console.log(templateStore.buttonsByType)
+  },
+)
 </script>
+
+<style>
+.draggable-item {
+  transition: transform 0.2s ease-in-out;
+}
+</style>

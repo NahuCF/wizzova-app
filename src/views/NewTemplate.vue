@@ -1,8 +1,8 @@
 <template>
   <div class="flex justify-center">
-    <div class="w-[65rem] flex flex-col gap-4">
+    <div class="w-[70rem] flex flex-col gap-4">
       <div class="flex justify-between items-center">
-        <h1 class="font-semibold text-2xl">New template</h1>
+        <h1 class="font-semibold text-2xl">{{ t('new_template.title') }}</h1>
         <Button
           @click="storeTemplate"
           v-tooltip.bottom="{
@@ -141,10 +141,7 @@
           </div>
 
           <div>
-            <PreviewTemplate
-              :bodyText="templateStore.template.body.text"
-              :footer="templateStore.template.footer.text"
-            />
+            <PreviewTemplate />
           </div>
         </div>
       </div>

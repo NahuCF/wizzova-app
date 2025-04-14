@@ -21,7 +21,11 @@
     </div>
 
     <div class="p-5 flex h-[30rem] overflow-y-scroll">
-      <MessagePreview :body="bodyText" :footer="footer" />
+      <MessagePreview
+        :body="templateStore.template.body.text"
+        :footer="templateStore.template.footer.text"
+        :buttons="templateStore.template.buttons"
+      />
     </div>
 
     <div class="mt-auto flex gap-2 w-full p-3 h-[4.3rem]">
@@ -55,18 +59,9 @@ import {
   IconRosetteDiscountCheckFilled,
 } from '@tabler/icons-vue'
 import MessagePreview from '~/components/templates/MessagePreview.vue'
+import { useTemplateStore } from '~/stores'
 
-const props = defineProps({
-  bodyText: {
-    type: String,
-    required: true,
-  },
-  footer: {
-    type: String,
-    required: false,
-    default: '',
-  },
-})
+const templateStore = useTemplateStore()
 </script>
 
 <style scoped>
