@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { toHandlers } from 'vue'
 
 export const useTemplateStore = defineStore('template', {
   state: () => {

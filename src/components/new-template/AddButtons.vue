@@ -131,7 +131,6 @@ import {
 import { useTemplateStore } from '~/stores'
 import { useI18n } from 'vue-i18n'
 import draggable from 'vuedraggable'
-import Templates from '~/views/Templates.vue'
 import TemplateButton from './TemplateButton.vue'
 
 const templateStore = useTemplateStore()
@@ -176,7 +175,7 @@ const canAddMoreButtons = computed(() => {
 const addButton = (option) => {
   if (!canAddButton(option.type, option.maximun)) return
 
-  let button = {
+  const button = {
     type: option.type,
     category: option.category,
   }

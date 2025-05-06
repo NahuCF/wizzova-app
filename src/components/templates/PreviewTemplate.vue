@@ -47,7 +47,6 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
 import {
   IconArrowLeft,
   IconDotsVertical,
