@@ -150,7 +150,7 @@
 </template>
 
 <script setup>
-import { LanguageService, TemplateCategoryService, ComponentTypeService } from '~/services'
+import { TemplateLanguageService, TemplateCategoryService, TemplateHeaderService } from '~/services'
 import { onMounted, ref, watch, computed } from 'vue'
 import { useToast } from 'primevue'
 import { IconAsterisk, IconInfoCircle, IconLoader2 } from '@tabler/icons-vue'
@@ -179,7 +179,7 @@ const formatInputName = (event) => {
 }
 
 const fetchLanguages = async () => {
-  const response = await LanguageService.index()
+  const response = await TemplateLanguageService.index()
   languages.value = response.data.data
 
   const englishLanguage = languages.value.find((item) => item.name === 'English')
@@ -236,7 +236,7 @@ const storeTemplate = async () => {
 }
 
 const fetchHeaderComponentTypes = async () => {
-  const response = await ComponentTypeService.headerTypes()
+  const response = await TemplateHeaderService.headerTypes()
   componentHeaderTypes.value = response.data.data
 }
 
