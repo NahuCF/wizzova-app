@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import type { TemplateState, TemplateButtonsByCategory } from '~/types'
 
 export const useTemplateStore = defineStore('template', {
   state: () => {
@@ -9,18 +10,14 @@ export const useTemplateStore = defineStore('template', {
         templateCategoryId: 0,
         allowCategoryChange: false,
         constainsHeader: false,
-        footer: {
-          text: '',
-        },
-        body: {
-          text: '',
-        },
+        footer: '',
+        body: '',
         header: {
           typeId: 0,
           text: '',
         },
         buttons: [],
-      },
+      } as TemplateState,
     }
   },
   getters: {
@@ -29,14 +26,14 @@ export const useTemplateStore = defineStore('template', {
         acc[item.category] = acc[item.category] || []
         acc[item.category].push(item)
         return acc
-      }, {})
+      }, {} as TemplateButtonsByCategory)
     },
   },
   actions: {
     updateButtons() {
       this.template.buttons = Object.values(this.buttonsByCategory).flat()
     },
-    switchCategoryOrder(category) {
+    switchCategoryOrder(category: string) {
       const categories = Object.keys(this.buttonsByCategory)
       const index = categories.indexOf(category)
 

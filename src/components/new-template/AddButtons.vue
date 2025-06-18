@@ -1,3 +1,86 @@
+<script setup lang="ts">
+import { ref, computed, type Component } from 'vue'
+import { Button, Popover, Divider } from 'primevue'
+import {
+  IconPhone,
+  IconPlus,
+  IconGripVertical,
+  IconArrowBackUp,
+  IconExternalLink,
+  IconSwitchVertical,
+} from '@tabler/icons-vue'
+import { useTemplateStore } from '~/stores'
+import { useI18n } from 'vue-i18n'
+import draggable from 'vuedraggable'
+import type { TemplateButton, TemplateButtonOption, TemplateQuickReplyOption } from '~/types'
+
+const templateStore = useTemplateStore()
+const { t } = useI18n()
+
+const popoverButton = ref()
+const ctaButtonOptions = ref<TemplateButtonOption[]>([
+  {
+    id: 'url',
+    type: 'URL',
+    category: 'cta',
+    name: 'URL',
+    icon: 'IconExternalLink',
+    description: 'max_2_buttons',
+    maximun: 2,
+  },
+  {
+    id: 'ctn',
+    type: 'PHONE_NUMBER',
+    category: 'cta',
+    name: 'call_to_number',
+    icon: 'IconPhone',
+    description: 'max_1_buttons',
+    maximun: 1,
+  },
+])
+const iconComponents: Record<string, Component> = { IconExternalLink, IconPhone }
+const tooltipContent = ref(
+  `<strong class="font-semibold break-keep whitespace-nowrap">${t('button_limit_reached')}</strong>
+    <span class="text-slate-200">${t('first_delete_a_button')}</span>`,
+)
+const dragOptions = ref({
+  animation: 200,
+  ghostClass: 'dragging',
+  revertOnSpill: true,
+})
+
+const canAddMoreButtons = computed(() => {
+  return templateStore.template.buttons.length < 10
+})
+
+const addButton = (option: TemplateButtonOption | TemplateQuickReplyOption) => {
+  if (!canAddButton(option.type, option.maximun)) return
+
+  const button: TemplateButton = {
+    type: option.type,
+    category: option.category,
+  }
+
+  if (option.type == 'URL') {
+    button.type_url = 'static_url'
+  }
+
+  templateStore.template.buttons.push(button)
+
+  popoverButton.value.hide()
+}
+
+const openPopoverButton = (event: MouseEvent) => {
+  popoverButton.value.toggle(event)
+}
+
+const canAddButton = (btnType: string, max: number) => {
+  const buttonsOfType = templateStore.template.buttons.filter((btn) => btn.type === btnType)
+
+  return buttonsOfType.length < max
+}
+</script>
+
 <template>
   <div>
     <div class="flex flex-col gap-1">
@@ -116,96 +199,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref, computed, watch } from 'vue'
-import { Button, Popover, Divider } from 'primevue'
-import {
-  IconPhone,
-  IconPlus,
-  IconGripVertical,
-  IconArrowBackUp,
-  IconExternalLink,
-  IconSwitchVertical,
-} from '@tabler/icons-vue'
-import { useTemplateStore } from '~/stores'
-import { useI18n } from 'vue-i18n'
-import draggable from 'vuedraggable'
-import TemplateButton from './TemplateButton.vue'
-
-const templateStore = useTemplateStore()
-const { t } = useI18n()
-
-const popoverButton = ref(null)
-const ctaButtonOptions = ref([
-  {
-    id: 'url',
-    type: 'URL',
-    category: 'cta',
-    name: 'URL',
-    icon: 'IconExternalLink',
-    description: 'max_2_buttons',
-    maximun: 2,
-  },
-  {
-    id: 'ctn',
-    type: 'PHONE_NUMBER',
-    category: 'cta',
-    name: 'call_to_number',
-    icon: 'IconPhone',
-    description: 'max_1_buttons',
-    maximun: 1,
-  },
-])
-const iconComponents = { IconExternalLink, IconPhone }
-const tooltipContent = ref(
-  `<strong class="font-semibold break-keep whitespace-nowrap">${t('button_limit_reached')}</strong>
-    <span class="text-slate-200">${t('first_delete_a_button')}</span>`,
-)
-const dragOptions = ref({
-  animation: 200,
-  ghostClass: 'dragging',
-  revertOnSpill: true,
-})
-
-const canAddMoreButtons = computed(() => {
-  return templateStore.template.buttons.length < 10
-})
-
-const addButton = (option) => {
-  if (!canAddButton(option.type, option.maximun)) return
-
-  const button = {
-    type: option.type,
-    category: option.category,
-  }
-
-  if (option.type == 'URL') {
-    button.type_url = 'static_url'
-  }
-
-  templateStore.template.buttons.push(button)
-
-  popoverButton.value.hide()
-}
-
-const openPopoverButton = (event) => {
-  popoverButton.value.toggle(event)
-}
-
-const canAddButton = (btnType, max) => {
-  const buttonsOfType = templateStore.template.buttons.filter((btn) => btn.type === btnType)
-
-  return buttonsOfType.length < max
-}
-
-watch(
-  () => templateStore.buttonsByType,
-  () => {
-    console.log(templateStore.buttonsByType)
-  },
-)
-</script>
 
 <style>
 .draggable-item {

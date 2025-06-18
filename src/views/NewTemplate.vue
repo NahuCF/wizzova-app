@@ -1,3 +1,138 @@
+<script setup lang="ts">
+import { API } from '~/services'
+import { onMounted, ref, watch, computed } from 'vue'
+import { useToast } from 'primevue'
+import { IconAsterisk, IconInfoCircle, IconLoader2 } from '@tabler/icons-vue'
+import { useTemplateStore } from '~/stores'
+import { useI18n } from 'vue-i18n'
+import PreviewTemplate from '~/components/templates/PreviewTemplate.vue'
+import AddButtons from '~/components/new-template/AddButtons.vue'
+import type { TemplateCategory, TemplateHeaderType, Language, TemplateCreate } from '~/types'
+import axios from 'axios'
+
+const templateStore = useTemplateStore()
+const { t } = useI18n()
+const toast = useToast()
+
+const languages = ref<Language[]>([])
+const templateCategories = ref<TemplateCategory[]>([])
+const categoryChangeOptions = ref([
+  { name: t('yes'), id: true },
+  { name: t('no'), id: false },
+])
+const componentHeaderTypes = ref<TemplateHeaderType[]>([])
+const loading = ref(false)
+
+const formatInputName = (event: Event) => {
+  const target = event.target as HTMLInputElement | null
+
+  if(target) {
+    target.value = target.value.replace(/[^a-zA-Z0-9]/g, '_')
+    templateStore.template.name = target.value
+  }
+}
+
+const fetchLanguages = async () => {
+  const response = await API.templateLanguage.index()
+  languages.value = response.data.data
+
+  const englishLanguage = languages.value.find((item) => item.name === 'English')
+
+  if (!englishLanguage) return
+
+  templateStore.template.languageId = englishLanguage.id
+}
+
+const fetchTemplateCategories = async () => {
+  const response = await API.templateCategory.index()
+  templateCategories.value = response.data.data
+
+  const categoryMarketing = templateCategories.value.find((item) => item.name === 'Marketing')
+
+  if (!categoryMarketing) return
+
+  templateStore.template.templateCategoryId = categoryMarketing.id
+}
+
+const storeTemplate = async () => {
+  const template = templateStore.template
+
+  const payload: TemplateCreate = {
+    name: template.name,
+    language_id: template.languageId,
+    template_category_id: template.templateCategoryId,
+    body: template.body,
+  }
+
+  const footerText = template.footer
+  if (footerText) {
+    payload.footer = footerText
+  }
+
+  try {
+    loading.value = true
+    await API.template.store(payload)
+  } catch (error) {
+    let errorMessage = t('an_error_occurred')
+
+    if (axios.isAxiosError(error) && error.status === 422 && error.response) {
+      errorMessage = t('validation_errors.' + error.response.data.message.replace('.', ''))
+    }
+
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: errorMessage,
+      life: 3000,
+    })
+  } finally {
+    loading.value = false
+  }
+}
+
+const fetchHeaderComponentTypes = async () => {
+  const response = await API.templateHeader.headerTypes()
+  componentHeaderTypes.value = response.data.data
+}
+
+const validateLineJump = (event: KeyboardEvent) => {
+  const target = event.target as HTMLInputElement | null
+  const text = target?.value ?? ''
+
+  // Prevent more than 2 white spaces
+  if (text.length > 0 && text.endsWith('\n\n')) {
+    event.preventDefault()
+  }
+
+  // Prevent enter if there is nothing to show
+  if (!/[^\n]/.test(text)) {
+    event.preventDefault()
+  }
+}
+
+const canSubmit = computed(() => {
+  return (
+    templateStore.template.name &&
+    templateStore.template.languageId &&
+    templateStore.template.templateCategoryId &&
+    templateStore.template.body
+  )
+})
+
+watch(
+  () => templateStore.template.body,
+  (newValue) => {
+    templateStore.template.body = newValue.replace(/\n{2,}/g, '\n\n')
+  },
+)
+
+onMounted(() => {
+  fetchLanguages()
+  fetchTemplateCategories()
+  fetchHeaderComponentTypes()
+})
+</script>
+
 <template>
   <div class="flex justify-center">
     <div class="w-[70rem] flex flex-col gap-4">
@@ -42,7 +177,7 @@
 
         <div class="flex gap-6">
           <div class="flex flex-col gap-6">
-            <div class="flex gap-5 grid grid-cols-3">
+            <div class="gap-5 grid grid-cols-3">
               <div class="flex flex-col gap-1 relative">
                 <div class="flex gap-1">
                   <label for="category">{{ $t('category') }}</label>
@@ -103,7 +238,7 @@
                 <div class="flex flex-col gap-1 relative">
                   <div class="relative">
                     <Textarea
-                      v-model="templateStore.template.body.text"
+                      v-model="templateStore.template.body"
                       rows="8"
                       cols="30"
                       fluid
@@ -113,7 +248,7 @@
                       :placeholder="t('example_body_text_template')"
                     />
                     <div class="absolute right-3 bottom-2 text-slate-400">
-                      {{ templateStore.template.body.text.length }} / 1024
+                      {{ templateStore.template.body.length }} / 1024
                     </div>
                   </div>
                 </div>
@@ -122,7 +257,7 @@
                 <h2 class="font-medium mb-1 text-lg">{{ $t('footer') }}</h2>
                 <div class="relative">
                   <InputText
-                    v-model="templateStore.template.footer.text"
+                    v-model="templateStore.template.footer"
                     class="!pr-[5.5rem]"
                     name="name"
                     id="name"
@@ -131,7 +266,7 @@
                     :placeholder="$t('example_footer_text')"
                   />
                   <div class="absolute right-3 top-2 text-slate-400">
-                    {{ templateStore.template.footer.text.length }} / 60
+                    {{ templateStore.template.footer.length }} / 60
                   </div>
                 </div>
               </div>
@@ -149,133 +284,6 @@
   </div>
 </template>
 
-<script setup>
-import { TemplateLanguageService, TemplateCategoryService, TemplateHeaderService } from '~/services'
-import { onMounted, ref, watch, computed } from 'vue'
-import { useToast } from 'primevue'
-import { IconAsterisk, IconInfoCircle, IconLoader2 } from '@tabler/icons-vue'
-import { useTemplateStore } from '~/stores'
-import { useI18n } from 'vue-i18n'
-import PreviewTemplate from '~/components/templates/PreviewTemplate.vue'
-import TemplateService from '~/services/TemplateService'
-import AddButtons from '~/components/new-template/AddButtons.vue'
-
-const templateStore = useTemplateStore()
-const { t } = useI18n()
-const toast = useToast()
-
-const languages = ref([])
-const templateCategories = ref([])
-const categoryChangeOptions = ref([
-  { name: t('yes'), id: true },
-  { name: t('no'), id: false },
-])
-const componentHeaderTypes = ref([])
-const loading = ref(false)
-const formatInputName = (event) => {
-  event.target.value = event.target.value.replace(/[^a-zA-Z0-9]/g, '_')
-
-  templateStore.template.name = event.target.value
-}
-
-const fetchLanguages = async () => {
-  const response = await TemplateLanguageService.index()
-  languages.value = response.data.data
-
-  const englishLanguage = languages.value.find((item) => item.name === 'English')
-
-  if (!englishLanguage) return
-
-  templateStore.template.languageId = englishLanguage.id
-}
-
-const fetchTemplateCategories = async () => {
-  const response = await TemplateCategoryService.index()
-  templateCategories.value = response.data.data
-
-  const categoryMarketing = templateCategories.value.find((item) => item.name === 'Marketing')
-
-  if (!categoryMarketing) return
-
-  templateStore.template.templateCategoryId = categoryMarketing.id
-}
-
-const storeTemplate = async () => {
-  const template = templateStore.template
-
-  const payload = {
-    name: template.name,
-    language_id: template.languageId,
-    template_category_id: template.templateCategoryId,
-    body: template.body.text,
-  }
-
-  const footerText = template.footer.text
-  if (footerText) {
-    payload.footer = footerText
-  }
-
-  try {
-    loading.value = true
-    await TemplateService.store(payload)
-  } catch (error) {
-    let errorMessage = t('an_error_occurred')
-    if (error.status == 422) {
-      errorMessage = t('validation_errors.' + error.response.data.message.replace('.', ''))
-    }
-
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: errorMessage,
-      life: 3000,
-    })
-  } finally {
-    loading.value = false
-  }
-}
-
-const fetchHeaderComponentTypes = async () => {
-  const response = await TemplateHeaderService.headerTypes()
-  componentHeaderTypes.value = response.data.data
-}
-
-const validateLineJump = (event) => {
-  const text = event.target.value
-
-  // Prevent more than 2 white spaces
-  if (text.length > 0 && text.endsWith('\n\n')) {
-    event.preventDefault()
-  }
-
-  // Prevent enter if there is nothing to show
-  if (!/[^\n]/.test(text)) {
-    event.preventDefault()
-  }
-}
-
-const canSubmit = computed(() => {
-  return (
-    templateStore.template.name &&
-    templateStore.template.languageId &&
-    templateStore.template.templateCategoryId &&
-    templateStore.template.body.text
-  )
-})
-
-watch(
-  () => templateStore.template.body.text,
-  (newValue) => {
-    templateStore.template.body.text = newValue.replace(/\n{2,}/g, '\n\n')
-  },
-)
-
-onMounted(() => {
-  fetchLanguages()
-  fetchTemplateCategories()
-  fetchHeaderComponentTypes()
-})
-</script>
 <style>
 .custom-tooltip {
   max-width: none !important;
