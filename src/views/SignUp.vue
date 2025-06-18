@@ -1,6 +1,201 @@
+<script lang="ts" setup>
+import { computed, ref, onMounted } from 'vue'
+import {
+  Popover,
+  InputText,
+  Password,
+  Message,
+  Button,
+  InputGroup,
+  InputGroupAddon,
+} from 'primevue'
+import { IconLoader2, IconCircleX, IconCircleCheck } from '@tabler/icons-vue'
+import { useI18n } from 'vue-i18n'
+import { zodResolver } from '@primevue/forms/resolvers/zod'
+import { z } from 'zod'
+import { Form, type FormSubmitEvent } from '@primevue/forms'
+import { parsePhoneNumber } from 'libphonenumber-js/min'
+import LanguageSelector from '~/components/LanguageSelector.vue'
+import { useRouter } from 'vue-router'
+import AuthService from '~/services/AuthService'
+import { useSessionStore } from '~/stores/session'
+import type { Tenant } from '~/types/Tenant'
+import { useToast } from 'primevue'
+import type { CountryCellphone } from '~/types/Country'
+import axios from 'axios'
+
+const session = useSessionStore()
+
+const router = useRouter()
+const { t } = useI18n()
+const toast = useToast()
+const cellphonePopover = ref()
+const selectedCountry = ref('US')
+const passwordRules = ref([
+  'password_min_length',
+  'password_require_lowercase',
+  'password_require_uppercase',
+  'password_require_numeric',
+])
+const countries = ref<CountryCellphone[]>([
+  { name: 'Argentina', code: 'AR', prefix: '+54' },
+  { name: 'Brazil', code: 'BR', prefix: '+55' },
+  { name: 'Spain', code: 'ES', prefix: '+34' },
+  { name: 'United States', code: 'US', prefix: '+1' },
+])
+
+const loading = ref(false)
+
+const form = ref({
+  name: '',
+  cellphone: '',
+  workEmail: '',
+  password: '',
+})
+const errors = ref({})
+
+const selectCountry = (country: CountryCellphone) => {
+  selectedCountry.value = country.code
+  cellphonePopover.value.hide()
+}
+
+const getSelectedCountry = computed(() => {
+  return countries.value.find((country) => country.code === selectedCountry.value)
+})
+
+const resolver = zodResolver(
+  z.object({
+    name: z.string().refine((value) => value.length > 0, {
+      message: 'name_is_required',
+    }),
+    cellphone: z.string().refine(
+      (value) => {
+        let phoneNumber = null
+
+        if(!getSelectedCountry.value) {
+          return false
+        }
+
+        try {
+          phoneNumber = parsePhoneNumber(
+            getSelectedCountry.value.prefix + value,
+            getSelectedCountry.value.code,
+          )
+        } catch (e) {
+          return false
+        }
+
+        return phoneNumber.isValid()
+      },
+      {
+        message: 'invalid_cellphone',
+      },
+    ),
+    workEmail: z
+      .string()
+      .refine((value) => value.length > 0, {
+        message: 'work_email_is_required',
+      })
+      .refine((value) => z.string().email().safeParse(value).success, {
+        message: 'invalid_email',
+      })
+      .refine(
+        (value) => {
+          const personalDomains = [
+            'gmail.com',
+            'yahoo.com',
+            'hotmail.com',
+            'aol.com',
+            'outlook.com',
+          ]
+          const splitstr = value.split('@').filter(Boolean)
+          if (splitstr.length == 0 || splitstr[1] == undefined) {
+            return
+          }
+
+          const domain = splitstr[1].toLowerCase()
+          return !personalDomains.includes(domain)
+        },
+        {
+          message: 'only_business_emails_allowed',
+        },
+      ),
+    password: z
+      .string()
+      .refine((value) => value.length >= 8, {
+        message: 'password_min_length',
+      })
+      .refine((value) => /[a-z]/.test(value), {
+        message: 'password_require_lowercase',
+      })
+      .refine((value) => /[A-Z]/.test(value), {
+        message: 'password_require_uppercase',
+      })
+      .refine((value) => /\d/.test(value), {
+        message: 'password_require_numeric',
+      }),
+  }),
+)
+
+const onFormSubmit = async ({ valid }: FormSubmitEvent) => {
+  if (!valid) return
+
+  errors.value = {}
+
+  try {
+    loading.value = true
+    const response = await AuthService.register({
+      // business_name: form.value.businessName,
+      // business_website: form.value.businessWebsite,
+      name: form.value.name,
+      cellphone: form.value.cellphone,
+      cellphone_prefix: getSelectedCountry.value?.prefix ?? '',
+      work_email: form.value.workEmail,
+      password: form.value.password,
+    })
+    const data = response.data.data
+
+    const tenant = {
+      id: data.id,
+      name: data.name,
+      businessName: data.business_name,
+      website: data.website,
+      email: data.email,
+      verifiedEmail: data.verified_email,
+      verifiedWhatsapp: data.verified_whatsapp,
+      filledBasicInformation: data.filled_basic_information,
+    } as Tenant
+
+    session.setTenant(tenant)
+    router.push({
+      name: 'confirm-account',
+    })
+  } catch (error) {
+    let errorMessage = t('an_error_occurred')
+    
+    if (axios.isAxiosError(error) && error.status === 422 && error.response) {
+      errorMessage = t('validation_errors.' + error.response.data.message.replace('.', ''))
+    }
+
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: errorMessage,
+      life: 3000,
+    })
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  session.$reset()
+})
+</script>
+
 <template>
   <div class="flex flex-col w-full h-screen relative">
-    <div class="flex absolute right-0 hidden md:block p-3">
+    <div class="flex absolute right-0 md:block p-3">
       <LanguageSelector class="ml-auto" />
     </div>
     <div class="w-full flex items-center justify-center flex-1">
@@ -30,7 +225,7 @@
               size="small"
               variant="simple"
               class="absolute bottom-[-1.4rem]"
-              >{{ $form.name.error?.message }}</Message
+              >{{ $t($form.name.error?.message) }}</Message
             >
           </div>
           <div class="flex flex-col gap-1 relative">
@@ -51,7 +246,7 @@
                   :class="{
                     '!border-red-400': $form.cellphone?.invalid,
                   }"
-                  >{{ getSelectedCountry.prefix }}</InputGroupAddon
+                  >{{ getSelectedCountry?.prefix }}</InputGroupAddon
                 >
                 <InputText
                   v-model="form.cellphone"
@@ -68,7 +263,7 @@
               size="small"
               variant="simple"
               class="absolute bottom-[-1.4rem]"
-              >{{ $form.cellphone.error?.message }}</Message
+              >{{ $t($form.cellphone.error?.message) }}</Message
             >
           </div>
           <div class="flex flex-col gap-1 relative">
@@ -85,7 +280,7 @@
               size="small"
               variant="simple"
               class="absolute bottom-[-1.4rem]"
-              >{{ $form.workEmail.error?.message }}</Message
+              >{{ $t($form.workEmail.error?.message) }}</Message
             >
           </div>
           <div class="flex flex-col gap-1 relative">
@@ -162,192 +357,6 @@
     </Popover>
   </div>
 </template>
-
-<script lang="ts" setup>
-import { computed, ref, onMounted } from 'vue'
-import {
-  Popover,
-  InputText,
-  Password,
-  Message,
-  Button,
-  InputGroup,
-  InputGroupAddon,
-} from 'primevue'
-import { IconLoader2, IconCircleX, IconCircleCheck } from '@tabler/icons-vue'
-import { useI18n } from 'vue-i18n'
-import { zodResolver } from '@primevue/forms/resolvers/zod'
-import { z } from 'zod'
-import { Form } from '@primevue/forms'
-import { parsePhoneNumber } from 'libphonenumber-js/min'
-import LanguageSelector from '~/components/LanguageSelector.vue'
-import { useRouter } from 'vue-router'
-import AuthService from '~/services/AuthService'
-import { useSessionStore } from '~/stores/session'
-import type { Tenant } from '~/types/Tenant'
-import { useToast } from 'primevue'
-
-const session = useSessionStore()
-
-const router = useRouter()
-const { t } = useI18n()
-const toast = useToast()
-const cellphonePopover = ref()
-const selectedCountry = ref('US')
-const passwordRules = ref([
-  'password_min_length',
-  'password_require_lowercase',
-  'password_require_uppercase',
-  'password_require_numeric',
-])
-const countries = ref([
-  { name: 'Argentina', code: 'AR', prefix: '+54' },
-  { name: 'Brazil', code: 'BR', prefix: '+55' },
-  { name: 'Spain', code: 'ES', prefix: '+34' },
-  { name: 'United States', code: 'US', prefix: '+1' },
-])
-
-const loading = ref(false)
-
-const form = ref({
-  name: '',
-  cellphone: '',
-  workEmail: '',
-  password: '',
-})
-const errors = ref({})
-const selectCountry = (country) => {
-  selectedCountry.value = country.code
-  cellphonePopover.value.hide()
-}
-
-const getSelectedCountry = computed(() => {
-  return countries.value.find((country) => country.code === selectedCountry.value)
-})
-
-const resolver = zodResolver(
-  z.object({
-    name: z.string().refine((value) => value.length > 0, {
-      message: computed(() => t('name_is_required')),
-    }),
-    cellphone: z.string().refine(
-      (value) => {
-        let phoneNumber = null
-        try {
-          phoneNumber = parsePhoneNumber(
-            getSelectedCountry.value.prefix + value,
-            getSelectedCountry.value.code,
-          )
-        } catch (e) {
-          return false
-        }
-
-        return phoneNumber.isValid()
-      },
-      {
-        message: computed(() => t('invalid_cellphone')),
-      },
-    ),
-    workEmail: z
-      .string()
-      .refine((value) => value.length > 0, {
-        message: computed(() => t('work_email_is_required')),
-      })
-      .refine((value) => z.string().email().safeParse(value).success, {
-        message: computed(() => t('invalid_email')),
-      })
-      .refine(
-        (value) => {
-          const personalDomains = [
-            'gmail.com',
-            'yahoo.com',
-            'hotmail.com',
-            'aol.com',
-            'outlook.com',
-          ]
-          const splitstr = value.split('@').filter(Boolean)
-          if (splitstr.length == 0 || splitstr[1] == undefined) {
-            return
-          }
-
-          const domain = splitstr[1].toLowerCase()
-          return !personalDomains.includes(domain)
-        },
-        {
-          message: computed(() => t('only_business_emails_allowed')),
-        },
-      ),
-    password: z
-      .string()
-      .refine((value) => value.length >= 8, {
-        message: computed(() => t('password_min_length', { length: 8 })),
-      })
-      .refine((value) => /[a-z]/.test(value), {
-        message: computed(() => t('password_require_lowercase')),
-      })
-      .refine((value) => /[A-Z]/.test(value), {
-        message: computed(() => t('password_require_uppercase')),
-      })
-      .refine((value) => /\d/.test(value), {
-        message: computed(() => t('password_require_numeric')),
-      }),
-  }),
-)
-
-const onFormSubmit = async ({ valid }) => {
-  if (!valid) return
-
-  errors.value = {}
-
-  try {
-    loading.value = true
-    const response = await AuthService.register({
-      business_name: form.value.businessName,
-      business_website: form.value.businessWebsite,
-      name: form.value.name,
-      cellphone: form.value.cellphone,
-      cellphone_prefix: getSelectedCountry.value.prefix,
-      work_email: form.value.workEmail,
-      password: form.value.password,
-    })
-    const data = response.data.data
-
-    const tenant = {
-      id: data.id,
-      name: data.name,
-      businessName: data.business_name,
-      website: data.website,
-      email: data.email,
-      verifiedEmail: data.verified_email,
-      verifiedWhatsapp: data.verified_whatsapp,
-      filledBasicInformation: data.filled_basic_information,
-    } as Tenant
-
-    session.setTenant(tenant)
-    router.push({
-      name: 'confirm-account',
-    })
-  } catch (error) {
-    let errorMessage = t('an_error_occurred')
-    if (error.status == 422) {
-      errorMessage = t('validation_errors.' + error.response.data.message.replace('.', ''))
-    }
-
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: errorMessage,
-      life: 3000,
-    })
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  session.$reset()
-})
-</script>
 
 <style>
 .p-popover-content {
