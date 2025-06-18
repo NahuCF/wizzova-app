@@ -182,7 +182,7 @@ import { Form } from '@primevue/forms'
 import { parsePhoneNumber } from 'libphonenumber-js/min'
 import LanguageSelector from '~/components/LanguageSelector.vue'
 import { useRouter } from 'vue-router'
-import AuthService from '~/services/AuthService'
+import { API } from '~/services/index'
 import { useSessionStore } from '~/stores/session'
 import type { Tenant } from '~/types/Tenant'
 import { useToast } from 'primevue'
@@ -301,7 +301,7 @@ const onFormSubmit = async ({ valid }) => {
 
   try {
     loading.value = true
-    const response = await AuthService.register({
+    const response = await API.auth.register({
       business_name: form.value.businessName,
       business_website: form.value.businessWebsite,
       name: form.value.name,

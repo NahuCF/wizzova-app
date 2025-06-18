@@ -85,7 +85,7 @@ import { z } from 'zod'
 import { Form } from '@primevue/forms'
 import LanguageSelector from '~/components/LanguageSelector.vue'
 import { useRouter } from 'vue-router'
-import AuthService from '~/services/AuthService'
+import { API } from '~/services/index'
 import { useSessionStore } from '~/stores/session'
 import type { Tenant } from '~/types/Tenant'
 import type { User } from '~/types/User'
@@ -123,7 +123,7 @@ const onFormSubmit = async ({ valid }) => {
 
   try {
     loading.value = true
-    const response = await AuthService.login({
+    const response = await API.auth.login({
       email: form.value.email,
       password: form.value.password,
     })
