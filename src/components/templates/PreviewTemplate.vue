@@ -39,6 +39,7 @@ const templateStore = useTemplateStore()
 
     <div class="p-5 flex h-[30rem] overflow-y-scroll">
       <MessagePreview
+        :header="''"
         :body="templateStore.template.body"
         :footer="templateStore.template.footer"
         :buttons="templateStore.template.buttons"

@@ -21,7 +21,7 @@ export interface TemplateState {
   }
   body: string,
   footer: string,
-  buttons: TemplateButton[]
+  buttons: (TemplateBtn | TemplateUrlBtn | TemplateCallBtn) []
 }
 
 export interface TemplateCreate {
@@ -32,27 +32,41 @@ export interface TemplateCreate {
   footer?: string
 }
 
-export interface TemplateButton {
-  type: string,
-  type_url?: string,
-  category: string
-}
+export type TemplateBtnCategory = 'cta' | 'custom_reply'
+export type TemplateBtnType = 'URL' | 'PHONE_NUMBER' | 'QUICK_REPLY' | 'EXPLORE_MORE'
+export type TempalteBtnUrlType = 'static_url' | 'dynamic_url'
 
 export interface TemplateButtonOption {
   id: string,
-  type: string,
-  category: string,
-  name: string,
+  type: TemplateBtnType,
+  category: TemplateBtnCategory,
+  name?: string,
   icon: string,
-  description: string,
+  description?: string,
   maximun: number
 }
 
 export interface TemplateQuickReplyOption {
-  type: string,
-  maximun: number,
-  category: string,
+  type: TemplateBtnType,
+  category: TemplateBtnCategory,
   text: string,
+  maximun: number
 }
 
-export type TemplateButtonsByCategory = Record<string, TemplateButton[]>
+export interface TemplateBtn {
+  type: TemplateBtnType,
+  category: string,
+  text?: string
+}
+
+export interface TemplateUrlBtn extends TemplateBtn {
+  type_url?: string,
+  url?: string,
+  example?: string,
+}
+
+export interface TemplateCallBtn extends TemplateBtn {
+  phone_number?: string
+}
+
+export type TemplateButtonsByCategory = Record<string, (TemplateBtn | TemplateUrlBtn | TemplateCallBtn)[]>

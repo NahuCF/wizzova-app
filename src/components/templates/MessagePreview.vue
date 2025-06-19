@@ -1,37 +1,51 @@
 <template>
   <div
-    v-if="body.length || (body.length > 0 && footer.length)"
-    class="bg-white p-3 message rounded-lg self-start break-all relative shadow min-w-[18rem]"
+    v-if="body.length || (body.length > 0 && footer.length) || (header.length && header.length > 0)"
+    class="flex flex-col gap-2.5 bg-white px-3 pt-2 pb-1 message rounded-lg self-start break-all relative shadow min-w-[18rem]"
   >
-    <span v-if="body.length > 0" v-html="formattedBodyText"></span>
+    <div v-if="header.length > 0" class="font-semibold">
+      {{ header }}
+    </div>
 
-    <div class="text-slate-400 text-sm mt-2" v-if="body.length > 0">
+    <span class="font-regular" v-if="body.length > 0" v-html="formattedBodyText"></span>
+
+    <div class="text-slate-400 text-sm italic" v-if="body.length > 0">
       {{ footer }}
     </div>
     <div class="triangle"></div>
-    <Divider v-if="true" />
-    {{ buttons }}
+
+    <div class="flex flex-col items-center">
+      <button v-for="(button, index) in filteredButtons" :key="button.type + index"
+        class="w-full flex justify-center items-center gap-2 pt-3 pb-2 text-sm font-light text-sky-600 border-t-1 border-slate-100">
+          <component
+            :is="iconComponents[button.type]"
+            class="w-[13px] h-[13px]"
+          />
+          {{ button.text }}
+      </button>
+    </div>
   </div>
 </template>
 
-<script setup>
-import { defineProps, computed } from 'vue'
+<script setup lang="ts">
+import { defineProps, computed, type Component } from 'vue'
+import { IconExternalLink } from '@tabler/icons-vue'
+import IconMdiPhone from '~icons/mdi/phone'
+import IconMdiReply from '~icons/mdi/reply'
+import IconMdiFormatListBulleted from '~icons/mdi/format-list-bulleted'
+import type { TemplateBtn, TemplateBtnType, TemplateCallBtn, TemplateUrlBtn } from '~/types'
 
-const props = defineProps({
-  body: {
-    type: String,
-    required: true,
-  },
-  footer: {
-    type: String,
-    required: false,
-    default: '',
-  },
-  buttons: {
-    type: Array,
-    required: false,
-  },
-})
+const props = withDefaults(
+  defineProps<{
+    header: string,
+    body: string,
+    footer?: string,
+    buttons: (TemplateBtn | TemplateUrlBtn | TemplateCallBtn)[]
+  }>(), 
+  {
+    footer: ''
+  }
+)
 
 const formattedBodyText = computed(() => {
   if (!props.body) {
@@ -39,7 +53,32 @@ const formattedBodyText = computed(() => {
   }
   return props.body.replace(/\n/g, '<br>')
 })
+
+const filteredButtons = computed(() => {
+  const buttons = props.buttons.filter(b => b.text)
+
+  if (buttons.length <= 3) {
+    return buttons
+  }
+
+  const firstTwo = buttons.slice(0, 2)
+  const showMoreButton: TemplateBtn = {
+    type: 'EXPLORE_MORE',
+    category: 'explore_more',
+    text: 'Explore more'
+  }
+
+  return [...firstTwo, showMoreButton]
+})
+
+const iconComponents: Record<TemplateBtnType, Component> = {
+  URL: IconExternalLink,
+  PHONE_NUMBER: IconMdiPhone,
+  QUICK_REPLY: IconMdiReply,
+  EXPLORE_MORE: IconMdiFormatListBulleted
+}
 </script>
+
 <style scoped>
 .triangle {
   position: absolute;

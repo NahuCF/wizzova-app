@@ -97,6 +97,7 @@ export default {
   cto_button: 'Botones de llamada de acción',
   URL: 'URL',
   call_to_number: 'Llamar a número de telefono',
+  explore_more: 'Explorar mas',
   max_2_buttons: '2 botones maximo',
   max_1_buttons: '1 boton maximun',
   add_button: 'Añadir boton',

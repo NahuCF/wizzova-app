@@ -12,7 +12,8 @@ import {
 import { useTemplateStore } from '~/stores'
 import { useI18n } from 'vue-i18n'
 import draggable from 'vuedraggable'
-import type { TemplateButton, TemplateButtonOption, TemplateQuickReplyOption } from '~/types'
+import TemplateButton from './TemplateButton.vue'
+import type { TemplateButtonOption, TemplateQuickReplyOption } from '~/types'
 
 const templateStore = useTemplateStore()
 const { t } = useI18n()
@@ -38,7 +39,7 @@ const ctaButtonOptions = ref<TemplateButtonOption[]>([
     maximun: 1,
   },
 ])
-const iconComponents: Record<string, Component> = { IconExternalLink, IconPhone }
+const iconComponents: Record<string, Component> = { IconExternalLink, IconPhone, IconArrowBackUp }
 const tooltipContent = ref(
   `<strong class="font-semibold break-keep whitespace-nowrap">${t('button_limit_reached')}</strong>
     <span class="text-slate-200">${t('first_delete_a_button')}</span>`,
@@ -56,16 +57,22 @@ const canAddMoreButtons = computed(() => {
 const addButton = (option: TemplateButtonOption | TemplateQuickReplyOption) => {
   if (!canAddButton(option.type, option.maximun)) return
 
-  const button: TemplateButton = {
-    type: option.type,
-    category: option.category,
-  }
+  if (option.type === 'URL') {
+    const button = {
+      type: option.type,
+      category: option.category,
+      type_url: 'static_url'
+    }
+    templateStore.template.buttons.push(button)
 
-  if (option.type == 'URL') {
-    button.type_url = 'static_url'
-  }
+  } else {
+    const button = {
+      type: option.type,
+      category: option.category,
+    }
 
-  templateStore.template.buttons.push(button)
+    templateStore.template.buttons.push(button)
+  }
 
   popoverButton.value.hide()
 }
@@ -154,9 +161,11 @@ const canAddButton = (btnType: string, max: number) => {
               ]"
               @click="
                 addButton({
+                  id: 'qr',
                   type: 'QUICK_REPLY',
                   maximun: 999,
                   category: 'custom_reply',
+                  icon: 'IconArrowBackUp',
                   text: 'text',
                 })
               "
@@ -186,10 +195,10 @@ const canAddButton = (btnType: string, max: number) => {
               <div class="flex gap-1">
                 <component :is="iconComponents[option.icon]" size="18" />
                 <div>
-                  <p>
+                  <p v-if="option.name">
                     {{ t(option.name) }}
                   </p>
-                  <p class="text-slate-400 text-sm">{{ t(option.description) }}</p>
+                  <p v-if="option.description" class="text-slate-400 text-sm">{{ t(option.description) }}</p>
                 </div>
               </div>
             </li>
