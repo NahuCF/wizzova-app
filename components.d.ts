@@ -14,6 +14,7 @@ declare module 'vue' {
     Badge: typeof import('primevue/badge')['default']
     Button: typeof import('primevue/button')['default']
     Divider: typeof import('primevue/divider')['default']
+    Form: typeof import('@primevue/forms/form')['default']
     InputGroup: typeof import('primevue/inputgroup')['default']
     InputGroupAddon: typeof import('primevue/inputgroupaddon')['default']
     InputText: typeof import('primevue/inputtext')['default']
@@ -31,6 +32,7 @@ declare module 'vue' {
     TemplateHeader: typeof import('./src/components/new-template/TemplateHeader.vue')['default']
     Textarea: typeof import('primevue/textarea')['default']
     TheSidebar: typeof import('./src/components/TheSidebar.vue')['default']
+    Toast: typeof import('primevue/toast')['default']
   }
   export interface ComponentCustomProperties {
     Tooltip: typeof import('primevue/tooltip')['default']

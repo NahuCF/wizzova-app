@@ -35,7 +35,6 @@
 </template>
 
 <script lang="ts" setup>
-import { Select } from 'primevue'
 import { onMounted, ref, watch } from 'vue'
 import i18n from '~/config/i18n'
 import { useI18n } from 'vue-i18n'

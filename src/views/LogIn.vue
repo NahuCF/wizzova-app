@@ -1,24 +1,17 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import {
-  InputText,
-  Password,
-  Message,
-  Button,
-} from 'primevue'
 import { IconLoader2 } from '@tabler/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
-import { Form, type FormSubmitEvent } from '@primevue/forms'
-import LanguageSelector from '~/components/LanguageSelector.vue'
 import { useRouter } from 'vue-router'
 import { API } from '~/services/index'
 import { useSessionStore } from '~/stores/session'
-import type { Tenant } from '~/types/Tenant'
-import type { User } from '~/types/User'
 import { useToast } from 'primevue'
 import axios from 'axios'
+import type { FormSubmitEvent } from '@primevue/forms'
+import type { Tenant } from '~/types/Tenant'
+import type { User } from '~/types/User'
 
 const sessionStore = useSessionStore()
 const router = useRouter()

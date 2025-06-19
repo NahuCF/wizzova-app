@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed, type Component } from 'vue'
-import { Button, Popover, Divider } from 'primevue'
 import {
   IconPhone,
   IconPlus,
@@ -12,7 +11,6 @@ import {
 import { useTemplateStore } from '~/stores'
 import { useI18n } from 'vue-i18n'
 import draggable from 'vuedraggable'
-import TemplateButton from './TemplateButton.vue'
 import type { TemplateButtonOption, TemplateQuickReplyOption } from '~/types'
 
 const templateStore = useTemplateStore()

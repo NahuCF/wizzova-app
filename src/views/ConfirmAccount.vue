@@ -28,7 +28,7 @@
   </div>
 </template>
 <script setup>
-import { Button, Badge, useToast } from 'primevue'
+import { useToast } from 'primevue'
 import { IconMailOpened, IconLoader2 } from '@tabler/icons-vue'
 import { useSessionStore } from '~/stores/session'
 import AuthService from '~/services/AuthService'

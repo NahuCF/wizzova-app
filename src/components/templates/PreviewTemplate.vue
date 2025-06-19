@@ -9,7 +9,6 @@ import {
   IconBrandWhatsappFilled,
   IconRosetteDiscountCheckFilled,
 } from '@tabler/icons-vue'
-import MessagePreview from '~/components/templates/MessagePreview.vue'
 import { useTemplateStore } from '~/stores'
 
 const templateStore = useTemplateStore()

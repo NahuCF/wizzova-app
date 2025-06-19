@@ -1,28 +1,18 @@
 <script lang="ts" setup>
 import { computed, ref, onMounted } from 'vue'
-import {
-  Popover,
-  InputText,
-  Password,
-  Message,
-  Button,
-  InputGroup,
-  InputGroupAddon,
-} from 'primevue'
 import { IconLoader2, IconCircleX, IconCircleCheck } from '@tabler/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
-import { Form, type FormSubmitEvent } from '@primevue/forms'
 import { parsePhoneNumber } from 'libphonenumber-js/min'
-import LanguageSelector from '~/components/LanguageSelector.vue'
 import { useRouter } from 'vue-router'
 import { API } from '~/services/index'
 import { useSessionStore } from '~/stores/session'
-import type { Tenant } from '~/types/Tenant'
 import { useToast } from 'primevue'
-import type { CountryCellphone } from '~/types/Country'
 import axios from 'axios'
+import type { FormSubmitEvent } from '@primevue/forms'
+import type { Tenant } from '~/types/Tenant'
+import type { CountryCellphone } from '~/types/Country'
 
 const session = useSessionStore()
 
