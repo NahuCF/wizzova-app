@@ -81,9 +81,21 @@ export default {
   },
   submit_for_review: 'Enviar para revision',
   template_name: 'Nombre del template',
+  template_name_placeholder: 'welcome_template',
   category: 'Categoria',
   allow_category_change: 'Permitir cambio de categoria',
   language: 'Idioma',
+  header: 'Encabezado',
+  header_type: {
+    NONE: 'Ninguno',
+    TEXT: 'Texto',
+    IMAGE: 'Imagen',
+    VIDEO: 'Video',
+    DOCUMENT: 'Documento'
+  },
+  header_tooltip: 'Haga que su mensaje se destaque con texto o contenido personalizado.',
+  header_placeholder: '¿Eres nuevo en Wabox?',
+  optional: 'Opcional',
   body: 'Cuerpo',
   footer: 'Pie de página',
   help_text_category_change:

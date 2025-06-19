@@ -13,7 +13,7 @@ export const useTemplateStore = defineStore('template', {
         footer: '',
         body: '',
         header: {
-          typeId: 0,
+          type: 'NONE',
           text: '',
         },
         buttons: [],

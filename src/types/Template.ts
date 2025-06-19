@@ -3,10 +3,12 @@ export interface TemplateCategory {
   name: string
 }
 
+export type TemplateHeaderCode = 'NONE' | 'TEXT' | 'IMAGE' | 'VIDEO' | 'DOCUMENT'
+
 export interface TemplateHeaderType {
-  id: number
+  id: string
   name: string
-  code: string
+  code: TemplateHeaderCode
 }
 
 export interface TemplateState {
@@ -16,7 +18,7 @@ export interface TemplateState {
   allowCategoryChange: boolean,
   constainsHeader: boolean,
   header: {
-    typeId: number,
+    type: TemplateHeaderCode,
     text: string
   }
   body: string,

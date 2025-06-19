@@ -5,9 +5,7 @@ import { useToast } from 'primevue'
 import { IconAsterisk, IconInfoCircle, IconLoader2 } from '@tabler/icons-vue'
 import { useTemplateStore } from '~/stores'
 import { useI18n } from 'vue-i18n'
-import PreviewTemplate from '~/components/templates/PreviewTemplate.vue'
-import AddButtons from '~/components/new-template/AddButtons.vue'
-import type { TemplateCategory, TemplateHeaderType, Language, TemplateCreate } from '~/types'
+import type { TemplateCategory, Language, TemplateCreate } from '~/types'
 import axios from 'axios'
 
 const templateStore = useTemplateStore()
@@ -20,7 +18,6 @@ const categoryChangeOptions = ref([
   { name: t('yes'), id: true },
   { name: t('no'), id: false },
 ])
-const componentHeaderTypes = ref<TemplateHeaderType[]>([])
 const loading = ref(false)
 
 const formatInputName = (event: Event) => {
@@ -90,11 +87,6 @@ const storeTemplate = async () => {
   }
 }
 
-const fetchHeaderComponentTypes = async () => {
-  const response = await API.templateHeader.headerTypes()
-  componentHeaderTypes.value = response.data.data
-}
-
 const validateLineJump = (event: KeyboardEvent) => {
   const target = event.target as HTMLInputElement | null
   const text = target?.value ?? ''
@@ -129,7 +121,6 @@ watch(
 onMounted(() => {
   fetchLanguages()
   fetchTemplateCategories()
-  fetchHeaderComponentTypes()
 })
 </script>
 
@@ -167,7 +158,7 @@ onMounted(() => {
               fluid
               :maxlength="512"
               @input="formatInputName"
-              :placeholder="$t('welcome_template')"
+              :placeholder="$t('template_name_placeholder')"
             />
             <div class="absolute right-3 top-2 text-slate-400">
               {{ templateStore.template.name.length }} / 512
@@ -229,6 +220,8 @@ onMounted(() => {
             </div>
 
             <div class="bg-white p-4 border rounded-md flex flex-col gap-7 border-slate-300">
+              <TemplateHeader />
+
               <div>
                 <div class="flex gap-1">
                   <h2 class="font-medium mb-1 text-lg">{{ $t('body') }}</h2>

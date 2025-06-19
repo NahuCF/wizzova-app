@@ -9,7 +9,7 @@
 
     <span class="font-regular" v-if="body.length > 0" v-html="formattedBodyText"></span>
 
-    <div class="text-slate-400 text-sm italic" v-if="body.length > 0">
+    <div class="text-slate-400 text-sm italic" v-if="body.length > 0 && footer.length > 0">
       {{ footer }}
     </div>
     <div class="triangle"></div>
