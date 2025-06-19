@@ -98,6 +98,7 @@ export default {
   optional: 'Optional',
   body: 'Body',
   footer: 'Footer',
+  footer_tooltip: 'Include a brief line of text at the bottom of your template. If you enable the marketing opt-out button, its default footer will appear here automatically.',
   help_text_category_change:
     'Enabling this option will prevent the template from being rejected due to miscategorization.',
   example_footer_text: 'Ex: Thank you for choosing us!',

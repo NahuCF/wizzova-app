@@ -246,8 +246,13 @@ onMounted(() => {
                   </div>
                 </div>
               </div>
+
               <div>
-                <h2 class="font-medium mb-1 text-lg">{{ $t('footer') }}</h2>
+                <div class="flex items-center gap-2 mb-2">
+                  <h2 class="font-medium mb-1 text-lg">{{ $t('footer') }}</h2>
+                  <IconInfoCircle class="text-slate-700 hover:cursor-pointer" size="16" v-tooltip="t('footer_tooltip')" />
+                  <Badge severity="secondary">{{ $t('optional') }}</Badge>
+                </div>
                 <div class="relative">
                   <InputText
                     v-model="templateStore.template.footer"

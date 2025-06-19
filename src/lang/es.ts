@@ -98,6 +98,7 @@ export default {
   optional: 'Opcional',
   body: 'Cuerpo',
   footer: 'Pie de página',
+  footer_tooltip: 'Incluye una breve línea de texto al final de tu plantilla. Si activas el botón de cancelación de suscripción a marketing, el pie de página predeterminado aparecerá aquí automáticamente.',
   help_text_category_change:
     'Habilitando esta opci&oacute;n prevendr&aacute; la rechazo del template debido a la miscategorizaci&oacute;n.',
   example_footer_text: 'Ej: Gracias por elegirnos!',
