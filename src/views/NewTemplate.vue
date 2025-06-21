@@ -23,7 +23,7 @@ const loading = ref(false)
 const formatInputName = (event: Event) => {
   const target = event.target as HTMLInputElement | null
 
-  if(target) {
+  if (target) {
     target.value = target.value.replace(/[^a-zA-Z0-9]/g, '_')
     templateStore.template.name = target.value
   }
@@ -126,7 +126,7 @@ onMounted(() => {
 
 <template>
   <div class="flex justify-center">
-    <div class="w-[70rem] flex flex-col gap-4">
+    <div class="w-[73rem] flex flex-col gap-4">
       <div class="flex justify-between items-center">
         <h1 class="font-semibold text-2xl">{{ t('new_template.title') }}</h1>
         <Button
@@ -250,7 +250,11 @@ onMounted(() => {
               <div>
                 <div class="flex items-center gap-2 mb-2">
                   <h2 class="font-medium mb-1 text-lg">{{ $t('footer') }}</h2>
-                  <IconInfoCircle class="text-slate-700 hover:cursor-pointer" size="16" v-tooltip="t('footer_tooltip')" />
+                  <IconInfoCircle
+                    class="text-slate-700 hover:cursor-pointer"
+                    size="16"
+                    v-tooltip="t('footer_tooltip')"
+                  />
                   <Badge severity="secondary">{{ $t('optional') }}</Badge>
                 </div>
                 <div class="relative">
