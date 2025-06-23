@@ -18,7 +18,7 @@ const fullHeaderTypes = computed(() => {
             name: 'None',
             code: 'NONE'
         },
-        ...headerTypes.value
+        ...headerTypes.value.filter(ht => ht.code === 'TEXT')
     ]
 })
 
