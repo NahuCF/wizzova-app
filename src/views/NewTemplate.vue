@@ -68,10 +68,6 @@ const storeTemplate = async () => {
     }
   }
   
-  if (template.footer) {
-    payload.components.footer = template.footer
-  }
-
   try {
     loading.value = true
     await API.template.store(payload)

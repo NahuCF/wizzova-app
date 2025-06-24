@@ -52,7 +52,7 @@ export interface TemplateCreate {
 }
 
 export type TemplateBtnCategory = 'cta' | 'custom_reply'
-export type TemplateBtnType = 'URL' | 'PHONE_NUMBER' | 'QUICK_REPLY' | 'EXPLORE_MORE'
+export type TemplateBtnType = 'STATIC_URL' | 'DYNAMIC_URL' | 'PHONE_NUMBER' | 'QUICK_REPLY' | 'EXPLORE_MORE'
 export type TempalteBtnUrlType = 'static_url' | 'dynamic_url'
 
 export interface TemplateButtonOption {
@@ -79,13 +79,13 @@ export interface TemplateBtn {
 }
 
 export interface TemplateUrlBtn extends TemplateBtn {
-  type_url?: string,
   url: string,
   example?: string,
 }
 
 export interface TemplateCallBtn extends TemplateBtn {
-  phone_number?: string
+  phone_number: string,
+  phone_number_prefix: string
 }
 
 export type TemplateButtonsByCategory = Record<string, (TemplateBtn | TemplateUrlBtn | TemplateCallBtn)[]>

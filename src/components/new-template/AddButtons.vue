@@ -20,7 +20,7 @@ const popoverButton = ref()
 const ctaButtonOptions = ref<TemplateButtonOption[]>([
   {
     id: 'url',
-    type: 'URL',
+    type: 'STATIC_URL',
     category: 'cta',
     name: 'URL',
     icon: 'IconExternalLink',
@@ -55,24 +55,12 @@ const canAddMoreButtons = computed(() => {
 const addButton = (option: TemplateButtonOption | TemplateQuickReplyOption) => {
   if (!canAddButton(option.type, option.maximun)) return
 
-  if (option.type === 'URL') {
-    const button = {
-      type: option.type,
-      text: '',
-      category: option.category,
-      type_url: 'static_url'
-    }
-    templateStore.template.buttons.push(button)
-
-  } else {
-    const button = {
-      type: option.type,
-      text: '',
-      category: option.category,
-    }
-
-    templateStore.template.buttons.push(button)
+  const button = {
+    type: option.type,
+    text: '',
+    category: option.category
   }
+  templateStore.template.buttons.push(button)
 
   popoverButton.value.hide()
 }

@@ -37,13 +37,17 @@ export const useTemplateStore = defineStore('template', {
     buttonsFilled: (state): boolean => {
       const incompleteBtn = state.template.buttons.find(b => {
         switch(b.type) {
-          case 'URL': {
+          case 'STATIC_URL': {
             const urlBtn = b as TemplateUrlBtn
             return !urlBtn.text || !urlBtn.url 
           }
+          case 'DYNAMIC_URL': {
+            const urlBtn = b as TemplateUrlBtn
+            return !urlBtn.text || !urlBtn.url || !urlBtn.example
+          }
           case 'PHONE_NUMBER': {
             const phoneBtn = b as TemplateCallBtn
-            return !phoneBtn.text || !phoneBtn.phone_number
+            return !phoneBtn.text || !phoneBtn.phone_number || !phoneBtn.phone_number_prefix
           }
           case 'QUICK_REPLY': {
             return !b.text
