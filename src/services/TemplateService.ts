@@ -6,6 +6,6 @@ export default {
     return Http.get('/templates')
   },
   async store(payload: TemplateCreate) {
-    return Http.post('/templates/create', payload)
+    return Http.post('/templates', payload)
   },
 }

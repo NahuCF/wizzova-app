@@ -14,14 +14,19 @@ export interface TemplateHeaderType {
 export interface TemplateState {
   name: string,
   languageId: number,
-  templateCategoryId: number,
+  category: string,
   allowCategoryChange: boolean,
   constainsHeader: boolean,
   header: {
     type: TemplateHeaderCode,
     text: string
   }
-  body: string,
+  body: {
+    text: string,
+    variables: {
+      [key: string]: string
+    }
+  },
   footer: string,
   buttons: (TemplateBtn | TemplateUrlBtn | TemplateCallBtn) []
 }
@@ -29,13 +34,25 @@ export interface TemplateState {
 export interface TemplateCreate {
   name: string,
   language_id: number,
-  template_category_id: number,
-  body: string,
-  footer?: string
+  category: string,
+  components: {
+    header?: {
+      type: TemplateHeaderCode,
+      text: string
+    }
+    body: {
+      text: string,
+      variables: {
+        [key: string]: string
+      }
+    },
+    footer?: string,
+    buttons: (TemplateBtn | TemplateUrlBtn | TemplateCallBtn) []
+  }
 }
 
 export type TemplateBtnCategory = 'cta' | 'custom_reply'
-export type TemplateBtnType = 'URL' | 'PHONE_NUMBER' | 'QUICK_REPLY' | 'EXPLORE_MORE'
+export type TemplateBtnType = 'STATIC_URL' | 'DYNAMIC_URL' | 'PHONE_NUMBER' | 'QUICK_REPLY' | 'EXPLORE_MORE'
 export type TempalteBtnUrlType = 'static_url' | 'dynamic_url'
 
 export interface TemplateButtonOption {
@@ -58,17 +75,17 @@ export interface TemplateQuickReplyOption {
 export interface TemplateBtn {
   type: TemplateBtnType,
   category: string,
-  text?: string
+  text: string
 }
 
 export interface TemplateUrlBtn extends TemplateBtn {
-  type_url?: string,
-  url?: string,
+  url: string,
   example?: string,
 }
 
 export interface TemplateCallBtn extends TemplateBtn {
-  phone_number?: string
+  phone_number: string,
+  phone_number_prefix: string
 }
 
 export type TemplateButtonsByCategory = Record<string, (TemplateBtn | TemplateUrlBtn | TemplateCallBtn)[]>

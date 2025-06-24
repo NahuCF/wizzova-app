@@ -78,6 +78,8 @@ export default {
   validation_errors: {
     'The work email has already been taken': 'The email has already been taken.',
     'The provided credentials are incorrect': 'The provided credentials are incorrect',
+    'Template name already exists': 'Template name already exists',
+    'templater_name_already_exists': 'Template name already exists',
   },
   submit_for_review: 'Submit for review',
   template_name: 'Template name',
@@ -113,6 +115,7 @@ export default {
   explore_more: 'Expore more',
   max_2_buttons: '2 buttons maximum',
   max_1_buttons: '1 button maximun',
+  buttons: 'Buttons',
   add_button: 'Add button',
   help_text_buttons:
     'Create buttons so customers can reply to your message or take an action. If you add more than 3 buttons, they will appear as a list.',
@@ -121,9 +124,32 @@ export default {
   example_body_text_template: `Hello {{name}}!\n\nYour amazing products from {{site_name}} are ready for you!
 Grab them today!`,
   cta: 'Call to action',
+  new_template_created: 'New template created succesfully',
   new_template: {
     title: 'New template',
     button_text: 'Button text',
+    body: {
+      variable_placeholder: {
+        name: 'Ex: John, Ram, Riya',
+        email: 'Ex: hello@email.com',
+        phone: 'Ex: 9876543210',
+        default: 'Ex: 234, Custom value'
+      },
+      add_variable: 'Add variables',
+      variables_tooltip: 'Personalize your message by adding variables',
+      contact: 'Contact',
+      add_custom: 'Add Custom',
+      variable_name: 'Variable name',
+      sample_value: 'Sample value',
+      format: {
+        bold: 'Bold',
+        italic: 'Italic',
+        strikethrough: 'Strikethrough',
+        numbered_list: 'Numbered List',
+        unordered_list: 'Unordered List'
+      },
+      variables_info: 'Enter a sample value for your variables to give context to the WhatsApp’s template approval team.'
+    },
     buttons: {
       quick_reply: {
         placeholder: 'e.g. Get Discount',

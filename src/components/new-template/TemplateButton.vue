@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps, ref } from 'vue'
+import { computed, defineProps, ref, watch } from 'vue'
 import { IconTrash } from '@tabler/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { useTemplateStore } from '~/stores'
@@ -32,11 +32,11 @@ const countries = ref<CountryCellphone[]>([
 const urlOptions = ref([
   {
     name: t('new_template.buttons.url.static_url'),
-    id: 'static_url',
+    id: 'STATIC_URL',
   },
   {
     name: t('new_template.buttons.url.dynamic_url'),
-    id: 'dynamic_url',
+    id: 'DYNAMIC_URL',
   },
 ])
 const cellphonePopover = ref()
@@ -57,6 +57,12 @@ const removeButton = () => {
   templateStore.buttonsByCategory[props.category].splice(props.index, 1)
   templateStore.updateButtons()
 }
+
+watch(getSelectedCountry, () => {
+  if(props.type == 'PHONE_NUMBER') {
+    (button() as TemplateCallBtn).phone_number_prefix = getSelectedCountry.value?.prefix ?? ''
+  }
+}, { immediate: true })
 </script>
 
 <template>
@@ -86,14 +92,14 @@ const removeButton = () => {
         </button>
       </div>
     </div>
-    <div v-else-if="type === 'URL'">
+    <div v-else-if="type === 'STATIC_URL' || type === 'DYNAMIC_URL'">
       <div class="flex justify-between">
         <Select
           :options="urlOptions"
           option-label="name"
           option-value="id"
           class="!w-[14.5rem]"
-          v-model="(button() as TemplateUrlBtn).type_url"
+          v-model="(button() as TemplateUrlBtn).type"
         >
         </Select>
         <button
@@ -144,7 +150,7 @@ const removeButton = () => {
       </div>
       <div
         class="mt-5"
-        v-if="(button() as TemplateUrlBtn).type_url == 'dynamic_url'"
+        v-if="button().type === 'DYNAMIC_URL'"
       >
         <div class="text-slate-500 text-sm mb-1">
           {{ t('new_template.buttons.url.example_label') }}

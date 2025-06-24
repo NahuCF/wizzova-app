@@ -28,6 +28,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('primevue/select')['default']
+    TemplateBody: typeof import('./src/components/new-template/TemplateBody.vue')['default']
     TemplateButton: typeof import('./src/components/new-template/TemplateButton.vue')['default']
     TemplateHeader: typeof import('./src/components/new-template/TemplateHeader.vue')['default']
     Textarea: typeof import('primevue/textarea')['default']
