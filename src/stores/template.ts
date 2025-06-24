@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { TemplateState, TemplateButtonsByCategory } from '~/types'
+import type { TemplateState, TemplateButtonsByCategory, TemplateUrlBtn, TemplateCallBtn } from '~/types'
 
 export const useTemplateStore = defineStore('template', {
   state: () => {
@@ -7,11 +7,14 @@ export const useTemplateStore = defineStore('template', {
       template: {
         name: '',
         languageId: 0,
-        templateCategoryId: 0,
+        category: '',
         allowCategoryChange: false,
         constainsHeader: false,
         footer: '',
-        body: '',
+        body: {
+          text: '',
+          variables: {}
+        },
         header: {
           type: 'NONE',
           text: '',
@@ -28,6 +31,29 @@ export const useTemplateStore = defineStore('template', {
         return acc
       }, {} as TemplateButtonsByCategory)
     },
+    variableKeys: (state): string[] => {
+      return Object.keys(state.template.body.variables)
+    },
+    buttonsFilled: (state): boolean => {
+      const incompleteBtn = state.template.buttons.find(b => {
+        switch(b.type) {
+          case 'URL': {
+            const urlBtn = b as TemplateUrlBtn
+            return !urlBtn.text || !urlBtn.url 
+          }
+          case 'PHONE_NUMBER': {
+            const phoneBtn = b as TemplateCallBtn
+            return !phoneBtn.text || !phoneBtn.phone_number
+          }
+          case 'QUICK_REPLY': {
+            return !b.text
+          }
+          default: return false
+        }
+      })
+
+      return !incompleteBtn
+    }
   },
   actions: {
     updateButtons() {

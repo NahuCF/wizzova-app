@@ -7,10 +7,12 @@ import { useTemplateStore } from '~/stores'
 import { useI18n } from 'vue-i18n'
 import type { TemplateCategory, Language, TemplateCreate } from '~/types'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 
 const templateStore = useTemplateStore()
 const { t } = useI18n()
 const toast = useToast()
+const router = useRouter()
 
 const languages = ref<Language[]>([])
 const templateCategories = ref<TemplateCategory[]>([])
@@ -48,7 +50,7 @@ const fetchTemplateCategories = async () => {
 
   if (!categoryMarketing) return
 
-  templateStore.template.templateCategoryId = categoryMarketing.id
+  templateStore.template.category = categoryMarketing.name
 }
 
 const storeTemplate = async () => {
@@ -57,18 +59,31 @@ const storeTemplate = async () => {
   const payload: TemplateCreate = {
     name: template.name,
     language_id: template.languageId,
-    template_category_id: template.templateCategoryId,
-    body: template.body,
+    category: template.category.toUpperCase(),
+    components: {
+      ...(template.header.type !== 'NONE' && { header: template.header }),
+      body: template.body,
+      ...(template.footer && { footer: template.footer }),
+      buttons: template.buttons
+    }
   }
-
-  const footerText = template.footer
-  if (footerText) {
-    payload.footer = footerText
+  
+  if (template.footer) {
+    payload.components.footer = template.footer
   }
 
   try {
     loading.value = true
     await API.template.store(payload)
+
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: t('new_template_created'),
+      life: 3000,
+    })
+
+    router.push({ name: 'templates' })
   } catch (error) {
     let errorMessage = t('an_error_occurred')
 
@@ -87,34 +102,21 @@ const storeTemplate = async () => {
   }
 }
 
-const validateLineJump = (event: KeyboardEvent) => {
-  const target = event.target as HTMLInputElement | null
-  const text = target?.value ?? ''
-
-  // Prevent more than 2 white spaces
-  if (text.length > 0 && text.endsWith('\n\n')) {
-    event.preventDefault()
-  }
-
-  // Prevent enter if there is nothing to show
-  if (!/[^\n]/.test(text)) {
-    event.preventDefault()
-  }
-}
-
 const canSubmit = computed(() => {
   return (
     templateStore.template.name &&
     templateStore.template.languageId &&
-    templateStore.template.templateCategoryId &&
-    templateStore.template.body
+    templateStore.template.category &&
+    templateStore.template.body.text &&
+    !templateStore.variableKeys.find(key => templateStore.template.body.variables[key].trim() === '') &&
+    templateStore.buttonsFilled
   )
 })
 
 watch(
-  () => templateStore.template.body,
+  () => templateStore.template.body.text,
   (newValue) => {
-    templateStore.template.body = newValue.replace(/\n{2,}/g, '\n\n')
+    templateStore.template.body.text = newValue.replace(/\n{2,}/g, '\n\n')
   },
 )
 
@@ -126,8 +128,8 @@ onMounted(() => {
 
 <template>
   <div class="flex justify-center">
-    <div class="w-[70rem] flex flex-col gap-4">
-      <div class="flex justify-between items-center">
+    <div class="w-[70rem] flex flex-col py-4 gap-4">
+      <div class="flex justify-between items-center py-4 sticky top-0 z-2 bg-slate-100">
         <h1 class="font-semibold text-2xl">{{ t('new_template.title') }}</h1>
         <Button
           @click="storeTemplate"
@@ -135,7 +137,7 @@ onMounted(() => {
             value: canSubmit ? '' : t('complete_mandatory_fields'),
             class: 'custom-tooltip',
           }"
-          :disabled="!canSubmit"
+          :disabled="!canSubmit || loading"
         >
           <IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
           <span v-else>
@@ -175,10 +177,10 @@ onMounted(() => {
                   <IconAsterisk color="red" class="mt-1" size="8  " />
                 </div>
                 <Select
-                  v-model="templateStore.template.templateCategoryId"
+                  v-model="templateStore.template.category"
                   :options="templateCategories"
                   optionLabel="name"
-                  optionValue="id"
+                  optionValue="name"
                   name="category"
                   id="category"
                 />
@@ -222,30 +224,7 @@ onMounted(() => {
             <div class="bg-white p-4 border rounded-md flex flex-col gap-7 border-slate-300">
               <TemplateHeader />
 
-              <div>
-                <div class="flex gap-1">
-                  <h2 class="font-medium mb-1 text-lg">{{ $t('body') }}</h2>
-                  <IconAsterisk color="red" class="mt-1" size="8  " />
-                </div>
-
-                <div class="flex flex-col gap-1 relative">
-                  <div class="relative">
-                    <Textarea
-                      v-model="templateStore.template.body"
-                      rows="8"
-                      cols="30"
-                      fluid
-                      class="min-h-[15rem]"
-                      :maxlength="1024"
-                      @keydown.enter="validateLineJump"
-                      :placeholder="t('example_body_text_template')"
-                    />
-                    <div class="absolute right-3 bottom-2 text-slate-400">
-                      {{ templateStore.template.body.length }} / 1024
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <TemplateBody />
 
               <div>
                 <div class="flex items-center gap-2 mb-2">
@@ -273,8 +252,8 @@ onMounted(() => {
             </div>
           </div>
 
-          <div>
-            <PreviewTemplate />
+          <div >
+            <PreviewTemplate class="sticky top-22" />
           </div>
         </div>
       </div>

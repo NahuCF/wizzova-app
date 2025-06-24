@@ -58,6 +58,7 @@ const addButton = (option: TemplateButtonOption | TemplateQuickReplyOption) => {
   if (option.type === 'URL') {
     const button = {
       type: option.type,
+      text: '',
       category: option.category,
       type_url: 'static_url'
     }
@@ -66,6 +67,7 @@ const addButton = (option: TemplateButtonOption | TemplateQuickReplyOption) => {
   } else {
     const button = {
       type: option.type,
+      text: '',
       category: option.category,
     }
 
@@ -89,7 +91,7 @@ const canAddButton = (btnType: string, max: number) => {
 <template>
   <div>
     <div class="flex flex-col gap-1">
-      <h2 class="font-medium text-lg">{{ $t('Buttons') }}</h2>
+      <h2 class="font-medium text-lg">{{ $t('buttons') }}</h2>
 
       <p class="text-slate-500 text-sm">{{ t('help_text_buttons') }}</p>
 

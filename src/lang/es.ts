@@ -78,6 +78,8 @@ export default {
   validation_errors: {
     'The work email has already been taken': 'El email de trabajo ya ha sido tomado.',
     'The provided credentials are incorrect': 'Credenciales incorrectas',
+    'Template name already exists': 'El nombre de la plantilla ya existe',
+    'templater_name_already_exists': 'El nombre de la plantilla ya existe',
   },
   submit_for_review: 'Enviar para revision',
   template_name: 'Nombre del template',
@@ -113,6 +115,7 @@ export default {
   explore_more: 'Explorar mas',
   max_2_buttons: '2 botones maximo',
   max_1_buttons: '1 boton maximun',
+  buttons: 'Botones',
   add_button: 'Añadir boton',
   help_text_buttons:
     'Crea botones para que los clientes puedan responder tu mensaje o realizar una acción. Si agregas más de 3 botones, aparecerán en forma de lista.',
@@ -120,9 +123,32 @@ export default {
   first_delete_a_button: 'Para añadir un boton diferente, primero borra un botón.',
   example_body_text_template: `¡Hola, {{name}}!\n\n¡Tus increíbles productos de {{site_name}} están listos para ti!`,
   cta: 'Llamada a la accion',
+  new_template_created: 'Nueva plantilla creada exitosamente',
   new_template: {
     title: 'Nuevo template',
     button_text: 'Texto del botón',
+    body: {
+      variable_placeholder: {
+        name: 'Ex: John, Ram, Riya',
+        email: 'Ex: hola@email.com',
+        phone: 'Ex: 9876543210',
+        default: 'Ex: 234, Valor perzonalizado'
+      },
+      add_variable: 'Agregar variables',
+      variables_tooltip: 'Personaliza tu mensaje añadiendo variables',
+      contact: 'Contacto',
+      add_custom: 'Añadir perzonalizado',
+      variable_name: 'Nombre de la variable',
+      sample_value: 'Valor de muestra',
+      format: {
+        bold: 'Negrita',
+        italic: 'Italico',
+        strikethrough: 'Tachado',
+        numbered_list: 'Lista Numerada',
+        unordered_list: 'Lista Desordenada'
+      },
+      variables_info: 'Ingrese un valor de muestra para sus variables para dar contexto al equipo de aprobación de plantillas de WhatsApp.'
+    },
     buttons: {
       quick_reply: {
         placeholder: 'ej. Quiero el descuento',

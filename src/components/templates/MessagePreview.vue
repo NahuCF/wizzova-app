@@ -51,7 +51,16 @@ const formattedBodyText = computed(() => {
   if (!props.body) {
     return ''
   }
-  return props.body.replace(/\n/g, '<br>')
+
+  // Hightlight variables
+  let formatedText = props.body.replace(/{{\s*(\w+)\s*}}/g, (_match, variableName) => {
+    return `<mark class='px-1 bg-slate-100 text-green-700 font-semibold'>${variableName}</mark>`
+  })
+
+  // Add html tags for new line characters
+  formatedText = formatedText.replace(/\n/g, '<br>')
+
+  return formatedText
 })
 
 const filteredButtons = computed(() => {
