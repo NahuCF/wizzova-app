@@ -1,27 +1,29 @@
 import { defineStore } from 'pinia'
-import type { TemplateState, TemplateButtonsByCategory, TemplateUrlBtn, TemplateCallBtn } from '~/types'
+import type { TemplateState, TemplateButtonsByCategory, TemplateUrlBtn, TemplateCallBtn } from '~/types' 
+
+const initState = (): { template: TemplateState } => ({
+  template: {
+    name: '',
+    languageId: 0,
+    category: '',
+    allowCategoryChange: false,
+    constainsHeader: false,
+    footer: '',
+    body: {
+      text: '',
+      variables: {}
+    },
+    header: {
+      type: 'NONE',
+      text: '',
+    },
+    buttons: [],
+  }
+})
 
 export const useTemplateStore = defineStore('template', {
-  state: () => {
-    return {
-      template: {
-        name: '',
-        languageId: 0,
-        category: '',
-        allowCategoryChange: false,
-        constainsHeader: false,
-        footer: '',
-        body: {
-          text: '',
-          variables: {}
-        },
-        header: {
-          type: 'NONE',
-          text: '',
-        },
-        buttons: [],
-      } as TemplateState,
-    }
+  state: (): { template: TemplateState } => {
+    return initState()
   },
   getters: {
     buttonsByCategory: (state) => {
@@ -60,6 +62,9 @@ export const useTemplateStore = defineStore('template', {
     }
   },
   actions: {
+    clearState() {
+      this.$state = initState()
+    },
     updateButtons() {
       this.template.buttons = Object.values(this.buttonsByCategory).flat()
     },

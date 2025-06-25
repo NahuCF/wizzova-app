@@ -172,4 +172,31 @@ export default {
       },
     },
   },
+  loading: 'Cargando',
+  list: 'Lista',
+  grid: 'Cuadrícula',
+  showing_results: 'Mostrando {first} - {last} de {totalRecords} elementos',
+  templates: {
+    title: 'Templates',
+    whatsapp_templates: 'Plantillas de WhatsApp',
+    create_new_template: 'Crear nueva plantilla',
+    create_new_template_card: 'Crear nueva plantilla',
+    create_from_library: 'Crear desde nuestra biblioteca →',
+    search_templates: 'Buscar plantillas',
+  },
+  template: {
+    empty: 'No se encontraron plantillas',
+    name: 'Nombre',
+    message: 'Mensaje',
+    language_code: 'Idioma',
+    created_at: 'Creado el',
+    category: 'Categoría',
+    status: 'Estado',
+    edit: 'Editar plantilla',
+    delete: 'Eliminar',
+  },
+  template_status: {
+    PENDING: 'Pendiente',
+    REJECTED: 'Rechazado'
+  }
 }

@@ -1,32 +1,3 @@
-<template>
-  <div
-    v-if="body.length || (body.length > 0 && footer.length) || (header.length && header.length > 0)"
-    class="flex flex-col gap-2.5 bg-white px-3 pt-2 pb-1 message rounded-lg self-start break-all relative shadow min-w-[18rem]"
-  >
-    <div v-if="header.length > 0" class="font-semibold">
-      {{ header }}
-    </div>
-
-    <span class="font-regular" v-if="body.length > 0" v-html="formattedBodyText"></span>
-
-    <div class="text-slate-400 text-sm italic" v-if="body.length > 0 && footer.length > 0">
-      {{ footer }}
-    </div>
-    <div class="triangle"></div>
-
-    <div class="flex flex-col items-center">
-      <button v-for="(button, index) in filteredButtons" :key="button.type + index"
-        class="w-full flex justify-center items-center gap-2 pt-3 pb-2 text-sm font-light text-sky-600 border-t-1 border-slate-100">
-          <component
-            :is="iconComponents[button.type]"
-            class="w-[13px] h-[13px]"
-          />
-          {{ button.text }}
-      </button>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { defineProps, computed, type Component } from 'vue'
 import { IconExternalLink } from '@tabler/icons-vue'
@@ -40,7 +11,9 @@ const props = withDefaults(
     header: string,
     body: string,
     footer?: string,
-    buttons: (TemplateBtn | TemplateUrlBtn | TemplateCallBtn)[]
+    buttons: (TemplateBtn | TemplateUrlBtn | TemplateCallBtn)[],
+    minWidth?: string,
+    maxWidth?: string
   }>(), 
   {
     footer: ''
@@ -81,12 +54,43 @@ const filteredButtons = computed(() => {
 })
 
 const iconComponents: Record<TemplateBtnType, Component> = {
-  URL: IconExternalLink,
+  STATIC_URL: IconExternalLink,
+  DYNAMIC_URL: IconExternalLink,
   PHONE_NUMBER: IconMdiPhone,
   QUICK_REPLY: IconMdiReply,
   EXPLORE_MORE: IconMdiFormatListBulleted
 }
 </script>
+
+<template>
+  <div
+    v-if="body.length || (body.length > 0 && footer.length) || (header.length && header.length > 0)"
+    class="flex flex-col gap-2.5 bg-white px-3 pt-2 pb-1 message rounded-lg self-start break-all relative shadow "
+    :class="`${minWidth ?? 'min-w-[18rem]'} ${maxWidth ?? 'max-w-[100%]'}`"
+  >
+    <div v-if="header.length > 0" class="font-semibold">
+      {{ header }}
+    </div>
+
+    <span class="font-regular" v-if="body.length > 0" v-html="formattedBodyText"></span>
+
+    <div class="text-slate-400 text-sm italic" v-if="body.length > 0 && footer.length > 0">
+      {{ footer }}
+    </div>
+    <div class="triangle"></div>
+
+    <div class="flex flex-col items-center">
+      <button v-for="(button, index) in filteredButtons" :key="button.type + index"
+        class="w-full flex justify-center items-center gap-2 pt-3 pb-2 text-sm font-light text-sky-600 border-t-1 border-slate-100">
+          <component
+            :is="iconComponents[button.type]"
+            class="w-[13px] h-[13px]"
+          />
+          {{ button.text }}
+      </button>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .triangle {

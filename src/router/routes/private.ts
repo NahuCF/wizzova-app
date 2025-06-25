@@ -1,5 +1,6 @@
 import AppLayout from '~/components/layouts/AppLayout.vue'
 import Conversations from '~/views/Conversations.vue'
+import EditTemplate from '~/views/EditTemplate.vue'
 import NewTemplate from '~/views/NewTemplate.vue'
 import Templates from '~/views/Templates.vue'
 
@@ -30,6 +31,12 @@ const routes = [
             meta: { titleKey: 'new_template.title' },
             component: NewTemplate,
           },
+          {
+            path: '/:id/edit',
+            name: 'edit-template',
+            meta: { titleKey: 'edit_template.title' },
+            component: EditTemplate,
+          }
         ],
       },
     ],

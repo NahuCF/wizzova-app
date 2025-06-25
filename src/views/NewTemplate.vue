@@ -79,6 +79,7 @@ const storeTemplate = async () => {
       life: 3000,
     })
 
+    templateStore.clearState()
     router.push({ name: 'templates' })
   } catch (error) {
     let errorMessage = t('an_error_occurred')

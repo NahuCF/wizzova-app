@@ -173,4 +173,32 @@ Grab them today!`,
       },
     },
   },
+  loading: 'Loading',
+  list: 'List',
+  grid: 'Grid',
+  showing_results: 'Showing {first} - {last} of {totalRecords} items',
+  templates: {
+    title: 'Templates',
+    whatsapp_templates: 'WhatsApp Templates',
+    create_new_template: 'Create New Template',
+    create_new_template_card: 'Create new template',
+    create_from_library: 'Create new from our library →',
+    search_templates: 'Search templates',
+  },
+  template: {
+    title: 'Templates',
+    empty: 'No templates found',
+    name: 'Name',
+    message: 'Message',
+    language_code: 'Language',
+    created_at: 'Created at',
+    category: 'Category',
+    status: 'Status',
+    edit: 'Edit template',
+    delete: 'Delete',
+  },
+  template_status: {
+    PENDING: 'Pending',
+    REJECTED: 'Rejected'
+  }
 }
