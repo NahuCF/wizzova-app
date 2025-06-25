@@ -53,7 +53,6 @@ export interface TemplateCreate {
 
 export type TemplateBtnCategory = 'cta' | 'custom_reply'
 export type TemplateBtnType = 'STATIC_URL' | 'DYNAMIC_URL' | 'PHONE_NUMBER' | 'QUICK_REPLY' | 'EXPLORE_MORE'
-export type TempalteBtnUrlType = 'static_url' | 'dynamic_url'
 
 export interface TemplateButtonOption {
   id: string,
