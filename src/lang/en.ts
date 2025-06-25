@@ -182,7 +182,6 @@ Grab them today!`,
     whatsapp_templates: 'WhatsApp Templates',
     create_new_template: 'Create New Template',
     create_new_template_card: 'Create new template',
-    create_from_library: 'Create new from our library →',
     search_templates: 'Search templates',
   },
   template: {

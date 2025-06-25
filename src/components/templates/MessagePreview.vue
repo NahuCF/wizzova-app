@@ -30,6 +30,18 @@ const formattedBodyText = computed(() => {
     return `<mark class='px-1 bg-slate-100 text-green-700 font-semibold'>${variableName}</mark>`
   })
 
+  formatedText = formatedText.replace(/\*(.*?)\*/g, (_match, value) => {
+    return `<b>${value}</b>`
+  })
+
+  formatedText = formatedText.replace(/_(.*?)_/g, (_match, value) => {
+    return `<em>${value}</em>`
+  })
+
+  formatedText = formatedText.replace(/\~(.*?)\~/g, (_match, value) => {
+    return `<s>${value}</s>`
+  })
+
   // Add html tags for new line characters
   formatedText = formatedText.replace(/\n/g, '<br>')
 
