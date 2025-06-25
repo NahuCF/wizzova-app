@@ -36,29 +36,29 @@ export const useTemplateStore = defineStore('template', {
     variableKeys: (state): string[] => {
       return Object.keys(state.template.body.variables)
     },
-    buttonsFilled: (state): boolean => {
-      const incompleteBtn = state.template.buttons.find(b => {
+    buttonsFilled: (state) => {
+      const filteredButtons = state.template.buttons.filter(b => {
         switch(b.type) {
           case 'STATIC_URL': {
             const urlBtn = b as TemplateUrlBtn
-            return !urlBtn.text || !urlBtn.url 
+            return urlBtn.text && urlBtn.url 
           }
           case 'DYNAMIC_URL': {
             const urlBtn = b as TemplateUrlBtn
-            return !urlBtn.text || !urlBtn.url || !urlBtn.example
+            return urlBtn.text && urlBtn.url && urlBtn.example
           }
           case 'PHONE_NUMBER': {
             const phoneBtn = b as TemplateCallBtn
-            return !phoneBtn.text || !phoneBtn.phone_number || !phoneBtn.phone_number_prefix
+            return phoneBtn.text && phoneBtn.phone_number && phoneBtn.phone_number_prefix
           }
           case 'QUICK_REPLY': {
-            return !b.text
+            return b.text
           }
           default: return false
         }
       })
 
-      return !incompleteBtn
+      return filteredButtons
     }
   },
   actions: {

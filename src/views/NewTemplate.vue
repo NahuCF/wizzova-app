@@ -64,7 +64,7 @@ const storeTemplate = async () => {
       ...(template.header.type !== 'NONE' && { header: template.header }),
       body: template.body,
       ...(template.footer && { footer: template.footer }),
-      buttons: template.buttons
+      buttons: templateStore.buttonsFilled
     }
   }
   
@@ -105,8 +105,7 @@ const canSubmit = computed(() => {
     templateStore.template.languageId &&
     templateStore.template.category &&
     templateStore.template.body.text &&
-    !templateStore.variableKeys.find(key => templateStore.template.body.variables[key].trim() === '') &&
-    templateStore.buttonsFilled
+    !templateStore.variableKeys.find(key => templateStore.template.body.variables[key].trim() === '')
   )
 })
 
