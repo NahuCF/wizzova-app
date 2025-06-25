@@ -177,7 +177,7 @@ export default {
   grid: 'Cuadrícula',
   showing_results: 'Mostrando {first} - {last} de {totalRecords} elementos',
   templates: {
-    title: 'Templates',
+    title: 'Plantillas',
     whatsapp_templates: 'Plantillas de WhatsApp',
     create_new_template: 'Crear nueva plantilla',
     create_new_template_card: 'Crear nueva plantilla',
@@ -197,5 +197,8 @@ export default {
   template_status: {
     PENDING: 'Pendiente',
     REJECTED: 'Rechazado'
+  },
+  edit_template: {
+    title: 'Edit template'
   }
 }

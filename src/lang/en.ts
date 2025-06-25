@@ -199,5 +199,8 @@ Grab them today!`,
   template_status: {
     PENDING: 'Pending',
     REJECTED: 'Rejected'
+  },
+  edit_template: {
+    title: 'Editar Plantilla'
   }
 }

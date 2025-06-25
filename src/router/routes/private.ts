@@ -22,7 +22,7 @@ const routes = [
           {
             path: '',
             name: 'templates',
-            meta: { titleKey: 'templates' },
+            meta: { titleKey: 'templates.title' },
             component: Templates,
           },
           {
@@ -32,7 +32,7 @@ const routes = [
             component: NewTemplate,
           },
           {
-            path: '/:id/edit',
+            path: ':id/edit',
             name: 'edit-template',
             meta: { titleKey: 'edit_template.title' },
             component: EditTemplate,
