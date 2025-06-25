@@ -181,7 +181,6 @@ export default {
     whatsapp_templates: 'Plantillas de WhatsApp',
     create_new_template: 'Crear nueva plantilla',
     create_new_template_card: 'Crear nueva plantilla',
-    create_from_library: 'Crear desde nuestra biblioteca →',
     search_templates: 'Buscar plantillas',
   },
   template: {

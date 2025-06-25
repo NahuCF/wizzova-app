@@ -241,9 +241,7 @@ onMounted(() => {
 						<IconPlus size="32" class="text-white" />
 					</Button>
 
-					<a class="mb-3 text-md text-slate-500 font-medium cursor-pointer underline">
-						{{ $t('templates.create_from_library') }}
-					</a>
+					<div></div>
 				</div>
 				<TemplateCard class="h-[340px] md:max-w-full" v-for="template in dataPage.data" :key="template.id"
 					:template="template" :options="templateOptions" />
