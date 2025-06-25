@@ -44,8 +44,8 @@ fetchHeaderComponentTypes()
         </div>
         <div class="flex flex-wrap gap-4">
             <div v-for="headerType in fullHeaderTypes" :key="headerType.id" class="flex items-center gap-2">
-                <RadioButton v-model="templateStore.template.header.type" :inputId="headerType.id" :value="headerType.code" />
-                <label :for="headerType.id">{{ $t(`header_type.${headerType.code}`) }}</label>
+                <RadioButton v-model="templateStore.template.header.type" :inputId="headerType.code" :value="headerType.code" />
+                <label class="cursor-pointer" :for="headerType.code">{{ $t(`header_type.${headerType.code}`) }}</label>
             </div>
         </div>
 
