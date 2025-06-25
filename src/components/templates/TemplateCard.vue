@@ -34,13 +34,9 @@ const headerText = computed(() => {
 					</div>
 				</div>
 			</div>
-			<div class="flex gap-1">
-				<button
-					class="bg-white hover:bg-slate-200 px-2.5 py-0.5 border-1 border-slate-300 text-sm rounded-sm font-semibold text-slate-500 cursor-pointer">
-					<span>View</span>
-				</button>
+			<div class="flex">
 				<Button
-					class="bg-white! hover:bg-slate-200! px-1! py-0.5! border-1! border-slate-300! font-semibold! text-slate-500!"
+					class="bg-white! hover:bg-slate-200! p-1! border-1! border-slate-300! font-semibold! text-slate-500!"
 					@click="(e) => popover?.show(e, template)"
 				>
 					<IconDotsVertical size="13"  />
