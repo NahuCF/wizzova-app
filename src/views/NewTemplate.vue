@@ -25,7 +25,7 @@ const loading = ref(false)
 const formatInputName = (event: Event) => {
   const target = event.target as HTMLInputElement | null
 
-  if(target) {
+  if (target) {
     target.value = target.value.replace(/[^a-zA-Z0-9]/g, '_')
     templateStore.template.name = target.value
   }
@@ -64,10 +64,10 @@ const storeTemplate = async () => {
       ...(template.header.type !== 'NONE' && { header: template.header }),
       body: template.body,
       ...(template.footer && { footer: template.footer }),
-      buttons: templateStore.buttonsFilled
-    }
+      buttons: templateStore.buttonsFilled,
+    },
   }
-  
+
   try {
     loading.value = true
     await API.template.store(payload)
@@ -105,7 +105,9 @@ const canSubmit = computed(() => {
     templateStore.template.languageId &&
     templateStore.template.category &&
     templateStore.template.body.text &&
-    !templateStore.variableKeys.find(key => templateStore.template.body.variables[key].trim() === '')
+    !templateStore.variableKeys.find(
+      (key) => templateStore.template.body.variables[key].trim() === '',
+    )
   )
 })
 
@@ -124,7 +126,7 @@ onMounted(() => {
 
 <template>
   <div class="flex justify-center">
-    <div class="w-[70rem] flex flex-col py-4 gap-4">
+    <div class="w-[73rem] flex flex-col py-4 gap-4">
       <div class="flex justify-between items-center py-4 sticky top-0 z-2 bg-slate-100">
         <h1 class="font-semibold text-2xl">{{ t('new_template.title') }}</h1>
         <Button
@@ -225,7 +227,11 @@ onMounted(() => {
               <div>
                 <div class="flex items-center gap-2 mb-2">
                   <h2 class="font-medium mb-1 text-lg">{{ $t('footer') }}</h2>
-                  <IconInfoCircle class="text-slate-700 hover:cursor-pointer" size="16" v-tooltip="t('footer_tooltip')" />
+                  <IconInfoCircle
+                    class="text-slate-700 hover:cursor-pointer"
+                    size="16"
+                    v-tooltip="t('footer_tooltip')"
+                  />
                   <Badge severity="secondary">{{ $t('optional') }}</Badge>
                 </div>
                 <div class="relative">
@@ -248,7 +254,7 @@ onMounted(() => {
             </div>
           </div>
 
-          <div >
+          <div>
             <PreviewTemplate class="sticky top-22" />
           </div>
         </div>
