@@ -67,7 +67,7 @@ const onFormSubmit = async ({ valid }: FormSubmitEvent) => {
     sessionStore.setTenant(tenantData)
     sessionStore.setUser(userData)
 
-    router.replace({ name: 'conversations' })
+    router.replace({ name: 'templates' })
   } catch (error) {
     let errorMessage = t('an_error_occurred')
     
