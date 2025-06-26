@@ -133,7 +133,7 @@ onMounted(() => {
           @click="storeTemplate"
           v-tooltip.bottom="{
             value: canSubmit ? '' : t('complete_mandatory_fields'),
-            class: 'custom-tooltip',
+            class: 'custom-tooltip text-sm',
           }"
           :disabled="!canSubmit || loading"
         >
@@ -202,11 +202,17 @@ onMounted(() => {
               <div class="flex flex-col gap-1 relative">
                 <div class="flex gap-1 items-center">
                   <label for="allow_category_change">{{ $t('allow_category_change') }}</label>
-                  <IconInfoCircle
-                    class="text-slate-700 hover:cursor-pointer"
-                    size="16"
-                    v-tooltip="t('help_text_category_change')"
-                  />
+                  <div
+                    v-tooltip.top="{
+                      value: t('help_text_category_change'),
+                      class: 'text-sm max-w-[300px]!'
+                    }"
+                  >
+                    <IconInfoCircle
+                      class="text-slate-700 hover:cursor-pointer"
+                      size="16"
+                    />
+                  </div>
                 </div>
                 <Select
                   v-model="templateStore.template.allowCategoryChange"
@@ -227,11 +233,17 @@ onMounted(() => {
               <div>
                 <div class="flex items-center gap-2 mb-2">
                   <h2 class="font-medium mb-1 text-lg">{{ $t('footer') }}</h2>
-                  <IconInfoCircle
-                    class="text-slate-700 hover:cursor-pointer"
-                    size="16"
-                    v-tooltip="t('footer_tooltip')"
-                  />
+                  <div 
+                    v-tooltip.bottom="{
+                      value: t('footer_tooltip'),
+                      class: 'text-sm max-w-[300px]!'
+                    }"
+                  >
+                    <IconInfoCircle
+                      class="text-slate-700 hover:cursor-pointer"
+                      size="16"
+                    />
+                  </div>
                   <Badge severity="secondary">{{ $t('optional') }}</Badge>
                 </div>
                 <div class="relative">
@@ -269,6 +281,5 @@ onMounted(() => {
   padding: 8px 12px;
   white-space: normal !important;
   word-wrap: break-word !important;
-  font-size: 14px;
 }
 </style>

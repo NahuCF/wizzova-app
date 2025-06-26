@@ -63,7 +63,13 @@ const headerText = computed(() => {
 			<div class="bg-slate-100 px-2 py-1 rounded-lg text-sm font-medium leading-none">
 				{{ template.language }}
 			</div>
-			<div class="text-sm font-normal text-slate-500" v-tooltip.bottom="moment(template.created_at).format('DD/MM/YYYY HH:mm')">
+			<div 
+				class="text-sm font-normal text-slate-500" 
+				v-tooltip.bottom="{
+					value: moment(template.created_at).format('DD/MM/YYYY HH:mm'),
+					class: 'text-sm'
+				}"
+			>
 				{{ moment(template.created_at).format('DD/MM/YYYY') }}
 			</div>
 		</div>

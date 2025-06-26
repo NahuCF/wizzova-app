@@ -152,8 +152,14 @@ const nextCustomVariable = () => {
 						@click="openVariablesPopover">
 						{{ t('new_template.body.add_variable') }}
 					</Button>
-					<IconInfoCircle class="text-slate-700 hover:cursor-pointer" size="16"
-						v-tooltip="t('new_template.body.variables_tooltip')" />
+					<div 
+						v-tooltip.bottom="{
+							value: t('new_template.body.variables_tooltip'),
+							class: 'text-sm max-w-[300px]!'
+						}"
+					>
+						<IconInfoCircle class="text-slate-700 hover:cursor-pointer" size="16" />
+					</div>
 				</div>
 
 				<div class="flex items-center gap-3">

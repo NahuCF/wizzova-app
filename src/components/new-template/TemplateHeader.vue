@@ -38,8 +38,14 @@ fetchHeaderComponentTypes()
     <div>
         <div class="flex items-center gap-2 mb-2">
             <h2 class="font-medium text-lg">{{ $t('header') }}</h2>
-            <IconInfoCircle class="text-slate-700 hover:cursor-pointer" size="16"
-                v-tooltip="t('header_tooltip')" />
+            <div
+                v-tooltip.bottom="{
+                    value: t('header_tooltip'),
+                    class: 'text-sm max-w-[250px]!'
+                }"
+            >
+                <IconInfoCircle class="text-slate-700 hover:cursor-pointer" size="16" />
+            </div>
             <Badge severity="secondary">{{ $t('optional') }}</Badge>
         </div>
         <div class="flex flex-wrap gap-4">
