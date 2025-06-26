@@ -44,26 +44,25 @@ const onFormSubmit = async ({ valid }: FormSubmitEvent) => {
       email: form.value.email,
       password: form.value.password,
     })
-    const tenant = response.data.data
-    const user = response.data.meta.user
+    const data = response.data.data
+    const meta = response.data.meta
 
-    if (tenant.verified_email === false) {
-      router.push({ name: 'confirm-account' })
+    // if (data.verified_email === false) {
+    //   router.push({ name: 'confirm-account' })
+    // }
+
+    const tenantData: Tenant = {
+      id: data.id,
+      email: data.email,
+      verifiedEmail: data.verified_email,
+      token: meta.token
     }
 
-    const tenantData = {
-      id: tenant.id,
-      email: tenant.email,
-      verifiedEmail: tenant.verified_email,
-    } as Tenant
-
-    const userData = {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      cellphonePrefix: user.cellphone_prefix,
-      cellphoneNumber: user.cellphone_number,
-    } as User
+    const userData: User = {
+      id: data.id,
+      email: data.email,
+      name: data.name
+    }
 
     sessionStore.setTenant(tenantData)
     sessionStore.setUser(userData)

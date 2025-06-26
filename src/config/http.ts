@@ -20,11 +20,10 @@ Http.interceptors.response.use(
 
 Http.interceptors.request.use((config) => {
   const session = useSessionStore()
-  const token = sessionStorage.apiToken
   const tenant = session.getTenant
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+  if (tenant.token) {
+    config.headers.Authorization = `Bearer ${tenant.token}`
   }
 
   if (tenant) {

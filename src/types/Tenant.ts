@@ -1,5 +1,6 @@
 export interface Tenant {
   id: string
   email: string
-  verifiedEmail: boolean
+  verifiedEmail: boolean,
+  token: string
 }

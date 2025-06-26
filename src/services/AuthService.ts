@@ -1,9 +1,9 @@
 import Http from '~/config/http'
-import type { LoginForm, RegisterForm } from '~/types/Auth'
+import type { LoginForm, LoginResponse, RegisterForm } from '~/types/Auth'
 
 export default {
   async login(data: LoginForm) {
-    return Http.post('/login', data)
+    return Http.post<LoginResponse>('/login', data)
   },
   async register(data: RegisterForm) {
     return Http.post('/register', data)

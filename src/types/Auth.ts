@@ -10,3 +10,16 @@ export interface RegisterForm {
     work_email: string,
     password: string,
 }
+
+export interface LoginResponse {
+    data: {
+        id: string,
+        name: string,
+        email: string,
+        verified_email: boolean,
+        filled_basic_information: boolean,
+    }
+    meta: {
+        token: string
+    }
+}
