@@ -8,6 +8,7 @@ import TemplateHeaderService from './TemplateHeaderService'
 import TemplateLanguageService from './TemplateLanguageService'
 import TemplateService from './TemplateService'
 import TimezoneService from './TimezoneService'
+import ContactFieldService from './ContactFieldService'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -15,6 +16,7 @@ export { default as TemplateHeaderService } from './TemplateHeaderService'
 
 export const API = {
     auth: AuthService,
+    contactField: ContactFieldService,
     country: CountryService,
     currency: CurrencyService,
     industry: IndustryService,

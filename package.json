@@ -31,6 +31,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@iconify-json/iconoir": "^1.2.7",
     "@iconify-json/mdi": "^1.2.3",
     "@primevue/auto-import-resolver": "^4.3.2",
     "@tsconfig/node22": "^22.0.0",

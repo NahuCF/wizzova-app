@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ActionButton: typeof import('./src/components/ActionButton.vue')['default']
     ActionsPopover: typeof import('./src/components/ActionsPopover.vue')['default']
     AddButtons: typeof import('./src/components/new-template/AddButtons.vue')['default']
     AppLayout: typeof import('./src/components/layouts/AppLayout.vue')['default']
@@ -16,8 +17,13 @@ declare module 'vue' {
     Button: typeof import('primevue/button')['default']
     ButtonGroup: typeof import('primevue/buttongroup')['default']
     Column: typeof import('primevue/column')['default']
+    ContactFieldDrawer: typeof import('./src/components/contact-fields/ContactFieldDrawer.vue')['default']
     DataTable: typeof import('primevue/datatable')['default']
+    DeleteDialog: typeof import('./src/components/contact-fields/DeleteDialog.vue')['default']
+    DeleteFieldDialog: typeof import('./src/components/contact-fields/DeleteFieldDialog.vue')['default']
+    Dialog: typeof import('primevue/dialog')['default']
     Divider: typeof import('primevue/divider')['default']
+    Drawer: typeof import('primevue/drawer')['default']
     Dropdown: typeof import('./src/components/templates/Dropdown.vue')['default']
     Form: typeof import('@primevue/forms/form')['default']
     InputGroup: typeof import('primevue/inputgroup')['default']
@@ -44,6 +50,7 @@ declare module 'vue' {
     Textarea: typeof import('primevue/textarea')['default']
     TheSidebar: typeof import('./src/components/TheSidebar.vue')['default']
     Toast: typeof import('primevue/toast')['default']
+    ToggleSwitch: typeof import('primevue/toggleswitch')['default']
   }
   export interface ComponentCustomProperties {
     Tooltip: typeof import('primevue/tooltip')['default']

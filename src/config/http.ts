@@ -4,7 +4,6 @@ import { useSessionStore } from '~/stores/session'
 const Http = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
-    'Content-Type': 'multipart/form-data',
     Accept: 'application/json',
   },
 })

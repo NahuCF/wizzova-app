@@ -200,5 +200,47 @@ export default {
   },
   edit_template: {
     title: 'Edit template'
+  },
+  save: 'Guardar',
+  cancel: 'Cancelar',
+  delete: 'Eliminar',
+  contact_fields: {
+    title: 'Campos de contacto',
+    field_collection: 'Colección de campos',
+    add: 'Agregar',
+    not_found: 'No se encontraron campos de contacto',
+    no_more_to_load: 'No hay más para cargar',
+    load_more: 'Cargar más',
+    option_prefilled: 'Opción 1',
+    name: {
+      is_required: 'El nombre es obligatorio.',
+      no_special_char: 'El nombre no puede contener caracteres especiales ni números.',
+      placeholder: 'Ingrese el nombre',
+      help: 'Nombre del campo que se mostrará en toda la plataforma.'
+    },
+    internal_name: {
+      is_required: 'El nombre interno es obligatorio.',
+      no_special_char_except_underscore: 'El nombre interno no puede contener caracteres especiales ni números, excepto guiones bajos (_).',
+      placeholder: 'Ingrese el nombre interno',
+      help: 'Nombre real del campo utilizado para acceder a los valores externamente.'
+    },
+    delete_field: 'Eliminar campo',
+    delete_message: '¿Estás seguro de que deseas eliminar este campo?',
+    delete_note: 'NOTA: Una vez eliminado, todos los datos asociados a este campo se eliminarán de los contactos. Esta acción no se puede deshacer.',
+    field_created: '¡Valor del campo creado con éxito!',
+    field_updated: '¡Valor del campo actualizado con éxito!',
+    field_deleted: '¡Valor del campo eliminado con éxito!'
+  },
+  contact_field: {
+    edit: 'Editar valor del campo',
+    name: 'Nombre',
+    name_info: 'El nombre que se muestra en toda la plataforma.',
+    is_primary: '{field} es un campo principal',
+    is_secondary: '{field} es un campo secundario',
+    internal_name: 'Nombre interno',
+    internal_name_info: 'El nombre interno del campo utilizado para acceder a los valores externamente (por ejemplo, en APIs o integraciones).',
+    type: 'Tipo',
+    status: 'Estado',
+    mandatory: 'Obligatorio'
   }
 }

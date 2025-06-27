@@ -217,12 +217,7 @@ onMounted(() => {
 
 				<Column>
 					<template #body="{ data }">
-						<Button
-							class="bg-white! hover:bg-slate-200! p-1! border-1! border-slate-300! font-semibold! text-slate-500!"
-							@click="(e) => popover?.show(e, data)"
-						>
-							<IconDotsVertical size="13" />
-						</Button>
+						<ActionButton @click="(e: Event) => popover?.show(e, data)" />
 					</template>
 				</Column>
 			</DataTable>

@@ -202,5 +202,47 @@ Grab them today!`,
   },
   edit_template: {
     title: 'Editar Plantilla'
+  },
+  save: 'Save',
+  cancel: 'Cancel',
+  delete: 'Delete',
+  contact_fields: {
+    title: 'Contact Fields',
+    field_collection: 'Field Collection',
+    add: 'Add',
+    not_found: 'No contact fields found',
+    no_more_to_load: 'No more to load',
+    load_more: 'Load more',
+    option_prefilled: 'Option 1',
+    name: {
+      is_required: 'Name is required.',
+      no_special_char: "The name can't contain special characters or numbers.",
+      placeholder: 'Enter the name',
+      help: 'Display field name across the platform.'
+    },
+    internal_name: {
+      is_required: 'Internal name is required.',
+      no_special_char_except_underscore: "The internal name can't contain special characters or numbers, except underscore (_).",
+      placeholder: 'Enter the internal name',
+      help: 'Actual field name to access the field values externally.'
+    },
+    delete_field: 'Delete Field',
+    delete_message: 'Are you sure you want to delete this field?',
+    delete_note: 'NOTE : Once deleted, all associated data for this field will be removed from the contacts. This action cannot be undone.',
+    field_created: 'Field value created successfully!',
+    field_updated: 'Field value updated successfully!',
+    field_deleted: 'Field value deleted successfully!'
+  },
+  contact_field: {
+    edit: 'Edit field value',
+    name: 'Name',
+    name_info: 'The display name shown across the platform.',
+    is_primary: '{field} is a primary field',
+    is_secondary: '{field} is a secondary field',
+    internal_name: 'Internal Name',
+    internal_name_info: 'The internal field name used to access field values externally, (e.g., in APIs or integrations).',
+    type: 'Type',
+    status: 'Status',
+    mandatory: 'Mandatory'
   }
 }

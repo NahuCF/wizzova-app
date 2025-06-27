@@ -23,8 +23,8 @@ defineExpose({ show })
 </script>
 
 <template>
-    <Popover ref="popoverRef">
-        <div class="pt-3 pb-2 min-w-[15rem]">
+    <Popover ref="popoverRef" class="min-w-[15rem]">
+        <div class="pt-3 pb-2">
             <ul class="list-none p-0 m-0 flex flex-col">
                 <template v-for="(optionList, index) in options" :key="index">
                     <li v-for="option in optionList" :key="option.label"
