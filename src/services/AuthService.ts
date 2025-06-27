@@ -1,12 +1,12 @@
 import Http from '~/config/http'
-import type { LoginForm, LoginResponse, RegisterForm } from '~/types/Auth'
+import type { LoginForm, LoginResponse, RegisterForm, RegisterResponse } from '~/types/Auth'
 
 export default {
   async login(data: LoginForm) {
     return Http.post<LoginResponse>('/login', data)
   },
   async register(data: RegisterForm) {
-    return Http.post('/register', data)
+    return Http.post<RegisterResponse>('/register', data)
   },
   async sendVerifyAccount(data: { email: string }) {
     return Http.post('/send-verify-account', data)

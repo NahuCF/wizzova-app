@@ -23,3 +23,16 @@ export interface LoginResponse {
         token: string
     }
 }
+
+export interface RegisterResponse {
+    data: {
+        id: string,
+        name: string,
+        website?: string,
+        email: string,
+        business_name?: string,
+        verified_email?: boolean,
+        verified_whatsapp?: boolean,
+        filled_basic_information: boolean
+    }
+}

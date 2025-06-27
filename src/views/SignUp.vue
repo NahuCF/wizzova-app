@@ -145,16 +145,17 @@ const onFormSubmit = async ({ valid }: FormSubmitEvent) => {
     })
     const data = response.data.data
 
-    const tenant = {
+    const tenant: Tenant = {
       id: data.id,
-      name: data.name,
-      businessName: data.business_name,
-      website: data.website,
+      // name: data.name,
+      // businessName: data.business_name,
+      // website: data.website,
       email: data.email,
-      verifiedEmail: data.verified_email,
-      verifiedWhatsapp: data.verified_whatsapp,
-      filledBasicInformation: data.filled_basic_information,
-    } as Tenant
+      verifiedEmail: Boolean(data.verified_email),
+      // verifiedWhatsapp: data.verified_whatsapp,
+      // filledBasicInformation: data.filled_basic_information,
+      token: ''
+    }
 
     session.setTenant(tenant)
     router.push({
