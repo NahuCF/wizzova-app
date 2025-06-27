@@ -231,7 +231,8 @@ Grab them today!`,
     delete_note: 'NOTE : Once deleted, all associated data for this field will be removed from the contacts. This action cannot be undone.',
     field_created: 'Field value created successfully!',
     field_updated: 'Field value updated successfully!',
-    field_deleted: 'Field value deleted successfully!'
+    field_deleted: 'Field value deleted successfully!',
+    add_options: 'Add Options'
   },
   contact_field: {
     edit: 'Edit field value',
@@ -243,6 +244,7 @@ Grab them today!`,
     internal_name_info: 'The internal field name used to access field values externally, (e.g., in APIs or integrations).',
     type: 'Type',
     status: 'Status',
-    mandatory: 'Mandatory'
+    mandatory: 'Mandatory',
+    options: 'Options'
   }
 }

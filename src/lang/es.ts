@@ -229,7 +229,8 @@ export default {
     delete_note: 'NOTA: Una vez eliminado, todos los datos asociados a este campo se eliminarán de los contactos. Esta acción no se puede deshacer.',
     field_created: '¡Valor del campo creado con éxito!',
     field_updated: '¡Valor del campo actualizado con éxito!',
-    field_deleted: '¡Valor del campo eliminado con éxito!'
+    field_deleted: '¡Valor del campo eliminado con éxito!',
+    add_options: 'Agregar Opciones'
   },
   contact_field: {
     edit: 'Editar valor del campo',
@@ -241,6 +242,7 @@ export default {
     internal_name_info: 'El nombre interno del campo utilizado para acceder a los valores externamente (por ejemplo, en APIs o integraciones).',
     type: 'Tipo',
     status: 'Estado',
-    mandatory: 'Obligatorio'
+    mandatory: 'Obligatorio',
+    options: 'Opciones'
   }
 }
