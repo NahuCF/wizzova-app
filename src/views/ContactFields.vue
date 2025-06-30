@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { IconEdit, IconTrash, IconPlus, IconLoader2, IconToggleLeft, 
-    IconTextWrap, IconCalendar, IconUserCircle, IconHash, IconInfoCircle } from '@tabler/icons-vue'
-import IconRadioboxMarked from '~icons/mdi/radiobox-marked'
-import IconText from '~icons/iconoir/text'
+import { IconEdit, IconTrash, IconPlus, IconLoader2, IconToggleLeft, IconTextWrap, 
+    IconCalendar, IconUserCircle, IconHash, IconInfoCircle, IconTypography, IconCircleDot } from '@tabler/icons-vue'
 import { ref, type Component } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePaginatedData } from '~/composables/usePaginatedData'
@@ -30,9 +28,9 @@ const loadingDrawer = ref(false)
 const selectedField = ref<ContactFieldItem | undefined>()
 const types = ref<ContactFieldType[]>([])
 const typeIcon = ref<{ [key in ContactFieldType]: Component }>({
-    'SELECT': IconRadioboxMarked,
+    'SELECT': IconCircleDot,
     'NUMBER': IconHash,
-    'TEXT': IconText,
+    'TEXT': IconTypography,
     'MULTI_TEXT': IconTextWrap,
     'USER': IconUserCircle,
     'SWITCH': IconToggleLeft,

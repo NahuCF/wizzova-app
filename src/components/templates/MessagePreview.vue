@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { defineProps, computed, type Component } from 'vue'
-import { IconExternalLink } from '@tabler/icons-vue'
-import IconMdiPhone from '~icons/mdi/phone'
-import IconMdiReply from '~icons/mdi/reply'
-import IconMdiFormatListBulleted from '~icons/mdi/format-list-bulleted'
+import { IconExternalLink, IconPhone, IconArrowBackUp, IconList } from '@tabler/icons-vue'
 import type { TemplateBtn, TemplateBtnType, TemplateCallBtn, TemplateUrlBtn } from '~/types'
 
 const props = withDefaults(
@@ -68,9 +65,9 @@ const filteredButtons = computed(() => {
 const iconComponents: Record<TemplateBtnType, Component> = {
   STATIC_URL: IconExternalLink,
   DYNAMIC_URL: IconExternalLink,
-  PHONE_NUMBER: IconMdiPhone,
-  QUICK_REPLY: IconMdiReply,
-  EXPLORE_MORE: IconMdiFormatListBulleted
+  PHONE_NUMBER: IconPhone,
+  QUICK_REPLY: IconArrowBackUp,
+  EXPLORE_MORE: IconList
 }
 </script>
 
