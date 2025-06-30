@@ -21,7 +21,6 @@ const pages = ref([
 
 const parentRouteName = computed(() => {
   if (route.matched.length >= 2) {
-	console.log('parent route', route.matched)
     return route.matched[route.matched.length - 2].path
   }
   return null

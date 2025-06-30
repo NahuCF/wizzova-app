@@ -36,16 +36,10 @@ const resolver = zodResolver(
         name: z.string()
             .refine((value) => value.length > 0, {
                 message: 'contact_fields.name.is_required',
-            })
-            .refine((value) => /^[a-zA-Z ]+$/.test(value), {
-                message: 'contact_fields.name.no_special_char',
             }),
         internal_name: z.string()
             .refine((value) => value.length > 0, {
                 message: 'contact_fields.internal_name.is_required',
-            })
-            .refine((value) => /^[a-zA-Z_]+$/.test(value), {
-                message: 'contact_fields.internal_name.no_special_char_except_underscore',
             })
     })
 )
@@ -74,9 +68,32 @@ const onNameUpdate = (event: Event) => {
     const target = event.target as HTMLInputElement | null
 
     if (target && !internalNameEdited.value) {
-        const formattedName = target.value.replace(/[^a-zA-Z]/g, '_')
-        contactField.value.internal_name = formattedName
-        formRef.value?.setFieldValue('internal_name', formattedName)
+        const formattedInternalName = target.value.replace(/[ ]/g, '_')
+        contactField.value.internal_name = formattedInternalName
+        formRef.value?.setFieldValue('internal_name', formattedInternalName)
+    }
+}
+
+const onInternalNameUpdate = (event: Event) => {
+    internalNameEdited.value = true
+    const target = event.target as HTMLInputElement | null
+
+    if (target) {
+        const formattedInternalName = target.value.replace(/[ ]/g, '_')
+        contactField.value.internal_name = formattedInternalName
+        formRef.value?.setFieldValue('internal_name', formattedInternalName)
+    }
+}
+
+const onNameKeypress = (event: KeyboardEvent) => {
+    if (!/^[a-zA-Z ]$/.test(event.key)) {
+        event.preventDefault()
+    }
+}
+
+const onInternalNameKeypress = (event: KeyboardEvent) => {
+    if (!/^[a-zA-Z_ ]$/.test(event.key)) {
+        event.preventDefault()
     }
 }
 
@@ -113,6 +130,7 @@ watch(() => props.visible, () => {
             v-slot="$form"
             class="flex flex-col gap-5"
             :initialValues="contactField"
+            :validateOnValueUpdate="false"
             :resolver
             @submit="save"
         >
@@ -127,6 +145,7 @@ watch(() => props.visible, () => {
                     fluid
                     id="name"
                     name="name"
+                    @keypress="onNameKeypress"
                     @input="onNameUpdate"
                 />
                 <p class="text-slate-500 text-sm">{{ t('contact_fields.name.help') }}</p>
@@ -150,7 +169,8 @@ watch(() => props.visible, () => {
                     fluid
                     id="internal_name"
                     name="internal_name"
-                    @input="internalNameEdited = true"
+                    @keypress="onInternalNameKeypress"
+                    @input="onInternalNameUpdate"
                 />
                 <p class="text-slate-500 text-sm">{{ t('contact_fields.internal_name.help') }}</p>
                 <Message
