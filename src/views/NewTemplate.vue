@@ -125,7 +125,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex justify-center">
+  <div class="flex justify-center p-6">
     <div class="w-[73rem] flex flex-col py-4 gap-4">
       <div class="flex justify-between items-center py-4 sticky top-0 z-2 bg-slate-100">
         <h1 class="font-semibold text-2xl">{{ t('new_template.title') }}</h1>

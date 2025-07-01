@@ -19,3 +19,14 @@ export interface ContactFieldCreate {
     type: ContactFieldType,
     options?: string[]
 }
+
+export interface ContactItemField {
+    field_value_id: string,
+    name: string,
+    value: string | string[] | boolean
+}
+
+export interface ContactItem {
+    id: string,
+    fields: ContactItemField[]
+}

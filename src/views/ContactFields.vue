@@ -169,7 +169,7 @@ fetchTypes()
 </script>
 
 <template>
-    <div class="flex flex-col gap-5 custom-datatable">
+    <div class="flex flex-col gap-5 custom-datatable p-6">
         <div class="flex justify-between items-center py-5 z-2 bg-slate-100">
 			<h1 class="font-semibold text-2xl">{{ t('contact_fields.field_collection') }}</h1>
 			<Button @click="openFieldDrawer()">
@@ -310,7 +310,13 @@ fetchTypes()
             :contactField="selectedField"
             @onSave="createField" 
         />
-        <DeleteFieldDialog v-model:visible="showDeleteDialog" @onConfirm="deleteField" />
+        <DeleteDialog 
+            v-model:visible="showDeleteDialog" 
+            :title="$t('contact_fields.delete_field')"
+            :message="$t('contact_fields.delete_message')"
+            :note="$t('contact_fields.delete_note')"
+            @onConfirm="deleteField" 
+        />
     </div>
 </template>
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { IconLayout, IconAddressBook } from '@tabler/icons-vue'
+import { IconLayout, IconUsers, IconAddressBook } from '@tabler/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -11,6 +11,11 @@ const pages = ref([
 		name: 'Templates',
 		icon: IconLayout,
 		path: '/templates'
+	},
+	{
+		name: 'Contacts',
+		icon: IconUsers,
+		path: '/contacts'
 	},
 	{
 		name: 'Contact Fields',

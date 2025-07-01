@@ -175,7 +175,8 @@ export default {
   loading: 'Cargando',
   list: 'Lista',
   grid: 'Cuadrícula',
-  showing_results: 'Mostrando {first} - {last} de {totalRecords} elementos',
+  showing_results: 'Mostrando {first} de {last} elementos',
+  show_rows_per_page: 'Mostrar filas por página',
   templates: {
     title: 'Plantillas',
     whatsapp_templates: 'Plantillas de WhatsApp',
@@ -204,6 +205,9 @@ export default {
   save: 'Guardar',
   cancel: 'Cancelar',
   delete: 'Eliminar',
+  search: 'Buscar',
+  filter: 'Filtrar',
+  import: 'Importar',
   contact_fields: {
     title: 'Campos de contacto',
     field_collection: 'Colección de campos',
@@ -244,5 +248,24 @@ export default {
     status: 'Estado',
     mandatory: 'Obligatorio',
     options: 'Opciones'
+  },
+  contacts: {
+    title: 'Contactos',
+    contacts_tab: 'Contactos',
+    segments_tab: 'Divisiones',
+    import_file: 'Importar archivo',
+    import_history: 'Importar histórico',
+    add_contact: 'Agregar contacto',
+    empty: 'No se encontraron contactos',
+    delete_contact: 'Eliminar Contacto',
+    delete_message: '¿Quieres eliminar este contacto?',
+    contact_deleted: '¡Contacto eliminado con éxito!',
+    headers: {
+      Name: 'Nombre',
+      Email: 'Email',
+      Phone: 'Teléfono',
+      Tags: 'Etiquetas',
+      'Marketing OptIn': 'Marketing OptIn'
+    }
   }
 }

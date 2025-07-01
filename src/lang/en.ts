@@ -176,7 +176,8 @@ Grab them today!`,
   loading: 'Loading',
   list: 'List',
   grid: 'Grid',
-  showing_results: 'Showing {first} - {last} of {totalRecords} items',
+  showing_results: 'Showing {first} of {last} entries',
+  show_rows_per_page: 'Show rows per page',
   templates: {
     title: 'Templates',
     whatsapp_templates: 'WhatsApp Templates',
@@ -206,6 +207,9 @@ Grab them today!`,
   save: 'Save',
   cancel: 'Cancel',
   delete: 'Delete',
+  search: 'Search',
+  filter: 'Filter',
+  import: 'Import',
   contact_fields: {
     title: 'Contact Fields',
     field_collection: 'Field Collection',
@@ -246,5 +250,24 @@ Grab them today!`,
     status: 'Status',
     mandatory: 'Mandatory',
     options: 'Options'
+  },
+  contacts: {
+    title: 'Contacts',
+    contacts_tab: 'Contacts',
+    segments_tab: 'Segments',
+    import_file: 'Import file',
+    import_history: 'Import history',
+    add_contact: 'Add contact',
+    empty: 'No contacts found',
+    delete_contact: 'Delete Contact',
+    delete_message: 'Do you want to delete this contact?',
+    contact_deleted: 'Contact deleted successfully!',
+    headers: {
+      Name: 'Name',
+      Email: 'Email',
+      Phone: 'Phone',
+      Tags: 'Tags',
+      'Marketing OptIn': 'Marketing OptIn'
+    }
   }
 }

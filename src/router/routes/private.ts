@@ -1,5 +1,6 @@
 import AppLayout from '~/components/layouts/AppLayout.vue'
 import ContactFields from '~/views/ContactFields.vue'
+import Contacts from '~/views/Contacts.vue'
 import Conversations from '~/views/Conversations.vue'
 import EditTemplate from '~/views/EditTemplate.vue'
 import NewTemplate from '~/views/NewTemplate.vue'
@@ -48,6 +49,17 @@ const routes = [
             name: 'contact-fields',
             meta: { titleKey: 'contact_fields.title' },
             component: ContactFields
+          }
+        ]
+      },
+      {
+        path: '/contacts',
+        children: [
+          {
+            path: '',
+            name: 'contacts',
+            meta: { titleKey: 'contacts.title' },
+            component: Contacts
           }
         ]
       }

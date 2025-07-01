@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useToast, type DataTablePageEvent } from 'primevue'
+import type { DataTablePageEvent } from 'primevue'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { IconPlus } from '@tabler/icons-vue'
 import moment from 'moment'
 import { API } from '~/services'
-import { IconEdit, IconTrash, IconList, IconLayoutGrid, IconSearch, IconDotsVertical } from '@tabler/icons-vue'
+import { IconEdit, IconTrash, IconList, IconLayoutGrid, IconSearch } from '@tabler/icons-vue'
 import type { TemplateItem } from '~/types'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 
@@ -120,7 +120,7 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="flex flex-col">
+	<div class="flex flex-col p-6">
 		<div class="flex justify-between items-center py-5 z-2 bg-slate-100">
 			<h1 class="font-semibold text-2xl">{{ t('templates.whatsapp_templates') }}</h1>
 			<Button @click="router.push({ name: 'new-template' })">

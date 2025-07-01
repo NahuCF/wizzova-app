@@ -2,10 +2,11 @@ import Http from '~/config/http'
 import type { ContactFieldCreate, ContactFieldItem, ContactFieldType, Page } from '~/types'
 
 export default {
-    async index(page: number = 1, perPage: number = 12) {
-        const params: Record<string, string | number> = {
+    async index(page: number = 1, perPage: number = 12, is_primary_field: boolean = false) {
+        const params: Record<string, string | number | boolean> = {
             page,
             rows_per_page: perPage,
+            is_primary_field: Number(is_primary_field)
         }
 
         return Http.get<Page<ContactFieldItem>>('/contacts/fields', { params })
