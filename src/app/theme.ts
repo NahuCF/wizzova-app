@@ -397,7 +397,7 @@ export default definePreset(Aura, {
       },
       modal: {
         borderRadius: '{border.radius.xl}',
-        padding: '1.25rem',
+        padding: '1.5rem',
         shadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
       },
       navigation: {

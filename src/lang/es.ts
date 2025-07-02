@@ -208,6 +208,9 @@ export default {
   search: 'Buscar',
   filter: 'Filtrar',
   import: 'Importar',
+  submit: 'Enviar',
+  copy: 'Copiar',
+  required: '{field} es requerido!',
   contact_fields: {
     title: 'Campos de contacto',
     field_collection: 'Colección de campos',
@@ -260,12 +263,26 @@ export default {
     delete_contact: 'Eliminar Contacto',
     delete_message: '¿Quieres eliminar este contacto?',
     contact_deleted: '¡Contacto eliminado con éxito!',
+    create_contact: 'Crear Contacto',
+    edit_contact: 'Editar Contacto',
     headers: {
       Name: 'Nombre',
       Email: 'Email',
       Phone: 'Teléfono',
       Tags: 'Etiquetas',
       'Marketing OptIn': 'Marketing OptIn'
-    }
+    },
+    placeholder: {
+      Name: 'Ingresa el nombre',
+      Email: 'Ingresa el email',
+      Phone: '+54',
+      'Marketing OptIn': 'Seleccionar...',
+      tag: 'Ingresa una etiqueta'
+    },
+    add_tag: 'Agregar etiqueta',
+    additional_details: 'Detalles adicionales',
+    marketing_optin_help: "Marque 'SI' si se ha obtenido el consentimiento de este contacto para recibir mensajes de marketing.",
+    contact_created: '¡Contacto creado con éxito!',
+    contact_updated: '¡Contacto actualizado con éxito!'
   }
 }

@@ -10,6 +10,7 @@ import TemplateService from './TemplateService'
 import TimezoneService from './TimezoneService'
 import ContactFieldService from './ContactFieldService'
 import ContactService from './ContactService'
+import UserService from './UserService'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -27,5 +28,6 @@ export const API = {
     templateHeader: TemplateHeaderService,
     templateLanguage: TemplateLanguageService,
     template: TemplateService,
-    timezone: TimezoneService
+    timezone: TimezoneService,
+    user: UserService
 }

@@ -210,6 +210,9 @@ Grab them today!`,
   search: 'Search',
   filter: 'Filter',
   import: 'Import',
+  submit: 'Submit',
+  copy: 'Copy',
+  required: '{field} is required!',
   contact_fields: {
     title: 'Contact Fields',
     field_collection: 'Field Collection',
@@ -262,12 +265,26 @@ Grab them today!`,
     delete_contact: 'Delete Contact',
     delete_message: 'Do you want to delete this contact?',
     contact_deleted: 'Contact deleted successfully!',
+    create_contact: 'Create Contact',
+    edit_contact: 'Edit Contact',
     headers: {
       Name: 'Name',
       Email: 'Email',
       Phone: 'Phone',
       Tags: 'Tags',
       'Marketing OptIn': 'Marketing OptIn'
-    }
+    },
+    placeholder: {
+      Name: 'Enter the name',
+      Email: 'Enter email',
+      Phone: '+54',
+      'Marketing OptIn': 'Select...',
+      tag: 'Enter tag'
+    },
+    add_tag: 'Add Tag',
+    additional_details: 'Additional Details',
+    marketing_optin_help: "Mark 'YES' if consent for marketing messages has been obtained from this contact.",
+    contact_created: 'Contact created successfully!',
+    contact_updated: 'Contact updated successfully!'
   }
 }

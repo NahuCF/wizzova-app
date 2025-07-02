@@ -30,3 +30,12 @@ export interface ContactItem {
     id: string,
     fields: ContactItemField[]
 }
+
+export interface CreateContact {
+    id: string,
+    fields: {
+        id: string,
+        name: string,
+        value: string | string[] | number | boolean
+    } []
+}

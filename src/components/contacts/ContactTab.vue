@@ -7,7 +7,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
-import type { ContactFieldItem, ContactItem, TemplateItem } from '~/types'
+import type { ContactFieldItem, ContactItem, CreateContact } from '~/types'
 
 
 const { t } = useI18n()
@@ -20,7 +20,7 @@ const {
   rowsPerPage,
   fetchDataPage,
   debouncedFetch,
-} = usePaginatedData<TemplateItem>(
+} = usePaginatedData<ContactItem>(
     (page, perPage, search) => API.contact.index(page, perPage, search).then(res => res.data),
     10
 )
@@ -55,6 +55,11 @@ const contactMenu = ref()
 const selectedContact = ref<ContactItem | undefined>()
 const showDeleteDialog = ref(false)
 const showContactDrawer = ref(false)
+const loadingDrawer = ref(false)
+
+const primaryFields = computed(() => {
+    return contactFields.value.filter(cf => cf.is_primary_field)
+})
 
 const toggleImportMenu = (event: Event) => {
     importMenu.value.toggle(event)
@@ -76,6 +81,11 @@ const onPage = (event: DataTablePageEvent) => {
 	rowsPerPage.value = event.rows
 	const page = Math.floor(event.first / event.rows) + 1
 	fetchDataPage(page, rowsPerPage.value)
+}
+
+const onRowClick = ({ data }: { data?: ContactItem }) => {
+    selectedContact.value = data
+    showContactDrawer.value = true
 }
 
 const getContactField = (contactFieldItem: ContactFieldItem, contact: ContactItem) => {
@@ -104,7 +114,7 @@ const formatField = (contactFieldItem: ContactFieldItem, contact: ContactItem) =
 const fetchContactFields = async () => {
     loadingCF.value = true
     try {
-        const response = await API.contactField.index(1, 100, true)
+        const response = await API.contactField.index(1, 100)
         contactFields.value = response.data.data
     } catch(error) {
         toast.add({
@@ -115,6 +125,42 @@ const fetchContactFields = async () => {
         })
     } finally {
         loadingCF.value = false
+    }
+}
+
+const createContact = async (contact: CreateContact) => {
+    loadingDrawer.value = true
+    try {
+        let message = ''
+
+        if(contact.id) {
+            await API.contact.update(contact)
+            message = t('contacts.contact_updated')
+        }
+        else {
+            await API.contact.create(contact)
+            message = t('contacts.contact_created')
+        }
+
+        fetchDataPage(1, rowsPerPage.value)
+
+        toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: message,
+            life: 3000,
+        })
+        
+        showContactDrawer.value = false
+    } catch(error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: t('an_error_occurred'),
+            life: 3000,
+        })
+    } finally {
+        loadingDrawer.value = false
     }
 }
 
@@ -153,14 +199,14 @@ fetchDataPage(1, rowsPerPage.value)
     <div class="flex flex-col gap-6">
         <div class="flex justify-between py-2.5">
             <div class="flex gap-2">
-                <Button @click="" severity="secondary" class="bg-white! border-slate-200! flex!">
+                <Button @click="" severity="secondary" class="bg-white! border-slate-200! hover:bg-slate-100!">
                     <IconFilter size="14" />
                     <span class="text-sm">
                         {{ $t('filter') }}
                     </span>
                 </Button>
                 <Button
-                    class="bg-white! border-slate-200! flex!" 
+                    class="bg-white! border-slate-200! hover:bg-slate-100!" 
                     severity="secondary" 
                     aria-haspopup="true" 
                     aria-controls="overlay_menu"
@@ -182,7 +228,7 @@ fetchDataPage(1, rowsPerPage.value)
                     <IconSearch size="14" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                     <InputText
                         v-model="searchTerm"
-                        class="pl-8! max-w-[300px]"
+                        class="pl-8! max-w-[180px] text-sm! shadow-none!"
                         name="search"
                         id="search"
                         fluid
@@ -191,7 +237,7 @@ fetchDataPage(1, rowsPerPage.value)
                     />
                 </div>
             </div>
-            <Button @click="showContactDrawer = true">
+            <Button @click="onRowClick({})">
                 <IconPlus size="16" class="mr-1" />
                 <span class="text-sm">
                     {{ $t('contacts.add_contact') }}
@@ -211,7 +257,10 @@ fetchDataPage(1, rowsPerPage.value)
             scrollHeight="flex"
             paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             :currentPageReportTemplate="currentPageReport"
+            rowHover
+            :rowClass="() => 'cursor-pointer'"
             @page="onPage"
+            @row-click="onRowClick"
         >
             <template #empty>
                 <div class="text-center text-sm py-4 text-gray-500">
@@ -233,7 +282,7 @@ fetchDataPage(1, rowsPerPage.value)
                 </div>
             </template>
 
-            <Column v-for="cf in contactFields" :key="cf.id" :bodyStyle="{ maxWidth: '100px' }" headerClass="bg-slate-200!" >
+            <Column v-for="cf in primaryFields" :key="cf.id" :bodyStyle="{ maxWidth: '100px' }" headerClass="bg-slate-200!" >
                 <template #header>
                     <div class="uppercase text-sm font-semibold">
                         {{ $t(`contacts.headers.${cf.name}`, cf.name) }}
@@ -243,7 +292,7 @@ fetchDataPage(1, rowsPerPage.value)
                 <template #body="{ data }: { data: ContactItem }">
                     <span 
                         class="block whitespace-nowrap overflow-hidden text-ellipsis text-sm"
-                        :class="{ 'opacity-25': !getContactField(cf, data)?.value }"
+                        :class="{ 'opacity-25': getContactField(cf, data)?.value === undefined }"
                         v-tooltip.bottom="
                             Array.isArray(getContactField(cf, data)?.value) 
                                 ? {
@@ -277,7 +326,12 @@ fetchDataPage(1, rowsPerPage.value)
             @onConfirm="deleteContact" 
         />
         <ContactDrawer 
-            v-model:visible="showContactDrawer" 
+            v-model:visible="showContactDrawer"
+            :fields="contactFields"
+            :title="selectedContact ? $t('contacts.edit_contact') : $t('contacts.create_contact')"
+            :loading="loadingDrawer"
+            :contact="selectedContact"
+            @onConfirm="createContact"
         />
     </div>
 </template>
