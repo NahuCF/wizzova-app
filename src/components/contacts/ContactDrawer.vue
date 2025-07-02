@@ -42,6 +42,9 @@ const dynamicSchema = computed(() => {
             case 'SELECT':
                 base = z.string().nullable()
                 break
+            case 'DATE':
+                base = z.date().nullable()
+                break
             default:
                 base = z.any()
         }
@@ -63,7 +66,14 @@ const dynamicSchema = computed(() => {
 
 const fieldInit = (f: ContactFieldItem) => {
     const existing = props.contact?.fields.find(field => field.name === f.name)
-    if (existing) return existing.value
+    if (existing) {
+        if (f.type === 'DATE' && typeof existing.value === 'string') {
+            const m = moment(existing.value, 'YYYY-MM-DD', true)
+            return m.isValid() ? m.toDate() : null
+        }
+        
+        return existing.value
+    }
 
     switch (f.type) {
         case 'TEXT': return ''
