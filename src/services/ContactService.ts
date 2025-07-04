@@ -19,5 +19,21 @@ export default {
     },
     async delete(id: string) {
         return Http.delete(`/contacts/${id}`)
+    },
+    async importContacts(file: File, importType: 'ADD' | 'ADD_AND_REPLACE', mappings: { name: string; id: string }[]) {
+        const data = new FormData()
+        data.append('file', file)
+        data.append('import_type', importType)
+
+        mappings.forEach((mapping, index) => {
+            data.append(`mappings[${index}][name]`, mapping.name)
+            data.append(`mappings[${index}][id]`, mapping.id)
+        })
+
+        return Http.post('/contacts/import', data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
     }
 }

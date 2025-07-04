@@ -39,3 +39,10 @@ export interface CreateContact {
         value: string | string[] | number | boolean
     } []
 }
+
+export interface MappingContact {
+    excelColumn: string
+    value: string | string[] | number | boolean
+    contactField: ContactFieldItem | null
+    status: 'MAPPED' | 'NOT_MAPPED'
+}

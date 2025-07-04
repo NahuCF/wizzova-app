@@ -7,12 +7,14 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
+import { useContactFieldStore } from '~/stores'
 import type { ContactFieldItem, ContactItem, CreateContact } from '~/types'
 
 
 const { t } = useI18n()
 const router = useRouter()
 const toast = useToast()
+const contactFieldStore = useContactFieldStore()
 const {
   dataPage,
   loading,
@@ -25,19 +27,14 @@ const {
     10
 )
 
-const contactFields = ref<ContactFieldItem[]>([])
-const loadingCF = ref(false)
-const importOptions = ref([
-    {
-        label: t('contacts.import_file'),
-        action: () => {}
-    },
-    {
-        label: t('contacts.import_history'),
-        action: () => router.push('/contacts/import/history')
-    }
-])
 const importMenu = ref()
+const contactMenu = ref()
+const selectedContact = ref<ContactItem | undefined>()
+const showDeleteDialog = ref(false)
+const showContactDrawer = ref(false)
+const showImportContacts = ref(false)
+const loadingDrawer = ref(false)
+
 const contactOptions = ref([
 	[
 		{
@@ -51,15 +48,16 @@ const contactOptions = ref([
 		}
 	]
 ])
-const contactMenu = ref()
-const selectedContact = ref<ContactItem | undefined>()
-const showDeleteDialog = ref(false)
-const showContactDrawer = ref(false)
-const loadingDrawer = ref(false)
-
-const primaryFields = computed(() => {
-    return contactFields.value.filter(cf => cf.is_primary_field)
-})
+const importOptions = ref([
+    {
+        label: t('contacts.import_file'),
+        action: () => showImportContacts.value = true
+    },
+    {
+        label: t('contacts.import_history'),
+        action: () => router.push('/contacts/import/history')
+    }
+])
 
 const toggleImportMenu = (event: Event) => {
     importMenu.value.toggle(event)
@@ -108,23 +106,6 @@ const formatField = (contactFieldItem: ContactFieldItem, contact: ContactItem) =
     }
     else {
         return contactField.value
-    }
-}
-
-const fetchContactFields = async () => {
-    loadingCF.value = true
-    try {
-        const response = await API.contactField.index(1, 100)
-        contactFields.value = response.data.data
-    } catch(error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: t('an_error_occurred'),
-            life: 3000,
-        })
-    } finally {
-        loadingCF.value = false
     }
 }
 
@@ -191,7 +172,7 @@ const deleteContact = async () => {
 
 watch(rowsPerPage, () => fetchDataPage(1, rowsPerPage.value))
 
-fetchContactFields()
+contactFieldStore.fetchContactFields()
 fetchDataPage(1, rowsPerPage.value)
 </script>
 
@@ -250,7 +231,7 @@ fetchDataPage(1, rowsPerPage.value)
             class="rounded-lg overflow-hidden"
             :lazy="true"
             :paginator="true"
-            :loading="loading || loadingCF"
+            :loading="loading || contactFieldStore.loading"
             :rows="rowsPerPage"
             :totalRecords="dataPage.meta.total"
             scrollable
@@ -273,7 +254,7 @@ fetchDataPage(1, rowsPerPage.value)
                     <label for="rows" class="text-sm font-bold!">
                         {{ $t('show_rows_per_page') }}
                     </label>
-                    <Dropdown
+                    <Select
                         id="rows"
                         v-model="rowsPerPage"
                         :options="[10, 20, 50]"
@@ -282,7 +263,7 @@ fetchDataPage(1, rowsPerPage.value)
                 </div>
             </template>
 
-            <Column v-for="cf in primaryFields" :key="cf.id" :bodyStyle="{ maxWidth: '100px' }" headerClass="bg-slate-200!" >
+            <Column v-for="cf in contactFieldStore.primaryFields" :key="cf.id" :bodyStyle="{ maxWidth: '100px' }" headerClass="bg-slate-200!" >
                 <template #header>
                     <div class="uppercase text-sm font-semibold">
                         {{ $t(`contacts.headers.${cf.name}`, cf.name) }}
@@ -327,11 +308,14 @@ fetchDataPage(1, rowsPerPage.value)
         />
         <ContactDrawer 
             v-model:visible="showContactDrawer"
-            :fields="contactFields"
+            :fields="contactFieldStore.contactFields"
             :title="selectedContact ? $t('contacts.edit_contact') : $t('contacts.create_contact')"
             :loading="loadingDrawer"
             :contact="selectedContact"
             @onConfirm="createContact"
+        />
+        <ImportContactDialog
+            v-model:visible="showImportContacts"
         />
     </div>
 </template>
