@@ -94,12 +94,12 @@ const formatField = (contactFieldItem: ContactFieldItem, contact: ContactItem) =
     const contactField = getContactField(contactFieldItem, contact)
 
     if(!contactField) {
-        const header = t(`contacts.headers.${contactFieldItem.name}`, contactFieldItem.name)
+        const header = t(`contacts.headers.${contactFieldItem.name}`, { default: contactFieldItem.name })
         return `No ${header}`
     }
 
     if(Array.isArray(contactField.value)) {
-        return contactField.value.join(',')
+        return contactField.value.join(', ')
     } 
     else if (typeof contactField.value === 'boolean') {
         return Boolean(contactField.value) ? t('yes') : t('no')
@@ -266,7 +266,7 @@ fetchDataPage(1, rowsPerPage.value)
             <Column v-for="cf in contactFieldStore.primaryFields" :key="cf.id" :bodyStyle="{ maxWidth: '100px' }" headerClass="bg-slate-200!" >
                 <template #header>
                     <div class="uppercase text-sm font-semibold">
-                        {{ $t(`contacts.headers.${cf.name}`, cf.name) }}
+                        {{ $te(`contacts.headers.${cf.name}`) ? $t(`contacts.headers.${cf.name}`) :  cf.name }}
                     </div>
                 </template>
 

@@ -6,7 +6,7 @@ import { useI18n } from 'vue-i18n'
 
 type FieldValue = string | string[] | number | boolean | Date | null
 
-const { t } = useI18n()
+const { t, te } = useI18n()
 
 const props = defineProps<{
     field: {
@@ -63,7 +63,9 @@ const commonInputProps = computed(() => ({
     id: props.field.name,
     size: 'small' as const,
     invalid: !!props.errorMessage,
-    placeholder: t(`contacts.placeholder.${props.field.name}`, props.field.name),
+    placeholder: te(`contacts.placeholder.${props.field.name}`)
+        ? t(`contacts.placeholder.${props.field.name}`)
+        : props.field.name,
 }))
 
 const multitextIcon = () => {
@@ -88,7 +90,7 @@ const multitextIcon = () => {
         }"
     >
         <label class="text-sm flex items-center gap-1" :for="field.name">
-            <span class="text-neutral-800">{{ $t(`contacts.headers.${field.name}`, field.name) }}</span>
+            <span class="text-neutral-800">{{ $te(`contacts.headers.${field.name}`) ? $t(`contacts.headers.${field.name}`) : field.name }}</span>
             <IconAsterisk v-if="isMandatory" color="red" size="8" />
         </label>
 
@@ -191,7 +193,15 @@ const multitextIcon = () => {
             severity="error"
             variant="simple"
         >
-            {{ $t(errorMessage, { field: $t(`contacts.headers.${field.name}`, field.name) }) }}
+            {{ 
+                $t(errorMessage, 
+                    { 
+                        field: $te(`contacts.headers.${field.name}`) 
+                            ? $t(`contacts.headers.${field.name}`) 
+                            : field.name 
+                    }
+                ) 
+            }}
         </Message>
     </div>
 </template>

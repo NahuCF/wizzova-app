@@ -86,9 +86,6 @@ const fieldInit = (f: ContactFieldItem) => {
 const validateForm = () => {
     const result = dynamicSchema.value.safeParse(formValues.value)
 
-    console.log('Validating formValues:', formValues.value)
-    console.log('Validating results:', result)
-
     formErrors.value = {}
     if (!result.success) {
         for (const issue of result.error.issues) {
@@ -179,7 +176,7 @@ fetchUsers()
 
         <div class="flex flex-col gap-6 pt-6">
             <div v-if="contactId" class="flex items-center text-sm gap-1">
-                <span class="text-neutral-800 font-medium">{{ $t('Contact ID') }}:</span>
+                <span class="text-neutral-800 font-medium">{{ $t('contacts.contact_id') }}:</span>
                 <span>{{ contactId }}</span>
                 <Button class="p-1!" severity="secondary" variant="text" size="small" rounded :aria-label="$t('copy')"
                     :title="$t('copy')" @click="copyToClipboard">
@@ -199,7 +196,7 @@ fetchUsers()
                 />
             </template>
 
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2" v-if="fields.filter(f => !f.is_primary_field).length > 0">
                 <label class="text-sm text-neutral-800! font-medium">
                     {{ $t('contacts.additional_details') }}
                 </label>

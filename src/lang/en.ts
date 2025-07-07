@@ -267,6 +267,7 @@ Grab them today!`,
     contact_deleted: 'Contact deleted successfully!',
     create_contact: 'Create Contact',
     edit_contact: 'Edit Contact',
+    contact_id: 'Contact ID',
     headers: {
       Name: 'Name',
       Email: 'Email',

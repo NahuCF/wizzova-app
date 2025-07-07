@@ -265,6 +265,7 @@ export default {
     contact_deleted: '¡Contacto eliminado con éxito!',
     create_contact: 'Crear Contacto',
     edit_contact: 'Editar Contacto',
+    contact_id: 'ID de Contacto',
     headers: {
       Name: 'Nombre',
       Email: 'Email',
