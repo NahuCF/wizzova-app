@@ -322,5 +322,6 @@ Grab them today!`,
       confirm_import: 'Confirm import',
       select_placeholder: 'Select'
     }
-  }
+  },
+  copied_to_clipboard: 'Copied to clipboard'
 }

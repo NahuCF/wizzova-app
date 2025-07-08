@@ -321,5 +321,6 @@ export default {
       confirm_import: 'Confirmar importación',
       select_placeholder: 'Seleccionar'
     }
-  }
+  },
+  copied_to_clipboard: 'Copiado al portapapeles'
 }

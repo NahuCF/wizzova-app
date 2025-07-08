@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, computed } from 'vue'
 import moment from 'moment'
 import { IconLoader2, IconClipboard, IconClipboardCheck } from '@tabler/icons-vue'
 import FieldRenderer from './FieldRenderer.vue'
-import type { ContactFieldItem, ContactFieldType, ContactItem, CreateContact } from '~/types'
+import type { ContactFieldItem, ContactItem, CreateContact } from '~/types'
 import { API } from '~/services'
 import { z } from 'zod'
 import parsePhoneNumberFromString from 'libphonenumber-js/min'
+import { useToast } from 'primevue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
     visible: boolean
@@ -20,6 +22,9 @@ const emit = defineEmits<{
     (e: 'update:visible', value: boolean): void
     (e: 'onConfirm', contactData: CreateContact): void
 }>()
+
+const { t } = useI18n()
+const toast = useToast()
 
 const userList = ref<{ id: string; name: string }[]>([])
 const copiedId = ref(false)
@@ -145,11 +150,20 @@ const onConfirm = () => {
 const copyToClipboard = async () => {
     try {
         await navigator.clipboard.writeText(contactId.value)
-        copiedId.value = true
 
-        setTimeout(() => {
-            copiedId.value = false
-        }, 4000)
+        if (!copiedId.value) {
+            copiedId.value = true
+
+            toast.add({
+                severity: 'success',
+                summary: t('copied_to_clipboard'),
+                life: 3000,
+            })
+
+            setTimeout(() => {
+                copiedId.value = false
+            }, 3000)
+        }
     } catch (error) {
         console.log(error)
     }
