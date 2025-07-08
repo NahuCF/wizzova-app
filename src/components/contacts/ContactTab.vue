@@ -136,7 +136,7 @@ const createContact = async (contact: CreateContact) => {
         showContactDrawer.value = false
     } catch(error) {
         let errorMessage = t('an_error_occurred')
-        
+
         if (axios.isAxiosError(error) && error.status === 422 && error.response) {
             errorMessage = t('validation_errors.' + error.response.data.message.replace('.', ''))
         }
@@ -184,7 +184,7 @@ fetchDataPage(1, rowsPerPage.value)
 </script>
 
 <template>
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-6 h-full">
         <div class="flex justify-between py-2.5">
             <div class="flex gap-2">
                 <Button @click="" severity="secondary" class="bg-white! border-slate-200! hover:bg-slate-100!">
@@ -232,79 +232,81 @@ fetchDataPage(1, rowsPerPage.value)
                 </span>
             </Button>
         </div>
-        <DataTable 
-            :value="dataPage.data"
-            dataKey="id"
-            class="rounded-lg overflow-hidden"
-            :lazy="true"
-            :paginator="true"
-            :loading="loading || contactFieldStore.loading"
-            :rows="rowsPerPage"
-            :totalRecords="dataPage.meta.total"
-            scrollable
-            scrollHeight="flex"
-            paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-            :currentPageReportTemplate="currentPageReport"
-            rowHover
-            :rowClass="() => 'cursor-pointer'"
-            @page="onPage"
-            @row-click="onRowClick"
-        >
-            <template #empty>
-                <div class="text-center text-sm py-4 text-gray-500">
-                    {{ $t('contacts.empty') }}
-                </div>
-            </template>
-
-            <template #paginatorstart>
-                <div class="flex items-center gap-2">
-                    <label for="rows" class="text-sm font-bold!">
-                        {{ $t('show_rows_per_page') }}
-                    </label>
-                    <Select
-                        id="rows"
-                        v-model="rowsPerPage"
-                        :options="[10, 20, 50]"
-                        size="small"
-                    />
-                </div>
-            </template>
-
-            <Column v-for="cf in contactFieldStore.primaryFields" :key="cf.id" :bodyStyle="{ maxWidth: '100px' }" headerClass="bg-slate-200!" >
-                <template #header>
-                    <div class="uppercase text-sm font-semibold">
-                        {{ $te(`contacts.headers.${cf.name}`) ? $t(`contacts.headers.${cf.name}`) :  cf.name }}
+        <div class="overflow-auto">
+            <DataTable 
+                :value="dataPage.data"
+                dataKey="id"
+                class="rounded-lg overflow-hidden"
+                :lazy="true"
+                :paginator="true"
+                :loading="loading || contactFieldStore.loading"
+                :rows="rowsPerPage"
+                :totalRecords="dataPage.meta.total"
+                scrollable
+                scrollHeight="flex"
+                paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                :currentPageReportTemplate="currentPageReport"
+                rowHover
+                :rowClass="() => 'cursor-pointer'"
+                @page="onPage"
+                @row-click="onRowClick"
+            >
+                <template #empty>
+                    <div class="text-center text-sm py-4 text-gray-500">
+                        {{ $t('contacts.empty') }}
                     </div>
                 </template>
 
-                <template #body="{ data }: { data: ContactItem }">
-                    <span 
-                        class="block whitespace-nowrap overflow-hidden text-ellipsis text-sm"
-                        :class="{ 'opacity-25': getContactField(cf, data)?.value === undefined }"
-                        v-tooltip.bottom="
-                            Array.isArray(getContactField(cf, data)?.value) 
-                                ? {
-                                    value: (getContactField(cf, data)?.value as string[]).join('\n'),
-                                    class: 'text-sm max-w-[300px]!'
-                                } 
-                                : undefined
-                        "
-                    >
-                        {{ formatField(cf, data) }}
-                    </span>
-                </template>
-            </Column>
-
-            <Column headerClass="bg-slate-200!" :bodyStyle="{ maxWidth: '50px' }">
-                <template #body="{ data }: { data: ContactItem }">
-                    <div class="flex justify-center">
-                        <Button severity="secondary" variant="text" @click="(e: Event) => contactMenu?.show(e, data)">
-                            <IconDotsVertical  size="13" />
-                        </Button>
+                <template #paginatorstart>
+                    <div class="flex items-center gap-2">
+                        <label for="rows" class="text-sm font-bold!">
+                            {{ $t('show_rows_per_page') }}
+                        </label>
+                        <Select
+                            id="rows"
+                            v-model="rowsPerPage"
+                            :options="[10, 20, 50]"
+                            size="small"
+                        />
                     </div>
                 </template>
-            </Column>
-        </DataTable>
+
+                <Column v-for="cf in contactFieldStore.primaryFields" :key="cf.id" :bodyStyle="{ maxWidth: '100px' }" headerClass="bg-slate-200!" >
+                    <template #header>
+                        <div class="uppercase text-sm font-semibold">
+                            {{ $te(`contacts.headers.${cf.name}`) ? $t(`contacts.headers.${cf.name}`) :  cf.name }}
+                        </div>
+                    </template>
+
+                    <template #body="{ data }: { data: ContactItem }">
+                        <span 
+                            class="block whitespace-nowrap overflow-hidden text-ellipsis text-sm"
+                            :class="{ 'opacity-25': getContactField(cf, data)?.value === undefined }"
+                            v-tooltip.bottom="
+                                Array.isArray(getContactField(cf, data)?.value) 
+                                    ? {
+                                        value: (getContactField(cf, data)?.value as string[]).join('\n'),
+                                        class: 'text-sm max-w-[300px]!'
+                                    } 
+                                    : undefined
+                            "
+                        >
+                            {{ formatField(cf, data) }}
+                        </span>
+                    </template>
+                </Column>
+
+                <Column headerClass="bg-slate-200!" :bodyStyle="{ maxWidth: '50px' }">
+                    <template #body="{ data }: { data: ContactItem }">
+                        <div class="flex justify-center">
+                            <Button severity="secondary" variant="text" @click="(e: Event) => contactMenu?.show(e, data)">
+                                <IconDotsVertical  size="13" />
+                            </Button>
+                        </div>
+                    </template>
+                </Column>
+            </DataTable>
+        </div>
 
         <ActionsPopover ref="contactMenu" :options="contactOptions" />
         <DeleteDialog 
