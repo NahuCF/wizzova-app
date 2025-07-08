@@ -6,6 +6,7 @@ import FieldRenderer from './FieldRenderer.vue'
 import type { ContactFieldItem, ContactFieldType, ContactItem, CreateContact } from '~/types'
 import { API } from '~/services'
 import { z } from 'zod'
+import parsePhoneNumberFromString from 'libphonenumber-js/min'
 
 const props = defineProps<{
     visible: boolean
@@ -30,39 +31,51 @@ const dynamicSchema = computed(() => {
     const shape: Record<string, z.ZodTypeAny> = {}
 
     props.fields.forEach(field => {
-        let base: z.ZodTypeAny
-
-        switch (field.type) {
-            case 'TEXT':
-                base = z.string().nullable()
-                break
-            case 'MULTI_TEXT':
-                base = z.array(z.string())
-                break
-            case 'SELECT':
-                base = z.string().nullable()
-                break
-            case 'DATE':
-                base = z.date().nullable()
-                break
-            default:
-                base = z.any()
-        }
+        let base = getBaseSchema(field)
 
         if (field.is_mandatory) {
-            shape[field.name] = base.refine(val => {
+            base = base.refine(val => {
                 if (val === null || val === undefined) return false
-                if (Array.isArray(val)) return val.some(v => v.trim())
+                if (Array.isArray(val)) return val.some(v => v.trim?.())
                 if (typeof val === 'string') return val.trim().length > 0
                 return true
             }, { message: 'required' })
         } else {
-            shape[field.name] = base.optional()
+            base = base.optional()
         }
+
+        shape[field.name] = base
     })
 
     return z.object(shape)
 })
+
+const getBaseSchema = (field: ContactFieldItem) => {
+    if (field.type === 'MULTI_TEXT' && field.internal_name?.toLowerCase() === 'phone') {
+        return z.array(
+            z.string().refine(
+                (value) => {
+                    try {
+                        const phoneNumber = parsePhoneNumberFromString(value)
+                        return phoneNumber?.isValid() ?? false
+                    } catch {
+                        return false
+                    }
+                },
+                { message: 'invalid_cellphone' }
+            )
+        )
+    }
+
+    const typeMap: Record<string, z.ZodTypeAny> = {
+        TEXT: z.string().nullable(),
+        MULTI_TEXT: z.array(z.string()),
+        SELECT: z.string().nullable(),
+        DATE: z.date().nullable(),
+    }
+
+    return typeMap[field.type] ?? z.any()
+}
 
 const fieldInit = (f: ContactFieldItem) => {
     const existing = props.contact?.fields.find(field => field.name === f.name)
@@ -71,7 +84,10 @@ const fieldInit = (f: ContactFieldItem) => {
             const m = moment(existing.value, 'YYYY-MM-DD', true)
             return m.isValid() ? m.toDate() : null
         }
-        
+        else if (f.internal_name.toLowerCase() === 'phone' && typeof existing.value === 'string') {
+            return existing.value.replace('+', '')
+        }
+
         return existing.value
     }
 
@@ -186,14 +202,9 @@ fetchUsers()
             </div>
 
             <template v-for="field in fields.filter(f => f.is_primary_field)" :key="field.id">
-                <FieldRenderer 
-                    :field="{ id: field.id, name: field.name, options: field.options }" 
-                    :type="field.type"
-                    :is-mandatory="field.is_mandatory" 
-                    :user-options="userList"
-                    :error-message="formErrors[field.name] ?? undefined" 
-                    v-model:value="formValues[field.name]" 
-                />
+                <FieldRenderer :field="{ id: field.id, name: field.name, options: field.options }" :type="field.type"
+                    :is-mandatory="field.is_mandatory" :user-options="userList"
+                    :error-message="formErrors[field.name] ?? undefined" v-model:value="formValues[field.name]" />
             </template>
 
             <div class="flex flex-col gap-2" v-if="fields.filter(f => !f.is_primary_field).length > 0">
@@ -202,14 +213,10 @@ fetchUsers()
                 </label>
                 <div class="flex flex-col gap-6">
                     <template v-for="field in fields.filter(f => !f.is_primary_field)" :key="field.id">
-                        <FieldRenderer 
-                            :field="{ id: field.id, name: field.name, options: field.options }"
-                            :type="field.type" 
-                            :is-mandatory="field.is_mandatory" 
-                            :user-options="userList"
+                        <FieldRenderer :field="{ id: field.id, name: field.name, options: field.options }"
+                            :type="field.type" :is-mandatory="field.is_mandatory" :user-options="userList"
                             :error-message="formErrors[field.name] ?? undefined"
-                            v-model:value="formValues[field.name]" 
-                        />
+                            v-model:value="formValues[field.name]" />
                     </template>
                 </div>
             </div>

@@ -3,7 +3,7 @@ import { IconUsers, IconLayoutGrid } from '@tabler/icons-vue'
 </script>
 
 <template>
-    <Tabs value="0" class="py-4">
+    <Tabs value="0" class="py-4 max-h-[100vh]">
         <TabList>
             <Tab value="0">
                 <div class="flex items-center gap-2 text-inherit">

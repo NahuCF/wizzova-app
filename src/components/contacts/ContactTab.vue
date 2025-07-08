@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { IconSearch, IconPlus, IconFilter, IconDownload, 
     IconDotsVertical, IconTrash } from '@tabler/icons-vue'
+import axios from 'axios'
 import { useToast, type DataTablePageEvent } from 'primevue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -134,10 +135,16 @@ const createContact = async (contact: CreateContact) => {
         
         showContactDrawer.value = false
     } catch(error) {
+        let errorMessage = t('an_error_occurred')
+        
+        if (axios.isAxiosError(error) && error.status === 422 && error.response) {
+            errorMessage = t('validation_errors.' + error.response.data.message.replace('.', ''))
+        }
+
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: t('an_error_occurred'),
+            detail: errorMessage,
             life: 3000,
         })
     } finally {

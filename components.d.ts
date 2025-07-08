@@ -17,6 +17,7 @@ declare module 'vue' {
     Button: typeof import('primevue/button')['default']
     ButtonGroup: typeof import('primevue/buttongroup')['default']
     Calendar: typeof import('primevue/calendar')['default']
+    CellphoneInput: typeof import('./src/components/CellphoneInput.vue')['default']
     Column: typeof import('primevue/column')['default']
     ContactDrawer: typeof import('./src/components/contacts/ContactDrawer.vue')['default']
     ContactFieldDrawer: typeof import('./src/components/contact-fields/ContactFieldDrawer.vue')['default']

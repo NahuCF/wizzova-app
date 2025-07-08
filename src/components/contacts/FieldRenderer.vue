@@ -111,10 +111,25 @@ const multitextIcon = () => {
             />
 
             <MultiTextInput 
+                v-else-if="field.name === 'Phone'"
+                v-model="innerValue"
+                :fieldName="field.name"
+                v-bind="commonInputProps"
+            >
+                <template #input="{ modelValue, update, invalid }">
+                    <CellphoneInput
+                        :modelValue="modelValue"
+                        :invalid="invalid"
+                        @update:modelValue="update"
+                    />
+                </template>
+            </MultiTextInput>
+
+            <MultiTextInput 
                 v-else
                 v-model="innerValue"
                 :fieldName="field.name"
-                :isGrouped="['Email', 'Phone'].includes(field.name)"
+                :isGrouped="['Email'].includes(field.name)"
                 :icon="multitextIcon()"
                 v-bind="commonInputProps"
             />
