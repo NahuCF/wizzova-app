@@ -9,6 +9,7 @@ import { z } from 'zod'
 import parsePhoneNumberFromString from 'libphonenumber-js/min'
 import { useToast } from 'primevue'
 import { useI18n } from 'vue-i18n'
+import { useUserStore } from '~/stores'
 
 const props = defineProps<{
     visible: boolean
@@ -25,8 +26,8 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const toast = useToast()
+const userStore = useUserStore()
 
-const userList = ref<{ id: string; name: string }[]>([])
 const copiedId = ref(false)
 const contactId = ref('')
 const formValues = ref<Record<string, string | string[] | number | boolean | Date | null>>({})
@@ -169,15 +170,6 @@ const copyToClipboard = async () => {
     }
 }
 
-const fetchUsers = async () => {
-    try {
-        const response = await API.user.index()
-        userList.value = response.data.data
-    } catch (error) {
-        console.log(error)
-    }
-}
-
 watch(
     [() => props.visible, () => props.fields],
     ([visible, fields]) => {
@@ -196,7 +188,15 @@ watch(
     { immediate: true, deep: true }
 )
 
-fetchUsers()
+watch(
+    () => userStore.users.length,
+    (len) => {
+        if (len === 0) {
+            userStore.fetchUsers()
+        }
+    },
+    { immediate: true }
+)
 </script>
 
 <template>
@@ -217,7 +217,7 @@ fetchUsers()
 
             <template v-for="field in fields.filter(f => f.is_primary_field)" :key="field.id">
                 <FieldRenderer :field="{ id: field.id, name: field.name, options: field.options }" :type="field.type"
-                    :is-mandatory="field.is_mandatory" :user-options="userList"
+                    :is-mandatory="field.is_mandatory" :user-options="userStore.users"
                     :error-message="formErrors[field.name] ?? undefined" v-model:value="formValues[field.name]" />
             </template>
 
@@ -228,7 +228,7 @@ fetchUsers()
                 <div class="flex flex-col gap-6">
                     <template v-for="field in fields.filter(f => !f.is_primary_field)" :key="field.id">
                         <FieldRenderer :field="{ id: field.id, name: field.name, options: field.options }"
-                            :type="field.type" :is-mandatory="field.is_mandatory" :user-options="userList"
+                            :type="field.type" :is-mandatory="field.is_mandatory" :user-options="userStore.users"
                             :error-message="formErrors[field.name] ?? undefined"
                             v-model:value="formValues[field.name]" />
                     </template>

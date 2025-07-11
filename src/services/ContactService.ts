@@ -2,11 +2,21 @@ import Http from '~/config/http'
 import type { ContactItem, CreateContact, Page } from '~/types'
 
 export default {
-    async index(page: number = 1, perPage: number = 10, search: string = '') {
-        const params: Record<string, string | number> = {
+    async index(
+        page: number = 1,
+        perPage: number = 10,
+        search: string = '',
+        filters: {
+            contact_field_id: string
+            operator: string
+            value: any[]
+        }[] = []
+    ) {
+        const params: Record<string, any> = {
             page,
             rows_per_page: perPage,
             ...(search && { search }),
+            ...(filters.length > 0 && { filters }),
         }
 
         return Http.get<Page<ContactItem>>('/contacts', { params })

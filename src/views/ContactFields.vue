@@ -27,7 +27,7 @@ const showDeleteDialog = ref(false)
 const loadingDrawer = ref(false)
 const selectedField = ref<ContactFieldItem | undefined>()
 const types = ref<ContactFieldType[]>([])
-const typeIcon = ref<{ [key in ContactFieldType]: Component }>({
+const typeIcon = ref<Record<ContactFieldType, Component>>({
     'SELECT': IconCircleDot,
     'NUMBER': IconHash,
     'TEXT': IconTypography,

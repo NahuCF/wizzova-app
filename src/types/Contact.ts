@@ -1,3 +1,5 @@
+import type { FilterCondition } from "./Common"
+
 export type ContactFieldType = 'SELECT' | 'NUMBER' | 'TEXT' | 'MULTI_TEXT' | 'USER' | 'SWITCH' | 'DATE'
 
 export interface ContactFieldItem {
@@ -45,4 +47,9 @@ export interface MappingContact {
     value: string | string[] | number | boolean
     contactField: ContactFieldItem | null
     status: 'MAPPED' | 'NOT_MAPPED'
+}
+
+export interface ContactFilter {
+  contactFieldId: string
+  conditions: FilterCondition[]
 }

@@ -323,5 +323,27 @@ Grab them today!`,
       select_placeholder: 'Select'
     }
   },
-  copied_to_clipboard: 'Copied to clipboard'
+  copied_to_clipboard: 'Copied to clipboard',
+  apply: 'Apply',
+  filters: {
+    operator: 'Operator',
+    enter_value: 'Enter value',
+    add_condition: 'Add condition',
+    and: 'And',
+    or: 'Or',
+    operators: {
+      is: 'Is',
+      is_not: 'Is not',
+      contains: 'Contains',
+      not_contains: 'Not contains',
+      starts_with: 'Starts with',
+      ends_with: 'Ends with',
+      is_empty: 'Is empty',
+      is_not_empty: 'Is not empty',
+      before: 'Before',
+      after: 'After',
+      greater_than: 'Greater than',
+      less_than: 'Less than'
+    }
+  }
 }

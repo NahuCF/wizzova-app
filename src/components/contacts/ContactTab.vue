@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import { IconSearch, IconPlus, IconFilter, IconDownload, 
-    IconDotsVertical, IconTrash } from '@tabler/icons-vue'
 import axios from 'axios'
 import { useToast, type DataTablePageEvent } from 'primevue'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, type Component } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
-import { useContactFieldStore } from '~/stores'
-import type { ContactFieldItem, ContactItem, CreateContact } from '~/types'
-
+import { useContactFieldStore, useUserStore } from '~/stores'
+import type { Column, ContactFieldItem, ContactFieldType, ContactItem, CreateContact, Filter, FilterOperator } from '~/types'
+import { 
+    IconCircleDot, IconHash, IconTypography, IconTextWrap, IconUserCircle, 
+    IconToggleLeft, IconCalendar, IconSearch, IconPlus, IconDownload,  
+    IconDotsVertical, IconTrash, IconX
+} from '@tabler/icons-vue'
 
 const { t } = useI18n()
 const router = useRouter()
 const toast = useToast()
 const contactFieldStore = useContactFieldStore()
+const userStore = useUserStore()
 const {
   dataPage,
   loading,
@@ -24,7 +27,7 @@ const {
   fetchDataPage,
   debouncedFetch,
 } = usePaginatedData<ContactItem>(
-    (page, perPage, search) => API.contact.index(page, perPage, search).then(res => res.data),
+    (page, perPage, search) => API.contact.index(page, perPage, search, transformFilters()).then(res => res.data),
     10
 )
 
@@ -35,6 +38,7 @@ const showDeleteDialog = ref(false)
 const showContactDrawer = ref(false)
 const showImportContacts = ref(false)
 const loadingDrawer = ref(false)
+const filters = ref<Filter[]>([])
 
 const contactOptions = ref([
 	[
@@ -59,6 +63,56 @@ const importOptions = ref([
         action: () => router.push('/contacts/import/history')
     }
 ])
+
+const operatorsByType: Record<ContactFieldType, FilterOperator[]> = {
+    TEXT: ['is', 'is_not', 'contains', 'not_contains', 'starts_with', 'ends_with', 'is_empty', 'is_not_empty'],
+    MULTI_TEXT: ['is', 'is_not', 'contains', 'not_contains', 'starts_with', 'ends_with', 'is_empty', 'is_not_empty'],
+    SELECT: ['contains', 'not_contains', 'is_empty', 'is_not_empty'],
+    SWITCH: ['is', 'is_not', 'is_empty', 'is_not_empty'],
+    USER: ['contains', 'not_contains', 'is_empty', 'is_not_empty'],
+    DATE: ['is', 'is_not', 'contains', 'not_contains', 'starts_with', 'ends_with', 'is_empty', 'is_not_empty'],
+    NUMBER: ['is', 'is_not', 'contains', 'not_contains', 'starts_with', 'ends_with', 'is_empty', 'is_not_empty']
+}
+
+const iconsByType: Record<ContactFieldType, Component> = {
+    SELECT: IconCircleDot,
+    NUMBER: IconHash,
+    TEXT: IconTypography,
+    MULTI_TEXT: IconTextWrap,
+    USER: IconUserCircle,
+    SWITCH: IconToggleLeft,
+    DATE: IconCalendar
+}
+
+const columns = computed<Column[]>(() => {
+    return contactFieldStore.contactFields
+        .map(field => {
+            let options: { label: string; value: any }[] | undefined
+
+            if (field.type === 'USER') {
+                options = userStore.users.map(user => ({
+                    label: user.name,
+                    value: user.id
+                }))
+            } else if (field.options && field.options.length) {
+                options = field.options.map(opt => ({ label: opt, value: opt }))
+            } else if (field.type === 'SWITCH') {
+                options = [
+                    { label: t('yes'), value: true },
+                    { label: t('no'), value: false }
+                ]
+            }
+
+            return {
+                id: field.id,
+                name: field.name,
+                type: field.type.toLowerCase(),
+                operators: operatorsByType[field.type] || ['contains', 'is', 'is_not'],
+                icon: iconsByType[field.type] || null,
+                options
+            }
+        })
+})
 
 const toggleImportMenu = (event: Event) => {
     importMenu.value.toggle(event)
@@ -108,6 +162,45 @@ const formatField = (contactFieldItem: ContactFieldItem, contact: ContactItem) =
     else {
         return contactField.value
     }
+}
+
+const formatCondition = (contactFieldId: string, condition: { operator: FilterOperator | ''; value: string[]; labels?: string[] }) => {
+    const field = contactFieldStore.contactFields.find(f => f.id === contactFieldId)
+    const opLabel = t(`filters.operators.${condition.operator}`) || condition.operator
+
+    const displayValues = condition.labels && condition.labels.length === condition.value.length
+        ? condition.labels
+        : condition.value
+
+    const valStr = displayValues?.join(', ') || ''
+    return `${field?.name || ''} ${opLabel}${valStr ? ': ' + valStr : ''}`
+}
+
+const removeFromFilter = (filterIndex: number, conditionIndex: number) => {
+    if (filterIndex < 0 || filterIndex >= filters.value.length) return
+
+    const filter = filters.value[filterIndex]
+    if (!filter) return
+
+    filter.conditions.splice(conditionIndex, 1)
+
+    if (filter.conditions.length === 0) {
+        filters.value.splice(filterIndex, 1)
+    }
+}
+
+const onFiltersUpdate = (newFilters: Filter[]) => {
+    filters.value = newFilters
+}
+
+const transformFilters = () => {
+    return filters.value.flatMap(filter =>
+        filter.conditions.map(condition => ({
+            contact_field_id: filter.columnId,
+            operator: condition.operator,
+            value: condition.value
+        }))
+    )
 }
 
 const createContact = async (contact: CreateContact) => {
@@ -177,22 +270,29 @@ const deleteContact = async () => {
     }
 }
 
-watch(rowsPerPage, () => fetchDataPage(1, rowsPerPage.value))
+watch(rowsPerPage, 
+    () => fetchDataPage(1, rowsPerPage.value), 
+    { immediate: true }
+)
+
+watch(filters, 
+    () => fetchDataPage(1, rowsPerPage.value), 
+    { deep: true }
+)
 
 contactFieldStore.fetchContactFields()
-fetchDataPage(1, rowsPerPage.value)
+userStore.fetchUsers()
 </script>
 
 <template>
     <div class="flex flex-col gap-6 h-full">
         <div class="flex justify-between py-2.5">
             <div class="flex gap-2">
-                <Button @click="" severity="secondary" class="bg-white! border-slate-200! hover:bg-slate-100!">
-                    <IconFilter size="14" />
-                    <span class="text-sm">
-                        {{ $t('filter') }}
-                    </span>
-                </Button>
+                <GenericFilters 
+                    :columns="columns" 
+                    :modelValue="filters"
+                    @update:filters="onFiltersUpdate" 
+                />
                 <Button
                     class="bg-white! border-slate-200! hover:bg-slate-100!" 
                     severity="secondary" 
@@ -232,6 +332,26 @@ fetchDataPage(1, rowsPerPage.value)
                 </span>
             </Button>
         </div>
+
+        <div v-if="filters.length > 0" class="flex flex-wrap gap-2">
+            <template v-for="(filter, fIndex) in filters" :key="fIndex">
+                <template v-for="(condition, cIndex) in filter.conditions" :key="cIndex">
+                    <Tag class="px-3!" rounded size="small">
+                        {{ formatCondition(filter.columnId, condition) }}
+                        <Button 
+                            variant="text" 
+                            rounded
+                            class="p-0.5!"
+                            size="small"
+                            @click="removeFromFilter(fIndex, cIndex)"
+                        >
+                            <IconX class="w-4 h-4" />
+                        </Button>
+                    </Tag>
+                </template>
+            </template>
+        </div>
+        
         <div class="overflow-auto">
             <DataTable 
                 :value="dataPage.data"

@@ -322,5 +322,27 @@ export default {
       select_placeholder: 'Seleccionar'
     }
   },
-  copied_to_clipboard: 'Copiado al portapapeles'
+  copied_to_clipboard: 'Copiado al portapapeles',
+  pply: 'Aplicar',
+  filters: {
+    operator: 'Operador',
+    enter_value: 'Ingresa valor',
+    add_condition: 'Agregar Condicion',
+    and: 'Y',
+    or: 'O',
+    operators: {
+      is: 'Es',
+      is_not: 'No es',
+      contains: 'Contiene',
+      not_contains: 'No contiene',
+      starts_with: 'Empieza con',
+      ends_with: 'Termina con',
+      is_empty: 'Está vacío',
+      is_not_empty: 'No está vacío',
+      before: 'Antes de',
+      after: 'Después de',
+      greater_than: 'Mayor que',
+      less_than: 'Menor que'
+    }
+  }
 }
