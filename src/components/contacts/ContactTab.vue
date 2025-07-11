@@ -13,17 +13,20 @@ import {
     IconToggleLeft, IconCalendar, IconSearch, IconPlus, IconDownload,  
     IconDotsVertical, IconTrash, IconX
 } from '@tabler/icons-vue'
+import { useCrudActions } from '~/composables/useCrudActions'
 
 const { t } = useI18n()
 const router = useRouter()
 const toast = useToast()
 const contactFieldStore = useContactFieldStore()
 const userStore = useUserStore()
+
 const {
   dataPage,
   loading,
   searchTerm,
   rowsPerPage,
+  currentPageReport,
   fetchDataPage,
   debouncedFetch,
 } = usePaginatedData<ContactItem>(
@@ -31,13 +34,31 @@ const {
     10
 )
 
+const {
+    loading: loadingDrawer,
+    createOrUpdate,
+    remove
+} = useCrudActions<CreateContact>({
+    api: {
+        create: API.contact.create,
+        update: API.contact.update,
+        delete: API.contact.delete
+    },
+    fetchData: fetchDataPage,
+    rowsPerPage,
+    i18nKeys: {
+        created: 'contacts.contact_created',
+        updated: 'contacts.contact_updated',
+        deleted: 'contacts.contact_deleted'
+    }
+})
+
 const importMenu = ref()
 const contactMenu = ref()
 const selectedContact = ref<ContactItem | undefined>()
 const showDeleteDialog = ref(false)
 const showContactDrawer = ref(false)
 const showImportContacts = ref(false)
-const loadingDrawer = ref(false)
 const filters = ref<Filter[]>([])
 
 const contactOptions = ref([
@@ -118,18 +139,6 @@ const toggleImportMenu = (event: Event) => {
     importMenu.value.toggle(event)
 }
 
-const currentPageReport = computed(() => {
-	const total = dataPage.value.meta.total
-	const first = (dataPage.value.meta.current_page - 1) * rowsPerPage.value + (total > 0 ? 1 : 0)
-	let last = first + rowsPerPage.value - 1
-	if (last > dataPage.value.meta.total) last = dataPage.value.meta.total
-	
-	return t('showing_results', {
-		first: first,
-		last: last
-	})
-})
-
 const onPage = (event: DataTablePageEvent) => {
 	rowsPerPage.value = event.rows
 	const page = Math.floor(event.first / event.rows) + 1
@@ -203,71 +212,18 @@ const transformFilters = () => {
     )
 }
 
-const createContact = async (contact: CreateContact) => {
-    loadingDrawer.value = true
-    try {
-        let message = ''
-
-        if(contact.id) {
-            await API.contact.update(contact)
-            message = t('contacts.contact_updated')
-        }
-        else {
-            await API.contact.create(contact)
-            message = t('contacts.contact_created')
-        }
-
-        fetchDataPage(1, rowsPerPage.value)
-
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: message,
-            life: 3000,
-        })
-        
-        showContactDrawer.value = false
-    } catch(error) {
-        let errorMessage = t('an_error_occurred')
-
-        if (axios.isAxiosError(error) && error.status === 422 && error.response) {
-            errorMessage = t('validation_errors.' + error.response.data.message.replace('.', ''))
-        }
-
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: errorMessage,
-            life: 3000,
-        })
-    } finally {
-        loadingDrawer.value = false
-    }
+const onSave = (contact: CreateContact) => {
+  createOrUpdate(contact, {
+    onSuccess: () => showContactDrawer.value = false
+  })
 }
 
-const deleteContact = async () => {
-    try {
-        const id = selectedContact.value?.id ?? ''
-        await API.contact.delete(id)
-
-        dataPage.value.data = dataPage.value.data.filter(cf => cf.id !== id)
-        dataPage.value.meta.total = dataPage.value.meta.total - 1
-        showDeleteDialog.value = false
-
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: t('contacts.contact_deleted'),
-            life: 3000,
-        })
-    } catch(error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: t('an_error_occurred'),
-            life: 3000,
-        })
-    }
+const onDelete = () => {
+  if (selectedContact.value?.id) {
+    remove(selectedContact.value.id, {
+      onSuccess: () => showDeleteDialog.value = false
+    })
+  }
 }
 
 watch(rowsPerPage, 
@@ -433,7 +389,7 @@ userStore.fetchUsers()
             v-model:visible="showDeleteDialog" 
             :title="$t('contacts.delete_contact')"
             :message="$t('contacts.delete_message')"
-            @onConfirm="deleteContact" 
+            @onConfirm="onDelete" 
         />
         <ContactDrawer 
             v-model:visible="showContactDrawer"
@@ -441,7 +397,7 @@ userStore.fetchUsers()
             :title="selectedContact ? $t('contacts.edit_contact') : $t('contacts.create_contact')"
             :loading="loadingDrawer"
             :contact="selectedContact"
-            @onConfirm="createContact"
+            @onConfirm="onSave"
         />
         <ImportContactDialog
             v-model:visible="showImportContacts"

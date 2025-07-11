@@ -17,6 +17,7 @@ const {
   loading,
   searchTerm,
   rowsPerPage,
+  currentPageReport,
   fetchDataPage,
   loadNextPage,
   debouncedFetch,
@@ -62,19 +63,6 @@ const templateOptions = ref([
 	]
 ])
 const popover = ref()
-
-const currentPageReport = computed(() => {
-	const total = dataPage.value.meta.total
-	const first = (dataPage.value.meta.current_page - 1) * rowsPerPage.value + (total > 0 ? 1 : 0)
-	let last = first + rowsPerPage.value - 1
-	if (last > dataPage.value.meta.total) last = dataPage.value.meta.total
-	
-	return t('showing_results', {
-		first: first,
-		last: last,
-		totalRecords: total
-	})
-})
 
 const changeLayout = (index: number) => {
 	activeLayout.value = index

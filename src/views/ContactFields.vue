@@ -7,6 +7,7 @@ import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
 import type { ContactFieldType, ContactFieldItem, ContactFieldCreate } from '~/types'
 import { useToast } from 'primevue'
+import { useCrudActions } from '~/composables/useCrudActions'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -21,10 +22,28 @@ const {
   10
 )
 
+const {
+    loading: loadingDrawer,
+    createOrUpdate,
+    remove
+} = useCrudActions<ContactFieldCreate>({
+    api: {
+        create: API.contactField.create,
+        update: API.contactField.update,
+        delete: API.contactField.delete,
+    },
+    fetchData: fetchDataPage,
+    rowsPerPage,
+    i18nKeys: {
+        created: 'contact_fields.field_created',
+        updated: 'contact_fields.field_updated',
+        deleted: 'contact_fields.field_deleted',
+    }
+})
+
 const popover = ref()
 const showFieldDrawer = ref(false)
 const showDeleteDialog = ref(false)
-const loadingDrawer = ref(false)
 const selectedField = ref<ContactFieldItem | undefined>()
 const types = ref<ContactFieldType[]>([])
 const typeIcon = ref<Record<ContactFieldType, Component>>({
@@ -68,71 +87,16 @@ const fetchTypes = async () => {
     types.value = response.data.data
 }
 
-const createField = async (contactField: ContactFieldCreate) => {
-    loadingDrawer.value = true
-    try {
-        let message = ''
-
-        if(contactField.id) {
-            const { data } = await API.contactField.update(contactField)
-
-            // Filter field to avoid reloading
-            dataPage.value.data = dataPage.value.data.map(cf => {
-                if(cf.id === data.data.id) {
-                    return data.data
-                }
-                
-                return cf
-            })
-            message = t('contact_fields.field_updated')
-        }
-        else {
-            const { data } = await API.contactField.create(contactField)
-            fetchDataPage(1, rowsPerPage.value)
-            message = t('contact_fields.field_created')
-        }
-
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: message,
-            life: 3000,
-        })
-        
-        showFieldDrawer.value = false
-    } catch(error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: t('an_error_occurred'),
-            life: 3000,
-        })
-    } finally {
-        loadingDrawer.value = false
-    }
+const onSaveField = (contactField: ContactFieldCreate) => {
+    createOrUpdate(contactField, {
+        onSuccess: () => showFieldDrawer.value = false
+    })
 }
 
-const deleteField = async () => {
-    try {
-        const id = selectedField.value?.id ?? ''
-        await API.contactField.delete(id)
-
-        dataPage.value.data = dataPage.value.data.filter(cf => cf.id !== id)
-        dataPage.value.meta.total = dataPage.value.meta.total - 1
-        showDeleteDialog.value = false
-
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: t('contact_fields.field_deleted'),
-            life: 3000,
-        })
-    } catch(error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: t('an_error_occurred'),
-            life: 3000,
+const onDeleteField = () => {
+    if (selectedField.value?.id) {
+        remove(selectedField.value.id, {
+            onSuccess: () => showDeleteDialog.value = false
         })
     }
 }
@@ -308,14 +272,14 @@ fetchTypes()
             :loading="loadingDrawer"
             :types="types"
             :contactField="selectedField"
-            @onSave="createField" 
+            @onSave="onSaveField" 
         />
         <DeleteDialog 
             v-model:visible="showDeleteDialog" 
             :title="$t('contact_fields.delete_field')"
             :message="$t('contact_fields.delete_message')"
             :note="$t('contact_fields.delete_note')"
-            @onConfirm="deleteField" 
+            @onConfirm="onDeleteField" 
         />
     </div>
 </template>

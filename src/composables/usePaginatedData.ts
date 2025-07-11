@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useToast } from 'primevue'
 import { useDebounceFn } from '~/composables/useDebounceFn'
 import type { Page } from '~/types'
@@ -62,11 +62,25 @@ export function usePaginatedData<T>(
 
 	const debouncedFetch = useDebounceFn(fetchDataPage, 500)
 
+	const currentPageReport = computed(() => {
+		const total = dataPage.value.meta.total
+		const first = (dataPage.value.meta.current_page - 1) * rowsPerPage.value + (total > 0 ? 1 : 0)
+		let last = first + rowsPerPage.value - 1
+		if (last > dataPage.value.meta.total) last = dataPage.value.meta.total
+		
+		return t('showing_results', {
+			first: first,
+			last: last,
+			totalRecords: total
+		})
+	})
+
 	return {
 		dataPage,
 		loading,
 		searchTerm,
 		rowsPerPage,
+		currentPageReport,
 		fetchDataPage,
 		loadNextPage,
 		debouncedFetch,
