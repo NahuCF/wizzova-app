@@ -4,7 +4,7 @@ import { IconUsers, IconLayoutGrid } from '@tabler/icons-vue'
 
 <template>
     <div class="h-screen">
-        <Tabs value="0" class="py-4">
+        <Tabs value="0" class="py-4" lazy>
             <TabList>
                 <Tab value="0">
                     <div class="flex items-center gap-2 text-inherit">
@@ -15,7 +15,7 @@ import { IconUsers, IconLayoutGrid } from '@tabler/icons-vue'
                 <Tab value="1">
                     <div class="flex items-center gap-2 text-inherit">
                         <IconLayoutGrid size="16" />
-                        <span class="text-sm">{{ $t('contacts.segments_tab') }}</span>
+                        <span class="text-sm">{{ $t('contacts.groups_tab') }}</span>
                     </div>
                 </Tab>
             </TabList>
@@ -24,7 +24,7 @@ import { IconUsers, IconLayoutGrid } from '@tabler/icons-vue'
                     <ContactTab />
                 </TabPanel>
                 <TabPanel value="1">
-                    Todo segments
+                    <ContactGroupsTab />
                 </TabPanel>
             </TabPanels>
         </Tabs>

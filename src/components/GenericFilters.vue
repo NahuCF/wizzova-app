@@ -8,7 +8,7 @@ import Menu from 'primevue/menu'
 import Popover from 'primevue/popover'
 import Divider from 'primevue/divider'
 import { useI18n } from 'vue-i18n'
-import type { Column, FilterOperator } from '~/types'
+import type { Column, Filter, FilterOperator } from '~/types'
 import {
   IconX,
   IconPlus,
@@ -16,14 +16,10 @@ import {
   IconFilter
 } from '@tabler/icons-vue'
 
-interface Filter {
-    columnId: string
-    conditions: { operator: FilterOperator | ''; value: any[] }[]
-}
-
 const props = defineProps<{
     columns: Column[]
-    modelValue: Filter[]
+    filters: Filter[],
+    disabled?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -32,7 +28,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const filters = ref<Filter[]>([...props.modelValue])
 const menu = ref()
 const popover = ref()
 const filterButton = ref<any>()
@@ -43,6 +38,11 @@ const currentFilter = ref<{
 }>({
     columnId: '',
     conditions: []
+})
+
+const filters = computed({
+    get: () => props.filters,
+    set: (val: Filter[]) => emit('update:filters', val)
 })
 
 const menuItems = computed(() =>
@@ -126,7 +126,6 @@ const addFilter = () => {
     if (idx === -1) filters.value.push(newFilter)
     else filters.value[idx] = newFilter
 
-    emit('update:filters', filters.value)
     closePopover()
 }
 
@@ -185,8 +184,13 @@ const dateModel = (conditionIndex: number, valueIndex: number) =>
 
 <template>
     <div>
-        <Button @click="openMenu" severity="secondary" class="bg-white! border-slate-200! hover:bg-slate-100!"
-            ref="filterButton">
+        <Button 
+            @click="openMenu" 
+            severity="secondary" 
+            class="bg-white! border-slate-200! hover:bg-slate-100!"
+            :disabled="disabled"
+            ref="filterButton"
+        >
             <IconFilter size="14" class="mr-1" />
             <span class="text-sm">{{ $t('filter') }}</span>
         </Button>

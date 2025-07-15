@@ -258,7 +258,7 @@ Grab them today!`,
   contacts: {
     title: 'Contacts',
     contacts_tab: 'Contacts',
-    segments_tab: 'Segments',
+    groups_tab: 'Groups',
     import_file: 'Import file',
     import_history: 'Import history',
     add_contact: 'Add contact',
@@ -344,6 +344,28 @@ Grab them today!`,
       after: 'After',
       greater_than: 'Greater than',
       less_than: 'Less than'
+    }
+  },
+  contact_groups: {
+    add_group: 'Add group',
+    empty: 'No groups found',
+    edit: 'Edit group',
+    delete_group: 'Delete Group',
+    delete_message: 'Do you want to delete this group?',
+    headers: {
+      name_of_group: 'Name of group',
+      filters: 'Filters',
+      total_contacts: 'Total contacts',
+      created_by: 'Created by',
+      last_update: 'Last update'
+    },
+    dialog: {
+      create_group: 'Create Group',
+      edit_group: 'Edit Group',
+      message: 'Create dynamic groups with contact filters that automatically include new and existing contacts meeting the criteria.',
+      enter_group_name: 'Enter group name',
+      create_group_tooltip: 'Cannot save/create a group without associated contacts',
+      reset: 'Reset'
     }
   }
 }

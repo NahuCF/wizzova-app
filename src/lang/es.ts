@@ -256,7 +256,7 @@ export default {
   contacts: {
     title: 'Contactos',
     contacts_tab: 'Contactos',
-    segments_tab: 'Divisiones',
+    groups_tab: 'Grupos',
     import_file: 'Importar archivo',
     import_history: 'Importar histórico',
     add_contact: 'Agregar contacto',
@@ -343,6 +343,28 @@ export default {
       after: 'Después de',
       greater_than: 'Mayor que',
       less_than: 'Menor que'
+    }
+  },
+  contact_groups: {
+    add_group: 'Agregar Grupo',
+    empty: 'No se encontraron grupos',
+    edit: 'Editar grupo',
+    delete_group: 'Eliminar Grupo',
+    delete_message: '¿Quieres eliminar este grupo?',
+    headers: {
+      name_of_group: 'Nombre de grupo',
+      filters: 'Filtros',
+      total_contacts: 'Contactos totales',
+      created_by: 'Creado por',
+      last_update: 'Ultima actualización'
+    },
+    dialog: {
+      create_group: 'Crear Grupo',
+      edit_group: 'Editar Grupo',
+      message: 'Crea grupos dinámicos con filtros de contactos que incluyan automáticamente contactos nuevos y existentes que cumplan los criterios.',
+      enter_group_name: 'Ingresar nombre del grupo',
+      create_group_tooltip: 'No puede guardar/crear un grupo sin contactos asociados',
+      reset: 'Resetear'
     }
   }
 }

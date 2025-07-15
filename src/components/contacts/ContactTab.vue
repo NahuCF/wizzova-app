@@ -1,36 +1,31 @@
 <script setup lang="ts">
-import axios from 'axios'
-import { useToast, type DataTablePageEvent } from 'primevue'
-import { computed, ref, watch, type Component } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
 import { useContactFieldStore, useUserStore } from '~/stores'
-import type { Column, ContactFieldItem, ContactFieldType, ContactItem, CreateContact, Filter, FilterOperator } from '~/types'
-import { 
-    IconCircleDot, IconHash, IconTypography, IconTextWrap, IconUserCircle, 
-    IconToggleLeft, IconCalendar, IconSearch, IconPlus, IconDownload,  
-    IconDotsVertical, IconTrash, IconX
-} from '@tabler/icons-vue'
+import type { ContactItem, CreateContact, Filter, FilterOperator } from '~/types'
+import { IconSearch, IconPlus, IconDownload, IconX } from '@tabler/icons-vue'
 import { useCrudActions } from '~/composables/useCrudActions'
+import { useContactFilters } from '~/composables/useContactFilters'
 
 const { t } = useI18n()
 const router = useRouter()
-const toast = useToast()
 const contactFieldStore = useContactFieldStore()
 const userStore = useUserStore()
+const { columns: contactFilters, flattenFilters } = useContactFilters()
 
 const {
-  dataPage,
-  loading,
-  searchTerm,
-  rowsPerPage,
-  currentPageReport,
-  fetchDataPage,
-  debouncedFetch,
+    dataPage,
+    loading,
+    searchTerm,
+    rowsPerPage,
+    currentPageReport,
+    fetchDataPage,
+    debouncedFetch,
 } = usePaginatedData<ContactItem>(
-    (page, perPage, search) => API.contact.index(page, perPage, search, transformFilters()).then(res => res.data),
+    (page, perPage, search) => API.contact.index(page, perPage, search, flattenFilters(filters.value)).then(res => res.data),
     10
 )
 
@@ -54,26 +49,12 @@ const {
 })
 
 const importMenu = ref()
-const contactMenu = ref()
 const selectedContact = ref<ContactItem | undefined>()
 const showDeleteDialog = ref(false)
 const showContactDrawer = ref(false)
 const showImportContacts = ref(false)
 const filters = ref<Filter[]>([])
 
-const contactOptions = ref([
-	[
-		{
-			label: 'delete',
-			class: 'text-red-600',
-			icon: IconTrash,
-			action: (contactItem: ContactItem) => {
-                selectedContact.value = contactItem
-                showDeleteDialog.value = true
-            }
-		}
-	]
-])
 const importOptions = ref([
     {
         label: t('contacts.import_file'),
@@ -85,92 +66,18 @@ const importOptions = ref([
     }
 ])
 
-const operatorsByType: Record<ContactFieldType, FilterOperator[]> = {
-    TEXT: ['is', 'is_not', 'contains', 'not_contains', 'starts_with', 'ends_with', 'is_empty', 'is_not_empty'],
-    MULTI_TEXT: ['is', 'is_not', 'contains', 'not_contains', 'starts_with', 'ends_with', 'is_empty', 'is_not_empty'],
-    SELECT: ['contains', 'not_contains', 'is_empty', 'is_not_empty'],
-    SWITCH: ['is', 'is_not', 'is_empty', 'is_not_empty'],
-    USER: ['contains', 'not_contains', 'is_empty', 'is_not_empty'],
-    DATE: ['is', 'is_not', 'contains', 'not_contains', 'starts_with', 'ends_with', 'is_empty', 'is_not_empty'],
-    NUMBER: ['is', 'is_not', 'contains', 'not_contains', 'starts_with', 'ends_with', 'is_empty', 'is_not_empty']
-}
-
-const iconsByType: Record<ContactFieldType, Component> = {
-    SELECT: IconCircleDot,
-    NUMBER: IconHash,
-    TEXT: IconTypography,
-    MULTI_TEXT: IconTextWrap,
-    USER: IconUserCircle,
-    SWITCH: IconToggleLeft,
-    DATE: IconCalendar
-}
-
-const columns = computed<Column[]>(() => {
-    return contactFieldStore.contactFields
-        .map(field => {
-            let options: { label: string; value: any }[] | undefined
-
-            if (field.type === 'USER') {
-                options = userStore.users.map(user => ({
-                    label: user.name,
-                    value: user.id
-                }))
-            } else if (field.options && field.options.length) {
-                options = field.options.map(opt => ({ label: opt, value: opt }))
-            } else if (field.type === 'SWITCH') {
-                options = [
-                    { label: t('yes'), value: true },
-                    { label: t('no'), value: false }
-                ]
-            }
-
-            return {
-                id: field.id,
-                name: field.name,
-                type: field.type.toLowerCase(),
-                operators: operatorsByType[field.type] || ['contains', 'is', 'is_not'],
-                icon: iconsByType[field.type] || null,
-                options
-            }
-        })
-})
-
 const toggleImportMenu = (event: Event) => {
     importMenu.value.toggle(event)
 }
 
-const onPage = (event: DataTablePageEvent) => {
-	rowsPerPage.value = event.rows
-	const page = Math.floor(event.first / event.rows) + 1
-	fetchDataPage(page, rowsPerPage.value)
-}
-
-const onRowClick = ({ data }: { data?: ContactItem }) => {
-    selectedContact.value = data
+const onCreateContact = (contactItem?: ContactItem) => {
+    selectedContact.value = contactItem
     showContactDrawer.value = true
 }
 
-const getContactField = (contactFieldItem: ContactFieldItem, contact: ContactItem) => {
-    return contact.fields.find(f => f.name === contactFieldItem.name)
-}
-
-const formatField = (contactFieldItem: ContactFieldItem, contact: ContactItem) => {
-    const contactField = getContactField(contactFieldItem, contact)
-
-    if(!contactField) {
-        const header = t(`contacts.headers.${contactFieldItem.name}`, { default: contactFieldItem.name })
-        return `No ${header}`
-    }
-
-    if(Array.isArray(contactField.value)) {
-        return contactField.value.join(', ')
-    } 
-    else if (typeof contactField.value === 'boolean') {
-        return Boolean(contactField.value) ? t('yes') : t('no')
-    }
-    else {
-        return contactField.value
-    }
+const onDeleteContact = (contactItem: ContactItem) => {
+    selectedContact.value = contactItem
+    showDeleteDialog.value = true
 }
 
 const formatCondition = (contactFieldId: string, condition: { operator: FilterOperator | ''; value: string[]; labels?: string[] }) => {
@@ -198,32 +105,18 @@ const removeFromFilter = (filterIndex: number, conditionIndex: number) => {
     }
 }
 
-const onFiltersUpdate = (newFilters: Filter[]) => {
-    filters.value = newFilters
-}
-
-const transformFilters = () => {
-    return filters.value.flatMap(filter =>
-        filter.conditions.map(condition => ({
-            contact_field_id: filter.columnId,
-            operator: condition.operator,
-            value: condition.value
-        }))
-    )
-}
-
 const onSave = (contact: CreateContact) => {
-  createOrUpdate(contact, {
-    onSuccess: () => showContactDrawer.value = false
-  })
+    createOrUpdate(contact, {
+        onSuccess: () => showContactDrawer.value = false
+    })
 }
 
 const onDelete = () => {
-  if (selectedContact.value?.id) {
-    remove(selectedContact.value.id, {
-      onSuccess: () => showDeleteDialog.value = false
-    })
-  }
+    if (selectedContact.value?.id) {
+        remove(selectedContact.value.id, {
+            onSuccess: () => showDeleteDialog.value = false
+        })
+    }
 }
 
 watch(rowsPerPage, 
@@ -245,9 +138,8 @@ userStore.fetchUsers()
         <div class="flex justify-between py-2.5">
             <div class="flex gap-2">
                 <GenericFilters 
-                    :columns="columns" 
-                    :modelValue="filters"
-                    @update:filters="onFiltersUpdate" 
+                    :columns="contactFilters"
+                    v-model:filters="filters" 
                 />
                 <Button
                     class="bg-white! border-slate-200! hover:bg-slate-100!" 
@@ -281,7 +173,7 @@ userStore.fetchUsers()
                     />
                 </div>
             </div>
-            <Button @click="onRowClick({})">
+            <Button @click="onCreateContact()">
                 <IconPlus size="16" class="mr-1" />
                 <span class="text-sm">
                     {{ $t('contacts.add_contact') }}
@@ -307,84 +199,18 @@ userStore.fetchUsers()
                 </template>
             </template>
         </div>
-        
-        <div class="overflow-auto">
-            <DataTable 
-                :value="dataPage.data"
-                dataKey="id"
-                class="rounded-lg overflow-hidden"
-                :lazy="true"
-                :paginator="true"
-                :loading="loading || contactFieldStore.loading"
-                :rows="rowsPerPage"
-                :totalRecords="dataPage.meta.total"
-                scrollable
-                scrollHeight="flex"
-                paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                :currentPageReportTemplate="currentPageReport"
-                rowHover
-                :rowClass="() => 'cursor-pointer'"
-                @page="onPage"
-                @row-click="onRowClick"
-            >
-                <template #empty>
-                    <div class="text-center text-sm py-4 text-gray-500">
-                        {{ $t('contacts.empty') }}
-                    </div>
-                </template>
 
-                <template #paginatorstart>
-                    <div class="flex items-center gap-2">
-                        <label for="rows" class="text-sm font-bold!">
-                            {{ $t('show_rows_per_page') }}
-                        </label>
-                        <Select
-                            id="rows"
-                            v-model="rowsPerPage"
-                            :options="[10, 20, 50]"
-                            size="small"
-                        />
-                    </div>
-                </template>
+        <ContactTable
+            v-model:rowsPerPage="rowsPerPage"
+            :loading="loading"
+            :dataPage="dataPage"
+            :currentPageReport="currentPageReport"
+            :filters="filters"
+            @loadPage="(pageNumber: number) => fetchDataPage(pageNumber, rowsPerPage)"
+            @updateContact="(contactItem: ContactItem) => onCreateContact(contactItem)"
+            @deleteContact="(contactItem: ContactItem) => onDeleteContact(contactItem)"
+        />
 
-                <Column v-for="cf in contactFieldStore.primaryFields" :key="cf.id" :bodyStyle="{ maxWidth: '100px' }" headerClass="bg-slate-200!" >
-                    <template #header>
-                        <div class="uppercase text-sm font-semibold">
-                            {{ $te(`contacts.headers.${cf.name}`) ? $t(`contacts.headers.${cf.name}`) :  cf.name }}
-                        </div>
-                    </template>
-
-                    <template #body="{ data }: { data: ContactItem }">
-                        <span 
-                            class="block whitespace-nowrap overflow-hidden text-ellipsis text-sm"
-                            :class="{ 'opacity-25': getContactField(cf, data)?.value === undefined }"
-                            v-tooltip.bottom="
-                                Array.isArray(getContactField(cf, data)?.value) 
-                                    ? {
-                                        value: (getContactField(cf, data)?.value as string[]).join('\n'),
-                                        class: 'text-sm max-w-[300px]!'
-                                    } 
-                                    : undefined
-                            "
-                        >
-                            {{ formatField(cf, data) }}
-                        </span>
-                    </template>
-                </Column>
-
-                <Column headerClass="bg-slate-200!" :bodyStyle="{ maxWidth: '50px' }">
-                    <template #body="{ data }: { data: ContactItem }">
-                        <div class="flex justify-center">
-                            <Button severity="secondary" variant="text" @click="(e: Event) => contactMenu?.show(e, data)">
-                                <IconDotsVertical  size="13" />
-                            </Button>
-                        </div>
-                    </template>
-                </Column>
-            </DataTable>
-        </div>
-
-        <ActionsPopover ref="contactMenu" :options="contactOptions" />
         <DeleteDialog 
             v-model:visible="showDeleteDialog" 
             :title="$t('contacts.delete_contact')"

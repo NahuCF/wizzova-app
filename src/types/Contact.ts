@@ -1,4 +1,5 @@
-import type { FilterCondition } from "./Common"
+import type { FilterCondition, FilterOperator } from "./Common"
+import type { UserItem } from "./User"
 
 export type ContactFieldType = 'SELECT' | 'NUMBER' | 'TEXT' | 'MULTI_TEXT' | 'USER' | 'SWITCH' | 'DATE'
 
@@ -39,7 +40,7 @@ export interface CreateContact {
         id: string,
         name: string,
         value: string | string[] | number | boolean
-    } []
+    }[]
 }
 
 export interface MappingContact {
@@ -50,6 +51,27 @@ export interface MappingContact {
 }
 
 export interface ContactFilter {
-  contactFieldId: string
-  conditions: FilterCondition[]
+    contactFieldId: string
+    conditions: FilterCondition[]
+}
+
+export interface ContactFilterCondition {
+    contact_field_id: string,
+    operator: FilterOperator,
+    value: string[]
+}
+
+export interface ContactGroupItem {
+    id: string,
+    name: string,
+    contact_count: number,
+    user: UserItem,
+    filters: ContactFilterCondition[]
+    updated_at: string
+}
+
+export interface CreateContactGroup {
+    id: string,
+    name: string,
+    filters: ContactFilterCondition[]
 }
