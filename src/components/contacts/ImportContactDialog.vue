@@ -2,9 +2,10 @@
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 import { API } from '~/services'
 import { IconCircleCheck, IconUsers } from '@tabler/icons-vue'
-import type { MappingContact, ContactFieldItem } from '~/types'
+import type { MappingContact } from '~/types'
 import { useContactFieldStore } from '~/stores'
 
 const props = defineProps<{ visible: boolean }>()
@@ -60,28 +61,26 @@ const contactFields = computed(() => {
     return contactFieldStore.contactFields
 })
 
-const onStepChange = async (newStep: number) => {
-    if (newStep === 2) {
+const onStepChange = async () => {
+    if (currentStep.value === 1) {
         validateMappings()
         if (validationErrors.value.length > 0) {
-            currentStep.value = 1
-            return
+            return false
         }
     }
 
-    if (newStep === 3) {
+    if (currentStep.value === 2) {
         if (validationErrors.value.length > 0) {
-            currentStep.value = 2
-            return
+            return false
         }
+
         const success = await submitImport()
         if (!success) {
-            currentStep.value = 2
-            return
+            return false
         }
     }
 
-    currentStep.value = newStep
+    return true
 }
 
 const validateMappings = () => {
@@ -113,6 +112,8 @@ const validateMappings = () => {
 
 const submitImport = async () => {
     submitting.value = true
+    let success = false
+    
     try {
         let file = uploadedFile.value
         if (!file) return false
@@ -133,13 +134,20 @@ const submitImport = async () => {
             }))
 
         await API.contact.importContacts(file, renamedFileName.value || originalName, importMode.value, mappings)
-        return true
+        success = true
     } catch (error) {
         console.error(error)
-        validationErrors.value.push(t('contacts.import_dialog.import_failed'))
-        return false
+        let message = t('contacts.import_dialog.import_failed')
+
+        if (axios.isAxiosError(error) && error.status === 422 && error.response) {
+            const errorKey = error.response.data.message?.replace('.', '')
+            message = t(`validation_errors.${errorKey}`)
+        }
+
+        validationErrors.value.push(message)
     } finally {
         submitting.value = false
+        return success
     }
 }
 
@@ -166,13 +174,14 @@ watch(mappingRows, validateMappings)
 <template>
     <StepperDialog 
         :visible="props.visible" 
-        @update:visible="emit('update:visible', $event)" 
-        :steps="stepTitles"
+        @update:visible="emit('update:visible', $event)"
+        v-model:currentStep="currentStep"
+        :stepValidate="onStepChange"
+        :stepTitles="stepTitles"
         :loading="submitting" 
         :next-disabled="isNextDisabled" 
         :next-label="nextLabel"
         :back-label="t('contacts.import_dialog.back')" 
-        @step-change="onStepChange"
     >
         <template #title>
             <div class="flex items-center gap-2">

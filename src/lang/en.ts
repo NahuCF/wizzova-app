@@ -81,7 +81,8 @@ export default {
     'Template name already exists': 'Template name already exists',
     'templater_name_already_exists': 'Template name already exists',
     'Contact already exists': 'Contact already exists',
-    'Group name already exists': 'Group name already exists'
+    'Group name already exists': 'Group name already exists',
+    'Import name already exists': 'Import name already exists'
   },
   submit_for_review: 'Submit for review',
   template_name: 'Template name',

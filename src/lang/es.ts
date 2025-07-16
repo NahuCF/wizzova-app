@@ -81,7 +81,8 @@ export default {
     'Template name already exists': 'El nombre de la plantilla ya existe',
     'templater_name_already_exists': 'El nombre de la plantilla ya existe',
     'Contact already exists': 'El contacto ya existe',
-    'Group name already exists': 'El nombre del grupo ya existe'
+    'Group name already exists': 'El nombre del grupo ya existe',
+    'Import name already exists': 'El nombre de importación ya existe'
   },
   submit_for_review: 'Enviar para revision',
   template_name: 'Nombre del template',
