@@ -132,7 +132,7 @@ const submitImport = async () => {
                 id: row.contactField!.id,
             }))
 
-        await API.contact.importContacts(file, importMode.value, mappings)
+        await API.contact.importContacts(file, renamedFileName.value || originalName, importMode.value, mappings)
         return true
     } catch (error) {
         console.error(error)

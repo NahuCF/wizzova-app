@@ -30,9 +30,10 @@ export default {
     async delete(id: string) {
         return Http.delete(`/contacts/${id}`)
     },
-    async importContacts(file: File, importType: 'ADD' | 'ADD_AND_REPLACE', mappings: { name: string; id: string }[]) {
+    async importContacts(file: File, name: string, importType: 'ADD' | 'ADD_AND_REPLACE', mappings: { name: string; id: string }[]) {
         const data = new FormData()
         data.append('file', file)
+        data.append('name', name)
         data.append('import_type', importType)
 
         mappings.forEach((mapping, index) => {
