@@ -80,7 +80,8 @@ export default {
     'The provided credentials are incorrect': 'The provided credentials are incorrect',
     'Template name already exists': 'Template name already exists',
     'templater_name_already_exists': 'Template name already exists',
-    'Contact already exists': 'Contact already exists'
+    'Contact already exists': 'Contact already exists',
+    'Group name already exists': 'Group name already exists'
   },
   submit_for_review: 'Submit for review',
   template_name: 'Template name',
@@ -366,6 +367,9 @@ Grab them today!`,
       enter_group_name: 'Enter group name',
       create_group_tooltip: 'Cannot save/create a group without associated contacts',
       reset: 'Reset'
-    }
+    },
+    group_created: 'Group created successfully!',
+    group_updated: 'Group updated successfully!',
+    group_deleted: 'Group deleted successfully!'
   }
 }
