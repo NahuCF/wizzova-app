@@ -7,6 +7,7 @@ import { API } from '~/services'
 import { IconCircleCheck, IconUsers } from '@tabler/icons-vue'
 import type { ContactImportMode, MappingContact } from '~/types'
 import { useContactFieldStore } from '~/stores'
+import { useToast } from 'primevue'
 
 const props = defineProps<{ visible: boolean }>()
 const emit = defineEmits<{ 
@@ -16,6 +17,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const router = useRouter()
+const toast = useToast()
 const contactFieldStore = useContactFieldStore()
 
 const currentStep = ref(1)
@@ -145,7 +147,12 @@ const submitImport = async () => {
             message = t(`validation_errors.${errorKey}`)
         }
 
-        validationErrors.value.push(message)
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: message,
+            life: 3000,
+        })
     } finally {
         submitting.value = false
         return success
