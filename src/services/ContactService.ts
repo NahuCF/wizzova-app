@@ -1,5 +1,5 @@
 import Http from '~/config/http'
-import type { ContactItem, CreateContact, Page } from '~/types'
+import type { ContactImportItem, ContactImportMode, ContactItem, CreateContact, Page } from '~/types'
 
 export default {
     async index(
@@ -30,7 +30,7 @@ export default {
     async delete(id: string) {
         return Http.delete(`/contacts/${id}`)
     },
-    async importContacts(file: File, name: string, importType: 'ADD' | 'ADD_AND_REPLACE', mappings: { name: string; id: string }[]) {
+    async importContacts(file: File, name: string, importType: ContactImportMode, mappings: { name: string; id: string }[]) {
         const data = new FormData()
         data.append('file', file)
         data.append('name', name)
@@ -46,5 +46,19 @@ export default {
                 'Content-Type': 'multipart/form-data',
             },
         })
+    },
+    async importHistory(
+        page: number = 1,
+        perPage: number = 10
+    ) {
+        const params: Record<string, number> = {
+            page,
+            rows_per_page: perPage
+        }
+
+        return Http.get<Page<ContactImportItem>>('/contacts/import', { params })
+    },
+    async pollImportStatus(id: string) {
+        return Http.get<{ data: ContactImportItem }>(`/contacts/import/${id}`)
     }
 }

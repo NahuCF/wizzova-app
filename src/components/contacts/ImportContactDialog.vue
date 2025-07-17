@@ -5,11 +5,14 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { API } from '~/services'
 import { IconCircleCheck, IconUsers } from '@tabler/icons-vue'
-import type { MappingContact } from '~/types'
+import type { ContactImportMode, MappingContact } from '~/types'
 import { useContactFieldStore } from '~/stores'
 
 const props = defineProps<{ visible: boolean }>()
-const emit = defineEmits<{ (e: 'update:visible', value: boolean): void }>()
+const emit = defineEmits<{ 
+    (e: 'update:visible', value: boolean): void
+    (e: 'success'): void
+}>()
 
 const { t } = useI18n()
 const router = useRouter()
@@ -19,7 +22,7 @@ const currentStep = ref(1)
 const mappingRows = ref<MappingContact[]>([])
 const renamedFileName = ref<string | null>(null)
 const uploadedFile = ref<File | null>(null)
-const importMode = ref<'ADD' | 'ADD_AND_REPLACE'>('ADD')
+const importMode = ref<ContactImportMode>('ADD')
 const validationErrors = ref<string[]>([])
 const submitting = ref(false)
 
@@ -61,15 +64,13 @@ const contactFields = computed(() => {
     return contactFieldStore.contactFields
 })
 
-const onStepChange = async () => {
+const validateStep = async () => {
     if (currentStep.value === 1) {
-        validateMappings()
-        if (validationErrors.value.length > 0) {
-            return false
-        }
+        validationErrors.value = []
     }
 
     if (currentStep.value === 2) {
+        validateMappings()
         if (validationErrors.value.length > 0) {
             return false
         }
@@ -166,9 +167,19 @@ watch(() => contactFieldStore.contactFields, () => {
     if(contactFieldStore.contactFields.length === 0) {
         contactFieldStore.fetchContactFields()
     }
+}, { immediate: true })
+
+watch(mappingRows, () => {
+    if(currentStep.value === 2) {
+        validateMappings()
+    }
 })
 
-watch(mappingRows, validateMappings)
+watch(currentStep, () => {
+    if(currentStep.value === 3) {
+        emit('success')
+    }
+})
 </script>
 
 <template>
@@ -176,7 +187,7 @@ watch(mappingRows, validateMappings)
         :visible="props.visible" 
         @update:visible="emit('update:visible', $event)"
         v-model:currentStep="currentStep"
-        :stepValidate="onStepChange"
+        :stepValidate="validateStep"
         :stepTitles="stepTitles"
         :loading="submitting" 
         :next-disabled="isNextDisabled" 
@@ -223,7 +234,7 @@ watch(mappingRows, validateMappings)
                     {{ t('contacts.import_dialog.step3_hint') }}
                 </div>
                 <div class="pb-4">
-                    <Button variant="link" class="underline p-0!" @click="router.push('/contacts/import/history')">
+                    <Button variant="link" class="underline p-0!" @click="router.push({ name: 'contacts-import' })">
                         <span class="text-sm">{{ t('contacts.import_dialog.go_to_history') }}</span>
                     </Button>
                 </div>

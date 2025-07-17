@@ -5,12 +5,12 @@ import {
 } from '@tabler/icons-vue'
 import { FileUpload, Button, InputText, RadioButton } from 'primevue'
 import { useExcelParser } from '~/composables/useExcelParser'
-import type { ContactFieldItem, MappingContact } from '~/types'
+import type { ContactFieldItem, ContactImportMode, MappingContact } from '~/types'
 
 const props = defineProps<{
     file: File | null,
     renamedFileName: string | null,
-    importMode: 'ADD' | 'ADD_AND_REPLACE',
+    importMode: ContactImportMode,
     mappingRows: MappingContact[],
     contactFields: ContactFieldItem[],
     mappingLoaded: boolean

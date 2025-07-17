@@ -372,5 +372,31 @@ Grab them today!`,
     group_created: 'Group created successfully!',
     group_updated: 'Group updated successfully!',
     group_deleted: 'Group deleted successfully!'
-  }
+  },
+  contact_imports: {
+    title: 'Import contact',
+    empty: 'No imported contacts found',
+    headers: {
+      name: 'Name',
+      imported_on: 'Imported On',
+      import_type: 'Import Type',
+      total_contacts: 'Total Contacts',
+      updated_contacts: 'Updated Contacts',
+      errored_contacts: 'Errored Contacts',
+      status: 'Status'
+    },
+    status: {
+      PENDING: 'Pending',
+      PROCESSING: 'Processing',
+      COMPLETED: 'Completed'
+    }
+  },
+  contact_import_type: {
+    ADD: 'Add new contacts',
+    ADD_AND_REPLACE: 'Add and update contacts'
+  },
+  today: 'Today',
+  yesterday: 'Yesterday',
+  imported_by: 'Imported by: {author}',
+  imported_at: 'Imported at: {date}'
 }

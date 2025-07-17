@@ -125,7 +125,7 @@ const digitIconMap: Record<string, any> = {
                     <Button
                         v-if="currentStep === 3"
                         variant="outlined"
-                        @click="router.push('/contacts/import/history')"
+                        @click="router.push({ name: 'contacts-import' })"
                     >
                         <span class="text-sm">{{ $t('contacts.import_dialog.go_to_history') }}</span>
                     </Button>

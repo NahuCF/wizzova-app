@@ -62,7 +62,7 @@ const importOptions = ref([
     },
     {
         label: t('contacts.import_history'),
-        action: () => router.push('/contacts/import/history')
+        action: () => router.push({ name: 'contacts-import' })
     }
 ])
 

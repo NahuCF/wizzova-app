@@ -1,5 +1,6 @@
 import AppLayout from '~/components/layouts/AppLayout.vue'
 import ContactFields from '~/views/ContactFields.vue'
+import ContactImports from '~/views/ContactImports.vue'
 import Contacts from '~/views/Contacts.vue'
 import Conversations from '~/views/Conversations.vue'
 import EditTemplate from '~/views/EditTemplate.vue'
@@ -60,6 +61,12 @@ const routes = [
             name: 'contacts',
             meta: { titleKey: 'contacts.title' },
             component: Contacts
+          },
+          {
+            path: 'import/history',
+            name: 'contacts-import',
+            meta: { titleKey: 'contacts.title' },
+            component: ContactImports
           }
         ]
       }

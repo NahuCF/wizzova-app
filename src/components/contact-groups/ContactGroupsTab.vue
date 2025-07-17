@@ -21,7 +21,7 @@ const {
     currentPageReport,
     fetchDataPage,
     debouncedFetch,
-} = usePaginatedData<any>(
+} = usePaginatedData<ContactGroupItem>(
     (page, perPage, search) => API.group.index(page, perPage, search).then(res => res.data),
     10
 )
@@ -50,22 +50,18 @@ const showDeleteDialog = ref(false)
 const selectedGroup = ref<ContactGroupItem>()
 const columns = ref([
     {
-        name: 'name',
         header: 'name_of_group',
         value: (data: ContactGroupItem) => data.name
     },
     {
-        name: 'name',
         header: 'filters',
         value: (data: ContactGroupItem) => data.filters
     },
     {
-        name: 'name',
         header: 'total_contacts',
         value: (data: ContactGroupItem) => data.contact_count
     },
     {
-        name: 'name',
         header: 'created_by',
         value: (data: ContactGroupItem) => data.user.name
     },

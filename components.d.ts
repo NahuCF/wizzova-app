@@ -19,6 +19,7 @@ declare module 'vue' {
     Calendar: typeof import('primevue/calendar')['default']
     CellphoneInput: typeof import('./src/components/CellphoneInput.vue')['default']
     Chip: typeof import('primevue/chip')['default']
+    CircularProgress: typeof import('./src/components/CircularProgress.vue')['default']
     Column: typeof import('primevue/column')['default']
     ContactDrawer: typeof import('./src/components/contacts/ContactDrawer.vue')['default']
     ContactFieldDrawer: typeof import('./src/components/contact-fields/ContactFieldDrawer.vue')['default']

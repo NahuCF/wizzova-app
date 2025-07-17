@@ -371,5 +371,31 @@ export default {
     group_created: '¡Grupo creado con éxito!',
     group_updated: '¡Grupo actualizado con éxito!',
     group_deleted: '¡Grupo eliminado con éxito!'
-  }
+  },
+  today: 'Hoy',
+  yesterday: 'Ayer',
+  imported_by: 'Importado por: {author}',
+  imported_at: 'Importado en: {date}',
+  contact_imports: {
+    title: 'Importar contacto',
+    empty: 'No se encontraron contactos importados',
+    headers: {
+      name: 'Nombre',
+      imported_on: 'Importado el',
+      import_type: 'Tipo de importación',
+      total_contacts: 'Contactos totales',
+      updated_contacts: 'Contactos actualizados',
+      errored_contacts: 'Contactos con error',
+      status: 'Estado'
+    },
+    status: {
+      PENDING: 'Pendiente',
+      PROCESSING: 'Procesando',
+      COMPLETED: 'Completado'
+    }
+  },
+  contact_import_type: {
+    ADD: 'Agregar nuevos contactos',
+    ADD_AND_REPLACE: 'Agregar y actualizar contactos'
+  },
 }

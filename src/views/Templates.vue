@@ -110,7 +110,7 @@ onMounted(() => {
 <template>
 	<div class="flex flex-col p-6">
 		<div class="flex justify-between items-center py-5 z-2 bg-slate-100">
-			<h1 class="font-semibold text-2xl">{{ t('templates.whatsapp_templates') }}</h1>
+			<h1 class="font-semibold text-xl">{{ t('templates.whatsapp_templates') }}</h1>
 			<Button @click="router.push({ name: 'new-template' })">
 				<IconPlus size="16" class="mr-2" />
 				<span>
