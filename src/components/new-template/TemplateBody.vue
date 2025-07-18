@@ -4,19 +4,23 @@ import {
 	IconAsterisk, IconInfoCircle, IconStrikethrough, IconBold,
 	IconItalic, IconList, IconListNumbers
 } from '@tabler/icons-vue'
-import { useTemplateStore } from '~/stores'
+import { useContactFieldStore, useTemplateStore } from '~/stores'
 import { useI18n } from 'vue-i18n'
 import { useTextareaSelection } from '~/composables/useTextareaSelection'
 
 const templateStore = useTemplateStore()
+const contactFieldStore = useContactFieldStore()
 const { t, te } = useI18n()
 
 const bodyRef = ref()
 const bodyText = toRef(templateStore.template.body, 'text')
 const variablesPopover = ref()
-const defaultVariables = ref(['name', 'email', 'phone'])
 
 const { wrapSelection } = useTextareaSelection(bodyRef, bodyText)
+
+const defaultVariables = computed(() => {
+	return contactFieldStore.contactFields
+})
 
 const validateLineJump = (event: KeyboardEvent) => {
 	const target = event.target as HTMLInputElement | null
@@ -42,21 +46,28 @@ const onBodyInput = (event: Event) => {
 }
 
 const formatBody = (value: string) => {
-	const variables: { [key: string]: string } = {}
+	const variables: { 
+		contact_field_id?: string, 
+		name: string, 
+		value: string 
+	} [] = []
 
 	// Replace variables blank or invalid spaces with underscore
 	const formattedText = value.replace(/{{(.*?)}}/g, (_match, variableName) => {
-		const variable = variableName.replace(/[^a-zA-Z0-9]/g, '_')
+		const name = variableName.replace(/[^a-zA-Z0-9]/g, '_')
 
 		// Add variable if it doesnt exists
-		if (!templateStore.template.body.variables[variable]) {
-			variables[variable] = ''
-		}
-		else {
-			variables[variable] = templateStore.template.body.variables[variable]
-		}
+		const variableFound = templateStore.template.body.variables.find(v => v.name === name)
+		const id = defaultVariables.value.find((df) => df.name === name)?.id
+		const value = variableFound ? variableFound.value : ''
 
-		return `{{${variable}}}`
+		variables.push({
+			contact_field_id: id,
+			name: name,
+			value: value
+		})
+
+		return `{{${name}}}`
 	})
 
 	templateStore.template.body.text = formattedText
@@ -117,6 +128,8 @@ const nextCustomVariable = () => {
 
   return `variable_${maxNum + 1}`;
 }
+
+contactFieldStore.fetchContactFields()
 </script>
 
 <template>
@@ -183,9 +196,9 @@ const nextCustomVariable = () => {
 							v-for="variable in defaultVariables" 
 							:key="`default_${variable}`"
 							class="py-2 px-3 hover:bg-slate-100 cursor-pointer"
-							@click="insertVariable(variable)"
+							@click="insertVariable(variable.name)"
 						>
-							{{ variable }}
+							{{ variable.name }}
 						</li>
 						<li 
 							class="py-2 px-3 hover:bg-slate-100 cursor-pointer" 
@@ -198,20 +211,20 @@ const nextCustomVariable = () => {
 			</Popover>
 		</div>
 
-		<div v-if="templateStore.variableKeys.length > 0" class="flex flex-col gap-2 pt-8 pb-5 border-b-1 border-slate-200">
+		<div v-if="templateStore.template.body.variables.length > 0" class="flex flex-col gap-2 pt-8 pb-5 border-b-1 border-slate-200">
 			<div class="flex flex-col gap-2 w-[80%]">
 				<div class="flex gap-16">
 					<label class="w-full" for="language">{{ $t('new_template.body.variable_name') }}</label>
 					<label class="w-full" for="language">{{ $t('new_template.body.sample_value') }}</label>
 				</div>
 
-				<div v-for="key in templateStore.variableKeys" :key="key" class="flex gap-16">
-					<InputText :value="key" :id="key" :name="key" fluid />
+				<div v-for="(variable, index) in templateStore.template.body.variables" :key="variable.name" class="flex gap-16">
+					<InputText :value="variable.name" :id="variable.name" :name="variable.name" fluid />
 					<InputText 
-						v-model="templateStore.template.body.variables[key]" 
-						:placeholder="getVariablePlaceholder(key)" 
+						v-model="templateStore.template.body.variables[index].value" 
+						:placeholder="getVariablePlaceholder(variable.name)" 
 						fluid
-						/>
+					/>
 				</div>
 			</div>
 

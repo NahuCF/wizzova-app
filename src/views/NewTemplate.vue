@@ -105,8 +105,8 @@ const canSubmit = computed(() => {
     templateStore.template.languageId &&
     templateStore.template.category &&
     templateStore.template.body.text &&
-    !templateStore.variableKeys.find(
-      (key) => templateStore.template.body.variables[key].trim() === '',
+    !templateStore.template.body.variables.find(
+      (variable) => variable.value.trim() === '',
     )
   )
 })

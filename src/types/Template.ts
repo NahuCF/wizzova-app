@@ -24,8 +24,10 @@ export interface TemplateState {
   body: {
     text: string,
     variables: {
-      [key: string]: string
-    }
+      contact_field_id?: string,
+      name: string,
+      value: string
+    } []
   },
   footer: string,
   buttons: (TemplateBtn | TemplateUrlBtn | TemplateCallBtn) []
@@ -43,8 +45,10 @@ export interface TemplateCreate {
     body: {
       text: string,
       variables: {
-        [key: string]: string
-      }
+        contact_field_id?: string,
+        name: string,
+        value: string
+      } []
     },
     footer?: string,
     buttons: (TemplateBtn | TemplateUrlBtn | TemplateCallBtn) []

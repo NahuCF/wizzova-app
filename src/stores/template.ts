@@ -11,7 +11,7 @@ const initState = (): { template: TemplateState } => ({
     footer: '',
     body: {
       text: '',
-      variables: {}
+      variables: []
     },
     header: {
       type: 'NONE',
@@ -32,9 +32,6 @@ export const useTemplateStore = defineStore('template', {
         acc[item.category].push(item)
         return acc
       }, {} as TemplateButtonsByCategory)
-    },
-    variableKeys: (state): string[] => {
-      return Object.keys(state.template.body.variables)
     },
     buttonsFilled: (state) => {
       const filteredButtons = state.template.buttons.filter(b => {
