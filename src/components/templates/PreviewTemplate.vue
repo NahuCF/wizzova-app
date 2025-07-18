@@ -1,3 +1,19 @@
+<script setup lang="ts">
+import {
+  IconArrowLeft,
+  IconDotsVertical,
+  IconMicrophoneFilled,
+  IconPaperclip,
+  IconCamera,
+  IconMoodHappy,
+  IconBrandWhatsappFilled,
+  IconRosetteDiscountCheckFilled,
+} from '@tabler/icons-vue'
+import { useTemplateStore } from '~/stores'
+
+const templateStore = useTemplateStore()
+</script>
+
 <template>
   <div class="border border-slate-200 flex flex-col w-[23rem] preview rounded-lg overflow-hidden">
     <div class="bg-[#00A884] h-[3rem] flex justify-between items-center px-3">
@@ -22,8 +38,9 @@
 
     <div class="p-5 flex h-[30rem] overflow-y-scroll">
       <MessagePreview
+        :header="templateStore.template.header.text"
         :body="templateStore.template.body.text"
-        :footer="templateStore.template.footer.text"
+        :footer="templateStore.template.footer"
         :buttons="templateStore.template.buttons"
       />
     </div>
@@ -45,23 +62,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import {
-  IconArrowLeft,
-  IconDotsVertical,
-  IconMicrophoneFilled,
-  IconPaperclip,
-  IconCamera,
-  IconMoodHappy,
-  IconBrandWhatsappFilled,
-  IconRosetteDiscountCheckFilled,
-} from '@tabler/icons-vue'
-import MessagePreview from '~/components/templates/MessagePreview.vue'
-import { useTemplateStore } from '~/stores'
-
-const templateStore = useTemplateStore()
-</script>
 
 <style scoped>
 .preview {

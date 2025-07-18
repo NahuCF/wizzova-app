@@ -78,14 +78,32 @@ export default {
   validation_errors: {
     'The work email has already been taken': 'The email has already been taken.',
     'The provided credentials are incorrect': 'The provided credentials are incorrect',
+    'Template name already exists': 'Template name already exists',
+    'templater_name_already_exists': 'Template name already exists',
+    'Contact already exists': 'Contact already exists',
+    'Group name already exists': 'Group name already exists',
+    'Import name already exists': 'Import name already exists'
   },
   submit_for_review: 'Submit for review',
   template_name: 'Template name',
+  template_name_placeholder: 'welcome_template',
   category: 'Category',
   allow_category_change: 'Allow category change',
   language: 'Language',
+  header: 'Header',
+  header_type: {
+    NONE: 'None',
+    TEXT: 'Text',
+    IMAGE: 'Image',
+    VIDEO: 'Video',
+    DOCUMENT: 'Document'
+  },
+  header_tooltip: 'Make your message stand out with personalized text or media.',
+  header_placeholder: 'New to Wabox?',
+  optional: 'Optional',
   body: 'Body',
   footer: 'Footer',
+  footer_tooltip: 'Include a brief line of text at the bottom of your template. If you enable the marketing opt-out button, its default footer will appear here automatically.',
   help_text_category_change:
     'Enabling this option will prevent the template from being rejected due to miscategorization.',
   example_footer_text: 'Ex: Thank you for choosing us!',
@@ -97,8 +115,10 @@ export default {
   cto_button: 'Call to action buttons',
   URL: 'URL',
   call_to_number: 'Call to number',
+  explore_more: 'Expore more',
   max_2_buttons: '2 buttons maximum',
   max_1_buttons: '1 button maximun',
+  buttons: 'Buttons',
   add_button: 'Add button',
   help_text_buttons:
     'Create buttons so customers can reply to your message or take an action. If you add more than 3 buttons, they will appear as a list.',
@@ -107,9 +127,32 @@ export default {
   example_body_text_template: `Hello {{name}}!\n\nYour amazing products from {{site_name}} are ready for you!
 Grab them today!`,
   cta: 'Call to action',
+  new_template_created: 'New template created succesfully',
   new_template: {
     title: 'New template',
     button_text: 'Button text',
+    body: {
+      variable_placeholder: {
+        name: 'Ex: John, Ram, Riya',
+        email: 'Ex: hello@email.com',
+        phone: 'Ex: 9876543210',
+        default: 'Ex: 234, Custom value'
+      },
+      add_variable: 'Add variables',
+      variables_tooltip: 'Personalize your message by adding variables',
+      contact: 'Contact',
+      add_custom: 'Add Custom',
+      variable_name: 'Variable name',
+      sample_value: 'Sample value',
+      format: {
+        bold: 'Bold',
+        italic: 'Italic',
+        strikethrough: 'Strikethrough',
+        numbered_list: 'Numbered List',
+        unordered_list: 'Unordered List'
+      },
+      variables_info: 'Enter a sample value for your variables to give context to the WhatsApp’s template approval team.'
+    },
     buttons: {
       quick_reply: {
         placeholder: 'e.g. Get Discount',
@@ -133,4 +176,227 @@ Grab them today!`,
       },
     },
   },
+  loading: 'Loading',
+  list: 'List',
+  grid: 'Grid',
+  showing_results: 'Showing {first} of {last} entries',
+  show_rows_per_page: 'Show rows per page',
+  templates: {
+    title: 'Templates',
+    whatsapp_templates: 'WhatsApp Templates',
+    create_new_template: 'Create New Template',
+    create_new_template_card: 'Create new template',
+    search_templates: 'Search templates',
+  },
+  template: {
+    title: 'Templates',
+    empty: 'No templates found',
+    name: 'Name',
+    message: 'Message',
+    language_code: 'Language',
+    created_at: 'Created at',
+    category: 'Category',
+    status: 'Status',
+    edit: 'Edit template',
+    delete: 'Delete',
+  },
+  template_status: {
+    PENDING: 'Pending',
+    REJECTED: 'Rejected'
+  },
+  edit_template: {
+    title: 'Editar Plantilla'
+  },
+  save: 'Save',
+  cancel: 'Cancel',
+  delete: 'Delete',
+  search: 'Search',
+  filter: 'Filter',
+  import: 'Import',
+  submit: 'Submit',
+  copy: 'Copy',
+  required: '{field} is required!',
+  contact_fields: {
+    title: 'Contact Fields',
+    field_collection: 'Field Collection',
+    add: 'Add',
+    not_found: 'No contact fields found',
+    no_more_to_load: 'No more to load',
+    load_more: 'Load more',
+    option_prefilled: 'Option 1',
+    name: {
+      is_required: 'Name is required.',
+      no_special_char: "The name can't contain special characters or numbers.",
+      placeholder: 'Enter the name',
+      help: 'Display field name across the platform.'
+    },
+    internal_name: {
+      is_required: 'Internal name is required.',
+      no_special_char_except_underscore: "The internal name can't contain special characters or numbers, except underscore (_).",
+      placeholder: 'Enter the internal name',
+      help: 'Actual field name to access the field values externally.'
+    },
+    delete_field: 'Delete Field',
+    delete_message: 'Are you sure you want to delete this field?',
+    delete_note: 'NOTE : Once deleted, all associated data for this field will be removed from the contacts. This action cannot be undone.',
+    field_created: 'Field value created successfully!',
+    field_updated: 'Field value updated successfully!',
+    field_deleted: 'Field value deleted successfully!',
+    add_options: 'Add Options'
+  },
+  contact_field: {
+    edit: 'Edit field value',
+    name: 'Name',
+    name_info: 'The display name shown across the platform.',
+    is_primary: '{field} is a primary field',
+    is_secondary: '{field} is a secondary field',
+    internal_name: 'Internal Name',
+    internal_name_info: 'The internal field name used to access field values externally, (e.g., in APIs or integrations).',
+    type: 'Type',
+    status: 'Status',
+    mandatory: 'Mandatory',
+    options: 'Options'
+  },
+  contacts: {
+    title: 'Contacts',
+    contacts_tab: 'Contacts',
+    groups_tab: 'Groups',
+    import_file: 'Import file',
+    import_history: 'Import history',
+    add_contact: 'Add contact',
+    empty: 'No contacts found',
+    delete_contact: 'Delete Contact',
+    delete_message: 'Do you want to delete this contact?',
+    contact_deleted: 'Contact deleted successfully!',
+    create_contact: 'Create Contact',
+    edit_contact: 'Edit Contact',
+    contact_id: 'Contact ID',
+    headers: {
+      Name: 'Name',
+      Email: 'Email',
+      Phone: 'Phone',
+      Tags: 'Tags',
+      'Marketing OptIn': 'Marketing OptIn'
+    },
+    placeholder: {
+      Name: 'Enter the name',
+      Email: 'Enter email',
+      Phone: '+54',
+      'Marketing OptIn': 'Select...',
+      tag: 'Enter tag'
+    },
+    add_tag: 'Add Tag',
+    additional_details: 'Additional Details',
+    marketing_optin_help: "Mark 'YES' if consent for marketing messages has been obtained from this contact.",
+    contact_created: 'Contact created successfully!',
+    contact_updated: 'Contact updated successfully!',
+    import_dialog: {
+      title: 'Import contacts',
+      steps_title: 'Complete the below steps to import users.',
+      step1_title: 'Import contacts through file',
+      upload_file: 'Upload file',
+      step1_hint: 'You can use Google Sheets or Microsoft Excel to generate a xlsx file (.xlsx or .xlsx utf-8). Your file must have phone number with country code, name. It can also have custom columns that can be imported to Wabox as attributes.',
+      download_sample: '[Download example XLSX].',
+      browse_hint: 'Click to browse or drag and drop your import file here',
+      supported_formats: 'Only .xlsx, .xls, .csv files are supported',
+      imported_file: 'Imported file',
+      rename_imported_file: 'Rename imported file',
+      add_only: 'Add only new contacts',
+      add_only_help: 'Only contacts that are not currently in the database will be added.',
+      add_update: 'Add contacts and update existing ones',
+      add_update_help: 'Existing contacts with the same numbers will be replaced with the values ​​from the XLSX file.',
+      step2_description: 'Choose where you want to import your fields. Please note that “Name” and “Phone” are always required.',
+      excel_column: 'Excel Column',
+      sample_value: 'Value',
+      contact_field: 'Contact Field',
+      mapping_status: 'Mapping Status',
+      mapped: 'Mapped',
+      not_mapped: 'Not Mapped',
+      required_field_missing: 'Required field "{field}" is not mapped.',
+      duplicated_field: 'Contact field "{field}" is mapped more than once.',
+      import_failed: 'Import failed. Please try again.',
+      step3_title: 'Mapping completed successfully',
+      step3_hint: 'The columns and values were mapped correctly, and the contacts were successfully added to your contact list. If you wish, you can access the history.',
+      go_to_history: 'Go to history',
+      cancel: 'Cancel',
+      back: 'Back',
+      map_columns: 'Map columns',
+      confirm_import: 'Confirm import',
+      select_placeholder: 'Select'
+    }
+  },
+  copied_to_clipboard: 'Copied to clipboard',
+  apply: 'Apply',
+  filters: {
+    operator: 'Operator',
+    enter_value: 'Enter value',
+    add_condition: 'Add condition',
+    and: 'And',
+    or: 'Or',
+    operators: {
+      is: 'Is',
+      is_not: 'Is not',
+      contains: 'Contains',
+      not_contains: 'Not contains',
+      starts_with: 'Starts with',
+      ends_with: 'Ends with',
+      is_empty: 'Is empty',
+      is_not_empty: 'Is not empty',
+      before: 'Before',
+      after: 'After',
+      greater_than: 'Greater than',
+      less_than: 'Less than'
+    }
+  },
+  contact_groups: {
+    add_group: 'Add group',
+    empty: 'No groups found',
+    edit: 'Edit group',
+    delete_group: 'Delete Group',
+    delete_message: 'Do you want to delete this group?',
+    headers: {
+      name_of_group: 'Name of group',
+      filters: 'Filters',
+      total_contacts: 'Total contacts',
+      created_by: 'Created by',
+      last_update: 'Last update'
+    },
+    dialog: {
+      create_group: 'Create Group',
+      edit_group: 'Edit Group',
+      message: 'Create dynamic groups with contact filters that automatically include new and existing contacts meeting the criteria.',
+      enter_group_name: 'Enter group name',
+      create_group_tooltip: 'Cannot save/create a group without associated contacts',
+      reset: 'Reset'
+    },
+    group_created: 'Group created successfully!',
+    group_updated: 'Group updated successfully!',
+    group_deleted: 'Group deleted successfully!'
+  },
+  contact_imports: {
+    title: 'Import contact',
+    empty: 'No imported contacts found',
+    headers: {
+      name: 'Name',
+      imported_on: 'Imported On',
+      import_type: 'Import Type',
+      total_contacts: 'Total Contacts',
+      updated_contacts: 'Updated Contacts',
+      errored_contacts: 'Errored Contacts',
+      status: 'Status'
+    },
+    status: {
+      PENDING: 'Pending',
+      PROCESSING: 'Processing',
+      COMPLETED: 'Completed'
+    }
+  },
+  contact_import_type: {
+    ADD: 'Add new contacts',
+    ADD_AND_REPLACE: 'Add and update contacts'
+  },
+  today: 'Today',
+  yesterday: 'Yesterday',
+  imported_by: 'Imported by: {author}',
+  imported_at: 'Imported at: {date}'
 }

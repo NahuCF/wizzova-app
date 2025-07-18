@@ -1,5 +1,9 @@
 import AppLayout from '~/components/layouts/AppLayout.vue'
+import ContactFields from '~/views/ContactFields.vue'
+import ContactImports from '~/views/ContactImports.vue'
+import Contacts from '~/views/Contacts.vue'
 import Conversations from '~/views/Conversations.vue'
+import EditTemplate from '~/views/EditTemplate.vue'
 import NewTemplate from '~/views/NewTemplate.vue'
 import Templates from '~/views/Templates.vue'
 
@@ -21,7 +25,7 @@ const routes = [
           {
             path: '',
             name: 'templates',
-            meta: { titleKey: 'templates' },
+            meta: { titleKey: 'templates.title' },
             component: Templates,
           },
           {
@@ -30,8 +34,42 @@ const routes = [
             meta: { titleKey: 'new_template.title' },
             component: NewTemplate,
           },
+          {
+            path: ':id/edit',
+            name: 'edit-template',
+            meta: { titleKey: 'edit_template.title' },
+            component: EditTemplate,
+          }
         ],
       },
+      {
+        path: '/contact-fields',
+        children: [
+          {
+            path: '',
+            name: 'contact-fields',
+            meta: { titleKey: 'contact_fields.title' },
+            component: ContactFields
+          }
+        ]
+      },
+      {
+        path: '/contacts',
+        children: [
+          {
+            path: '',
+            name: 'contacts',
+            meta: { titleKey: 'contacts.title' },
+            component: Contacts
+          },
+          {
+            path: 'import/history',
+            name: 'contacts-import',
+            meta: { titleKey: 'contacts.title' },
+            component: ContactImports
+          }
+        ]
+      }
     ],
   },
 ]

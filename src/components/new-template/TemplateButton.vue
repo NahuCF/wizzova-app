@@ -1,3 +1,70 @@
+<script setup lang="ts">
+import { computed, defineProps, ref, watch } from 'vue'
+import { IconTrash } from '@tabler/icons-vue'
+import { useI18n } from 'vue-i18n'
+import { useTemplateStore } from '~/stores'
+import type { CountryCellphone } from '~/types/Country'
+import type { TemplateCallBtn, TemplateUrlBtn } from '~/types'
+
+const props = defineProps({
+  type: {
+    type: String,
+    required: true,
+  },
+  category: {
+    type: String,
+    required: true,
+  },
+  index: {
+    type: Number,
+    required: true,
+  },
+})
+
+const { t } = useI18n()
+const templateStore = useTemplateStore()
+const countries = ref<CountryCellphone[]>([
+  { name: 'Argentina', code: 'AR', prefix: '+54' },
+  { name: 'Brazil', code: 'BR', prefix: '+55' },
+  { name: 'Spain', code: 'ES', prefix: '+34' },
+  { name: 'United States', code: 'US', prefix: '+1' },
+])
+const urlOptions = ref([
+  {
+    name: t('new_template.buttons.url.static_url'),
+    id: 'STATIC_URL',
+  },
+  {
+    name: t('new_template.buttons.url.dynamic_url'),
+    id: 'DYNAMIC_URL',
+  },
+])
+const cellphonePopover = ref()
+const selectedCountry = ref('US')
+
+const button = () => templateStore.buttonsByCategory[props.category][props.index]
+
+const selectCountry = (country: CountryCellphone) => {
+  selectedCountry.value = country.code
+  cellphonePopover.value.hide()
+}
+
+const getSelectedCountry = computed(() => {
+  return countries.value.find((country) => country.code === selectedCountry.value)
+})
+
+const removeButton = () => {
+  templateStore.buttonsByCategory[props.category].splice(props.index, 1)
+  templateStore.updateButtons()
+}
+
+watch(getSelectedCountry, () => {
+  if(props.type == 'PHONE_NUMBER') {
+    (button() as TemplateCallBtn).phone_number_prefix = getSelectedCountry.value?.prefix ?? ''
+  }
+}, { immediate: true })
+</script>
+
 <template>
   <div class="bg-white border border-slate-200 rounded-md p-4">
     <div v-if="type == 'QUICK_REPLY'">
@@ -7,14 +74,14 @@
       <div class="flex w-full gap-4 items-center">
         <div class="relative w-full">
           <InputText
-            v-model="templateStore.buttonsByCategory[category][index].text"
+            v-model="button().text"
             :placeholder="t('new_template.buttons.quick_reply.placeholder')"
             class="!pr-[5.5rem]"
             :maxlength="25"
             fluid
           />
           <div class="absolute right-3 top-2 text-slate-400">
-            {{ templateStore.buttonsByCategory[category][index].text?.length ?? 0 }} / 25
+            {{ button().text?.length ?? 0 }} / 25
           </div>
         </div>
         <button
@@ -25,14 +92,14 @@
         </button>
       </div>
     </div>
-    <div v-else-if="type == 'URL'">
+    <div v-else-if="type === 'STATIC_URL' || type === 'DYNAMIC_URL'">
       <div class="flex justify-between">
         <Select
           :options="urlOptions"
           option-label="name"
           option-value="id"
           class="!w-[14.5rem]"
-          v-model="templateStore.buttonsByCategory[category][index].type_url"
+          v-model="(button() as TemplateUrlBtn).type"
         >
         </Select>
         <button
@@ -50,14 +117,14 @@
             </div>
             <div class="relative">
               <InputText
-                v-model="templateStore.buttonsByCategory[category][index].text"
+                v-model="button().text"
                 :placeholder="t('new_template.buttons.url.placeholder_text')"
                 class="!pr-[5.5rem]"
                 :maxlength="25"
                 fluid
               />
               <div class="absolute right-3 top-2 text-slate-400">
-                {{ templateStore.buttonsByCategory[category][index].text?.length ?? 0 }} / 25
+                {{ button().text?.length ?? 0 }} / 25
               </div>
             </div>
           </div>
@@ -68,14 +135,14 @@
             </div>
             <div class="relative">
               <InputText
-                v-model="templateStore.buttonsByCategory[category][index].url"
+                v-model="(button() as TemplateUrlBtn).url"
                 :placeholder="t('new_template.buttons.url.placeholder_url')"
                 class="!pr-[5.5rem]"
                 :maxlength="2000"
                 fluid
               />
               <div class="absolute right-3 top-2 text-slate-400">
-                {{ templateStore.buttonsByCategory[category][index].url?.length ?? 0 }} / 2000
+                {{ (button() as TemplateUrlBtn).url?.length ?? 0 }} / 2000
               </div>
             </div>
           </div>
@@ -83,21 +150,21 @@
       </div>
       <div
         class="mt-5"
-        v-if="templateStore.buttonsByCategory[category][index].type_url == 'dynamic_url'"
+        v-if="button().type === 'DYNAMIC_URL'"
       >
         <div class="text-slate-500 text-sm mb-1">
           {{ t('new_template.buttons.url.example_label') }}
         </div>
         <div class="relative">
           <InputText
-            v-model="templateStore.buttonsByCategory[category][index].example"
+            v-model="(button() as TemplateUrlBtn).example"
             :placeholder="t('new_template.buttons.url.example_placeholder')"
             class="!pr-[5.5rem]"
             :maxlength="25"
             fluid
           />
           <div class="absolute right-3 top-2 text-slate-400">
-            {{ templateStore.buttonsByCategory[category][index].example?.length ?? 0 }} / 2000
+            {{ (button() as TemplateUrlBtn).example?.length ?? 0 }} / 2000
           </div>
         </div>
         <p class="mt-5 text-slate-400 text-sm">
@@ -122,14 +189,14 @@
           </div>
           <div class="relative">
             <InputText
-              v-model="templateStore.buttonsByCategory[category][index].text"
+              v-model="button().text"
               :placeholder="t('new_template.buttons.phone_number.placeholder')"
               class="!pr-[5.5rem]"
               :maxlength="25"
               fluid
             />
             <div class="absolute right-3 top-2 text-slate-400">
-              {{ templateStore.buttonsByCategory[category][index].text?.length ?? 0 }} / 25
+              {{ button().text?.length ?? 0 }} / 25
             </div>
           </div>
         </div>
@@ -149,18 +216,18 @@
               />
             </div>
             <InputGroup>
-              <InputGroupAddon>{{ getSelectedCountry.prefix }}</InputGroupAddon>
+              <InputGroupAddon>{{ getSelectedCountry?.prefix }}</InputGroupAddon>
               <InputText
                 name="cellphone"
                 id="cellphone"
                 class="!pr-[5.5rem]"
                 :maxlength="20"
-                v-model="templateStore.buttonsByCategory[category][index].phone_number"
+                v-model="(button() as TemplateCallBtn).phone_number"
               />
             </InputGroup>
 
             <div class="absolute right-3 top-2 text-slate-400 z-20">
-              {{ templateStore.buttonsByCategory[category][index]?.phone_number?.length ?? 0 }} / 20
+              {{ (button() as TemplateCallBtn)?.phone_number?.length ?? 0 }} / 20
             </div>
           </div>
         </div>
@@ -186,60 +253,3 @@
     </Popover>
   </div>
 </template>
-
-<script setup>
-import { computed, defineProps, ref } from 'vue'
-import { IconTrash } from '@tabler/icons-vue'
-import { useI18n } from 'vue-i18n'
-import { useTemplateStore } from '~/stores'
-
-const props = defineProps({
-  type: {
-    type: String,
-    required: true,
-  },
-  category: {
-    type: String,
-    required: true,
-  },
-  index: {
-    type: Number,
-    required: true,
-  },
-})
-
-const { t } = useI18n()
-const templateStore = useTemplateStore()
-const countries = ref([
-  { name: 'Argentina', code: 'AR', prefix: '+54' },
-  { name: 'Brazil', code: 'BR', prefix: '+55' },
-  { name: 'Spain', code: 'ES', prefix: '+34' },
-  { name: 'United States', code: 'US', prefix: '+1' },
-])
-const urlOptions = ref([
-  {
-    name: t('new_template.buttons.url.static_url'),
-    id: 'static_url',
-  },
-  {
-    name: t('new_template.buttons.url.dynamic_url'),
-    id: 'dynamic_url',
-  },
-])
-const cellphonePopover = ref()
-const selectedCountry = ref('US')
-
-const selectCountry = (country) => {
-  selectedCountry.value = country.code
-  cellphonePopover.value.hide()
-}
-
-const getSelectedCountry = computed(() => {
-  return countries.value.find((country) => country.code === selectedCountry.value)
-})
-
-const removeButton = () => {
-  templateStore.buttonsByCategory[props.category].splice(props.index, 1)
-  templateStore.updateButtons()
-}
-</script>

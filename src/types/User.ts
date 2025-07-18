@@ -2,6 +2,13 @@ export interface User {
   id: string
   email: string
   name: string
-  cellphonePrefix: string
-  cellphoneNumber: string
+}
+
+export interface UserItem {
+  id: string
+  email: string
+  name: string,
+  cellphone_number: string,
+  cellphone_prefix: string,
+  cellphone: string
 }

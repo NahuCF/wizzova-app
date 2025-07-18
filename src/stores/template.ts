@@ -1,27 +1,29 @@
 import { defineStore } from 'pinia'
+import type { TemplateState, TemplateButtonsByCategory, TemplateUrlBtn, TemplateCallBtn } from '~/types' 
+
+const initState = (): { template: TemplateState } => ({
+  template: {
+    name: '',
+    languageId: 0,
+    category: '',
+    allowCategoryChange: false,
+    constainsHeader: false,
+    footer: '',
+    body: {
+      text: '',
+      variables: []
+    },
+    header: {
+      type: 'NONE',
+      text: '',
+    },
+    buttons: [],
+  }
+})
 
 export const useTemplateStore = defineStore('template', {
-  state: () => {
-    return {
-      template: {
-        name: '',
-        languageId: 0,
-        templateCategoryId: 0,
-        allowCategoryChange: false,
-        constainsHeader: false,
-        footer: {
-          text: '',
-        },
-        body: {
-          text: '',
-        },
-        header: {
-          typeId: 0,
-          text: '',
-        },
-        buttons: [],
-      },
-    }
+  state: (): { template: TemplateState } => {
+    return initState()
   },
   getters: {
     buttonsByCategory: (state) => {
@@ -29,14 +31,41 @@ export const useTemplateStore = defineStore('template', {
         acc[item.category] = acc[item.category] || []
         acc[item.category].push(item)
         return acc
-      }, {})
+      }, {} as TemplateButtonsByCategory)
     },
+    buttonsFilled: (state) => {
+      const filteredButtons = state.template.buttons.filter(b => {
+        switch(b.type) {
+          case 'STATIC_URL': {
+            const urlBtn = b as TemplateUrlBtn
+            return urlBtn.text && urlBtn.url 
+          }
+          case 'DYNAMIC_URL': {
+            const urlBtn = b as TemplateUrlBtn
+            return urlBtn.text && urlBtn.url && urlBtn.example
+          }
+          case 'PHONE_NUMBER': {
+            const phoneBtn = b as TemplateCallBtn
+            return phoneBtn.text && phoneBtn.phone_number && phoneBtn.phone_number_prefix
+          }
+          case 'QUICK_REPLY': {
+            return b.text
+          }
+          default: return false
+        }
+      })
+
+      return filteredButtons
+    }
   },
   actions: {
+    clearState() {
+      this.$state = initState()
+    },
     updateButtons() {
       this.template.buttons = Object.values(this.buttonsByCategory).flat()
     },
-    switchCategoryOrder(category) {
+    switchCategoryOrder(category: string) {
       const categories = Object.keys(this.buttonsByCategory)
       const index = categories.indexOf(category)
 

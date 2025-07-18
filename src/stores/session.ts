@@ -16,7 +16,7 @@ export const useSessionStore = defineStore('session', {
   },
   getters: {
     isAuthenticated(): boolean {
-      return this.user.id != null && this.tenant.id != null
+      return this.user.id != null && this.tenant.id != null && this.tenant.token !== null
     },
     isTenantVerified(): boolean {
       return this.tenant.verifiedEmail

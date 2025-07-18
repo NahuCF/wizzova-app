@@ -1,9 +1,14 @@
+<script lang="ts" setup>
+import { RouterView } from 'vue-router'
+</script>
+
+
 <template>
   <div class="flex h-screen bg-slate-100">
     <TheSidebar />
     <RouterView v-slot="{ Component, route }">
       <transition name="fade" mode="out-in">
-        <main class="px-5 py-3 w-full overflow-y-scroll">
+        <main class="w-full overflow-y-scroll">
           <component :is="Component" :key="route.path" />
         </main>
       </transition>
@@ -11,12 +16,6 @@
     <Toast position="bottom-right" />
   </div>
 </template>
-
-<script lang="ts" setup>
-import { RouterView } from 'vue-router'
-import { Toast } from 'primevue'
-import TheSidebar from '../TheSidebar.vue'
-</script>
 
 <style lang="css">
 .fade-enter-active,

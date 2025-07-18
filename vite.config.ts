@@ -13,8 +13,10 @@ export default defineConfig({
     vueDevTools(),
     tailwindcss(),
     Components({
-      resolvers: [PrimeVueResolver()],
-    }),
+      resolvers: [
+        PrimeVueResolver()
+      ]
+    })
   ],
   resolve: {
     alias: {

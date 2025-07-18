@@ -35,14 +35,14 @@
 </template>
 
 <script lang="ts" setup>
-import { Select } from 'primevue'
 import { onMounted, ref, watch } from 'vue'
 import i18n from '~/config/i18n'
 import { useI18n } from 'vue-i18n'
+import type { LanguageFlag } from '~/types'
 
 const { t } = useI18n()
 const selectedLanguage = ref()
-const countries = ref([])
+const countries = ref<LanguageFlag[]>([])
 
 watch(selectedLanguage, () => {
   i18n.global.locale = selectedLanguage.value.code

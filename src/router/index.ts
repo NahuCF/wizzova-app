@@ -28,7 +28,7 @@ router.beforeEach((to, from, next) => {
   const sessionStore = useSessionStore()
 
   if (to.meta.public == true && sessionStore.isAuthenticated) {
-    next({ name: 'conversations' })
+    next({ name: 'templates' })
   }
 
   if (to.meta.public == false && !sessionStore.isAuthenticated) {
