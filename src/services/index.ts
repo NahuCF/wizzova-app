@@ -13,6 +13,7 @@ import ContactService from './ContactService'
 import UserService from './UserService'
 import GroupService from './GroupService'
 import TenantService from './TenantService'
+import MetaService from './MetaService'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -33,5 +34,6 @@ export const API = {
     template: TemplateService,
     timezone: TimezoneService,
     user: UserService,
-    tenant: TenantService
+    tenant: TenantService,
+    meta: MetaService
 }

@@ -5,7 +5,7 @@
 
 <script setup>
 import { onMounted } from 'vue'
-import TenantService from '~/services/TenantService'
+import { API } from '~/services'
 
 const loadFacebookSDK = () => {
   return new Promise((resolve, reject) => {
@@ -22,13 +22,24 @@ const loadFacebookSDK = () => {
   })
 }
 
-const initializeFacebookSDK = () => {
+const fetchAppId = async () => {
+  try {
+    const response = await API.meta.getAppId()
+    return response.data.app_id
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const initializeFacebookSDK = async () => {
+  const appId = await fetchAppId()
+
   window.fbAsyncInit = function () {
     FB.init({
-      appId: '2480654665657413', // Replace with your App ID
+      appId: appId, // Replace with your App ID
       autoLogAppEvents: true,
       xfbml: true,
-      version: 'v21.0', // Ensure the version is valid
+      version: 'v22.0', // Ensure the version is valid
     })
     console.log('Facebook SDK initialized')
   }
@@ -41,7 +52,7 @@ const launchWhatsAppSignup = () => {
         console.log('Login successful:', response)
         const token = response.authResponse.accessToken
         try {
-          TenantService.storeLongLovedToken(token)
+          API.tenant.storeLongLovedToken(token)
         } catch (error) {
           console.error(error)
         }
@@ -57,7 +68,7 @@ const launchWhatsAppSignup = () => {
 
 onMounted(async () => {
   try {
-    initializeFacebookSDK()
+    await initializeFacebookSDK()
     await loadFacebookSDK()
     console.log('Facebook SDK loaded and initialized')
   } catch (error) {
