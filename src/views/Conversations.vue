@@ -5,6 +5,7 @@
 
 <script setup>
 import { onMounted } from 'vue'
+import TenantService from '~/services/TenantService'
 
 const loadFacebookSDK = () => {
   return new Promise((resolve, reject) => {
@@ -38,6 +39,12 @@ const launchWhatsAppSignup = () => {
     (response) => {
       if (response.authResponse) {
         console.log('Login successful:', response)
+        const token = response.authResponse.accessToken
+        try {
+          TenantService.storeLongLovedToken(token)
+        } catch (error) {
+          console.error(error)
+        }
       } else {
         console.error('Login failed:', response)
       }
