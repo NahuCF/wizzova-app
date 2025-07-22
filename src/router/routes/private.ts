@@ -1,4 +1,5 @@
 import AppLayout from '~/components/layouts/AppLayout.vue'
+import Campaigns from '~/views/Campaigns.vue'
 import ContactFields from '~/views/ContactFields.vue'
 import ContactImports from '~/views/ContactImports.vue'
 import Contacts from '~/views/Contacts.vue'
@@ -18,6 +19,17 @@ const routes = [
         name: 'conversations',
         meta: { titleKey: 'conversations' },
         component: Conversations,
+      },
+      {
+        path: '/campaigns',
+        children: [
+          {
+            path: '',
+            name: 'campaigns',
+            meta: { titleKey: 'campaigns.title' },
+            component: Campaigns
+          }
+        ]
       },
       {
         path: '/templates',

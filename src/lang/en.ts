@@ -395,6 +395,31 @@ Grab them today!`,
     ADD: 'Add new contacts',
     ADD_AND_REPLACE: 'Add and update contacts'
   },
+  campaigns: {
+    title: 'Campaigns',
+    select_number: 'Select Number',
+    new_campaign: 'New Campaign',
+    overview: 'Overview',
+    all_campaigns: 'All Campaigns',
+    empty: 'No campaigns found',
+    headers: {
+      name: 'Name',
+      created_at: 'Created At',
+      created_by: 'Created by',
+      recipients: 'Recipients',
+      sent: 'Sent',
+      received: 'Received',
+      read: 'Read',
+      failed: 'Failed',
+      replied: 'Replied',
+      status: 'Status'
+    },
+    status: {
+      SCHEDULED: 'Scheduled',
+      PROCESSING: 'Processing',
+      COMPLETED: 'Completed'
+    }
+  },
   today: 'Today',
   yesterday: 'Yesterday',
   imported_by: 'Imported by: {author}',

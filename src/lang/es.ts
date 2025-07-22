@@ -398,4 +398,29 @@ export default {
     ADD: 'Agregar nuevos contactos',
     ADD_AND_REPLACE: 'Agregar y actualizar contactos'
   },
+  campaigns: {
+    title: 'Campañas',
+    select_number: 'Selecciona un Número',
+    new_campaign: 'Nueva Campaña',
+    overview: 'Resumen',
+    all_campaigns: 'Todas las Campañas',
+    empty: 'No se encontraron campañas',
+    headers: {
+      name: 'Nombre',
+      created_at: 'Fechado de creación',
+      created_by: 'Creado por',
+      recipients: 'Receptores',
+      sent: 'Enviados',
+      received: 'Recibidos',
+      read: 'Leidos',
+      failed: 'Fallidos',
+      replied: 'Respondidos',
+      status: 'Estado'
+    },
+    status: {
+      SCHEDULED: 'Agendado',
+      PROCESSING: 'Procesando',
+      COMPLETED: 'Completado'
+    }
+  },
 }

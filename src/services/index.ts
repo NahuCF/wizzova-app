@@ -12,6 +12,7 @@ import ContactFieldService from './ContactFieldService'
 import ContactService from './ContactService'
 import UserService from './UserService'
 import GroupService from './GroupService'
+import CampaignService from './CampaignService'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -19,6 +20,7 @@ export { default as TemplateHeaderService } from './TemplateHeaderService'
 
 export const API = {
     auth: AuthService,
+    campaign: CampaignService,
     contact: ContactService,
     contactField: ContactFieldService,
     country: CountryService,

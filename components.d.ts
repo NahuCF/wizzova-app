@@ -56,6 +56,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('primevue/select')['default']
+    Skeleton: typeof import('primevue/skeleton')['default']
     StatusBadge: typeof import('./src/components/StatusBadge.vue')['default']
     Step1UploadFile: typeof import('./src/components/contacts/Step1UploadFile.vue')['default']
     Step2MapColumns: typeof import('./src/components/contacts/Step2MapColumns.vue')['default']
@@ -75,6 +76,7 @@ declare module 'vue' {
     TheSidebar: typeof import('./src/components/TheSidebar.vue')['default']
     Toast: typeof import('primevue/toast')['default']
     ToggleSwitch: typeof import('primevue/toggleswitch')['default']
+    ValueCard: typeof import('./src/components/ValueCard.vue')['default']
   }
   export interface ComponentCustomProperties {
     KeyFilter: typeof import('primevue/keyfilter')['default']

@@ -1,12 +1,12 @@
 import { computed, ref } from 'vue'
-import { useToast } from 'primevue'
+import { useToast, type DataTablePageEvent } from 'primevue'
 import { useDebounceFn } from '~/composables/useDebounceFn'
 import type { Page } from '~/types'
 import { useI18n } from 'vue-i18n'
 
 export function usePaginatedData<T>(
 	fetchFn: (page: number, perPage: number, searchTerm: string) => Promise<any>,
-	perPageDefault = 10,
+	perPageDefault = 10
 ) {
 	const { t } = useI18n()
 	const toast = useToast()
@@ -60,6 +60,12 @@ export function usePaginatedData<T>(
 		}
 	}
 
+	const onPage = ({ rows, first }: DataTablePageEvent) => {
+		rowsPerPage.value = rows
+		const page = Math.floor(first / rows) + 1
+		fetchDataPage(page, rowsPerPage.value)
+	}
+
 	const debouncedFetch = useDebounceFn(fetchDataPage, 500)
 
 	const currentPageReport = computed(() => {
@@ -84,5 +90,6 @@ export function usePaginatedData<T>(
 		fetchDataPage,
 		loadNextPage,
 		debouncedFetch,
+		onPage
 	}
 }
