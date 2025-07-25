@@ -5,6 +5,7 @@ import ContactImports from '~/views/ContactImports.vue'
 import Contacts from '~/views/Contacts.vue'
 import Conversations from '~/views/Conversations.vue'
 import EditTemplate from '~/views/EditTemplate.vue'
+import NewCampaign from '~/views/NewCampaign.vue'
 import NewTemplate from '~/views/NewTemplate.vue'
 import Templates from '~/views/Templates.vue'
 
@@ -28,6 +29,12 @@ const routes = [
             name: 'campaigns',
             meta: { titleKey: 'campaigns.title' },
             component: Campaigns
+          },
+          {
+            path: 'new',
+            name: 'new-campaign',
+            meta: { titleKey: 'new_campaign.title' },
+            component: NewCampaign
           }
         ]
       },

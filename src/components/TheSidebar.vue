@@ -38,7 +38,7 @@ const parentRouteName = computed(() => {
 </script>
 
 <template>
-	<div class="w-[13rem] shadow bg-white">
+	<div class="w-[13rem] shadow bg-white z-101">
 		<ul class="list-none p-0 m-0 flex flex-col">
 			<li 
 				v-for="page in pages" 

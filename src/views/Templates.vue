@@ -26,8 +26,6 @@ const {
   12
 )
 
-
-const sentinel = ref<HTMLElement | null>(null)
 const activeLayout = ref(1)
 const layoutOptions = ref([
 	{
@@ -90,20 +88,6 @@ const onPage = (event: DataTablePageEvent) => {
 
 onMounted(() => {
 	fetchDataPage(1, rowsPerPage.value)
-
-	// To detect scroll
-	const observer = new IntersectionObserver(
-		async ([entry]) => {
-			if (entry.isIntersecting && activeLayout.value === 1) {
-				await loadNextPage()
-			}
-		},
-		{
-			rootMargin: '200px',
-		}
-	)
-
-	if (sentinel.value) observer.observe(sentinel.value)
 })
 </script>
 
@@ -211,30 +195,17 @@ onMounted(() => {
 			</DataTable>
 		</div>
 		<div v-else>
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7">
-				<div class="h-[340px] flex flex-col justify-between items-center rounded-md bg-slate-200 w-full">
-					<div class="flex justify-center py-5 border-b-2 border-slate-300 w-full">
-						<div class="font-bold text-xl">
-							{{ $t('templates.create_new_template') }}
-						</div>
-					</div>
-
-					<Button class="w-[48px] h-[48px] bg-blue-500 hover:bg-blue-700"
-						@click="router.push({ name: 'new-template' })" rounded>
-						<IconPlus size="32" class="text-white" />
-					</Button>
-
-					<div></div>
-				</div>
-				<TemplateCard class="h-[340px] md:max-w-full" v-for="template in dataPage.data" :key="template.id"
-					:template="template" :options="templateOptions" />
-			</div>
+			<TemplateCardList
+				:templates="dataPage.data"
+				:loading="loading"
+				showCreateCard
+				:cardProps="{
+					options: templateOptions
+				}"
+				@reach-end="loadNextPage"
+			/>
 		</div>
 
 		<ActionsPopover ref="popover" :options="templateOptions" />
-
-		<div ref="sentinel" class="h-10" />
-
-		<div v-if="loading && activeLayout === 1" class="text-center mt-4">{{ $t('loading') + '...' }}</div>
 	</div>
 </template>

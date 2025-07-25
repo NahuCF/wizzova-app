@@ -4,11 +4,13 @@ import { IconRefresh, IconPlus, IconUsers, IconCheck, IconChecks,
 import moment from 'moment'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
 import type { BroadcastNumber, CampaignItem, CampaignOverview, CampaignStatus } from '~/types'
 
 const { t } = useI18n()
+const router = useRouter()
 const {
     dataPage,
     loading,
@@ -230,7 +232,7 @@ fetchOverview()
                     :disabled="loadingNumbers"
                 />
 
-                <Button>
+                <Button @click="router.push({ name: 'new-campaign' })">
                     <IconPlus size="16" class="mr-1" />
                     <span class="text-sm">
                         {{ $t('campaigns.new_campaign') }}

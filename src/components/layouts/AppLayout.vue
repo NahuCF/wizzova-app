@@ -8,7 +8,7 @@ import { RouterView } from 'vue-router'
     <TheSidebar />
     <RouterView v-slot="{ Component, route }">
       <transition name="fade" mode="out-in">
-        <main class="w-full overflow-y-scroll">
+        <main class="w-full overflow-y-auto">
           <component :is="Component" :key="route.path" />
         </main>
       </transition>

@@ -7,12 +7,13 @@ import { useTemplateStore } from '~/stores'
 import { useI18n } from 'vue-i18n'
 import type { TemplateCategory, Language, TemplateCreate } from '~/types'
 import axios from 'axios'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const templateStore = useTemplateStore()
 const { t } = useI18n()
 const toast = useToast()
 const router = useRouter()
+const route = useRoute()
 
 const languages = ref<Language[]>([])
 const templateCategories = ref<TemplateCategory[]>([])
@@ -80,7 +81,12 @@ const storeTemplate = async () => {
     })
 
     templateStore.clearState()
-    router.push({ name: 'templates' })
+    if(route.query.redirectTo && typeof route.query.redirectTo === 'string') {
+      router.push({ name: route.query.redirectTo })
+    }
+    else {
+      router.push({ name: 'templates' })
+    }
   } catch (error) {
     let errorMessage = t('an_error_occurred')
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { IconSearch, IconPlus, IconDotsVertical, IconTrash, IconEdit } from '@tabler/icons-vue'
 import moment from 'moment'
 import { useCrudActions } from '~/composables/useCrudActions'
@@ -9,6 +9,14 @@ import type { ContactFilterCondition, ContactGroupItem, CreateContactGroup, Filt
 import type { DataTablePageEvent } from 'primevue'
 import { useI18n } from 'vue-i18n'
 import { useContactFieldStore } from '~/stores'
+
+defineProps<{
+    selectedGroups?: ContactGroupItem[]
+}>()
+
+const emit = defineEmits<{
+    (e: 'update:selectedGroups', selectedGroups: ContactGroupItem[]): void
+}>()
 
 const { t } = useI18n()
 const contactFieldStore = useContactFieldStore()
@@ -179,6 +187,8 @@ contactFieldStore.fetchContactFields()
         <div class="overflow-auto">
             <DataTable 
                 :value="dataPage.data"
+                :selection="selectedGroups"
+                @update:selection="(groups) => emit('update:selectedGroups', groups)"
                 dataKey="id"
                 class="rounded-lg overflow-hidden"
                 :lazy="true"
@@ -212,7 +222,9 @@ contactFieldStore.fetchContactFields()
                     </div>
                 </template>
 
-                <Column v-for="column in columns" :key="column.header" headerClass="bg-slate-200!" >
+                <Column v-if="selectedGroups" selectionMode="multiple" headerStyle="width: 3rem" headerClass="bg-slate-200!"></Column>
+
+                <Column v-for="column in columns" :key="column.header" headerClass="bg-slate-200!">
                     <template #header>
                         <div class="uppercase text-sm font-semibold">
                             {{ $t(`contact_groups.headers.${column.header}`) }}
@@ -280,7 +292,7 @@ contactFieldStore.fetchContactFields()
                 v-model:visible="showGroupDialog"
                 :title="selectedGroup ? $t('contact_groups.dialog.edit_group') : $t('contact_groups.dialog.create_group')" 
                 :group="selectedGroup"
-                :loading="loading"
+                :loading="loadingDrawer"
                 @confirm="onSave"
             />
             <DeleteDialog 

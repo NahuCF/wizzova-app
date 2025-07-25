@@ -325,7 +325,7 @@ export default {
     }
   },
   copied_to_clipboard: 'Copiado al portapapeles',
-  pply: 'Aplicar',
+  apply: 'Aplicar',
   filters: {
     operator: 'Operador',
     enter_value: 'Ingresa valor',
@@ -423,4 +423,29 @@ export default {
       COMPLETED: 'Completado'
     }
   },
+  continue: 'Continuar',
+  leave: 'Salir',
+  unsaved_changes: '¿Estás seguro de que quieres salir? Tienes cambios sin guardar.',
+  new_campaign: {
+    select_template: 'Seleccionar Plantilla',
+    select_audience: 'Seleccionar Audiencia',
+    schedule_campaign: 'Programar Campaña',
+    group_selected: '1 Grupo seleccionado',
+    groups_selected: '{groups} Grupos seleccionados',
+    no_group_selected: 'Ningún grupo seleccionado',
+    select_template_subtitle: 'Selecciona una plantilla para generar la campaña',
+    add_template: 'Agregar plantilla',
+    campaign_details: 'Detalles de la campaña',
+    campaign_name: 'Nombre de la campaña',
+    send_campaign: 'Enviar campaña',
+    target_audience: 'Audiencia objetivo',
+    total_contacts: 'Total de contactos',
+    selected_groups: 'Grupos seleccionados',
+    enter_campaign_name: 'Ingrese el nombre de la campaña',
+    send_now: 'Enviar ahora',
+    schedule_later: 'Programar envio',
+    schedule_on: 'Programar el día',
+    schedule_at: 'Programar la hora',
+    campaign_created: '¡Campaña creada con éxito!'
+  }
 }
