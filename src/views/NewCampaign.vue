@@ -10,7 +10,7 @@ const router = useRouter()
 const { t } = useI18n()
 const toast = useToast()
 const campaignStore = useCampaignStore()
-const { currentStep, newCampaign } = storeToRefs(campaignStore)
+const { currentStep, newCampaign, showMapDialog } = storeToRefs(campaignStore)
 
 const showLeaveDialog = ref(false)
 const pendingNext = ref<Function | null>(null)
@@ -47,6 +47,15 @@ const cancelLeave = () => {
     if (pendingNext.value) pendingNext.value(false)
 }
 
+const goToSchedule = () => {
+    if(newCampaign.value.variables) {
+        showMapDialog.value = true
+    }
+    else {
+        currentStep.value++
+    }
+}
+
 onBeforeRouteLeave((to, from, next) => {
     if(success.value === true || to.name === 'new-template') {
         next()
@@ -68,13 +77,13 @@ onBeforeRouteLeave((to, from, next) => {
                 </StepList>
                 <StepPanels>
                     <StepPanel class="bg-transparent!" :value="1">
-                        <TemplateStep />
+                        <TemplateStep v-if="currentStep === 1" />
                     </StepPanel>
                     <StepPanel class="bg-transparent!" :value="2">
-                        <AudienceStep />
+                        <AudienceStep v-if="currentStep === 2" />
                     </StepPanel>
                     <StepPanel class="bg-transparent!" :value="3">
-                        <ScheduleStep />
+                        <ScheduleStep v-if="currentStep === 3" />
                     </StepPanel>
                 </StepPanels>
             </Stepper>
@@ -96,7 +105,7 @@ onBeforeRouteLeave((to, from, next) => {
                 </div>
                 <Button 
                     :disabled="newCampaign.contactGroups.length === 0"
-                    @click="currentStep++"
+                    @click="goToSchedule"
                 >
                     <span class="text-sm">
                         {{ $t('continue') }}
@@ -124,8 +133,8 @@ onBeforeRouteLeave((to, from, next) => {
             </div>
         </div>
 
-        <Dialog v-model:visible="showLeaveDialog" modal header="Unsaved Changes" :closable="false">
-            <p>{{ $t('unsaved_changes') }}</p>
+        <Dialog v-model:visible="showLeaveDialog" modal :header="$t('unsaved_changes')" :closable="false">
+            <p>{{ $t('unsaved_changes_message') }}</p>
             <template #footer>
                 <Button :label="$t('cancel')" @click="cancelLeave" severity="secondary" />
                 <Button :label="$t('leave')" @click="confirmLeave" severity="danger" />

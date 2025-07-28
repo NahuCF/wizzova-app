@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 import { computed, ref, watchEffect } from "vue"
-import type { BroadcastNumber, ContactGroupItem, TemplateItem } from "~/types"
+import type { BroadcastNumber, ContactGroupItem, TemplateItem, VariableMapping } from "~/types"
 
 interface CreateCampaign {
     name: string,
@@ -9,7 +9,8 @@ interface CreateCampaign {
     template?: TemplateItem,
     contactGroups: ContactGroupItem[],
     scheduledDate?: Date,
-    scheduledTime?: Date
+    scheduledTime?: Date,
+    variables?: VariableMapping[]
 }
 
 export const useCampaignStore = defineStore('campaign', () => {
@@ -19,10 +20,15 @@ export const useCampaignStore = defineStore('campaign', () => {
         contactGroups: [],
         sendOption: 'SEND_NOW'
     })
+    const showMapDialog = ref(false)
 
     const totalContactsCount = computed(() => {
         return newCampaign.value.contactGroups.reduce((total, group) => total + group.contact_count, 0)
     })
+
+    const getVariableMapping = (name: string) => {
+        return newCampaign.value.variables?.find(v => v.name === name)!
+    }
 
     const clear = () => {
         currentStep.value = 1
@@ -31,22 +37,36 @@ export const useCampaignStore = defineStore('campaign', () => {
             contactGroups: [],
             sendOption: 'SEND_NOW'
         }
+        newCampaign.value.variables = undefined
+        showMapDialog.value = false
     }
 
     watchEffect(() => {
         const c = newCampaign.value
+
         if (typeof c.scheduledDate === 'string') {
             c.scheduledDate = new Date(c.scheduledDate)
         }
         if (typeof c.scheduledTime === 'string') {
             c.scheduledTime = new Date(c.scheduledTime)
         }
+
+        if (c.template && !c.variables && c.template.components.body.variables) {
+            // Initialize mapped variables
+            c.variables = c.template.components.body.variables.map(variable => ({
+                name: variable.name,
+                value: '',
+                contact_field_id: variable.contact_field_id
+            }))
+        }
     })
 
     return {
         currentStep,
         newCampaign,
+        showMapDialog,
         totalContactsCount,
+        getVariableMapping,
         clear
     }
 }, {

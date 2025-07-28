@@ -23,11 +23,7 @@ export interface TemplateState {
   }
   body: {
     text: string,
-    variables: {
-      contact_field_id?: string,
-      name: string,
-      value: string
-    } []
+    variables: VariableMapping []
   },
   footer: string,
   buttons: (TemplateBtn | TemplateUrlBtn | TemplateCallBtn) []
@@ -44,11 +40,7 @@ export interface TemplateCreate {
     }
     body: {
       text: string,
-      variables: {
-        contact_field_id?: string,
-        name: string,
-        value: string
-      } []
+      variables: VariableMapping []
     },
     footer?: string,
     buttons: (TemplateBtn | TemplateUrlBtn | TemplateCallBtn) []
@@ -92,3 +84,9 @@ export interface TemplateCallBtn extends TemplateBtn {
 }
 
 export type TemplateButtonsByCategory = Record<string, (TemplateBtn | TemplateUrlBtn | TemplateCallBtn)[]>
+
+export interface VariableMapping {
+  contact_field_id?: string
+  name: string
+  value: string
+}
