@@ -21,7 +21,7 @@ Http.interceptors.request.use((config) => {
   const session = useSessionStore()
   const tenant = session.getTenant
 
-  if (tenant.token) {
+  if (tenant?.token) {
     config.headers.Authorization = `Bearer ${tenant.token}`
   }
 

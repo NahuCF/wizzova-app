@@ -8,6 +8,9 @@ export default {
   async register(data: RegisterForm) {
     return Http.post<RegisterResponse>('/register', data)
   },
+  async logout() {
+    return Http.post('/logout')
+  },
   async sendVerifyAccount(data: { email: string }) {
     return Http.post('/send-verify-account', data)
   },

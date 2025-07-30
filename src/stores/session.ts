@@ -2,9 +2,14 @@ import { defineStore } from 'pinia'
 import type { Tenant } from '~/types/Tenant'
 import type { User } from '~/types/User'
 
+interface SessionState {
+  user: User | null,
+  tenant: Tenant | null
+}
+
 export const useSessionStore = defineStore('session', {
-  state: () => {
-    return { user: {} as User, tenant: {} as Tenant }
+  state: (): SessionState => {
+    return { user: null, tenant: null }
   },
   actions: {
     setTenant(tenant: Tenant) {
@@ -16,12 +21,12 @@ export const useSessionStore = defineStore('session', {
   },
   getters: {
     isAuthenticated(): boolean {
-      return this.user.id != null && this.tenant.id != null && this.tenant.token !== null
+      return this.user?.id != null && this.tenant?.id != null && this.tenant.token !== null
     },
     isTenantVerified(): boolean {
-      return this.tenant.verifiedEmail
+      return Boolean(this.tenant?.verifiedEmail)
     },
-    getTenant(): Tenant {
+    getTenant(): Tenant | null {
       return this.tenant
     },
   },
