@@ -1,0 +1,69 @@
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+import { useConvertToRete } from '~/composables/useConvertToRete'
+import { useTestBotFlow } from '~/composables/useTestBotFlow'
+
+const {
+	questionsInput,
+	messagesInput,
+	testCases,
+	currentTestIndex,
+	currentFlowWithLayout,
+	runTest,
+} = useTestBotFlow()
+
+const editorKey = ref(0)
+
+const reteConversion = computed(() =>
+	useConvertToRete(
+		currentFlowWithLayout.value.nodes,
+		currentFlowWithLayout.value.edges
+	)
+)
+
+watch([questionsInput, messagesInput], () => {
+	currentTestIndex.value = -1
+})
+
+watch(
+	[currentTestIndex, questionsInput, messagesInput],
+	() => {
+		editorKey.value++
+		runTest(currentTestIndex.value)
+	}
+)
+</script>
+
+<template>
+	<div class="mb-4">
+		<label>
+			Questions:
+			<input type="number" v-model.number="questionsInput" min="1" />
+		</label>
+		<label class="ml-4">
+			Messages per Question:
+			<input type="number" v-model.number="messagesInput" min="1" />
+		</label>
+	</div>
+
+	<div class="mb-4">
+		<label>
+			Quick Tests:
+			<select v-model.number="currentTestIndex" @change="runTest(currentTestIndex)">
+				<option :value="-1" disabled>Select a test case</option>
+				<option v-for="(test, i) in testCases" :key="i" :value="i">
+					Questions: {{ test.questions }}, Messages: {{ test.messages }}
+				</option>
+			</select>
+		</label>
+	</div>
+
+	<div class="h-[600px] border rounded overflow-hidden">
+		<ReteEditor 
+			:key="editorKey" 
+			:originalNodes="currentFlowWithLayout.nodes"
+			:reteNodes="reteConversion.reteNodes" 
+			:reteEdges="reteConversion.reteEdges" 
+		/>
+	</div>
+</template>

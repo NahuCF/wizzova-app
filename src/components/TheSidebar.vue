@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { IconSpeakerphone, IconLayout, IconUsers, IconAddressBook } from '@tabler/icons-vue'
+import { IconSpeakerphone, IconLayout, IconUsers, IconAddressBook, IconRobot } from '@tabler/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -26,6 +26,16 @@ const pages = ref([
 		name: 'Contact Fields',
 		icon: IconAddressBook,
 		path: '/contact-fields'
+	},
+	{
+		name: 'Vue Flow',
+		icon: IconRobot,
+		path: '/flows/vue-flow'
+	},
+	{
+		name: 'Rete JS',
+		icon: IconRobot,
+		path: '/flows/retejs'
 	}
 ])
 
