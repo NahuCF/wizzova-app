@@ -21,9 +21,15 @@ export const useUserStore = defineStore('user', () => {
         }
     }
 
+    const $reset = () => {
+        users.value = []
+        loading.value = false
+    }
+
     return {
         users,
         loading,
-        fetchUsers
+        fetchUsers,
+        $reset
     }
 })

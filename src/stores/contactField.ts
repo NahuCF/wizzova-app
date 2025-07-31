@@ -29,11 +29,17 @@ export const useContactFieldStore = defineStore('contactField', () => {
         contactFields.value.filter(field => field.is_mandatory)
     )
 
+    const $reset = () => {
+        contactFields.value = []
+        loading.value = false
+    }
+
     return {
         contactFields,
         primaryFields,
         requiredFields,
         loading,
-        fetchContactFields
+        fetchContactFields,
+        $reset
     }
 })

@@ -61,13 +61,24 @@ export const useCampaignStore = defineStore('campaign', () => {
         }
     })
 
+    const $reset = () => {
+        currentStep.value = 1
+        newCampaign.value = {
+            name: '',
+            contactGroups: [],
+            sendOption: 'SEND_NOW'
+        }
+        showMapDialog.value = false
+    }
+
     return {
         currentStep,
         newCampaign,
         showMapDialog,
         totalContactsCount,
         getVariableMapping,
-        clear
+        clear,
+        $reset
     }
 }, {
     persist: true
