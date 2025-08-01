@@ -305,13 +305,6 @@ fetchOverview()
                 </template>
 
                 <Column v-for="column in columns" :key="column.header" headerClass="bg-slate-200!">
-                    <template #loading>
-                        <div class="flex items-center"
-                            :style="{ height: '17px', 'flex-grow': '1', overflow: 'hidden' }">
-                            <Skeleton width="40%" height="1rem" />
-                        </div>
-                    </template>
-
                     <template #header>
                         <div class="uppercase text-sm font-semibold">
                             {{ $t(`campaigns.headers.${column.header}`) }}

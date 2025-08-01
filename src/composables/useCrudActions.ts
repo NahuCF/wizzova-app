@@ -11,8 +11,7 @@ interface CrudApi<T> {
 
 interface UseCrudActionsOptions<T> {
     api: CrudApi<T>
-    fetchData: (page: number, perPage: number) => void
-    rowsPerPage: Ref<number>
+    fetchData: () => void
     i18nKeys: {
         created: string
         updated: string
@@ -66,7 +65,7 @@ export function useCrudActions<T extends { id?: string | number }>(
                 showSuccess(options.i18nKeys.created)
             }
 
-            options.fetchData(1, options.rowsPerPage.value)
+            options.fetchData()
             opts?.onSuccess?.()
         } catch (error) {
             showError(error)
@@ -81,7 +80,7 @@ export function useCrudActions<T extends { id?: string | number }>(
     ) => {
         try {
             await options.api.delete(id)
-            options.fetchData(1, options.rowsPerPage.value)
+            options.fetchData()
             showSuccess(options.i18nKeys.deleted)
             opts?.onSuccess?.()
         } catch (error) {

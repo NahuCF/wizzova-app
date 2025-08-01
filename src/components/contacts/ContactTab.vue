@@ -39,8 +39,7 @@ const {
         update: API.contact.update,
         delete: API.contact.delete
     },
-    fetchData: fetchDataPage,
-    rowsPerPage,
+    fetchData: () => fetchDataPage(1, rowsPerPage.value),
     i18nKeys: {
         created: 'contacts.contact_created',
         updated: 'contacts.contact_updated',
@@ -211,7 +210,7 @@ userStore.fetchUsers()
             @deleteContact="(contactItem: ContactItem) => onDeleteContact(contactItem)"
         />
 
-        <DeleteDialog 
+        <WarningDialog 
             v-model:visible="showDeleteDialog" 
             :title="$t('contacts.delete_contact')"
             :message="$t('contacts.delete_message')"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { IconSpeakerphone, IconLayout, IconUsers, IconAddressBook, IconLogout, IconLoader2 } from '@tabler/icons-vue'
+import { IconSpeakerphone, IconLayout, IconUsers, IconAddressBook, IconLogout, IconLoader2, IconForms } from '@tabler/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import { API } from '~/services'
 import { defineStore, getActivePinia } from 'pinia'
@@ -49,15 +49,21 @@ const pages = computed(() => {
 		},
 		{
 			name: 'Contacts',
-			icon: IconUsers,
+			icon: IconAddressBook,
 			path: '/contacts',
 			action: () => router.push('/contacts')
 		},
 		{
 			name: 'Contact Fields',
-			icon: IconAddressBook,
+			icon: IconForms,
 			path: '/contact-fields',
 			action: () => router.push('/contact-fields')
+		},
+		{
+			name: 'Users, Teams and Roles',
+			icon: IconUsers,
+			path: '/settings/users-teams-roles',
+			action: () => router.push('/settings/users-teams-roles')
 		},
 		{
 			name: 'Logout',

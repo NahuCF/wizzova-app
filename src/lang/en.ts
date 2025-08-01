@@ -429,6 +429,8 @@ Grab them today!`,
   unsaved_changes: 'Unsaved changes',
   unsaved_changes_message: 'Are you sure you want to leave? You have unsaved changes.',
   confirm: 'Confirm',
+  invite: 'Invite',
+  restore: 'Restore',
   new_campaign: {
     title: 'New Campaign',
     select_template: 'Select Template',
@@ -461,5 +463,110 @@ Grab them today!`,
     schedule_on: 'Schedule on',
     schedule_at: 'Schedule at',
     campaign_created: 'Campaign created successfully!'
+  },
+  users_teams_roles: {
+    title: 'Users, Teams & Roles',
+    users_tab: 'Users',
+    deleted_users_tab: 'Deleted Users',
+    teams_tab: 'Teams',
+    roles_tab: 'Roles'
+  },
+  users: {
+    add: 'Add User',
+    edit: 'Edit User',
+    empty: 'No users found',
+    headers: {
+      name: 'Name',
+      email: 'Email',
+      role: 'Role',
+      status: 'Status'
+    },
+    status: {
+      SIGNED_UP: 'Signed Up',
+      ACTIVE: 'Active',
+      INACTIVE: 'Inactive',
+      DELETED: 'Deleted',
+      INVITATION_SENT: 'Invitation Sent',
+      INVITATION_ACCEPTED: 'Invitation Accepted'
+    },
+    create_user: 'Create User',
+    edit_user: 'Edit User',
+    delete_user: 'Delete User',
+    delete_message: 'Are you sure do you want to delete this user?',
+    name: {
+      label: 'Name',
+      placeholder: 'Enter name'
+    },
+    email: {
+      label: 'Email',
+      placeholder: 'Enter email'
+    },
+    role: {
+      label: 'Role',
+      placeholder: 'Select role'
+    },
+    teams: {
+      label: 'Teams',
+      placeholder: 'Select teams'
+    },
+    create_user_tooltip: 'You must fill all required fields',
+    user_created: 'User created successfully!',
+    user_updated: 'User updated successfully!',
+    user_deleted: 'User deleted successfully!'
+  },
+  deleted_users: {
+    restore: 'Restore',
+    restore_title: 'Restore user',
+    restore_message: 'Are you sure you want to restore this user?',
+    restored: 'User restored'
+  },
+  teams: {
+    add: 'Add Team',
+    edit: 'Edit Team',
+    empty: 'No teams found',
+    headers: {
+      name: 'Name',
+      created_by: 'Created By',
+      users_count: 'N° of users',
+      actions: 'Actions'
+    },
+    name: {
+      label: 'Name',
+      placeholder: 'Enter name'
+    },
+    users: {
+      label: 'Users',
+      placeholder: 'Select users'
+    },
+    create_team_tooltip: 'You must fill all required fields',
+    create_team: 'Create Team',
+    edit_team: 'Edit Team',
+    delete_team: 'Delete Team',
+    delete_message: 'Are you sure do you want to delete this team?',
+    team_created: 'Team created successfully!',
+    team_updated: 'Team updated successfully!',
+    team_deleted: 'Team deleted successfully!'
+  },
+  roles: {
+    add: 'Add Role',
+    edit: 'Edit Role',
+    empty: 'No roles found',
+    headers: {
+      name: 'Name',
+      created_by: 'Create By'
+    },
+    system: 'System',
+    name: {
+      label: 'Name',
+      placeholder: 'Enter name'
+    },
+    create_role_tooltip: 'You must fill all required fields',
+    create_role: 'Create Role',
+    edit_role: 'Edit Role',
+    delete_role: 'Delete Role',
+    delete_message: 'Are you sure do you want to delete this team?',
+    role_created: 'Role created successfully!',
+    role_updated: 'Role updated successfully!',
+    role_deleted: 'Role deleted successfully!'
   }
 }

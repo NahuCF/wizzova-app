@@ -44,8 +44,7 @@ const {
         update: API.group.update,
         delete: API.group.delete
     },
-    fetchData: fetchDataPage,
-    rowsPerPage,
+    fetchData: () => fetchDataPage(1, rowsPerPage.value),
     i18nKeys: {
         created: 'contact_groups.group_created',
         updated: 'contact_groups.group_updated',
@@ -295,7 +294,7 @@ contactFieldStore.fetchContactFields()
                 :loading="loadingDrawer"
                 @confirm="onSave"
             />
-            <DeleteDialog 
+            <WarningDialog 
                 v-model:visible="showDeleteDialog" 
                 :title="$t('contact_groups.delete_group')"
                 :message="$t('contact_groups.delete_message')"

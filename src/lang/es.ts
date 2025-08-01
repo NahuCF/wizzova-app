@@ -428,6 +428,8 @@ export default {
   unsaved_changes: 'Cambios sin guardar',
   unsaved_changes_message: '¿Estás seguro de que quieres salir? Tienes cambios sin guardar.',
   confirm: 'Confirmar',
+  invite: 'Invitar',
+  restore: 'Restaurar',
   new_campaign: {
     title: 'Nueva Campaña',
     select_template: 'Seleccionar Plantilla',
@@ -460,5 +462,110 @@ export default {
     schedule_on: 'Programar el día',
     schedule_at: 'Programar la hora',
     campaign_created: '¡Campaña creada con éxito!'
+  },
+  users_teams_roles: {
+    title: 'Usuarios, Equipos y Roles',
+    users_tab: 'Usuarios',
+    deleted_users_tab: 'Usuarios Eliminados',
+    teams_tab: 'Equipos',
+    roles_tab: 'Roles'
+  },
+  users: {
+    add: 'Agregar Usuario',
+    edit: 'Editar Usuario',
+    empty: 'No se encontraron usuarios',
+    headers: {
+      name: 'Nombre',
+      email: 'Correo Electrónico',
+      role: 'Rol',
+      status: 'Estado'
+    },
+    status: {
+      SIGNED_UP: 'Registrado',
+      ACTIVE: 'Activo',
+      INACTIVE: 'Inactivo',
+      DELETED: 'Eliminado',
+      INVITATION_SENT: 'Invitación Enviada',
+      INVITATION_ACCEPTED: 'Invitación Aceptada'
+    },
+    create_user: 'Crear Usuario',
+    edit_user: 'Editar Usuario',
+    delete_user: 'Eliminar Usuario',
+    delete_message: '¿Estás seguro de que deseas eliminar este usuario?',
+    name: {
+      label: 'Nombre',
+      placeholder: 'Ingresa el nombre'
+    },
+    email: {
+      label: 'Correo Electrónico',
+      placeholder: 'Ingresa el correo electrónico'
+    },
+    role: {
+      label: 'Rol',
+      placeholder: 'Selecciona un rol'
+    },
+    teams: {
+      label: 'Equipos',
+      placeholder: 'Selecciona equipos'
+    },
+    create_user_tooltip: 'Debes completar todos los campos requeridos',
+    user_created: '¡Usuario creado con éxito!',
+    user_updated: '¡Usuario actualizado con éxito!',
+    user_deleted: '¡Usuario eliminado con éxito!'
+  },
+  deleted_users: {
+    restore: 'Restaurar',
+    restore_title: 'Restaurar usuario',
+    restore_message: '¿Estás seguro de que deseas restaurar este usuario?',
+    restored: 'Usuario restaurado'
+  },
+  teams: {
+    add: 'Agregar Equipo',
+    edit: 'Editar Equipo',
+    empty: 'No se encontraron equipos',
+    headers: {
+      name: 'Nombre',
+      created_by: 'Creado Por',
+      users_count: 'N.º de usuarios',
+      actions: 'Acciones'
+    },
+    name: {
+      label: 'Nombre',
+      placeholder: 'Ingresa el nombre'
+    },
+    users: {
+      label: 'Usuarios',
+      placeholder: 'Selecciona usuarios'
+    },
+    create_team_tooltip: 'Debes completar todos los campos requeridos',
+    create_team: 'Crear Equipo',
+    edit_team: 'Editar Equipo',
+    delete_team: 'Eliminar Equipo',
+    delete_message: '¿Estás seguro de que deseas eliminar este equipo?',
+    team_created: '¡Equipo creado con éxito!',
+    team_updated: '¡Equipo actualizado con éxito!',
+    team_deleted: '¡Equipo eliminado con éxito!'
+  },
+  roles: {
+    add: 'Agregar Rol',
+    edit: 'Editar Rol',
+    empty: 'No se encontraron roles',
+    headers: {
+      name: 'Nombre',
+      created_by: 'Creado Por'
+    },
+    system: 'Sistema',
+    name: {
+      label: 'Nombre',
+      placeholder: 'Ingresa el nombre'
+    },
+    create_role_tooltip: 'Debes completar todos los campos requeridos',
+    create_role: 'Crear Rol',
+    edit_role: 'Editar Rol',
+    delete_role: 'Eliminar Rol',
+    delete_message: '¿Estás seguro de que deseas eliminar este rol?',
+    role_created: '¡Rol creado con éxito!',
+    role_updated: '¡Rol actualizado con éxito!',
+    role_deleted: '¡Rol eliminado con éxito!'
   }
 }

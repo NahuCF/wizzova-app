@@ -13,6 +13,8 @@ import ContactService from './ContactService'
 import UserService from './UserService'
 import GroupService from './GroupService'
 import CampaignService from './CampaignService'
+import TeamService from './TeamService'
+import RoleService from './RoleService'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -28,6 +30,8 @@ export const API = {
     group: GroupService,
     industry: IndustryService,
     knownPlace: KnownPLaceService,
+    role: RoleService,
+    team: TeamService,
     templateCategory: TemplateCategoryService,
     templateHeader: TemplateHeaderService,
     templateLanguage: TemplateLanguageService,

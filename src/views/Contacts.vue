@@ -30,25 +30,3 @@ import { IconUsers, IconLayoutGrid } from '@tabler/icons-vue'
         </Tabs>
     </div>
 </template>
-
-<style lang="css" scoped>
-:deep(.p-tabs),
-:deep(.p-tabpanels),
-:deep(.p-tabpanel) {
-  height: 100%;
-  overflow: hidden;
-}
-
-:deep(.p-tablist-tab),
-:deep(.p-tabpanels),
-:deep(.p-tabpanel) {
-    background: transparent;
-    border: none;
-}
-
-:deep(.p-tablist-tab-list) {
-    background: transparent;
-    padding: 0 1.5rem;
-    border-bottom: 1px solid var(--p-tabs-tab-hover-border-color);
-}
-</style>

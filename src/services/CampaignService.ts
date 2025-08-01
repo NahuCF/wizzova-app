@@ -35,7 +35,15 @@ const createMockCampaigns = (page: number, perPage: number): Page<CampaignItem> 
             email: `user${index + 1}@example.com`,
             cellphone_number: `1234567${index}`,
             cellphone_prefix: '+1',
-            cellphone: `+11234567${index}`
+            cellphone: `+11234567${index}`,
+            role: {
+                id: 1,
+                name: '',
+                is_internal: false
+            },
+            permissions: [],
+            status: 'ACTIVE',
+            is_deleted: false
         },
         recipients_count: 1000 + index,
         sent_count: 800 + index,

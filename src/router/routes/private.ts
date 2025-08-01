@@ -7,6 +7,7 @@ import Conversations from '~/views/Conversations.vue'
 import EditTemplate from '~/views/EditTemplate.vue'
 import NewCampaign from '~/views/NewCampaign.vue'
 import NewTemplate from '~/views/NewTemplate.vue'
+import UsersTeamsRoles from '~/views/settings/UsersTeamsRoles.vue'
 import Templates from '~/views/Templates.vue'
 
 const routes = [
@@ -86,6 +87,17 @@ const routes = [
             name: 'contacts-import',
             meta: { titleKey: 'contacts.title' },
             component: ContactImports
+          }
+        ]
+      },
+      {
+        path: '/settings',
+        children: [
+          {
+            path: 'users-teams-roles',
+            name: 'users-teams-roles',
+            meta: { titleKey: 'users_teams_roles.title' },
+            component: UsersTeamsRoles
           }
         ]
       }
