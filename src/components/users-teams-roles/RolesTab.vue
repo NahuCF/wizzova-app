@@ -5,9 +5,11 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useCrudActions } from '~/composables/useCrudActions'
 import { API } from '~/services'
+import { useSessionStore } from '~/stores'
 import { useRoleStore } from '~/stores/role'
 import type { RoleCreate, RoleItem } from '~/types/User'
 
+const { hasPermission } = useSessionStore()
 const roleStore = useRoleStore()
 const { fetchRoles } = roleStore
 const { loading, roles, selectedRole, showCreateDialog } = storeToRefs(roleStore)
@@ -121,10 +123,10 @@ fetchRoles()
                     </template>
                 </Column>
 
-				<Column headerClass="bg-slate-200!" :bodyStyle="{ maxWidth: '50px' }">
+				<Column v-if="hasPermission('settings.manage_user_roles_and_teams')" headerClass="bg-slate-200!" :bodyStyle="{ maxWidth: '50px' }">
                     <template #body="{ data }: { data: RoleItem }">
                         <div class="flex justify-center">
-                            <Button severity="secondary" variant="text" @click="(e: Event) => optionsMenu?.show(e, data)">
+                            <Button v-if="!data.is_internal" severity="secondary" variant="text" @click="(e: Event) => optionsMenu?.show(e, data)">
                                 <div>
 									<IconDotsVertical  size="13" />
 								</div>

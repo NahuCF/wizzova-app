@@ -4,6 +4,7 @@ import { IconAsterisk, IconLoader2 } from '@tabler/icons-vue'
 import type { Role, TeamItem, UserCreate, UserItem } from '~/types'
 import { useRoleStore, useTeamStore } from '~/stores'
 import { storeToRefs } from 'pinia'
+import { z } from 'zod'
 
 const props = defineProps<{
 	title: string,
@@ -35,9 +36,22 @@ const user = ref<{
 	email: '',
 	teams: []
 })
+const emailError = ref<string | null>(null)
+const emailSchema = z.string().email({ message: 'invalid_email' })
+
+const validateEmail = (email: string) => {
+    const result = emailSchema.safeParse(email)
+    emailError.value = result.success ? null : result.error.issues[0].message
+    return result.success
+}
 
 const canSubmit = () => {
-	return user.value.name && user.value.email && user.value.role
+    return (
+        user.value.name &&
+        user.value.email &&
+        validateEmail(user.value.email) &&
+        user.value.role
+    )
 }
 
 const onConfirm = () => {
@@ -55,6 +69,13 @@ const getRoles = computed(() => {
 		id: role.id,
 		name: role.name,
 		is_internal: role.is_internal
+	}))
+})
+
+const getTeams = computed(() => {
+	return teams.value.map(team => ({
+		id: team.id,
+		name: team.name
 	}))
 })
 
@@ -82,6 +103,14 @@ watch(() => props.visible, () => {
 			email: '',
 			teams: []
         }
+    }
+})
+
+watch(() => user.value.email, (newEmail) => {
+    if (!newEmail) {
+        emailError.value = null
+    } else {
+        validateEmail(newEmail)
     }
 })
 </script>
@@ -125,6 +154,13 @@ watch(() => props.visible, () => {
                     name="email"
 					size="small"
                 />
+                <Message
+                    v-if="emailError"
+                    severity="error"
+                    variant="simple"
+                >
+                    {{ $t(emailError) }}
+                </Message>
             </div>
 
             <div class="flex flex-col gap-1 relative">
@@ -146,7 +182,7 @@ watch(() => props.visible, () => {
 				<label class="text-sm text-neutral-800! font-medium" for="users">{{ $t('users.teams.label') }}</label>
                 <MultiSelect
                     v-model="user.teams"
-                    :options="teams"
+                    :options="getTeams"
                     optionLabel="name"
 					display="chip"
                     :placeholder="$t('users.teams.placeholder')"

@@ -1,9 +1,19 @@
 <script lang="ts" setup>
-import { RouterView, useRouter } from 'vue-router'
+import { computed } from 'vue'
+import { RouterView, useRoute, useRouter } from 'vue-router'
 import { useSessionStore } from '~/stores/session'
+import UnauthorizeAccess from '~/views/UnauthorizeAccess.vue'
 
 const router = useRouter()
+const route = useRoute()
 const sessionStore = useSessionStore()
+
+const hasAccess = computed(() => {
+	const permissions= route.meta?.permissions as string[] | undefined
+	if (!permissions || permissions.length === 0) return true
+
+	return sessionStore.hasAnyPermission(permissions)
+})
 
 const endSession = () => {
 	sessionStore.$reset()
@@ -17,17 +27,17 @@ const endSession = () => {
 		<RouterView v-slot="{ Component, route }">
 			<transition name="fade" mode="out-in">
 				<main class="w-full overflow-y-auto">
-					<component :is="Component" :key="route.path" />
+					<component :is="hasAccess ? Component : UnauthorizeAccess" :key="route.path" />
 				</main>
 			</transition>
 		</RouterView>
 		<Toast position="bottom-right" />
-		<WarningDialog
+		<WarningDialog 
 			v-model:visible="sessionStore.showOverrideDialog" 
 			:title="$t('invalid_session')"
-			:message="$t('session_override_message')"
+			:message="$t('session_override_message')" 
 			unclosable
-            :confirmMessage="$t('accept')"
+			:confirmMessage="$t('accept')"
 			@onConfirm="endSession" 
 		/>
 	</div>

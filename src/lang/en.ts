@@ -95,7 +95,16 @@ export default {
     'templater_name_already_exists': 'Template name already exists',
     'Contact already exists': 'Contact already exists',
     'Group name already exists': 'Group name already exists',
-    'Import name already exists': 'Import name already exists'
+    'Broadcast name already exists': 'Broadcast name already exists',
+    'Import name already exists': 'Import name already exists',
+    'You can not create an owner user': 'You can not create an owner user',
+    'A user with this email already exists': 'A user with this email already exists',
+    'You can not delete an owner user': 'You can not delete an owner user',
+    'User is not deleted': 'User is not deleted',
+    'A role with this name already exists': 'A role with this name already exists',
+    'This role is internal and cannot be updated': 'This role is internal and cannot be updated',
+    'A team with this name already exists': 'A team with this name already exists',
+    
   },
   submit_for_review: 'Submit for review',
   template_name: 'Template name',
@@ -584,5 +593,9 @@ Grab them today!`,
     role_created: 'Role created successfully!',
     role_updated: 'Role updated successfully!',
     role_deleted: 'Role deleted successfully!'
+  },
+  unauthorize_access: {
+    title: 'Access Denied',
+    message: 'You do not have sufficient permissions to access this module, contact your administrator.'
   }
 }

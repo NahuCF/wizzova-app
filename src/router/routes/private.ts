@@ -96,7 +96,10 @@ const routes = [
           {
             path: 'users-teams-roles',
             name: 'users-teams-roles',
-            meta: { titleKey: 'users_teams_roles.title' },
+            meta: { 
+              titleKey: 'users_teams_roles.title',
+              permissions: ['settings.manage_user_roles_and_teams', 'settings.view_user_roles_and_teams']
+            },
             component: UsersTeamsRoles
           }
         ]

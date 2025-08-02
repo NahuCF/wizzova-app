@@ -95,7 +95,15 @@ export default {
     'templater_name_already_exists': 'El nombre de la plantilla ya existe',
     'Contact already exists': 'El contacto ya existe',
     'Group name already exists': 'El nombre del grupo ya existe',
-    'Import name already exists': 'El nombre de importación ya existe'
+    'Broadcast name already exists': 'El nombre de la campaña ya existe',
+    'Import name already exists': 'El nombre de importación ya existe',
+    'You can not create an owner user': 'No puedes crear un usuario Owner',
+    'A user with this email already exists': 'Ya existe un usuario con este email',
+    'You can not delete an owner user': 'No puedes eliminar un usuario Owner',
+    'User is not deleted': 'El usuario no esta eliminado',
+    'A role with this name already exists': 'Ya existe un rol con este nombre',
+    'This role is internal and cannot be updated': 'Este rol es interno y no puede actualizarce',
+    'A team with this name already exists': 'Ya existe un equipo con este nombre',
   },
   submit_for_review: 'Enviar para revision',
   template_name: 'Nombre del template',
@@ -583,5 +591,9 @@ export default {
     role_created: '¡Rol creado con éxito!',
     role_updated: '¡Rol actualizado con éxito!',
     role_deleted: '¡Rol eliminado con éxito!'
+  },
+  unauthorize_access: {
+    title: 'Acceso Denegado',
+    message: 'No tienes permisos suficientes para acceder a este módulo, contacta a tu administrador'
   }
 }

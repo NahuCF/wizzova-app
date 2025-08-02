@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { Tenant } from '~/types'
-import type { User } from '~/types'
+import type { Tenant, UserItem } from '~/types'
 
 export const useSessionStore = defineStore('session', () => {
-	const user = ref<User | null>(null)
+	const user = ref<UserItem | null>(null)
 	const tenant = ref<Tenant | null>(null)
 	const tenants = ref<Tenant[]>([])
 	const selectedTenant = ref<Tenant | null>(null)
@@ -15,6 +14,24 @@ export const useSessionStore = defineStore('session', () => {
 	const isAuthenticated = computed(() => {
 		return user.value && tenant.value && token.value
 	})
+
+	const isOwner = computed(() => {
+		return user.value?.role.name === 'Owner' && user.value.role.is_internal
+	})
+
+	const hasPermission = (permissionName: string) => {
+		return !!user.value?.permission_names.find(permission => permission === permissionName)
+	}
+
+	const hasAllPermissions = (permissions: string[]) => {
+		return permissions.every(permission => {
+			return user.value?.permission_names.includes(permission)
+		})
+	}
+
+	const hasAnyPermission = (permissions: string[]) => {
+		return permissions.some(p => user.value?.permission_names.includes(p))
+	}
 
 	const $reset = () => {
 		user.value = null
@@ -35,6 +52,10 @@ export const useSessionStore = defineStore('session', () => {
 		token,
 		showOverrideDialog,
 		isAuthenticated,
+		isOwner,
+		hasPermission,
+		hasAllPermissions,
+		hasAnyPermission,
 		$reset
 	}
 }, {

@@ -3,8 +3,9 @@ import { IconPlus, IconSearch } from '@tabler/icons-vue'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { useDebounceFn } from '~/composables/useDebounceFn'
-import { useRoleStore, useTeamStore, useUserStore } from '~/stores'
+import { useRoleStore, useSessionStore, useTeamStore, useUserStore } from '~/stores'
 
+const { hasPermission } = useSessionStore()
 const userStore = useUserStore()
 const teamStore = useTeamStore()
 const roleStore = useRoleStore()
@@ -74,7 +75,7 @@ const debouncedFetchUsers = useDebounceFn(() => fetchUsers(true), 500)
                                 @input="debouncedFetchUsers()"
                             />
                         </div>
-                        <Button v-if="currentTab !== 'deleted_users'" @click="onCreate()">
+                        <Button v-if="currentTab !== 'deleted_users' && hasPermission('settings.manage_user_roles_and_teams')" @click="onCreate()">
                             <IconPlus size="16" class="mr-1" />
                             <span class="text-sm">
                                 {{ $t(`${currentTab}.add`) }}

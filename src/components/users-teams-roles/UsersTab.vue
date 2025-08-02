@@ -5,10 +5,11 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useCrudActions } from '~/composables/useCrudActions'
 import { API } from '~/services'
-import { useUserStore } from '~/stores'
+import { useUserStore, useSessionStore } from '~/stores'
 import { userStatusSeverity } from '~/types'
 import type { UserCreate, UserItem,  UserStatus } from '~/types'
 
+const { hasPermission, isOwner } = useSessionStore()
 const userStore = useUserStore()
 const { fetchUsers, fetchDeletedUsers } = userStore
 const { loading, users, showCreateDialog, selectedUser } = storeToRefs(userStore)
@@ -65,6 +66,29 @@ const userOptions = ref([
 		}
 	]
 ])
+const currentOptions = ref(userOptions.value)
+
+const openActions = (event: Event, userItem: UserItem) => {
+    if(userItem.role.is_internal && userItem.role.name === 'Owner') {
+        currentOptions.value = [
+            [
+                {
+                    label: 'users.edit',
+                    icon: IconEdit,
+                    action: (user: UserItem) => {
+                        selectedUser.value = user
+                        showCreateDialog.value = true
+                    }
+                }
+            ]
+        ]
+    }
+    else {
+        currentOptions.value = userOptions.value
+    }
+
+    optionsMenu.value?.show(event, userItem)
+}
 
 const transformedData = computed(() => {
 	return users.value.map(user => ({
@@ -130,10 +154,10 @@ fetchUsers()
                     </template>
                 </Column>
 
-				<Column headerClass="bg-slate-200!" :bodyStyle="{ maxWidth: '50px' }">
+				<Column v-if="hasPermission('settings.manage_user_roles_and_teams')" headerClass="bg-slate-200!" :bodyStyle="{ maxWidth: '50px' }">
                     <template #body="{ data }: { data: UserItem }">
                         <div class="flex justify-center">
-                            <Button severity="secondary" variant="text" @click="(e: Event) => optionsMenu?.show(e, data)">
+                            <Button v-if="!(data.role.is_internal && data.role.name === 'Owner') || isOwner" severity="secondary" variant="text" @click="(e: Event) => openActions(e, data)">
                                 <div>
 									<IconDotsVertical  size="13" />
 								</div>
@@ -144,7 +168,7 @@ fetchUsers()
             </DataTable>
         </div>
 
-		<ActionsPopover ref="optionsMenu" :options="userOptions" />
+		<ActionsPopover ref="optionsMenu" :options="currentOptions" />
 		<UserDrawer
             v-model:visible="showCreateDialog"
             :title="selectedUser ? $t('users.edit_user') : $t('users.create_user')"

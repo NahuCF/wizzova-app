@@ -5,10 +5,11 @@ import { useToast } from 'primevue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { API } from '~/services'
-import { useUserStore } from '~/stores'
+import { useUserStore, useSessionStore } from '~/stores'
 import { userStatusSeverity } from '~/types'
 import type { UserItem,  UserStatus } from '~/types'
 
+const { hasPermission } = useSessionStore()
 const userStore = useUserStore()
 const { fetchDeletedUsers, fetchUsers } = userStore
 const { loadingDeleted: loading, deletedUsers: users } = storeToRefs(userStore)
@@ -110,7 +111,7 @@ fetchDeletedUsers()
                     </template>
                 </Column>
 
-				<Column headerClass="bg-slate-200!">
+				<Column v-if="hasPermission('settings.manage_user_roles_and_teams')" headerClass="bg-slate-200!">
                     <template #body="{ data }: { data: UserItem }">
                         <div class="flex justify-center">
                             <Button severity="secondary" @click="onRestoreUser(data)" size="small">

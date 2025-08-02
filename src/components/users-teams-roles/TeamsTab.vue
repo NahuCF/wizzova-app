@@ -4,9 +4,10 @@ import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useCrudActions } from '~/composables/useCrudActions'
 import { API } from '~/services'
-import { useTeamStore } from '~/stores'
+import { useSessionStore, useTeamStore } from '~/stores'
 import type { TeamCreate, TeamItem } from '~/types'
 
+const { hasPermission } = useSessionStore()
 const teamStore = useTeamStore()
 const { fetchTeams } = teamStore
 const { loading, teams, showCreateDialog, selectedTeam } = storeToRefs(teamStore)
@@ -119,7 +120,7 @@ fetchTeams()
                     </template>
                 </Column>
 
-				<Column headerClass="bg-slate-200!" :bodyStyle="{ maxWidth: '50px' }">
+				<Column v-if="hasPermission('settings.manage_user_roles_and_teams')" headerClass="bg-slate-200!" :bodyStyle="{ maxWidth: '50px' }">
                     <template #body="{ data }: { data: TeamItem }">
                         <div class="flex justify-center">
                             <Button severity="secondary" variant="text" @click="(e: Event) => optionsMenu?.show(e, data)">
