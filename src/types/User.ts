@@ -15,7 +15,7 @@ export interface UserItem {
   cellphone: string,
   role: Role,
   teams?: TeamItem[],
-  permissions: Permission[],
+  permission_names: string[],
   is_deleted: boolean,
   status: UserStatus
 }

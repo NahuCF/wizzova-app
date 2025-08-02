@@ -59,7 +59,6 @@ export default {
   business_email: 'Business email',
   already_have_an_account: 'Already have an account?',
   business: 'Business',
-  login: 'Log In',
   grow_your_business_with: 'Grow your business with',
   confirm_account: 'Confirm account',
   check_your_email: 'Check your email',
@@ -74,6 +73,20 @@ export default {
   the_email_is_required: 'The email is required.',
   password_is_required: 'Password is required.',
   dont_you_have_an_account: "Don't have an account?",
+  signup: {
+    company_name: {
+      label: 'Company name',
+      placeholder: 'Enter your company name'
+    }
+  },
+  login: {
+    title: 'Log In',
+    company: 'Company',
+    switch: 'Switch'
+  },
+  choose_tenant: {
+    title: 'Choose Company',
+  },
   conversations: 'Conversations',
   validation_errors: {
     'The work email has already been taken': 'The email has already been taken.',
@@ -431,6 +444,9 @@ Grab them today!`,
   confirm: 'Confirm',
   invite: 'Invite',
   restore: 'Restore',
+  accept: 'Accept',
+  invalid_session: 'Invalid Session',
+  session_override_message: 'Another login has been detected, your current session will be logged out.',
   new_campaign: {
     title: 'New Campaign',
     select_template: 'Select Template',

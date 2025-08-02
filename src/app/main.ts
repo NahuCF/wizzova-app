@@ -12,6 +12,7 @@ import Tooltip from 'primevue/tooltip'
 
 import App from './App.vue'
 import router from '../router'
+import { setupInterceptors } from '~/config/http'
 
 const app = createApp(App)
 
@@ -28,6 +29,7 @@ app.use(PrimeVue, {
   },
 })
 app.directive('tooltip', Tooltip)
+setupInterceptors()
 
 app.mount('#app')
 

@@ -1,34 +1,46 @@
 import { defineStore } from 'pinia'
-import type { Tenant } from '~/types/Tenant'
-import type { User } from '~/types/User'
+import { computed, ref } from 'vue'
+import type { Tenant } from '~/types'
+import type { User } from '~/types'
 
-interface SessionState {
-  user: User | null,
-  tenant: Tenant | null
-}
+export const useSessionStore = defineStore('session', () => {
+	const user = ref<User | null>(null)
+	const tenant = ref<Tenant | null>(null)
+	const tenants = ref<Tenant[]>([])
+	const selectedTenant = ref<Tenant | null>(null)
+	const savedEmail = ref<string>('')
+	const token = ref<string>('')
+	const showOverrideDialog = ref(false)
 
-export const useSessionStore = defineStore('session', {
-  state: (): SessionState => {
-    return { user: null, tenant: null }
-  },
-  actions: {
-    setTenant(tenant: Tenant) {
-      this.tenant = tenant
-    },
-    setUser(user: User) {
-      this.user = user
-    },
-  },
-  getters: {
-    isAuthenticated(): boolean {
-      return this.user?.id != null && this.tenant?.id != null && this.tenant.token !== null
-    },
-    isTenantVerified(): boolean {
-      return Boolean(this.tenant?.verifiedEmail)
-    },
-    getTenant(): Tenant | null {
-      return this.tenant
-    },
-  },
-  persist: true,
+	const isAuthenticated = computed(() => {
+		return user.value && tenant.value && token.value
+	})
+
+	const $reset = () => {
+		user.value = null
+		tenant.value = null
+		tenants.value = []
+		selectedTenant.value = null
+		savedEmail.value = ''
+		token.value = ''
+		showOverrideDialog.value = false
+	}
+
+	return {
+		user,
+		tenant,
+		tenants,
+		selectedTenant,
+		savedEmail,
+		token,
+		showOverrideDialog,
+		isAuthenticated,
+		$reset
+	}
+}, {
+	persist: [
+		{
+			pick: ['user', 'tenant', 'token']
+		}
+	]
 })

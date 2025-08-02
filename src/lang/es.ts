@@ -59,7 +59,6 @@ export default {
   business_email: 'Email de la compañia',
   business: 'Compañia',
   already_have_an_account: '¿Ya tienes una cuenta?',
-  login: 'Iniciar sesion',
   grow_your_business_with: 'Crecer tu negocio con',
   confirm_account: 'Confirmar cuenta',
   check_your_email: 'Revisa tu email',
@@ -74,6 +73,20 @@ export default {
   the_email_is_required: 'El email es requerido.',
   password_is_required: 'La contraseña es requerida.',
   dont_you_have_an_account: '¿No tienes una cuenta?',
+  signup: {
+    company_name: {
+      label: 'Nombre de la compañia',
+      placeholder: 'Ingresa el nombre de la compañia'
+    }
+  },
+  login: {
+    title: 'Iniciar sesion',
+    company: 'Compañia',
+    switch: 'Cambiar'
+  },
+  choose_tenant: {
+    title: 'Elige la Compañia',
+  },
   conversations: 'Conversaciones',
   validation_errors: {
     'The work email has already been taken': 'El email de trabajo ya ha sido tomado.',
@@ -430,6 +443,9 @@ export default {
   confirm: 'Confirmar',
   invite: 'Invitar',
   restore: 'Restaurar',
+  accept: 'Aceptar',
+  invalid_session: 'Sesión Invalida',
+  session_override_message: 'Se ha detectado otro login, su sesión actual será cerrada.',
   new_campaign: {
     title: 'Nueva Campaña',
     select_template: 'Seleccionar Plantilla',
