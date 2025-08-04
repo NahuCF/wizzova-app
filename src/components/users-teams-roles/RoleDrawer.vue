@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { IconAsterisk, IconLoader2, IconInfoCircle } from '@tabler/icons-vue'
 import type { Permission, RoleCreate, RoleItem } from '~/types'
 import { useRoleStore } from '~/stores'
@@ -30,8 +30,12 @@ const role = ref<{
 	permissions: []
 })
 
+const hasAllPermissions = computed(() => {
+	return role.value.permissions.length === permissions.value?.data.length
+})
+
 const canSubmit = () => {
-	return role.value.name
+	return role.value.name && role.value.permissions.length > 0
 }
 
 const onConfirm = () => {
@@ -56,6 +60,12 @@ const togglePermission = (permission: Permission) => {
 			permission
 		]
 	}
+}
+
+const enableAllPermissions = () => {
+	role.value.permissions = [
+		...(permissions.value?.data || [])
+	]
 }
 
 watch(() => props.visible, () => {
@@ -110,6 +120,21 @@ watch(() => props.visible, () => {
 		</div>
 
 		<div class="flex flex-col gap-6 pt-6">
+			<div class="flex justify-between items-center pb-1 text-sm">
+				<div class="text-sm text-neutral-800! font-medium">
+					{{ $t('roles.role_permissions').toUpperCase() }}
+				</div>
+
+				<Button 
+					:modelValue="hasAllPermissions"
+					@click="enableAllPermissions"
+					variant="text"
+					size="small"
+				>
+					{{ $t('roles.enable_all') }}
+				</Button>
+			</div>
+
 			<div v-for="[group, permissionList] in Object.entries(permissions?.meta.groups || {})" class="flex flex-col gap-1 relative">
 				<label class="text-sm text-neutral-800! font-medium pb-3" for="name">{{ group.toUpperCase() }}</label>
 				<div class="flex justify-between items-center pb-1 text-sm" v-for="permission in permissionList">

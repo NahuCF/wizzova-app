@@ -5,13 +5,14 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useCrudActions } from '~/composables/useCrudActions'
 import { API } from '~/services'
-import { useUserStore, useSessionStore } from '~/stores'
+import { useUserStore, useSessionStore, useTeamStore } from '~/stores'
 import { userStatusSeverity } from '~/types'
 import type { UserCreate, UserItem,  UserStatus } from '~/types'
 
 const { hasPermission, isOwner } = useSessionStore()
 const userStore = useUserStore()
 const { fetchUsers, fetchDeletedUsers } = userStore
+const { fetchTeams } = useTeamStore()
 const { loading, users, showCreateDialog, selectedUser } = storeToRefs(userStore)
 
 const { t } = useI18n()
@@ -26,7 +27,10 @@ const {
         update: API.user.update,
         delete: API.user.delete
     },
-    fetchData: () => fetchUsers(true),
+    fetchData: () => {
+        fetchUsers(true)
+        fetchTeams(true)
+    },
     i18nKeys: {
         created: 'users.user_created',
         updated: 'users.user_updated',

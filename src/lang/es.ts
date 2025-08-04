@@ -585,7 +585,9 @@ export default {
       label: 'Nombre',
       placeholder: 'Ingresa el nombre'
     },
-    create_role_tooltip: 'Debes completar todos los campos requeridos',
+    role_permissions: 'Permisos de rol',
+    enable_all: 'Activar Todos',
+    create_role_tooltip: 'Debes ingresar el nombre del rol y al menos un permiso para continuar',
     create_role: 'Crear Rol',
     edit_role: 'Editar Rol',
     delete_role: 'Eliminar Rol',

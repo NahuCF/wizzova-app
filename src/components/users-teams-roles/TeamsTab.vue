@@ -24,7 +24,10 @@ const {
         update: API.team.update,
         delete: API.team.delete
     },
-    fetchData: () => fetchTeams(true),
+    fetchData: () => {
+        fetchTeams(true)
+        fetchUsers(true)
+    },
     i18nKeys: {
         created: 'teams.team_created',
         updated: 'teams.team_updated',
@@ -73,20 +76,14 @@ const transformedData = computed(() => {
 
 const onSave = (team: TeamCreate) => {
     createOrUpdate(team, {
-        onSuccess: () => {
-            showCreateDialog.value = false
-            fetchUsers(true)
-        }
+        onSuccess: () => showCreateDialog.value = false
     })
 }
 
 const onDelete = () => {
 	if (selectedTeam.value?.id) {
         remove(selectedTeam.value.id, {
-            onSuccess: () => {
-                showDeleteDialog.value = false
-                fetchUsers(true)
-            }
+            onSuccess: () => showDeleteDialog.value = false
         })
     }
 }
