@@ -90,6 +90,7 @@ export default {
   conversations: 'Conversations',
   validation_errors: {
     'The work email has already been taken': 'The email has already been taken.',
+    'The email has already been taken': 'The email has already been taken.',
     'The provided credentials are incorrect': 'The provided credentials are incorrect',
     'Template name already exists': 'Template name already exists',
     'templater_name_already_exists': 'Template name already exists',

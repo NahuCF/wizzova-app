@@ -90,6 +90,7 @@ export default {
   conversations: 'Conversaciones',
   validation_errors: {
     'The work email has already been taken': 'El email de trabajo ya ha sido tomado.',
+    'The email has already been taken': 'El email ya ha sido tomado.',
     'The provided credentials are incorrect': 'Credenciales incorrectas',
     'Template name already exists': 'El nombre de la plantilla ya existe',
     'templater_name_already_exists': 'El nombre de la plantilla ya existe',

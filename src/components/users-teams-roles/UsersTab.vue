@@ -118,16 +118,13 @@ fetchUsers()
 </script>
 
 <template>
-	<div>
+	<div class="flex flex-col h-full">
 		<div class="overflow-auto">
             <DataTable 
                 :value="transformedData" 
                 dataKey="id" 
-                class="rounded-lg overflow-hidden" 
-                :paginator="true" 
-                :loading="loading" 
-                :rows="10" 
-                :totalRecords="users.length" 
+                class="rounded-lg overflow-hidden"
+                :loading="loading"
                 scrollable
                 scrollHeight="flex"
             >

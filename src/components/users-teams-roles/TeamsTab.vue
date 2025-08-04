@@ -4,12 +4,14 @@ import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useCrudActions } from '~/composables/useCrudActions'
 import { API } from '~/services'
-import { useSessionStore, useTeamStore } from '~/stores'
+import { useSessionStore, useTeamStore, useUserStore } from '~/stores'
 import type { TeamCreate, TeamItem } from '~/types'
 
 const { hasPermission } = useSessionStore()
 const teamStore = useTeamStore()
+const userStore = useUserStore()
 const { fetchTeams } = teamStore
+const { fetchUsers } = userStore
 const { loading, teams, showCreateDialog, selectedTeam } = storeToRefs(teamStore)
 
 const {
@@ -71,14 +73,20 @@ const transformedData = computed(() => {
 
 const onSave = (team: TeamCreate) => {
     createOrUpdate(team, {
-        onSuccess: () => showCreateDialog.value = false
+        onSuccess: () => {
+            showCreateDialog.value = false
+            fetchUsers(true)
+        }
     })
 }
 
 const onDelete = () => {
 	if (selectedTeam.value?.id) {
         remove(selectedTeam.value.id, {
-            onSuccess: () => showDeleteDialog.value = false
+            onSuccess: () => {
+                showDeleteDialog.value = false
+                fetchUsers(true)
+            }
         })
     }
 }
@@ -87,16 +95,13 @@ fetchTeams()
 </script>
 
 <template>
-	<div>
+	<div class="flex flex-col h-full">
 		<div class="overflow-auto">
             <DataTable 
                 :value="transformedData" 
                 dataKey="id" 
-                class="rounded-lg overflow-hidden" 
-                :paginator="true" 
+                class="rounded-lg overflow-hidden"
                 :loading="loading" 
-                :rows="10" 
-                :totalRecords="teams.length" 
                 scrollable
                 scrollHeight="flex"
             >

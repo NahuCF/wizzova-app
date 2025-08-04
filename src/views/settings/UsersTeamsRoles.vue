@@ -37,7 +37,7 @@ const debouncedFetchUsers = useDebounceFn(() => fetchUsers(true), 500)
 </script>
 
 <template>
-    <div class="h-screen">
+    <div class="flex flex-col h-full">
         <div class="px-6 pt-6 text-lg font-semibold">{{ $t('users_teams_roles.title') }}</div>
         <Tabs v-model:value="currentTab" class="py-4" lazy>
             <TabList>
