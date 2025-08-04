@@ -486,7 +486,8 @@ export default {
     schedule_later: 'Programar envio',
     schedule_on: 'Programar el día',
     schedule_at: 'Programar la hora',
-    campaign_created: '¡Campaña creada con éxito!'
+    campaign_created: '¡Campaña creada con éxito!',
+    missing_template_description: 'Debes crear una plantilla para continuar con los pasos de la campaña'
   },
   users_teams_roles: {
     title: 'Usuarios, Equipos y Roles',

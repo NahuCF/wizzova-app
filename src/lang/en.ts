@@ -488,7 +488,8 @@ Grab them today!`,
     schedule_later: 'Schedule later',
     schedule_on: 'Schedule on',
     schedule_at: 'Schedule at',
-    campaign_created: 'Campaign created successfully!'
+    campaign_created: 'Campaign created successfully!',
+    missing_template_description: 'You must create a template to continue with the campaign steps'
   },
   users_teams_roles: {
     title: 'Users, Teams & Roles',

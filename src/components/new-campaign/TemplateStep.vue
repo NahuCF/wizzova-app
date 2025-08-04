@@ -110,7 +110,25 @@ fetchBroadcastNumbers()
             </div>
 		</div>
 
+        <div 
+            v-if="dataPage.data.length === 0 && !loading"
+            class="flex flex-col justify-center items-center py-20 gap-10"
+        >
+            <div class="text-3xl font-semibold text-center max-w-[500px]">{{ $t('new_campaign.missing_template_description') }}</div>
+            <Button
+                @click="router.push({ 
+                    name: 'new-template', 
+                    query: { redirectTo: 'new-campaign' }
+                })"
+            >
+                <span class="text">
+                    {{ $t('new_campaign.add_template') }}
+                </span>
+            </Button>
+        </div>
+
         <TemplateCardList
+            v-else
             :templates="dataPage.data"
             :loading="loading"
             :cardProps="{

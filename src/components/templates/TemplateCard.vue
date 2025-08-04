@@ -79,7 +79,7 @@ const onClick = () => {
 		</div>
 
 		<!-- MESSAGE TEMPLATE -->
-		<div class="mt-3 mb-2 pl-6 pt-3 pb-5 overflow-y-scroll overflow-x-hidden h-100">
+		<div class="mt-3 mb-2 px-6 pt-3 pb-5 overflow-y-scroll overflow-x-hidden h-100">
 			<MessagePreview 
 				:header="headerText" 
 				:body="template.components.body.content"
