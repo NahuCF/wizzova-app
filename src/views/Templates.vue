@@ -7,7 +7,7 @@ import { IconLoader2, IconPlus } from '@tabler/icons-vue'
 import moment from 'moment'
 import { API } from '~/services'
 import { IconEdit, IconTrash, IconList, IconLayoutGrid, IconSearch } from '@tabler/icons-vue'
-import type { TemplateCampaign, TemplateCreate, TemplateItem } from '~/types'
+import type { TemplateBroadcast, TemplateCreate, TemplateItem } from '~/types'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { useCrudActions } from '~/composables/useCrudActions'
 
@@ -41,9 +41,9 @@ const {
 })
 
 const activeLayout = ref(1)
-const loadingCampaigns = ref(false)
-const showCampaignsDialog = ref(false)
-const templateCampaigns = ref<TemplateCampaign[]>()
+const loadingBroadcasts = ref(false)
+const showBroadcastsDialog = ref(false)
+const templateBroadcasts = ref<TemplateBroadcast[]>()
 const layoutOptions = ref([
 	{
 		label: 'list',
@@ -72,9 +72,9 @@ const templateOptions = ref([
 		{
 			label: 'template.delete',
 			class: 'text-red-600',
-			icon: loadingCampaigns.value ? IconLoader2 : IconTrash,
-			iconClass: loadingCampaigns.value ? 'animate-spin' : '',
-			disabled: loadingCampaigns.value,
+			icon: loadingBroadcasts.value ? IconLoader2 : IconTrash,
+			iconClass: loadingBroadcasts.value ? 'animate-spin' : '',
+			disabled: loadingBroadcasts.value,
 			action: async (item: TemplateItem) => {
 				try {
 					const { data: response } = await API.template.activeBroadcasts(item.id)
@@ -83,8 +83,8 @@ const templateOptions = ref([
 						showDeleteDialog.value = true
 					}
 					else {
-						templateCampaigns.value = response.data
-						showCampaignsDialog.value = true
+						templateBroadcasts.value = response.data
+						showBroadcastsDialog.value = true
 					}
 				} catch(error) {
 					console.log(error)
@@ -258,20 +258,20 @@ onMounted(() => {
 			@onConfirm="onDelete"
 		/>
 		<WarningDialog 
-			v-model:visible="showCampaignsDialog" 
-			:title="$t('templates.active_campaigns')"
-			:message="$t('templates.active_campaigns_message')"
+			v-model:visible="showBroadcastsDialog" 
+			:title="$t('templates.active_broadcasts')"
+			:message="$t('templates.active_broadcasts_message')"
 			:confirmMessage="$t('accept')"
-			@onConfirm="showCampaignsDialog = false"
+			@onConfirm="showBroadcastsDialog = false"
 		>
 			<template #note>
 				<div class="flex flex-col gap-1 pb-4 px-6">
 					<div 
-						v-for="campaign in templateCampaigns" 
-						:key="campaign.id"
+						v-for="broadcast in templateBroadcasts" 
+						:key="broadcast.id"
 						class="text-sm text-surface-500 dark:text-surface-400 text-gray-600"
 					>
-						{{ campaign.name }}
+						{{ broadcast.name }}
 					</div>
 				</div>
 			</template>

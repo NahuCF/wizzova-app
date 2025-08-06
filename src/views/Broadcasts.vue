@@ -7,7 +7,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
-import type { BroadcastNumber, CampaignItem, CampaignOverview, CampaignStatus } from '~/types'
+import type { BroadcastNumber, BroadcastItem, BroadcastOverview, BroadcastStatus } from '~/types'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -20,8 +20,8 @@ const {
     fetchDataPage,
     debouncedFetch,
     onPage
-} = usePaginatedData<CampaignItem>(
-    (page, perPage, search) => API.campaign.index(page, perPage, search).then(res => res.data),
+} = usePaginatedData<BroadcastItem>(
+    (page, perPage, search) => API.broadcast.index(page, perPage, search).then(res => res.data),
     10
 )
 
@@ -41,7 +41,7 @@ const loadingOverview = ref(false)
 const canRefresh = ref(true)
 const broadcastNumbers = ref<BroadcastNumber[]>([])
 const selectedNumber = ref<BroadcastNumber>()
-const overviewData = ref<CampaignOverview>({
+const overviewData = ref<BroadcastOverview>({
     recipients: 0,
     sent: { count: 0, percentage: 0 },
     received: { count: 0, percentage: 0 },
@@ -89,14 +89,14 @@ const transformedData = computed(() => {
 const overviewCards = computed(() => [
     {
         key: 'recipients',
-        label: t('campaigns.headers.recipients'),
+        label: t('broadcasts.headers.recipients'),
         icon: IconUsers,
         colorClass: '',
         count: overviewData.value.recipients
     },
     {
         key: 'sent',
-        label: t('campaigns.headers.sent'),
+        label: t('broadcasts.headers.sent'),
         icon: IconCheck,
         colorClass: 'text-gray-500',
         count: overviewData.value.sent.count,
@@ -104,7 +104,7 @@ const overviewCards = computed(() => [
     },
     {
         key: 'received',
-        label: t('campaigns.headers.received'),
+        label: t('broadcasts.headers.received'),
         icon: IconChecks,
         colorClass: 'text-neutral-900',
         count: overviewData.value.received.count,
@@ -112,7 +112,7 @@ const overviewCards = computed(() => [
     },
     {
         key: 'read',
-        label: t('campaigns.headers.read'),
+        label: t('broadcasts.headers.read'),
         icon: IconChecks,
         colorClass: 'text-sky-600',
         count: overviewData.value.read.count,
@@ -120,7 +120,7 @@ const overviewCards = computed(() => [
     },
     {
         key: 'replied',
-        label: t('campaigns.headers.replied'),
+        label: t('broadcasts.headers.replied'),
         icon: IconArrowBackUp,
         colorClass: 'text-emerald-500',
         count: overviewData.value.responded.count,
@@ -128,7 +128,7 @@ const overviewCards = computed(() => [
     },
     {
         key: 'failed',
-        label: t('campaigns.headers.failed'),
+        label: t('broadcasts.headers.failed'),
         icon: IconExclamationCircle,
         colorClass: 'text-red-600',
         count: overviewData.value.failed.count,
@@ -136,7 +136,7 @@ const overviewCards = computed(() => [
     }
 ])
 
-const statusToSeverity = (status: CampaignStatus) => {
+const statusToSeverity = (status: BroadcastStatus) => {
     switch (status) {
         case 'COMPLETED':
             return 'success'
@@ -150,7 +150,7 @@ const statusToSeverity = (status: CampaignStatus) => {
 const fetchBroadcastNumbers = async () => {
     loadingNumbers.value = true
     try {
-        const { data: response } = await API.campaign.broadcastNumbers()
+        const { data: response } = await API.broadcast.broadcastNumbers()
         broadcastNumbers.value = response
 
         if(!selectedNumber.value && broadcastNumbers.value.length > 0) {
@@ -166,7 +166,7 @@ const fetchBroadcastNumbers = async () => {
 const fetchOverview = async () => {
     loadingOverview.value = true
     try {
-        const { data: response } = await API.campaign.overview()
+        const { data: response } = await API.broadcast.overview()
         overviewData.value = response
     } catch(error) {
         console.log(error)
@@ -202,7 +202,7 @@ fetchOverview()
     <div class="flex flex-col gap-6 h-full p-6">
         <div class="flex justify-between items-center">
             <div class="flex items-center">
-                <h1 class="font-semibold text-xl">{{ $t('campaigns.title') }}</h1>
+                <h1 class="font-semibold text-xl">{{ $t('broadcasts.title') }}</h1>
             </div>
             <div class="flex justify-between gap-2">
                 <Button 
@@ -227,22 +227,22 @@ fetchOverview()
                     option-id="id"
                     option-label="name" 
                     size="small"
-                    :placeholder="$t('campaigns.select_number')"
+                    :placeholder="$t('broadcasts.select_number')"
                     :loading="loadingNumbers"
                     :disabled="loadingNumbers"
                 />
 
-                <Button @click="router.push({ name: 'new-campaign' })">
+                <Button @click="router.push({ name: 'new-broadcast' })">
                     <IconPlus size="16" class="mr-1" />
                     <span class="text-sm">
-                        {{ $t('campaigns.new_campaign') }}
+                        {{ $t('broadcasts.new_broadcast') }}
                     </span>
                 </Button>
             </div>
         </div>
 
         <div class="flex flex-col gap-5 p-6 bg-slate-200 rounded-lg border border-gray-300">
-            <div class="text-lg font-bold text-gray-500">{{ $t('campaigns.overview') }}</div>
+            <div class="text-lg font-bold text-gray-500">{{ $t('broadcasts.overview') }}</div>
             <div class="grid gap-4 grid-cols-3 lg:grid-cols-6">
                 <ValueCard 
                     v-for="item in overviewCards" 
@@ -258,7 +258,7 @@ fetchOverview()
         </div>
 
         <div class="flex justify-between items-center">
-            <div class="font-semibold text-lg">{{ $t('campaigns.all_campaigns') }}</div>
+            <div class="font-semibold text-lg">{{ $t('broadcasts.all_broadcasts') }}</div>
             <div class="relative">
                 <IconSearch size="14" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                 <InputText
@@ -291,7 +291,7 @@ fetchOverview()
             >
                 <template #empty>
                     <div class="text-center text-sm py-4 text-gray-500">
-                        {{ $t('campaigns.empty') }}
+                        {{ $t('broadcasts.empty') }}
                     </div>
                 </template>
 
@@ -307,12 +307,12 @@ fetchOverview()
                 <Column v-for="column in columns" :key="column.header" headerClass="bg-slate-200!">
                     <template #header>
                         <div class="uppercase text-sm font-semibold">
-                            {{ $t(`campaigns.headers.${column.header}`) }}
+                            {{ $t(`broadcasts.headers.${column.header}`) }}
                         </div>
                     </template>
 
                     <template #body="{ data }">
-                        <Tag v-if="column.header === 'status'" :value="$t(`campaigns.status.${data[column.key]}`)"
+                        <Tag v-if="column.header === 'status'" :value="$t(`broadcasts.status.${data[column.key]}`)"
                             :severity="statusToSeverity(data[column.key])" size="small" />
 
                         <template v-else-if="data[column.key].percentage">

@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { IconArrowLeft, IconUsers, IconClock, IconAsterisk } from '@tabler/icons-vue'
-import { useCampaignStore } from '~/stores/campaign'
+import { useBroadcastStore } from '~/stores/broadcast'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 
 const { t } = useI18n()
-const campaignStore = useCampaignStore()
-const { currentStep, newCampaign, totalContactsCount } = storeToRefs(campaignStore)
+const broadcastStore = useBroadcastStore()
+const { currentStep, newBroadcast, totalContactsCount } = storeToRefs(broadcastStore)
 
 const sendOptions = ref([
     {
-        name: t('new_campaign.send_now'),
+        name: t('new_broadcast.send_now'),
         value: 'SEND_NOW'
     },
     {
-        name: t('new_campaign.schedule_later'),
+        name: t('new_broadcast.schedule_later'),
         value: 'SCHEDULE_LATER'
     }
 ])
@@ -33,33 +33,33 @@ const toPrevStep = () => {
                     <Button variant="text" @click="toPrevStep" size="small" severity="secondary">
                         <IconArrowLeft size="18" />
                     </Button>
-                    <h1 class="font-semibold text-lg">{{ t('new_campaign.schedule_campaign') }}</h1>
+                    <h1 class="font-semibold text-lg">{{ t('new_broadcast.schedule_broadcast') }}</h1>
                 </div>
             </div>
 
             <div>
                 <div class="text-lg font-bold text-gray-500 pb-2">
-                    {{ t('new_campaign.campaign_details') }}
+                    {{ t('new_broadcast.broadcast_details') }}
                 </div>
                 <div class="flex bg-white border-1 border-slate-200 p-6 rounded-lg">
                     <div class="flex flex-col w-full gap-8">
                         <div class="flex items-center">
                             <div class="flex gap-1 min-w-[30%]">
-                                <label for="name">{{ t('new_campaign.campaign_name') }}</label>
+                                <label for="name">{{ t('new_broadcast.broadcast_name') }}</label>
                                 <IconAsterisk color="red" class="mt-1" size="8" />
                             </div>
 
                             <InputText 
-                                v-model="newCampaign.name"
+                                v-model="newBroadcast.name"
                                 class="w-full"
-                                :placeholder="t('new_campaign.enter_campaign_name')"
+                                :placeholder="t('new_broadcast.enter_broadcast_name')"
                                 size="small" 
                             />
                         </div>
 
                         <div class="flex items-center">
                             <div class="flex gap-1 min-w-[30%]">
-                                <label for="name">{{ t('new_campaign.send_campaign') }}</label>
+                                <label for="name">{{ t('new_broadcast.send_broadcast') }}</label>
                                 <IconAsterisk color="red" class="mt-1" size="8" />
                             </div>
 
@@ -67,7 +67,7 @@ const toPrevStep = () => {
                                 <Select 
                                     id="sendOptions"
                                     class="w-full"
-                                    v-model="newCampaign.sendOption" 
+                                    v-model="newBroadcast.sendOption" 
                                     :options="sendOptions"
                                     option-label="name"
                                     option-value="value"
@@ -75,25 +75,25 @@ const toPrevStep = () => {
                                 />
 
                                 <DatePicker
-                                    v-if="newCampaign.sendOption === 'SCHEDULE_LATER'"
-                                    v-model="newCampaign.scheduledDate"
+                                    v-if="newBroadcast.sendOption === 'SCHEDULE_LATER'"
+                                    v-model="newBroadcast.scheduledDate"
                                     class="w-full"
                                     showIcon
                                     iconDisplay="input"
                                     dateFormat="yy/mm/dd"
                                     mask="9999/99/99"
-                                    :placeholder="t('new_campaign.schedule_on')"
+                                    :placeholder="t('new_broadcast.schedule_on')"
                                     size="small"
                                 />
                                 <div class="w-full" v-else></div>
 
                                 <DatePicker
-                                    v-if="newCampaign.sendOption === 'SCHEDULE_LATER'"
-                                    v-model="newCampaign.scheduledTime"
+                                    v-if="newBroadcast.sendOption === 'SCHEDULE_LATER'"
+                                    v-model="newBroadcast.scheduledTime"
                                     class="w-full"
                                     showIcon
                                     iconDisplay="input"
-                                    :placeholder="t('new_campaign.schedule_at')"
+                                    :placeholder="t('new_broadcast.schedule_at')"
                                     size="small"
                                     hourFormat="12"
                                     :stepMinute="15"
@@ -112,12 +112,12 @@ const toPrevStep = () => {
 
             <div>
                 <div class="text-lg font-bold text-gray-500 pb-2">
-                    {{ t('new_campaign.target_audience') }}
+                    {{ t('new_broadcast.target_audience') }}
                 </div>
                 <div class="flex bg-white border-1 border-slate-200 p-6 rounded-lg text-sm">
                     <div class="flex flex-col w-full gap-6">
                         <div class="flex items-center">
-                            <div class="min-w-[30%]">{{ t('new_campaign.total_contacts') }}</div>
+                            <div class="min-w-[30%]">{{ t('new_broadcast.total_contacts') }}</div>
 
                             <div class="flex gap-2">
                                 <IconUsers size="16 "/>
@@ -126,11 +126,11 @@ const toPrevStep = () => {
                         </div>
 
                         <div class="flex items-center">
-                            <div class="min-w-[30%]">{{ t('new_campaign.selected_groups') }}</div>
+                            <div class="min-w-[30%]">{{ t('new_broadcast.selected_groups') }}</div>
 
                             <div class="flex gap-2 text-ellipsis">
                                 <Badge
-                                    v-for="group in newCampaign.contactGroups"
+                                    v-for="group in newBroadcast.contactGroups"
                                     severity="secondary"
                                 >
                                     {{ group.name }}
@@ -144,10 +144,10 @@ const toPrevStep = () => {
 
         <div class="flex min-w-[350px]">
             <TemplateCard
-                v-if="newCampaign.template"
+                v-if="newBroadcast.template"
                 class="h-[420px]"
-                :template="newCampaign.template"
-                :broadcastNumber="newCampaign.broadcastNumber"
+                :template="newBroadcast.template"
+                :broadcastNumber="newBroadcast.broadcastNumber"
             />
         </div>
     </div>

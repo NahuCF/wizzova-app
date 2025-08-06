@@ -1,4 +1,4 @@
-import type { Page, CampaignItem, CampaignOverview, BroadcastNumber } from '~/types'
+import type { Page, BroadcastItem, BroadcastOverview, BroadcastNumber } from '~/types'
 import Http from '~/config/http'
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
@@ -16,7 +16,7 @@ const mockBroadcastNumbers: BroadcastNumber[] = [
     }
 ]
 
-const mockCampaignOverview: CampaignOverview = {
+const mockBroadcastOverview: BroadcastOverview = {
     recipients: 5000,
     sent: { count: 4500, percentage: 90 },
     received: { count: 4300, percentage: 86 },
@@ -25,10 +25,10 @@ const mockCampaignOverview: CampaignOverview = {
     failed: { count: 500, percentage: 10 }
 }
 
-const createMockCampaigns = (page: number, perPage: number): Page<CampaignItem> => ({
+const createMockBroadcasts = (page: number, perPage: number): Page<BroadcastItem> => ({
     data: Array.from({ length: perPage }, (_, index) => ({
-        id: `campaign-${(page - 1) * perPage + index + 1}`,
-        name: `Test Campaign ${(page - 1) * perPage + index + 1}`,
+        id: `broadcast-${(page - 1) * perPage + index + 1}`,
+        name: `Test Broadcast ${(page - 1) * perPage + index + 1}`,
         user: {
             id: `user-${index + 1}`,
             name: `User ${index + 1}`,
@@ -54,17 +54,17 @@ const createMockCampaigns = (page: number, perPage: number): Page<CampaignItem> 
         created_at: new Date().toISOString()
     })),
     links: {
-        first: '/campaigns?page=1',
-        last: '/campaigns?page=5',
-        prev: page > 1 ? `/campaigns?page=${page - 1}` : null,
-        next: page < 5 ? `/campaigns?page=${page + 1}` : null
+        first: '/broadcasts?page=1',
+        last: '/broadcasts?page=5',
+        prev: page > 1 ? `/broadcasts?page=${page - 1}` : null,
+        next: page < 5 ? `/broadcasts?page=${page + 1}` : null
     },
     meta: {
         current_page: page,
         from: (page - 1) * perPage + 1,
         last_page: 5,
         links: [],
-        path: '/campaigns',
+        path: '/broadcasts',
         per_page: perPage,
         to: page * perPage,
         total: 50
@@ -83,14 +83,14 @@ export default {
             ...(search && { search })
         }
 
-        const data = createMockCampaigns(page, perPage)
+        const data = createMockBroadcasts(page, perPage)
 
         await delay(500)
-        return Promise.resolve({ data }) as ReturnType<typeof Http.get<Page<CampaignItem>>>
+        return Promise.resolve({ data }) as ReturnType<typeof Http.get<Page<BroadcastItem>>>
     },
     async overview() {
         await delay(500)
-        return Promise.resolve({ data: mockCampaignOverview }) as ReturnType<typeof Http.get<CampaignOverview>>
+        return Promise.resolve({ data: mockBroadcastOverview }) as ReturnType<typeof Http.get<BroadcastOverview>>
     },
     async broadcastNumbers() {
         await delay(500)

@@ -1,6 +1,6 @@
 export { useContactFieldStore } from './contactField'
 export { useUserStore } from './user'
-export { useCampaignStore } from './campaign'
+export { useBroadcastStore } from './broadcast'
 export { useTeamStore } from './team'
 export { useRoleStore } from './role'
 export { useSessionStore } from './session'

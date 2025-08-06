@@ -100,7 +100,7 @@ export interface VariableMapping {
   value: string
 }
 
-export interface TemplateCampaign {
+export interface TemplateBroadcast {
   id: string,
   name: string,
   send_at: string,

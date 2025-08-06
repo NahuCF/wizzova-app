@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { IconArrowLeft } from '@tabler/icons-vue'
-import { useCampaignStore } from '~/stores'
+import { useBroadcastStore } from '~/stores'
 import { useContactFieldStore } from '~/stores'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const contactFieldStore = useContactFieldStore()
-const campaignStore = useCampaignStore()
-const { getVariableMapping } = campaignStore
-const { currentStep, newCampaign, showMapDialog } = storeToRefs(campaignStore)
+const broadcastStore = useBroadcastStore()
+const { getVariableMapping } = broadcastStore
+const { currentStep, newBroadcast, showMapDialog } = storeToRefs(broadcastStore)
 
 const radioStates = ref<Record<string, 'contact_field' | 'custom_value'>>({})
 const errors = ref<Record<string, boolean>>({})
 
 const toPrevStep = () => {
-    newCampaign.value.template = undefined
-    newCampaign.value.variables = undefined
+    newBroadcast.value.template = undefined
+    newBroadcast.value.variables = undefined
     currentStep.value--
 }
 
@@ -27,7 +27,7 @@ const toNextStep = () => {
     let hasError = false
     errors.value = {}
 
-    for (const variable of newCampaign.value.variables || []) {
+    for (const variable of newBroadcast.value.variables || []) {
         const mapping = getVariableMapping(variable.name)
         const selected = radioStates.value[variable.name]
 
@@ -47,8 +47,8 @@ const toNextStep = () => {
 }
 
 watch([() => showMapDialog.value], (open) => {
-    if (open && newCampaign.value.variables) {
-        for (const variable of newCampaign.value.variables) {
+    if (open && newBroadcast.value.variables) {
+        for (const variable of newBroadcast.value.variables) {
             const mapping = getVariableMapping(variable.name)
             radioStates.value[variable.name] = mapping?.contact_field_id ? 'contact_field' : 'custom_value'
         }
@@ -76,33 +76,33 @@ contactFieldStore.fetchContactFields()
                 <Button variant="text" @click="toPrevStep" size="small" severity="secondary">
                     <IconArrowLeft size="18" />
                 </Button>
-                <h1 class="font-semibold text-lg">{{ $t('new_campaign.select_audience') }}</h1>
+                <h1 class="font-semibold text-lg">{{ $t('new_broadcast.select_audience') }}</h1>
             </div>
         </div>
 
-        <ContactGroupsTab v-model:selectedGroups="newCampaign.contactGroups" />
+        <ContactGroupsTab v-model:selectedGroups="newBroadcast.contactGroups" />
 
-        <Dialog v-if="newCampaign.template" v-model:visible="showMapDialog" modal :draggable="false"
+        <Dialog v-if="newBroadcast.template" v-model:visible="showMapDialog" modal :draggable="false"
             contentClass="p-0! h-full" class="min-w-[25rem] max-w-[1088px] w-full"
-            :header="$t('new_campaign.map_variables')">
+            :header="$t('new_broadcast.map_variables')">
             <div class="flex flex-col gap-6 p-6">
                 <table class="table-auto w-full bg-slate-50 rounded-lg border-separate border-spacing-y-3">
                     <thead>
                         <tr>
                             <th class="text-start font-semibold min-w-[20%] p-5">
-                                {{ $t('new_campaign.variables') }}
+                                {{ $t('new_broadcast.variables') }}
                             </th>
                             <th class="text-start font-semibold p-5">
-                                {{ $t('new_campaign.map') }}
+                                {{ $t('new_broadcast.map') }}
                             </th>
                             <th class="text-start font-semibold min-w-[30%] p-5">
-                                {{ $t('new_campaign.values') }}
+                                {{ $t('new_broadcast.values') }}
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr 
-                            v-for="variable in newCampaign.variables" :key="variable.name"
+                            v-for="variable in newBroadcast.variables" :key="variable.name"
                         >
                             <td class="p-5 text-sm text-sky-500">
                                 {{ formatVariable(variable.name) }}
@@ -119,7 +119,7 @@ contactFieldStore.fetchContactFields()
                                             size="small" 
                                         />
                                         <label :for="`contact_field_${variable.name}`">
-                                            {{ $t('new_campaign.contact_field') }}
+                                            {{ $t('new_broadcast.contact_field') }}
                                         </label>
                                     </div>
                                     <div class="flex items-center gap-2">
@@ -131,7 +131,7 @@ contactFieldStore.fetchContactFields()
                                             size="small" 
                                         />
                                         <label :for="`custom_value_${variable.name}`">
-                                            {{ $t('new_campaign.custom_value') }}
+                                            {{ $t('new_broadcast.custom_value') }}
                                         </label>
                                     </div>
                                 </div>
@@ -144,7 +144,7 @@ contactFieldStore.fetchContactFields()
                                     :options="contactFieldStore.contactFields"
                                     optionLabel="name"
                                     optionValue="id"
-                                    :placeholder="$t('new_campaign.select_contact_field')"
+                                    :placeholder="$t('new_broadcast.select_contact_field')"
                                     class="w-full" 
                                     size="small"
                                     :invalid="Boolean(errors[variable.name])"
@@ -156,7 +156,7 @@ contactFieldStore.fetchContactFields()
                                     class="mt-2"
                                     size="small"
                                 >
-                                    {{ $t('new_campaign.contact_field_error') }}
+                                    {{ $t('new_broadcast.contact_field_error') }}
                                 </Message>
                             </td>
 
@@ -165,7 +165,7 @@ contactFieldStore.fetchContactFields()
                                 <InputText 
                                     v-model="getVariableMapping(variable.name).value" 
                                     class="w-full"
-                                    :placeholder="$t('new_campaign.enter_custom_value')"
+                                    :placeholder="$t('new_broadcast.enter_custom_value')"
                                     size="small"
                                     :invalid="Boolean(errors[variable.name])"
                                 />
@@ -176,7 +176,7 @@ contactFieldStore.fetchContactFields()
                                     class="mt-2"
                                     size="small"
                                 >
-                                    {{ $t('new_campaign.custom_field_error') }}
+                                    {{ $t('new_broadcast.custom_field_error') }}
                                 </Message>
                             </td>
                         </tr>

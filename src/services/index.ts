@@ -12,7 +12,7 @@ import ContactFieldService from './ContactFieldService'
 import ContactService from './ContactService'
 import UserService from './UserService'
 import GroupService from './GroupService'
-import CampaignService from './CampaignService'
+import BroadcastService from './BroadcastService'
 import TeamService from './TeamService'
 import RoleService from './RoleService'
 
@@ -22,7 +22,7 @@ export { default as TemplateHeaderService } from './TemplateHeaderService'
 
 export const API = {
     auth: AuthService,
-    campaign: CampaignService,
+    broadcast: BroadcastService,
     contact: ContactService,
     contactField: ContactFieldService,
     country: CountryService,

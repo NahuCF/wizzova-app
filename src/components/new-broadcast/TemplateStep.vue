@@ -5,12 +5,12 @@ import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
 import type { BroadcastNumber, TemplateItem } from '~/types'
 import { ref } from 'vue'
-import { useCampaignStore } from '~/stores/campaign'
+import { useBroadcastStore } from '~/stores/broadcast'
 import { storeToRefs } from 'pinia'
 
 const router = useRouter()
-const campaignStore = useCampaignStore()
-const { currentStep, newCampaign } = storeToRefs(campaignStore)
+const broadcastStore = useBroadcastStore()
+const { currentStep, newBroadcast } = storeToRefs(broadcastStore)
 
 const {
   dataPage,
@@ -30,11 +30,11 @@ const broadcastNumbers = ref<BroadcastNumber[]>([])
 const fetchBroadcastNumbers = async () => {
     loadingNumbers.value = true
     try {
-        const { data: response } = await API.campaign.broadcastNumbers()
+        const { data: response } = await API.broadcast.broadcastNumbers()
         broadcastNumbers.value = response
 
-        if(!newCampaign.value.broadcastNumber && broadcastNumbers.value.length > 0) {
-            newCampaign.value.broadcastNumber = broadcastNumbers.value[0]
+        if(!newBroadcast.value.broadcastNumber && broadcastNumbers.value.length > 0) {
+            newBroadcast.value.broadcastNumber = broadcastNumbers.value[0]
         }
     } catch(error) {
         console.log(error)
@@ -44,9 +44,9 @@ const fetchBroadcastNumbers = async () => {
 }
 
 const onTemplateSelected = (template: TemplateItem) => {
-    newCampaign.value.template = template
+    newBroadcast.value.template = template
     
-    if(newCampaign.value.broadcastNumber) {
+    if(newBroadcast.value.broadcastNumber) {
         currentStep.value++
     }
 }
@@ -59,12 +59,12 @@ fetchBroadcastNumbers()
     <div class="flex flex-col gap-6">
         <div class="flex justify-between py-2.5">
 			<div class="flex items-center gap-2">
-                <Button variant="text" @click="router.push({ name: 'campaigns' })" size="small" severity="secondary">
+                <Button variant="text" @click="router.push({ name: 'broadcasts' })" size="small" severity="secondary">
                     <IconArrowLeft size="18" />
                 </Button>
                 <div>
-                    <h1 class="font-semibold text-lg">{{ $t('new_campaign.select_template') }}</h1>
-                    <div class="font-light">{{ $t('new_campaign.select_template_subtitle') }}</div>
+                    <h1 class="font-semibold text-lg">{{ $t('new_broadcast.select_template') }}</h1>
+                    <div class="font-light">{{ $t('new_broadcast.select_template_subtitle') }}</div>
                 </div>
             </div>
 
@@ -85,12 +85,12 @@ fetchBroadcastNumbers()
 
                     <Select 
                         id="broadcastNumbers" 
-                        v-model="newCampaign.broadcastNumber" 
+                        v-model="newBroadcast.broadcastNumber" 
                         :options="broadcastNumbers" 
                         option-id="id"
                         option-label="name" 
                         size="small"
-                        :placeholder="$t('campaigns.select_number')"
+                        :placeholder="$t('broadcasts.select_number')"
                         :loading="loadingNumbers"
                         :disabled="loadingNumbers"
                     />
@@ -98,12 +98,12 @@ fetchBroadcastNumbers()
                     <Button 
                         @click="router.push({ 
                             name: 'new-template', 
-                            query: { redirectTo: 'new-campaign' }
+                            query: { redirectTo: 'new-broadcast' }
                         })"
                     >
                         <IconPlus size="16" class="mr-1" />
                         <span class="text-sm">
-                            {{ $t('new_campaign.add_template') }}
+                            {{ $t('new_broadcast.add_template') }}
                         </span>
                     </Button>
                 </div>
@@ -114,15 +114,15 @@ fetchBroadcastNumbers()
             v-if="dataPage.data.length === 0 && !loading"
             class="flex flex-col justify-center items-center py-20 gap-10"
         >
-            <div class="text-3xl font-semibold text-center max-w-[500px]">{{ $t('new_campaign.missing_template_description') }}</div>
+            <div class="text-3xl font-semibold text-center max-w-[500px]">{{ $t('new_broadcast.missing_template_description') }}</div>
             <Button
                 @click="router.push({ 
                     name: 'new-template', 
-                    query: { redirectTo: 'new-campaign' }
+                    query: { redirectTo: 'new-broadcast' }
                 })"
             >
                 <span class="text">
-                    {{ $t('new_campaign.add_template') }}
+                    {{ $t('new_broadcast.add_template') }}
                 </span>
             </Button>
         </div>

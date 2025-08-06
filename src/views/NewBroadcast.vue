@@ -4,40 +4,40 @@ import { useToast } from 'primevue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave, useRouter } from 'vue-router'
-import { useCampaignStore } from '~/stores/campaign'
+import { useBroadcastStore } from '~/stores/broadcast'
 
 const router = useRouter()
 const { t } = useI18n()
 const toast = useToast()
-const campaignStore = useCampaignStore()
-const { currentStep, newCampaign, showMapDialog } = storeToRefs(campaignStore)
+const broadcastStore = useBroadcastStore()
+const { currentStep, newBroadcast, showMapDialog } = storeToRefs(broadcastStore)
 
 const showLeaveDialog = ref(false)
 const pendingNext = ref<Function | null>(null)
 const success = ref(false)
 
 const canSubmit = () => {
-    const timeSelected = newCampaign.value.scheduledDate && newCampaign.value.scheduledTime
+    const timeSelected = newBroadcast.value.scheduledDate && newBroadcast.value.scheduledTime
 
-    return newCampaign.value.name.trim() !== '' &&
-        (newCampaign.value.sendOption === 'SEND_NOW' || timeSelected )
+    return newBroadcast.value.name.trim() !== '' &&
+        (newBroadcast.value.sendOption === 'SEND_NOW' || timeSelected )
 }
 
-const scheduleCampaign = () => {
+const scheduleBroadcast = () => {
     toast.add({
         severity: 'success',
         summary: 'Success',
-        detail: t('new_campaign.campaign_created'),
+        detail: t('new_broadcast.broadcast_created'),
         life: 3000,
     })
     
     success.value = true
-    router.push({ name: 'campaigns' })
-    campaignStore.clear()
+    router.push({ name: 'broadcasts' })
+    broadcastStore.clear()
 }
 
 const confirmLeave = () => {
-    campaignStore.clear()
+    broadcastStore.clear()
     showLeaveDialog.value = false
     if (pendingNext.value) pendingNext.value()
 }
@@ -48,7 +48,7 @@ const cancelLeave = () => {
 }
 
 const goToSchedule = () => {
-    if(newCampaign.value.variables) {
+    if(newBroadcast.value.variables) {
         showMapDialog.value = true
     }
     else {
@@ -71,9 +71,9 @@ onBeforeRouteLeave((to, from, next) => {
         <div class="flex flex-col w-full p-6">
             <Stepper v-model:value="currentStep" linear>
                 <StepList class="flex xl:px-70! ">
-                    <Step :value="1">{{ $t('new_campaign.select_template') }}</Step>
-                    <Step :value="2">{{ $t('new_campaign.select_audience') }}</Step>
-                    <Step :value="3">{{ $t('new_campaign.schedule_campaign') }}</Step>
+                    <Step :value="1">{{ $t('new_broadcast.select_template') }}</Step>
+                    <Step :value="2">{{ $t('new_broadcast.select_audience') }}</Step>
+                    <Step :value="3">{{ $t('new_broadcast.schedule_broadcast') }}</Step>
                 </StepList>
                 <StepPanels>
                     <StepPanel class="bg-transparent!" :value="1">
@@ -94,17 +94,17 @@ onBeforeRouteLeave((to, from, next) => {
             class="sticky bottom-0 w-full flex justify-end items-center py-4 px-6 bg-white shadow z-100"
         >
             <div v-if="currentStep === 2" class="flex items-center gap-3">
-                <div class="text-emerald-500" v-if="newCampaign.contactGroups.length === 1">
-                    {{ $t('new_campaign.group_selected') }}
+                <div class="text-emerald-500" v-if="newBroadcast.contactGroups.length === 1">
+                    {{ $t('new_broadcast.group_selected') }}
                 </div>
-                <div class="text-emerald-500" v-else-if="newCampaign.contactGroups.length > 1">
-                    {{ $t('new_campaign.groups_selected', { groups: newCampaign.contactGroups.length }) }}
+                <div class="text-emerald-500" v-else-if="newBroadcast.contactGroups.length > 1">
+                    {{ $t('new_broadcast.groups_selected', { groups: newBroadcast.contactGroups.length }) }}
                 </div>
                 <div class="text-emerald-500" v-else>
-                    {{ $t('new_campaign.no_group_selected') }}
+                    {{ $t('new_broadcast.no_group_selected') }}
                 </div>
                 <Button 
-                    :disabled="newCampaign.contactGroups.length === 0"
+                    :disabled="newBroadcast.contactGroups.length === 0"
                     @click="goToSchedule"
                 >
                     <span class="text-sm">
@@ -116,7 +116,7 @@ onBeforeRouteLeave((to, from, next) => {
             <div v-if="currentStep === 3" class="flex items-center gap-3">
                 <Button
                     severity="secondary"
-                    @click="router.push({ name: 'campaigns' })"
+                    @click="router.push({ name: 'broadcasts' })"
                 >
                     <span class="text-sm">
                         {{ $t('cancel') }}
@@ -124,10 +124,10 @@ onBeforeRouteLeave((to, from, next) => {
                 </Button>
                 <Button 
                     :disabled="!canSubmit()"
-                    @click="scheduleCampaign"
+                    @click="scheduleBroadcast"
                 >
                     <span class="text-sm">
-                        {{ $t('new_campaign.schedule_campaign') }}
+                        {{ $t('new_broadcast.schedule_broadcast') }}
                     </span>
                 </Button>
             </div>

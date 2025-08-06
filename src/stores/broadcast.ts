@@ -2,7 +2,7 @@ import { defineStore } from "pinia"
 import { computed, ref, watchEffect } from "vue"
 import type { BroadcastNumber, ContactGroupItem, TemplateItem, VariableMapping } from "~/types"
 
-interface CreateCampaign {
+interface CreateBroadcast {
     name: string,
     sendOption: 'SEND_NOW' | 'SCHEDULE_LATER',
     broadcastNumber?: BroadcastNumber,
@@ -13,9 +13,9 @@ interface CreateCampaign {
     variables?: VariableMapping[]
 }
 
-export const useCampaignStore = defineStore('campaign', () => {
+export const useBroadcastStore = defineStore('broadcast', () => {
     const currentStep = ref(1)
-    const newCampaign = ref<CreateCampaign>({
+    const newBroadcast = ref<CreateBroadcast>({
         name: '',
         contactGroups: [],
         sendOption: 'SEND_NOW'
@@ -23,26 +23,26 @@ export const useCampaignStore = defineStore('campaign', () => {
     const showMapDialog = ref(false)
 
     const totalContactsCount = computed(() => {
-        return newCampaign.value.contactGroups.reduce((total, group) => total + group.contact_count, 0)
+        return newBroadcast.value.contactGroups.reduce((total, group) => total + group.contact_count, 0)
     })
 
     const getVariableMapping = (name: string) => {
-        return newCampaign.value.variables?.find(v => v.name === name)!
+        return newBroadcast.value.variables?.find(v => v.name === name)!
     }
 
     const clear = () => {
         currentStep.value = 1
-        newCampaign.value = {
+        newBroadcast.value = {
             name: '',
             contactGroups: [],
             sendOption: 'SEND_NOW'
         }
-        newCampaign.value.variables = undefined
+        newBroadcast.value.variables = undefined
         showMapDialog.value = false
     }
 
     watchEffect(() => {
-        const c = newCampaign.value
+        const c = newBroadcast.value
 
         if (typeof c.scheduledDate === 'string') {
             c.scheduledDate = new Date(c.scheduledDate)
@@ -63,7 +63,7 @@ export const useCampaignStore = defineStore('campaign', () => {
 
     const $reset = () => {
         currentStep.value = 1
-        newCampaign.value = {
+        newBroadcast.value = {
             name: '',
             contactGroups: [],
             sendOption: 'SEND_NOW'
@@ -73,7 +73,7 @@ export const useCampaignStore = defineStore('campaign', () => {
 
     return {
         currentStep,
-        newCampaign,
+        newBroadcast,
         showMapDialog,
         totalContactsCount,
         getVariableMapping,

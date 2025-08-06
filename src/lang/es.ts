@@ -211,8 +211,8 @@ export default {
     delete_template: 'Eliminar plantilla',
     delete_message: '¿Estás seguro de que deseas eliminar esta plantilla?',
     template_deleted: '¡Plantilla eliminada con éxito!',
-    active_campaigns: 'Campañas Activas',
-    active_campaigns_message: 'No puedes eliminar esta plantilla porque se está utilizando en las siguientes campañas activas:'
+    active_broadcasts: 'Campañas Activas',
+    active_broadcasts_message: 'No puedes eliminar esta plantilla porque se está utilizando en las siguientes campañas activas:'
   },
   template: {
     empty: 'No se encontraron plantillas',
@@ -426,12 +426,12 @@ export default {
     ADD: 'Agregar nuevos contactos',
     ADD_AND_REPLACE: 'Agregar y actualizar contactos'
   },
-  campaigns: {
+  broadcasts: {
     title: 'Campañas',
     select_number: 'Selecciona un Número',
-    new_campaign: 'Nueva Campaña',
+    new_broadcast: 'Nueva Campaña',
     overview: 'Resumen',
-    all_campaigns: 'Todas las Campañas',
+    all_broadcasts: 'Todas las Campañas',
     empty: 'No se encontraron campañas',
     headers: {
       name: 'Nombre',
@@ -461,11 +461,11 @@ export default {
   accept: 'Aceptar',
   invalid_session: 'Sesión Invalida',
   session_override_message: 'Se ha detectado otro login, su sesión actual será cerrada.',
-  new_campaign: {
+  new_broadcast: {
     title: 'Nueva Campaña',
     select_template: 'Seleccionar Plantilla',
     select_audience: 'Seleccionar Audiencia',
-    schedule_campaign: 'Programar Campaña',
+    schedule_broadcast: 'Programar Campaña',
     group_selected: '1 Grupo seleccionado',
     groups_selected: '{groups} Grupos seleccionados',
     no_group_selected: 'Ningún grupo seleccionado',
@@ -481,18 +481,18 @@ export default {
     contact_field_error: 'Por favor selecciona un campo de contacto',
     select_template_subtitle: 'Selecciona una plantilla para generar la campaña',
     add_template: 'Agregar plantilla',
-    campaign_details: 'Detalles de la campaña',
-    campaign_name: 'Nombre de la campaña',
-    send_campaign: 'Enviar campaña',
+    broadcast_details: 'Detalles de la campaña',
+    broadcast_name: 'Nombre de la campaña',
+    send_broadcast: 'Enviar campaña',
     target_audience: 'Audiencia objetivo',
     total_contacts: 'Total de contactos',
     selected_groups: 'Grupos seleccionados',
-    enter_campaign_name: 'Ingrese el nombre de la campaña',
+    enter_broadcast_name: 'Ingrese el nombre de la campaña',
     send_now: 'Enviar ahora',
     schedule_later: 'Programar envio',
     schedule_on: 'Programar el día',
     schedule_at: 'Programar la hora',
-    campaign_created: '¡Campaña creada con éxito!',
+    broadcast_created: '¡Campaña creada con éxito!',
     missing_template_description: 'Debes crear una plantilla para continuar con los pasos de la campaña'
   },
   users_teams_roles: {

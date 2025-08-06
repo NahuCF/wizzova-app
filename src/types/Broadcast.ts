@@ -1,6 +1,6 @@
 import type { UserItem } from "./User"
 
-export interface CampaignOverview {
+export interface BroadcastOverview {
     recipients: number,
     sent: {
         count: number,
@@ -30,9 +30,9 @@ export interface BroadcastNumber {
     name: string
 }
 
-export type CampaignStatus = 'SCHEDULED' | 'PROCESSING' | 'COMPLETED'
+export type BroadcastStatus = 'SCHEDULED' | 'PROCESSING' | 'COMPLETED'
 
-export interface CampaignItem {
+export interface BroadcastItem {
     id: string,
     name: string,
     user: UserItem,
@@ -41,6 +41,6 @@ export interface CampaignItem {
     received_count: number,
     read_count: number,
     failed_count: number,
-    status: CampaignStatus,
+    status: BroadcastStatus,
     created_at: string
 }

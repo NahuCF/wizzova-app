@@ -36,10 +36,10 @@ const logout = async () => {
 const pages = computed(() => {
 	return [
 		{
-			name: 'Campaigns',
+			name: 'Broadcasts',
 			icon: IconSpeakerphone,
-			path: '/campaigns',
-			action: () => router.push('/campaigns')
+			path: '/broadcasts',
+			action: () => router.push('/broadcasts')
 		},
 		{
 			name: 'Templates',

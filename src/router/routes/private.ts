@@ -1,10 +1,10 @@
 import AppLayout from '~/components/layouts/AppLayout.vue'
-import Campaigns from '~/views/Campaigns.vue'
+import Broadcasts from '~/views/Broadcasts.vue'
 import ContactFields from '~/views/ContactFields.vue'
 import ContactImports from '~/views/ContactImports.vue'
 import Contacts from '~/views/Contacts.vue'
 import Conversations from '~/views/Conversations.vue'
-import NewCampaign from '~/views/NewCampaign.vue'
+import NewBroadcast from '~/views/NewBroadcast.vue'
 import NewTemplate from '~/views/NewTemplate.vue'
 import UsersTeamsRoles from '~/views/settings/UsersTeamsRoles.vue'
 import Templates from '~/views/Templates.vue'
@@ -22,19 +22,19 @@ const routes = [
         component: Conversations,
       },
       {
-        path: '/campaigns',
+        path: '/broadcasts',
         children: [
           {
             path: '',
-            name: 'campaigns',
-            meta: { titleKey: 'campaigns.title' },
-            component: Campaigns
+            name: 'broadcasts',
+            meta: { titleKey: 'broadcasts.title' },
+            component: Broadcasts
           },
           {
             path: 'new',
-            name: 'new-campaign',
-            meta: { titleKey: 'new_campaign.title' },
-            component: NewCampaign
+            name: 'new-broadcast',
+            meta: { titleKey: 'new_broadcast.title' },
+            component: NewBroadcast
           }
         ]
       },
