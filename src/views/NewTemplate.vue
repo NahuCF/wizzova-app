@@ -192,11 +192,11 @@ onMounted(() => {
 	<div class="flex justify-center p-6">
 		<div class="w-[73rem] flex flex-col py-4 gap-4">
 			<div class="flex justify-between items-center py-4 sticky top-0 z-2 bg-slate-100">
-				<div class="flex gap-2">
+				<div class="flex items-center gap-2">
 					<Button variant="text" @click="returnToPage" size="small" severity="secondary">
 						<IconArrowLeft size="22" />
 					</Button>
-					<h1 class="font-semibold text-2xl leading-normal">
+					<h1 class="font-semibold text-2xl">
 						{{ isEdit ? t('edit_template.title') : t('new_template.title') }}
 					</h1>
 				</div>
