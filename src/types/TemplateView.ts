@@ -1,4 +1,4 @@
-import type { TemplateBtn, TemplateCallBtn, TemplateHeaderCode, TemplateUrlBtn } from "./Template"
+import type { TemplateButton, TemplateHeaderCode } from "./Template"
 
 export type TemplateStatus = 'PENDING' | 'REJECTED'
 
@@ -16,7 +16,7 @@ export interface TemplateComponents {
     } []
   },
   footer: string,
-  buttons: (TemplateBtn | TemplateUrlBtn | TemplateCallBtn) []
+  buttons: TemplateButton []
 }
 
 export interface TemplateItem {

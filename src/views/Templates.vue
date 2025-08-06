@@ -7,8 +7,9 @@ import { IconPlus } from '@tabler/icons-vue'
 import moment from 'moment'
 import { API } from '~/services'
 import { IconEdit, IconTrash, IconList, IconLayoutGrid, IconSearch } from '@tabler/icons-vue'
-import type { TemplateItem } from '~/types'
+import type { TemplateCreate, TemplateItem } from '~/types'
 import { usePaginatedData } from '~/composables/usePaginatedData'
+import { useCrudActions } from '~/composables/useCrudActions'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -25,6 +26,19 @@ const {
   (page, perPage, search) => API.template.index(page, search, perPage).then(res => res.data),
   12
 )
+
+const {
+	loading: loadingDelete,
+	remove
+} = useCrudActions<TemplateCreate>({
+	api: {
+		delete: API.template.delete
+	},
+	fetchData: fetchDataPage,
+	i18nKeys: {
+		deleted: 'templates.template_deleted'
+	}
+})
 
 const activeLayout = ref(1)
 const layoutOptions = ref([
@@ -56,11 +70,16 @@ const templateOptions = ref([
 			label: 'template.delete',
 			class: 'text-red-600',
 			icon: IconTrash,
-			action: () => {}
+			action: (item: TemplateItem) => {
+				deleteId.value = item.id
+				showDeleteDialog.value = true
+			}
 		}
 	]
 ])
 const popover = ref()
+const deleteId = ref('')
+const showDeleteDialog = ref(false)
 
 const changeLayout = (index: number) => {
 	activeLayout.value = index
@@ -84,6 +103,14 @@ const onPage = (event: DataTablePageEvent) => {
 	rowsPerPage.value = event.rows
 	const page = Math.floor(event.first / event.rows) + 1
 	fetchDataPage(page, rowsPerPage.value)
+}
+
+const onDelete = () => {
+	remove(deleteId.value, {
+		onSuccess: () => {
+			showDeleteDialog.value = false
+		}
+	})
 }
 
 onMounted(() => {
@@ -207,5 +234,12 @@ onMounted(() => {
 		</div>
 
 		<ActionsPopover ref="popover" :options="templateOptions" />
+		<WarningDialog 
+			v-model:visible="showDeleteDialog" 
+			:title="$t('templates.delete_template')"
+			:message="$t('templates.delete_message')"
+			:loading="loadingDelete"
+			@onConfirm="onDelete"
+		/>
 	</div>
 </template>

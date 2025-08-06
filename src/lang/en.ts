@@ -210,6 +210,9 @@ Grab them today!`,
     create_new_template: 'Create New Template',
     create_new_template_card: 'Create new template',
     search_templates: 'Search templates',
+    delete_template: 'Delete template',
+    delete_message: 'Are you sure you want to delete this template?',
+    template_deleted: 'Template deleted successfully!'
   },
   template: {
     title: 'Templates',
@@ -228,7 +231,8 @@ Grab them today!`,
     REJECTED: 'Rejected'
   },
   edit_template: {
-    title: 'Editar Plantilla'
+    title: 'Edit template',
+    template_updated: 'Template updated successfully!'
   },
   save: 'Save',
   cancel: 'Cancel',

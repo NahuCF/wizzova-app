@@ -208,6 +208,9 @@ export default {
     create_new_template: 'Crear nueva plantilla',
     create_new_template_card: 'Crear nueva plantilla',
     search_templates: 'Buscar plantillas',
+    delete_template: 'Eliminar plantilla',
+    delete_message: '¿Estás seguro de que deseas eliminar esta plantilla?',
+    template_deleted: '¡Plantilla eliminada con éxito!',
   },
   template: {
     empty: 'No se encontraron plantillas',
@@ -225,7 +228,8 @@ export default {
     REJECTED: 'Rechazado'
   },
   edit_template: {
-    title: 'Edit template'
+    title: 'Editar Plantilla',
+    template_updated: '¡Plantilla actualizada con éxito!'
   },
   save: 'Guardar',
   cancel: 'Cancelar',

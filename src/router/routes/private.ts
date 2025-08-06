@@ -4,7 +4,6 @@ import ContactFields from '~/views/ContactFields.vue'
 import ContactImports from '~/views/ContactImports.vue'
 import Contacts from '~/views/Contacts.vue'
 import Conversations from '~/views/Conversations.vue'
-import EditTemplate from '~/views/EditTemplate.vue'
 import NewCampaign from '~/views/NewCampaign.vue'
 import NewTemplate from '~/views/NewTemplate.vue'
 import UsersTeamsRoles from '~/views/settings/UsersTeamsRoles.vue'
@@ -58,7 +57,8 @@ const routes = [
             path: ':id/edit',
             name: 'edit-template',
             meta: { titleKey: 'edit_template.title' },
-            component: EditTemplate,
+            component: NewTemplate,
+            props: { isEdit: true }
           }
         ],
       },

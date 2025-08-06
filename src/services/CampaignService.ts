@@ -41,7 +41,7 @@ const createMockCampaigns = (page: number, perPage: number): Page<CampaignItem> 
                 name: '',
                 is_internal: false
             },
-            permissions: [],
+            permission_names: [],
             status: 'ACTIVE',
             is_deleted: false
         },

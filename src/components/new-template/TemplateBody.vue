@@ -1,22 +1,31 @@
 <script lang="ts" setup>
-import { computed, ref, toRef } from 'vue'
+import { computed, ref, watch } from 'vue'
 import {
 	IconAsterisk, IconInfoCircle, IconStrikethrough, IconBold,
 	IconItalic, IconList, IconListNumbers
 } from '@tabler/icons-vue'
-import { useContactFieldStore, useTemplateStore } from '~/stores'
+import { useContactFieldStore } from '~/stores'
 import { useI18n } from 'vue-i18n'
 import { useTextareaSelection } from '~/composables/useTextareaSelection'
 
-const templateStore = useTemplateStore()
+const props = defineProps<{
+	bodyText: string
+	variables: { contact_field_id?: string; name: string; value: string }[]
+}>()
+
+const emit = defineEmits<{
+	(e: 'update:bodyText', value: string): void
+	(e: 'update:variables', value: any[]): void
+}>()
+
 const contactFieldStore = useContactFieldStore()
 const { t, te } = useI18n()
 
 const bodyRef = ref()
-const bodyText = toRef(templateStore.template.body, 'text')
+const localBodyText = ref(props.bodyText)
 const variablesPopover = ref()
 
-const { wrapSelection } = useTextareaSelection(bodyRef, bodyText)
+const { wrapSelection } = useTextareaSelection(bodyRef, localBodyText)
 
 const defaultVariables = computed(() => {
 	return contactFieldStore.contactFields
@@ -57,7 +66,7 @@ const formatBody = (value: string) => {
 		const name = variableName.replace(/[^a-zA-Z0-9]/g, '_')
 
 		// Add variable if it doesnt exists
-		const variableFound = templateStore.template.body.variables.find(v => v.name === name)
+		const variableFound = props.variables.find(v => v.name === name)
 		const id = defaultVariables.value.find((df) => df.name === name)?.id
 		const value = variableFound ? variableFound.value : ''
 
@@ -70,8 +79,8 @@ const formatBody = (value: string) => {
 		return `{{${name}}}`
 	})
 
-	templateStore.template.body.text = formattedText
-	templateStore.template.body.variables = variables
+	emit('update:bodyText', formattedText)
+	emit('update:variables', variables)
 }
 
 const getVariablePlaceholder = (variable: string) => {
@@ -114,13 +123,13 @@ const selectionFormatters = [
 
 const insertVariable = (variable: string) => {
 	wrapSelection('{{' + variable + '}}')
-	formatBody(bodyText.value)
+	formatBody(localBodyText.value)
 
 	variablesPopover.value?.hide()
 }	
 
 const nextCustomVariable = () => {
-  const matches = [...bodyText.value.matchAll(/\{\{variable_(\d+)\}\}/g)];
+  const matches = [...localBodyText.value.matchAll(/\{\{variable_(\d+)\}\}/g)];
 
   const maxNum = matches
     .map(match => parseInt(match[1], 10))
@@ -128,6 +137,10 @@ const nextCustomVariable = () => {
 
   return `variable_${maxNum + 1}`;
 }
+
+watch(() => props.bodyText, (val) => {
+	localBodyText.value = val
+})
 
 contactFieldStore.fetchContactFields()
 </script>
@@ -143,7 +156,7 @@ contactFieldStore.fetchContactFields()
 			<div class="relative">
 				<Textarea 
 					ref="bodyRef"
-					v-model="templateStore.template.body.text" 
+					v-model="localBodyText" 
 					rows="8" 
 					cols="30" 
 					fluid 
@@ -153,7 +166,7 @@ contactFieldStore.fetchContactFields()
 					@input="onBodyInput"
 					:placeholder="t('example_body_text_template')" />
 				<div class="absolute right-3 bottom-2 text-slate-400">
-					{{ templateStore.template.body.text.length }} / 1024
+					{{ localBodyText.length }} / 1024
 				</div>
 			</div>
 		</div>
@@ -211,17 +224,22 @@ contactFieldStore.fetchContactFields()
 			</Popover>
 		</div>
 
-		<div v-if="templateStore.template.body.variables.length > 0" class="flex flex-col gap-2 pt-8 pb-5 border-b-1 border-slate-200">
+		<div v-if="props.variables.length > 0" class="flex flex-col gap-2 pt-8 pb-5 border-b-1 border-slate-200">
 			<div class="flex flex-col gap-2 w-[80%]">
 				<div class="flex gap-16">
 					<label class="w-full" for="language">{{ $t('new_template.body.variable_name') }}</label>
 					<label class="w-full" for="language">{{ $t('new_template.body.sample_value') }}</label>
 				</div>
 
-				<div v-for="(variable, index) in templateStore.template.body.variables" :key="variable.name" class="flex gap-16">
+				<div v-for="(variable, index) in props.variables" :key="variable.name" class="flex gap-16">
 					<InputText :value="variable.name" :id="variable.name" :name="variable.name" fluid />
 					<InputText 
-						v-model="templateStore.template.body.variables[index].value" 
+						:modelValue="variable.value" 
+						@update:modelValue="val => {
+							const updated = [...props.variables]
+							updated[index].value = val || ''
+							emit('update:variables', updated)
+						}" 
 						:placeholder="getVariablePlaceholder(variable.name)" 
 						fluid
 					/>

@@ -8,8 +8,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    2: typeof import('./src/components/users-teams-roles/UsersTab copy 2.vue')['default']
-    3: typeof import('./src/components/users-teams-roles/UsersTab copy 3.vue')['default']
     ActionButton: typeof import('./src/components/ActionButton.vue')['default']
     ActionsPopover: typeof import('./src/components/ActionsPopover.vue')['default']
     AddButtons: typeof import('./src/components/new-template/AddButtons.vue')['default']
@@ -30,7 +28,6 @@ declare module 'vue' {
     ContactGroupsTab: typeof import('./src/components/contact-groups/ContactGroupsTab.vue')['default']
     ContactTab: typeof import('./src/components/contacts/ContactTab.vue')['default']
     ContactTable: typeof import('./src/components/contacts/ContactTable.vue')['default']
-    copy: typeof import('./src/components/users-teams-roles/UsersTab copy.vue')['default']
     DataTable: typeof import('primevue/datatable')['default']
     DatePicker: typeof import('primevue/datepicker')['default']
     DeletedUsersTab: typeof import('./src/components/users-teams-roles/DeletedUsersTab.vue')['default']
