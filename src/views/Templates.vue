@@ -3,11 +3,11 @@ import type { DataTablePageEvent } from 'primevue'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { IconPlus } from '@tabler/icons-vue'
+import { IconLoader2, IconPlus } from '@tabler/icons-vue'
 import moment from 'moment'
 import { API } from '~/services'
 import { IconEdit, IconTrash, IconList, IconLayoutGrid, IconSearch } from '@tabler/icons-vue'
-import type { TemplateCreate, TemplateItem } from '~/types'
+import type { TemplateCampaign, TemplateCreate, TemplateItem } from '~/types'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { useCrudActions } from '~/composables/useCrudActions'
 
@@ -41,6 +41,9 @@ const {
 })
 
 const activeLayout = ref(1)
+const loadingCampaigns = ref(false)
+const showCampaignsDialog = ref(false)
+const templateCampaigns = ref<TemplateCampaign[]>()
 const layoutOptions = ref([
 	{
 		label: 'list',
@@ -69,10 +72,23 @@ const templateOptions = ref([
 		{
 			label: 'template.delete',
 			class: 'text-red-600',
-			icon: IconTrash,
-			action: (item: TemplateItem) => {
-				deleteId.value = item.id
-				showDeleteDialog.value = true
+			icon: loadingCampaigns.value ? IconLoader2 : IconTrash,
+			iconClass: loadingCampaigns.value ? 'animate-spin' : '',
+			disabled: loadingCampaigns.value,
+			action: async (item: TemplateItem) => {
+				try {
+					const { data: response } = await API.template.activeBroadcasts(item.id)
+					if(response.data.length === 0) {
+						deleteId.value = item.id
+						showDeleteDialog.value = true
+					}
+					else {
+						templateCampaigns.value = response.data
+						showCampaignsDialog.value = true
+					}
+				} catch(error) {
+					console.log(error)
+				}
 			}
 		}
 	]
@@ -241,5 +257,24 @@ onMounted(() => {
 			:loading="loadingDelete"
 			@onConfirm="onDelete"
 		/>
+		<WarningDialog 
+			v-model:visible="showCampaignsDialog" 
+			:title="$t('templates.active_campaigns')"
+			:message="$t('templates.active_campaigns_message')"
+			:confirmMessage="$t('accept')"
+			@onConfirm="showCampaignsDialog = false"
+		>
+			<template #note>
+				<div class="flex flex-col gap-1 pb-4 px-6">
+					<div 
+						v-for="campaign in templateCampaigns" 
+						:key="campaign.id"
+						class="text-sm text-surface-500 dark:text-surface-400 text-gray-600"
+					>
+						{{ campaign.name }}
+					</div>
+				</div>
+			</template>
+		</WarningDialog>
 	</div>
 </template>

@@ -212,7 +212,9 @@ Grab them today!`,
     search_templates: 'Search templates',
     delete_template: 'Delete template',
     delete_message: 'Are you sure you want to delete this template?',
-    template_deleted: 'Template deleted successfully!'
+    template_deleted: 'Template deleted successfully!',
+    active_campaigns: 'Active campaigns',
+    active_campaigns_message: "You can't delete this template because is been use in the following active campaigns:"
   },
   template: {
     title: 'Templates',

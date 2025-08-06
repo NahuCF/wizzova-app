@@ -211,6 +211,8 @@ export default {
     delete_template: 'Eliminar plantilla',
     delete_message: '¿Estás seguro de que deseas eliminar esta plantilla?',
     template_deleted: '¡Plantilla eliminada con éxito!',
+    active_campaigns: 'Campañas Activas',
+    active_campaigns_message: 'No puedes eliminar esta plantilla porque se está utilizando en las siguientes campañas activas:'
   },
   template: {
     empty: 'No se encontraron plantillas',

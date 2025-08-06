@@ -1,5 +1,5 @@
 import Http from '~/config/http'
-import type { Page, TemplateCreate, TemplateEdit, TemplateItem } from '~/types'
+import type { Page, TemplateCampaign, TemplateCreate, TemplateEdit, TemplateItem } from '~/types'
 
 export default {
 	async index(page: number = 1, name: string = '', perPage: number = 12) {
@@ -23,4 +23,7 @@ export default {
 	async delete(id: string) {
         return Http.delete(`/templates/${id}`)
     },
+	async activeBroadcasts(id: string) {
+		return Http.get<{ data: TemplateCampaign[] }>(`/templates/${id}/active-broadcasts`)
+	}
 }

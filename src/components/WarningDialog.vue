@@ -27,6 +27,7 @@ const emit = defineEmits<{
     >
         <span class="text-surface-500 dark:text-surface-400 font-medium block mb-4">{{ message }}</span>
         <span v-if="note" class="text-surface-500 dark:text-surface-400 text-gray-600 block mb-8">{{ note }}</span>
+        <slot name="note"></slot>
         <div class="flex justify-end gap-2">
             <Button v-if="!unclosable" type="button" severity="secondary" @click="emit('update:visible', false)">{{ $t('cancel') }}</Button>
             <Button type="button" severity="danger" @click="emit('onConfirm')">{{ confirmMessage ? confirmMessage : $t('delete') }}</Button>

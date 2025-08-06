@@ -99,3 +99,13 @@ export interface VariableMapping {
   name: string
   value: string
 }
+
+export interface TemplateCampaign {
+  id: string,
+  name: string,
+  send_at: string,
+  follow_whatsapp_business_policy: boolean,
+  template_id: string,
+  group_id: string,
+  user_id: string
+}
