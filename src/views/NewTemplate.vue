@@ -36,7 +36,7 @@ const route = useRoute()
 
 const defaultValue: TemplateCreate = {
     name: '',
-    language_id: 0,
+    language: 'en',
     category: '',
     allow_category_change: false,
     components: {
@@ -96,12 +96,6 @@ const formatInputName = (event: Event) => {
 const fetchLanguages = async () => {
 	const response = await API.templateLanguage.index()
 	languages.value = response.data.data
-
-	const englishLanguage = languages.value.find((item) => item.name === 'English')
-
-	if (!englishLanguage) return
-
-	template.value.language_id = englishLanguage.id
 }
 
 const fetchTemplateCategories = async () => {
@@ -127,7 +121,6 @@ const fetchTemplate = async () => {
 		const templateEdit = response.data
 		template.value = {
 			...templateEdit,
-			language_id: 0,
 			components: {
 				header: Array.isArray(templateEdit.components.header) 
 					? emptyHeader : templateEdit.components.header,
@@ -157,7 +150,7 @@ const returnToPage = () => {
 const canSubmit = computed(() => {
 	return (
 		template.value.name &&
-		template.value.language_id &&
+		template.value.language &&
 		template.value.category &&
 		template.value.components.body.text &&
 		!template.value.components.body.variables.find(
@@ -268,10 +261,10 @@ onMounted(() => {
 									<IconAsterisk color="red" class="mt-1" size="8  " />
 								</div>
 								<Select 
-									v-model="template.language_id" 
+									v-model="template.language" 
 									:options="languages"
 									optionLabel="name" 
-									optionValue="id" 
+									optionValue="code" 
 									name="language" 
 									id="language"
 								/>

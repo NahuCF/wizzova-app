@@ -14,7 +14,7 @@ export interface TemplateHeaderType {
 export interface TemplateCreate {
   id?: string,
   name: string,
-  language_id: number,
+  language: string,
   category: string,
   allow_category_change?: boolean,
   components: {
@@ -34,6 +34,7 @@ export interface TemplateCreate {
 export interface TemplateEdit {
   id: string,
   name: string,
+  language: string,
   category: string,
   allow_category_change: boolean,
   components: {
