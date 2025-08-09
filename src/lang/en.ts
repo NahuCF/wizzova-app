@@ -607,5 +607,6 @@ Grab them today!`,
   unauthorize_access: {
     title: 'Access Denied',
     message: 'You do not have sufficient permissions to access this module, contact your administrator.'
-  }
+  },
+  table_empty: 'No items found'
 }

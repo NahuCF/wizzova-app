@@ -7,7 +7,7 @@ import { useI18n } from 'vue-i18n'
 import { API } from '~/services'
 import { useUserStore, useSessionStore } from '~/stores'
 import { userStatusSeverity } from '~/types'
-import type { UserItem,  UserStatus } from '~/types'
+import type { Column, UserItem } from '~/types'
 
 const { hasPermission } = useSessionStore()
 const userStore = useUserStore()
@@ -19,12 +19,23 @@ const toast = useToast()
 
 const selectedUser = ref<UserItem>()
 const showRestoreDialog = ref(false)
-const columns = [
-    { header: 'name', key: 'name' },
-    { header: 'email', key: 'email' },
-    { header: 'role', key:'roleName' },
-    { header: 'status', key: 'status' }
-]
+const columns = computed(() => {
+    let columnList: Column[] = [
+        { header: t('users.headers.name'), key: 'name' },
+        { header: t('users.headers.email'), key: 'email' },
+        { header: t('users.headers.role'), key:'roleName' },
+        { header: t('users.headers.status'), key: 'statusTag', type: 'TAG' }
+    ]
+
+    if(hasPermission('settings.manage_user_roles_and_teams')) {
+        columnList = [
+            ...columnList,
+            { header: '', key: 'restore', type: 'CUSTOM' }
+        ]
+    }
+
+    return columnList
+})
 
 const onRestoreUser = (user: UserItem) => {
 	selectedUser.value = user
@@ -67,7 +78,11 @@ const onRestore = async () => {
 const transformedData = computed(() => {
 	return users.value.map(user => ({
 		...user,
-		roleName: user.role.name
+		roleName: user.role.name,
+        statusTag: {
+            label: t(`users.status.${user.status}`),
+            severity: userStatusSeverity[user.status]
+        }
 	}))
 })
 
@@ -76,51 +91,22 @@ fetchDeletedUsers()
 
 <template>
 	<div class="flex flex-col h-full">
-		<div class="overflow-auto">
-            <DataTable 
-                :value="transformedData" 
-                dataKey="id" 
-                class="rounded-lg overflow-hidden" 
-                :loading="loading" 
-                scrollable
-                scrollHeight="flex"
-            >
-                <template #empty>
-                    <div class="text-center text-sm py-4 text-gray-500">
-                        {{ $t('users.empty') }}
-                    </div>
-                </template>
-
-                <Column v-for="column in columns" :key="column.header" headerClass="bg-slate-200!">
-                    <template #header>
-                        <div class="uppercase text-sm font-semibold">
-                            {{ $t(`users.headers.${column.header}`) }}
+        <Table 
+            :data="transformedData"
+            :columns="columns"
+            emptyMessage="users.empty"
+            :loading="loading"
+        >
+            <template #restore="{ data }: { data: UserItem }">
+                <div class="flex justify-center">
+                    <Button severity="secondary" @click="onRestoreUser(data)" size="small">
+                        <div>
+                            {{ $t('deleted_users.restore') }}
                         </div>
-                    </template>
-
-                    <template #body="{ data }">
-                        <Tag v-if="column.header === 'status'" :value="$t(`users.status.${data[column.key]}`)"
-                            :severity="userStatusSeverity[data[column.key] as UserStatus]" size="small" />
-
-                        <span v-else class="block whitespace-nowrap overflow-hidden text-ellipsis text-sm">
-                            {{ data[column.key] }}
-                        </span>
-                    </template>
-                </Column>
-
-				<Column v-if="hasPermission('settings.manage_user_roles_and_teams')" headerClass="bg-slate-200!">
-                    <template #body="{ data }: { data: UserItem }">
-                        <div class="flex justify-center">
-                            <Button severity="secondary" @click="onRestoreUser(data)" size="small">
-                                <div>
-									{{ $t('deleted_users.restore') }}
-								</div>
-                            </Button>
-                        </div>
-                    </template>
-                </Column>
-            </DataTable>
-        </div>
+                    </Button>
+                </div>
+            </template>
+        </Table>
 
 		<WarningDialog
 			v-model:visible="showRestoreDialog" 

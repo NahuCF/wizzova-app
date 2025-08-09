@@ -605,5 +605,6 @@ export default {
   unauthorize_access: {
     title: 'Acceso Denegado',
     message: 'No tienes permisos suficientes para acceder a este módulo, contacta a tu administrador'
-  }
+  },
+  table_empty: 'No se encontraron elementos'
 }

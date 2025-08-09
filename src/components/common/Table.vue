@@ -1,0 +1,201 @@
+<script setup lang="ts">
+import type { DataTablePageEvent } from 'primevue'
+import { IconDotsVertical } from '@tabler/icons-vue'
+import { computed, ref } from 'vue'
+import type { Column, ColumnType } from '~/types'
+
+const props = withDefaults(
+	defineProps<{
+		data: any[],
+		columns: Column[],
+		selection?: any[],
+		emptyMessage?: string,
+		loading?: boolean,
+		withPagination?: boolean,
+		totalRecords?: number,
+		rowsPerPage?: number,
+		currentPageReport?: string
+	}>(),
+	{
+		emptyMessage: 'table_empty'
+	}
+)
+
+const emit = defineEmits<{
+    (e: 'update:rowsPerPage', value: number): void,
+	(e: 'update:selection', data: any[]): void
+	(e: 'onPage', event: DataTablePageEvent): void,
+}>()
+
+const actions = ref<any[]>([])
+const taglistPopover = ref()
+const actionMenu = ref()
+const hoverTags = ref<string[]>([])
+let hoverTimeout: ReturnType<typeof setTimeout> | null = null
+
+const total = computed(() => {
+	return props.totalRecords || props.data.length
+})
+
+const paginatorTemplate = computed(() => {
+	if(props.withPagination) {
+		return 'FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink'
+	}
+
+	return undefined
+})
+
+const onHover = (event: MouseEvent, tags: string[]) => {
+    if (hoverTimeout) clearTimeout(hoverTimeout)
+    hoverTags.value = tags
+    taglistPopover.value.show(event)
+}
+
+const onLeave = () => {
+    hoverTimeout = setTimeout(() => {
+        taglistPopover.value.hide()
+    }, 300)
+}
+
+const openActionMenu = (event: MouseEvent, actionList: any[], item: any) => {
+	actions.value = actionList
+	actionMenu.value?.show(event, item)
+}
+
+const bodyStyleByType = (type: ColumnType) => {
+	if(type === 'ACTIONS') {
+		return { maxWidth: '50px' }
+	}
+
+	return undefined
+}
+
+</script>
+
+<template>
+	<div class="overflow-auto">
+		<DataTable 
+			:value="data"
+			:selection="selection"
+			@update:selection="(data) => emit('update:selection', data)"
+			dataKey="id" 
+			class="rounded-lg overflow-hidden" 
+			:lazy="withPagination"
+			:paginator="withPagination"
+			:loading="loading"
+			:rows="rowsPerPage"
+			:totalRecords="total" 
+			scrollable
+			scrollHeight="flex"
+			:paginatorTemplate="paginatorTemplate"
+			:currentPageReportTemplate="currentPageReport"
+			@page="emit('onPage', $event)"
+		>
+			<template #empty>
+				<div class="text-center text-sm py-4 text-gray-500">
+					{{ $t(emptyMessage) }}
+				</div>
+			</template>
+
+			<template v-if="withPagination" #paginatorstart>
+				<div class="flex items-center gap-2">
+					<label for="rows" class="text-sm font-bold!">
+						{{ $t('show_rows_per_page') }}
+					</label>
+					<Select 
+						id="rows" 
+						:model-value="rowsPerPage"
+                        @change="(value) => emit('update:rowsPerPage', value.value)" 
+						:options="[10, 20, 50]"
+						size="small"
+					/>
+				</div>
+			</template>
+
+			<Column v-if="selection" selectionMode="multiple" headerStyle="width: 3rem" headerClass="bg-slate-200!"></Column>
+
+			<Column v-for="column in columns" :key="column.key" headerClass="bg-slate-200!" :bodyStyle="bodyStyleByType">
+				<template #header>
+					<div class="uppercase font-semibold">
+						{{ column.header }}
+					</div>
+				</template>
+
+				<template #body="{ data }">
+					<Tag 
+						v-if="column.type === 'TAG'" 
+						:value="data[column.key].label"
+						:severity="data[column.key].severity" 
+						size="small"
+					/>
+
+					<div v-else-if="column.type === 'TAG_LIST'" class="flex items-center gap-2">
+						<template v-for="(tag, index) in data[column.key]" :key="index">
+							<Tag v-if="index === 0" class="px-3! text-nowrap" rounded size="small">
+								{{ tag }}
+							</Tag>
+						</template>
+						<div
+							@mouseenter="onHover($event, data[column.key])" 
+							@mouseleave="onLeave"
+						>
+							<Badge 
+								v-if="data[column.key].length > 1" 
+								severity="secondary"
+							>
+								+{{ data[column.key].length - 1 }}
+							</Badge>
+						</div>
+					</div>
+
+					<template v-else-if="column.type === 'PROGRESS'">
+						<div class="flex gap-2 items-center">
+							<CircularProgress :progress="data[column.key].percentage" :color="data[column.key].color" />
+							<div class="flex flex-col gap-0.5">
+								<span>{{ data[column.key].count }}</span>
+								<span class="text-gray-500">
+									{{ data[column.key].percentage }}%
+								</span>
+							</div>
+						</div>
+					</template>
+
+					<template v-else-if="column.type === 'ACTIONS'">
+						<div v-if="data[column.key].length > 0" class="flex justify-center">
+							<Button severity="secondary" variant="text" @click="openActionMenu($event, data[column.key], data)">
+								<IconDotsVertical  size="13" />
+							</Button>
+						</div>
+					</template>
+
+					<template v-else-if="column.type === 'CUSTOM'">
+						<slot :name="column.key" :data="data">
+						</slot>
+					</template>
+
+					<span v-else class="block whitespace-nowrap overflow-hidden text-ellipsis">
+						{{ data[column.key] }}
+					</span>
+				</template>
+			</Column>
+		</DataTable>
+
+		<Popover 
+			ref="taglistPopover"
+			:showCloseIcon="false"
+			:dismissable="false"
+			placement="bottom"
+			class="p-2 text-sm shadow-md rounded-md bg-white border"
+		>
+			<div class="flex flex-col gap-2">
+				<template v-for="(tag, index) in hoverTags" :key="index">
+					<Tag v-if="index !== 0" class="px-3! text-nowrap" rounded size="small">
+						{{ tag }}
+					</Tag>
+				</template>
+			</div>
+		</Popover>
+
+		<ActionsPopover ref="actionMenu" :options="actions" />
+	</div>
+</template>
