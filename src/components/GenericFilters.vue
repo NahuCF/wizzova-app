@@ -8,7 +8,7 @@ import Menu from 'primevue/menu'
 import Popover from 'primevue/popover'
 import Divider from 'primevue/divider'
 import { useI18n } from 'vue-i18n'
-import type { Column, Filter, FilterOperator } from '~/types'
+import type { FilterColumn, Filter, FilterOperator } from '~/types'
 import {
   IconX,
   IconPlus,
@@ -17,7 +17,7 @@ import {
 } from '@tabler/icons-vue'
 
 const props = defineProps<{
-    columns: Column[]
+    columns: FilterColumn[]
     filters: Filter[],
     disabled?: boolean
 }>()
@@ -31,7 +31,7 @@ const { t } = useI18n()
 const menu = ref()
 const popover = ref()
 const filterButton = ref<any>()
-const selectedColumn = ref<Column | null>(null)
+const selectedColumn = ref<FilterColumn | null>(null)
 const currentFilter = ref<{
     columnId: string
     conditions: { operator: FilterOperator | ''; value: any[] }[]
@@ -56,20 +56,20 @@ const menuItems = computed(() =>
 const showValueInput = (op: FilterOperator | '') =>
     op !== 'is_empty' && op !== 'is_not_empty' && op !== ''
 
-const getOperatorOptions = (column: Column) =>
+const getOperatorOptions = (column: FilterColumn) =>
     column.operators.map(op => ({
         label: t(`filters.operators.${op}`),
         value: op
     }))
 
-const getOptionsForColumn = (column: Column) => column.options || []
+const getOptionsForColumn = (column: FilterColumn) => column.options || []
 
 const openMenu = (event: MouseEvent) => {
     if (selectedColumn.value) popover.value?.hide()
     menu.value?.toggle(event)
 }
 
-const onColumnSelected = (column: Column, event: MouseEvent) => {
+const onColumnSelected = (column: FilterColumn, event: MouseEvent) => {
     selectedColumn.value = column
     const existingFilter = filters.value.find(f => f.columnId === column.id)
     if (existingFilter) {

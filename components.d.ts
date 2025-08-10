@@ -62,6 +62,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ScheduleStep: typeof import('./src/components/new-broadcast/ScheduleStep.vue')['default']
     Select: typeof import('primevue/select')['default']
+    Skeleton: typeof import('primevue/skeleton')['default']
     StatusBadge: typeof import('./src/components/StatusBadge.vue')['default']
     Step: typeof import('primevue/step')['default']
     Step1UploadFile: typeof import('./src/components/contacts/Step1UploadFile.vue')['default']

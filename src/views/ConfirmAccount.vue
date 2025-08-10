@@ -13,7 +13,7 @@
 
         <div class="flex gap-1 justify-center">
           <span class="whitespace-nowrap">{{ $t('we_have_sent_email_to') }}</span>
-          <strong>{{ session.tenant.email }}</strong>
+          <strong>{{ session.user?.email }}</strong>
         </div>
         <div>{{ $t('remember_check_your_spam') }}</div>
 
@@ -27,7 +27,7 @@
     </div>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { useToast } from 'primevue'
 import { IconMailOpened, IconLoader2 } from '@tabler/icons-vue'
 import { useSessionStore } from '~/stores/session'
@@ -44,7 +44,7 @@ const resend = async () => {
   loading.value = true
   try {
     await AuthService.sendVerifyAccount({
-      email: session.tenant.email,
+      email: session.user?.email || '',
     })
 
     toast.add({

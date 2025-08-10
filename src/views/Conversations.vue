@@ -50,12 +50,9 @@ const launchWhatsAppSignup = () => {
     (response) => {
       if (response.authResponse) {
         console.log('Login successful:', response)
-        const token = response.authResponse.accessToken
-        try {
-          API.tenant.storeLongLovedToken(token)
-        } catch (error) {
-          console.error(error)
-        }
+        const accessToken = response.authResponse.accessToken
+
+        API.tenant.finishSetup({ access_token: accessToken })
       } else {
         console.error('Login failed:', response)
       }

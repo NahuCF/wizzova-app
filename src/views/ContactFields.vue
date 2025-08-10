@@ -32,8 +32,7 @@ const {
         update: API.contactField.update,
         delete: API.contactField.delete,
     },
-    fetchData: fetchDataPage,
-    rowsPerPage,
+    fetchData: () => fetchDataPage(1, rowsPerPage.value),
     i18nKeys: {
         created: 'contact_fields.field_created',
         updated: 'contact_fields.field_updated',
@@ -274,7 +273,7 @@ fetchTypes()
             :contactField="selectedField"
             @onSave="onSaveField" 
         />
-        <DeleteDialog 
+        <WarningDialog 
             v-model:visible="showDeleteDialog" 
             :title="$t('contact_fields.delete_field')"
             :message="$t('contact_fields.delete_message')"

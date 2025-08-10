@@ -59,7 +59,6 @@ export default {
   business_email: 'Email de la compañia',
   business: 'Compañia',
   already_have_an_account: '¿Ya tienes una cuenta?',
-  login: 'Iniciar sesion',
   grow_your_business_with: 'Crecer tu negocio con',
   confirm_account: 'Confirmar cuenta',
   check_your_email: 'Revisa tu email',
@@ -74,15 +73,38 @@ export default {
   the_email_is_required: 'El email es requerido.',
   password_is_required: 'La contraseña es requerida.',
   dont_you_have_an_account: '¿No tienes una cuenta?',
+  signup: {
+    company_name: {
+      label: 'Nombre de la compañia',
+      placeholder: 'Ingresa el nombre de la compañia'
+    }
+  },
+  login: {
+    title: 'Iniciar sesion',
+    company: 'Compañia',
+    switch: 'Cambiar'
+  },
+  choose_tenant: {
+    title: 'Elige la Compañia',
+  },
   conversations: 'Conversaciones',
   validation_errors: {
     'The work email has already been taken': 'El email de trabajo ya ha sido tomado.',
+    'The email has already been taken': 'El email ya ha sido tomado.',
     'The provided credentials are incorrect': 'Credenciales incorrectas',
     'Template name already exists': 'El nombre de la plantilla ya existe',
     'templater_name_already_exists': 'El nombre de la plantilla ya existe',
     'Contact already exists': 'El contacto ya existe',
     'Group name already exists': 'El nombre del grupo ya existe',
-    'Import name already exists': 'El nombre de importación ya existe'
+    'Broadcast name already exists': 'El nombre de la campaña ya existe',
+    'Import name already exists': 'El nombre de importación ya existe',
+    'You can not create an owner user': 'No puedes crear un usuario Owner',
+    'A user with this email already exists': 'Ya existe un usuario con este email',
+    'You can not delete an owner user': 'No puedes eliminar un usuario Owner',
+    'User is not deleted': 'El usuario no esta eliminado',
+    'A role with this name already exists': 'Ya existe un rol con este nombre',
+    'This role is internal and cannot be updated': 'Este rol es interno y no puede actualizarce',
+    'A team with this name already exists': 'Ya existe un equipo con este nombre',
   },
   submit_for_review: 'Enviar para revision',
   template_name: 'Nombre del template',
@@ -186,6 +208,11 @@ export default {
     create_new_template: 'Crear nueva plantilla',
     create_new_template_card: 'Crear nueva plantilla',
     search_templates: 'Buscar plantillas',
+    delete_template: 'Eliminar plantilla',
+    delete_message: '¿Estás seguro de que deseas eliminar esta plantilla?',
+    template_deleted: '¡Plantilla eliminada con éxito!',
+    active_broadcasts: 'Campañas Activas',
+    active_broadcasts_message: 'No puedes eliminar esta plantilla porque se está utilizando en las siguientes campañas activas:'
   },
   template: {
     empty: 'No se encontraron plantillas',
@@ -203,7 +230,8 @@ export default {
     REJECTED: 'Rechazado'
   },
   edit_template: {
-    title: 'Edit template'
+    title: 'Editar Plantilla',
+    template_updated: '¡Plantilla actualizada con éxito!'
   },
   save: 'Guardar',
   cancel: 'Cancelar',
@@ -325,7 +353,7 @@ export default {
     }
   },
   copied_to_clipboard: 'Copiado al portapapeles',
-  pply: 'Aplicar',
+  apply: 'Aplicar',
   filters: {
     operator: 'Operador',
     enter_value: 'Ingresa valor',
@@ -398,4 +426,185 @@ export default {
     ADD: 'Agregar nuevos contactos',
     ADD_AND_REPLACE: 'Agregar y actualizar contactos'
   },
+  broadcasts: {
+    title: 'Campañas',
+    select_number: 'Selecciona un Número',
+    new_broadcast: 'Nueva Campaña',
+    overview: 'Resumen',
+    all_broadcasts: 'Todas las Campañas',
+    empty: 'No se encontraron campañas',
+    headers: {
+      name: 'Nombre',
+      created_at: 'Fechado de creación',
+      created_by: 'Creado por',
+      recipients: 'Receptores',
+      sent: 'Enviados',
+      received: 'Recibidos',
+      read: 'Leidos',
+      failed: 'Fallidos',
+      replied: 'Respondidos',
+      status: 'Estado'
+    },
+    status: {
+      SCHEDULED: 'Agendado',
+      PROCESSING: 'Procesando',
+      COMPLETED: 'Completado'
+    }
+  },
+  continue: 'Continuar',
+  leave: 'Salir',
+  unsaved_changes: 'Cambios sin guardar',
+  unsaved_changes_message: '¿Estás seguro de que quieres salir? Tienes cambios sin guardar.',
+  confirm: 'Confirmar',
+  invite: 'Invitar',
+  restore: 'Restaurar',
+  accept: 'Aceptar',
+  invalid_session: 'Sesión Invalida',
+  session_override_message: 'Se ha detectado otro login, su sesión actual será cerrada.',
+  new_broadcast: {
+    title: 'Nueva Campaña',
+    select_template: 'Seleccionar Plantilla',
+    select_audience: 'Seleccionar Audiencia',
+    schedule_broadcast: 'Programar Campaña',
+    group_selected: '1 Grupo seleccionado',
+    groups_selected: '{groups} Grupos seleccionados',
+    no_group_selected: 'Ningún grupo seleccionado',
+    map_variables: 'Mapea Variables',
+    variables: 'Variables',
+    map: 'Mapeos',
+    values: 'Valores',
+    contact_field: 'Campo de contacto',
+    custom_value: 'Valor personalizado',
+    enter_custom_value: 'Ingresa un valor personalizado',
+    select_contact_field: 'Selecciona un campo de contacto',
+    custom_field_error: 'Por favor ingresa un valor personalizado',
+    contact_field_error: 'Por favor selecciona un campo de contacto',
+    select_template_subtitle: 'Selecciona una plantilla para generar la campaña',
+    add_template: 'Agregar plantilla',
+    broadcast_details: 'Detalles de la campaña',
+    broadcast_name: 'Nombre de la campaña',
+    send_broadcast: 'Enviar campaña',
+    target_audience: 'Audiencia objetivo',
+    total_contacts: 'Total de contactos',
+    selected_groups: 'Grupos seleccionados',
+    enter_broadcast_name: 'Ingrese el nombre de la campaña',
+    send_now: 'Enviar ahora',
+    schedule_later: 'Programar envio',
+    schedule_on: 'Programar el día',
+    schedule_at: 'Programar la hora',
+    broadcast_created: '¡Campaña creada con éxito!',
+    missing_template_description: 'Debes crear una plantilla para continuar con los pasos de la campaña'
+  },
+  users_teams_roles: {
+    title: 'Usuarios, Equipos y Roles',
+    users_tab: 'Usuarios',
+    deleted_users_tab: 'Usuarios Eliminados',
+    teams_tab: 'Equipos',
+    roles_tab: 'Roles'
+  },
+  users: {
+    add: 'Agregar Usuario',
+    edit: 'Editar Usuario',
+    empty: 'No se encontraron usuarios',
+    headers: {
+      name: 'Nombre',
+      email: 'Correo Electrónico',
+      role: 'Rol',
+      status: 'Estado'
+    },
+    status: {
+      SIGNED_UP: 'Registrado',
+      ACTIVE: 'Activo',
+      INACTIVE: 'Inactivo',
+      DELETED: 'Eliminado',
+      INVITATION_SENT: 'Invitación Enviada',
+      INVITATION_ACCEPTED: 'Invitación Aceptada'
+    },
+    create_user: 'Crear Usuario',
+    edit_user: 'Editar Usuario',
+    delete_user: 'Eliminar Usuario',
+    delete_message: '¿Estás seguro de que deseas eliminar este usuario?',
+    name: {
+      label: 'Nombre',
+      placeholder: 'Ingresa el nombre'
+    },
+    email: {
+      label: 'Correo Electrónico',
+      placeholder: 'Ingresa el correo electrónico'
+    },
+    role: {
+      label: 'Rol',
+      placeholder: 'Selecciona un rol'
+    },
+    teams: {
+      label: 'Equipos',
+      placeholder: 'Selecciona equipos'
+    },
+    create_user_tooltip: 'Debes completar todos los campos requeridos',
+    user_created: '¡Usuario creado con éxito!',
+    user_updated: '¡Usuario actualizado con éxito!',
+    user_deleted: '¡Usuario eliminado con éxito!'
+  },
+  deleted_users: {
+    restore: 'Restaurar',
+    restore_title: 'Restaurar usuario',
+    restore_message: '¿Estás seguro de que deseas restaurar este usuario?',
+    restored: 'Usuario restaurado'
+  },
+  teams: {
+    add: 'Agregar Equipo',
+    edit: 'Editar Equipo',
+    empty: 'No se encontraron equipos',
+    headers: {
+      name: 'Nombre',
+      created_by: 'Creado Por',
+      users_count: 'N.º de usuarios',
+      actions: 'Acciones'
+    },
+    name: {
+      label: 'Nombre',
+      placeholder: 'Ingresa el nombre'
+    },
+    users: {
+      label: 'Usuarios',
+      placeholder: 'Selecciona usuarios'
+    },
+    create_team_tooltip: 'Debes completar todos los campos requeridos',
+    create_team: 'Crear Equipo',
+    edit_team: 'Editar Equipo',
+    delete_team: 'Eliminar Equipo',
+    delete_message: '¿Estás seguro de que deseas eliminar este equipo?',
+    team_created: '¡Equipo creado con éxito!',
+    team_updated: '¡Equipo actualizado con éxito!',
+    team_deleted: '¡Equipo eliminado con éxito!'
+  },
+  roles: {
+    add: 'Agregar Rol',
+    edit: 'Editar Rol',
+    empty: 'No se encontraron roles',
+    headers: {
+      name: 'Nombre',
+      created_by: 'Creado Por'
+    },
+    system: 'Sistema',
+    name: {
+      label: 'Nombre',
+      placeholder: 'Ingresa el nombre'
+    },
+    role_permissions: 'Permisos de rol',
+    enable_all: 'Activar Todos',
+    create_role_tooltip: 'Debes ingresar el nombre del rol y al menos un permiso para continuar',
+    create_role: 'Crear Rol',
+    edit_role: 'Editar Rol',
+    delete_role: 'Eliminar Rol',
+    delete_message: '¿Estás seguro de que deseas eliminar este rol?',
+    role_created: '¡Rol creado con éxito!',
+    role_updated: '¡Rol actualizado con éxito!',
+    role_deleted: '¡Rol eliminado con éxito!'
+  },
+  unauthorize_access: {
+    title: 'Acceso Denegado',
+    message: 'No tienes permisos suficientes para acceder a este módulo, contacta a tu administrador'
+  },
+  table_empty: 'No se encontraron elementos'
 }

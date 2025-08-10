@@ -4,19 +4,18 @@ import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 
 interface CrudApi<T> {
-    create: (data: T) => Promise<any>
-    update: (data: T) => Promise<any>
-    delete: (id: string) => Promise<any>
+    create?: (data: T) => Promise<any>
+    update?: (data: T) => Promise<any>
+    delete?: (id: string) => Promise<any>
 }
 
 interface UseCrudActionsOptions<T> {
     api: CrudApi<T>
-    fetchData: (page: number, perPage: number) => void
-    rowsPerPage: Ref<number>
+    fetchData: () => void
     i18nKeys: {
-        created: string
-        updated: string
-        deleted: string
+        created?: string
+        updated?: string
+        deleted?: string
     }
 }
 
@@ -59,14 +58,24 @@ export function useCrudActions<T extends { id?: string | number }>(
         loading.value = true
         try {
             if (item.id) {
+                if (!options.api.update) {
+                    console.warn('Update operation is not available.')
+                    return
+                }
+
                 await options.api.update(item)
-                showSuccess(options.i18nKeys.updated)
+                showSuccess(options.i18nKeys.updated || '')
             } else {
+                if (!options.api.create) {
+                    console.warn('Create operation is not available.')
+                    return
+                }
+
                 await options.api.create(item)
-                showSuccess(options.i18nKeys.created)
+                showSuccess(options.i18nKeys.created || '')
             }
 
-            options.fetchData(1, options.rowsPerPage.value)
+            options.fetchData()
             opts?.onSuccess?.()
         } catch (error) {
             showError(error)
@@ -79,10 +88,15 @@ export function useCrudActions<T extends { id?: string | number }>(
         id: string,
         opts?: { onSuccess?: () => void }
     ) => {
+        if (!options.api.delete) {
+            console.warn('Delete operation is not available.')
+            return
+        }
+
         try {
             await options.api.delete(id)
-            options.fetchData(1, options.rowsPerPage.value)
-            showSuccess(options.i18nKeys.deleted)
+            options.fetchData()
+            showSuccess(options.i18nKeys.deleted || '')
             opts?.onSuccess?.()
         } catch (error) {
             showError(error)

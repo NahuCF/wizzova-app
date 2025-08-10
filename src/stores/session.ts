@@ -1,29 +1,67 @@
 import { defineStore } from 'pinia'
-import type { Tenant } from '~/types/Tenant'
-import type { User } from '~/types/User'
+import { computed, ref } from 'vue'
+import type { Tenant, UserItem } from '~/types'
 
-export const useSessionStore = defineStore('session', {
-  state: () => {
-    return { user: {} as User, tenant: {} as Tenant }
-  },
-  actions: {
-    setTenant(tenant: Tenant) {
-      this.tenant = tenant
-    },
-    setUser(user: User) {
-      this.user = user
-    },
-  },
-  getters: {
-    isAuthenticated(): boolean {
-      return this.user.id != null && this.tenant.id != null && this.tenant.token !== null
-    },
-    isTenantVerified(): boolean {
-      return this.tenant.verifiedEmail
-    },
-    getTenant(): Tenant {
-      return this.tenant
-    },
-  },
-  persist: true,
+export const useSessionStore = defineStore('session', () => {
+	const user = ref<UserItem | null>(null)
+	const tenant = ref<Tenant | null>(null)
+	const tenants = ref<Tenant[]>([])
+	const selectedTenant = ref<Tenant | null>(null)
+	const savedEmail = ref<string>('')
+	const token = ref<string>('')
+	const showOverrideDialog = ref(false)
+
+	const isAuthenticated = computed(() => {
+		return user.value && tenant.value && token.value
+	})
+
+	const isOwner = computed(() => {
+		return user.value?.role.name === 'Owner' && user.value.role.is_internal
+	})
+
+	const hasPermission = (permissionName: string) => {
+		return !!user.value?.permission_names.find(permission => permission === permissionName)
+	}
+
+	const hasAllPermissions = (permissions: string[]) => {
+		return permissions.every(permission => {
+			return user.value?.permission_names.includes(permission)
+		})
+	}
+
+	const hasAnyPermission = (permissions: string[]) => {
+		return permissions.some(p => user.value?.permission_names.includes(p))
+	}
+
+	const $reset = () => {
+		user.value = null
+		tenant.value = null
+		tenants.value = []
+		selectedTenant.value = null
+		savedEmail.value = ''
+		token.value = ''
+		showOverrideDialog.value = false
+	}
+
+	return {
+		user,
+		tenant,
+		tenants,
+		selectedTenant,
+		savedEmail,
+		token,
+		showOverrideDialog,
+		isAuthenticated,
+		isOwner,
+		hasPermission,
+		hasAllPermissions,
+		hasAnyPermission,
+		$reset
+	}
+}, {
+	persist: [
+		{
+			pick: ['user', 'tenant', 'token']
+		}
+	]
 })

@@ -14,6 +14,9 @@ import UserService from './UserService'
 import GroupService from './GroupService'
 import TenantService from './TenantService'
 import MetaService from './MetaService'
+import BroadcastService from './BroadcastService'
+import TeamService from './TeamService'
+import RoleService from './RoleService'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -21,6 +24,7 @@ export { default as TemplateHeaderService } from './TemplateHeaderService'
 
 export const API = {
     auth: AuthService,
+    broadcast: BroadcastService,
     contact: ContactService,
     contactField: ContactFieldService,
     country: CountryService,
@@ -28,6 +32,8 @@ export const API = {
     group: GroupService,
     industry: IndustryService,
     knownPlace: KnownPLaceService,
+    role: RoleService,
+    team: TeamService,
     templateCategory: TemplateCategoryService,
     templateHeader: TemplateHeaderService,
     templateLanguage: TemplateLanguageService,

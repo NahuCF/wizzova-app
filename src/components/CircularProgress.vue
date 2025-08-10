@@ -1,33 +1,28 @@
 <template>
 	<svg :width="size" :height="size" viewBox="0 0 100 100" ref="svgRef">
 		<circle cx="50" cy="50" :r="radius" :stroke-width="strokeWidth" stroke="#e5e7eb" fill="none" />
-		<path ref="progressPath" fill="none" stroke="#10b981" :stroke-width="strokeWidth" stroke-linecap="butt"
+		<path ref="progressPath" fill="none" :class="color" :stroke-width="strokeWidth" stroke-linecap="butt"
 			transform="translate(50,50)" />
 	</svg>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, defineProps } from 'vue'
+import { ref, watch, onMounted, withDefaults, defineProps } from 'vue'
 import * as d3 from 'd3'
 
-const props = defineProps({
-	progress: {
-		type: Number,
-		required: true,
-		validator: (v: number) => v >= 0 && v <= 100
-	},
-	size: {
-		type: Number,
-		default: 28,
-	},
-	strokeWidth: {
-		type: Number,
-		default: 10,
-	},
-	duration: {
-		type: Number,
-		default: 750,
-	},
+interface ProgressCircleProps {
+	progress: number
+	size?: number
+	strokeWidth?: number
+	duration?: number
+	color?: string
+}
+
+const props = withDefaults(defineProps<ProgressCircleProps>(), {
+	size: 28,
+	strokeWidth: 10,
+	duration: 750,
+	color: 'stroke-emerald-500'
 })
 
 const svgRef = ref<SVGSVGElement | null>(null)
@@ -40,7 +35,7 @@ const arcGenerator = d3.arc()
 	.outerRadius(radius)
 	.startAngle(0)
 
-function updateArc(progress: number, oldProgress: number | null = null) {
+const updateArc = (progress: number, oldProgress: number | null = null): void => {
 	if (!progressPath.value) return
 
 	const endAngle = (progress / 100) * 2 * Math.PI
@@ -75,9 +70,7 @@ function updateArc(progress: number, oldProgress: number | null = null) {
 	}
 }
 
-onMounted(() => {
-	updateArc(props.progress)
-})
+onMounted(() => updateArc(props.progress))
 
 watch(() => props.progress, (newVal, oldVal) => {
 	updateArc(newVal, oldVal ?? null)

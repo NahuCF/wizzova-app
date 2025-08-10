@@ -4,10 +4,12 @@ export interface DropdownOption {
 	label: string
 	icon?: Component
 	class?: string
+  iconClass?: string,
+  disabled?: boolean,
 	action: (selectedItem?: any) => void
 }
 
-export interface Column {
+export interface FilterColumn {
   id: string
   name: string
   type: string
@@ -38,4 +40,12 @@ export type FilterOperator =
 export interface FilterCondition {
   operator: FilterOperator | ''
   value: string[]
+}
+
+export type ColumnType = 'TAG' | 'TAG_LIST' | 'PROGRESS' | 'ACTIONS' | 'CUSTOM'
+
+export interface Column {
+  header: string,
+  type?: ColumnType,
+  key: string
 }

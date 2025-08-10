@@ -1,6 +1,7 @@
 import AuthLayout from '~/components/layouts/AuthLayout.vue'
 import ConfirmAccount from '~/views/ConfirmAccount.vue'
-import LogIn from '~/views/LogIn.vue'
+import ChooseTenant from '~/views/login/ChooseTenant.vue'
+import LogIn from '~/views/login/LogIn.vue'
 import SignUp from '~/views/SignUp.vue'
 import VerifyAccount from '~/views/VerifyAccount.vue'
 
@@ -12,9 +13,21 @@ const routes = [
     children: [
       {
         path: '/login',
-        name: 'login',
-        meta: { titleKey: 'login' },
-        component: LogIn,
+        
+        children: [
+          {
+            path: '',
+            name: 'login',
+            meta: { titleKey: 'login.title' },
+            component: LogIn,
+          },
+          {
+            path: 'choose-tenant',
+            name: 'choose-tenant',
+            meta: { titleKey: 'choose_tenant.title' },
+            component: ChooseTenant
+          }
+        ]
       },
       {
         path: '/signup',

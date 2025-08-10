@@ -1,38 +1,37 @@
+import type { UserItem } from "./User"
+
 export interface LoginForm {
     email: string,
-    password: string
+    password: string,
+    tenant_id?: string
 }
 
 export interface RegisterForm {
     name: string,
+    company_name: string,
     cellphone: string,
     cellphone_prefix: string,
     work_email: string,
     password: string,
 }
 
+export interface Tenant {
+    id: string,
+    company_name: string
+}
+
 export interface LoginResponse {
-    data: {
-        id: string,
-        name: string,
-        email: string,
-        verified_email: boolean,
-        filled_basic_information: boolean,
-    }
+    data: Tenant
     meta: {
+        user: UserItem
         token: string
     }
 }
 
+export interface TenantsResponse {
+    data: Tenant[]
+}
+
 export interface RegisterResponse {
-    data: {
-        id: string,
-        name: string,
-        website?: string,
-        email: string,
-        business_name?: string,
-        verified_email?: boolean,
-        verified_whatsapp?: boolean,
-        filled_basic_information: boolean
-    }
+    data: Tenant
 }

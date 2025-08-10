@@ -1,5 +1,4 @@
-import type { PaginationLinks, PaginationMeta } from "./Pagination"
-import type { TemplateBtn, TemplateCallBtn, TemplateHeaderCode, TemplateUrlBtn } from "./Template"
+import type { TemplateButton, TemplateHeaderCode } from "./Template"
 
 export type TemplateStatus = 'PENDING' | 'REJECTED'
 
@@ -10,12 +9,14 @@ export interface TemplateComponents {
   } | []
   body: {
     content: string,
-    variables: {
-      [key: string]: string
-    }
+    variables?: {
+      contact_field_id: string,
+      name: string,
+      value: string
+    } []
   },
   footer: string,
-  buttons: (TemplateBtn | TemplateUrlBtn | TemplateCallBtn) []
+  buttons: TemplateButton []
 }
 
 export interface TemplateItem {

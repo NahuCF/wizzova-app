@@ -3,12 +3,13 @@ import type { DataTablePageEvent } from 'primevue'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { IconPlus } from '@tabler/icons-vue'
+import { IconLoader2, IconPlus } from '@tabler/icons-vue'
 import moment from 'moment'
 import { API } from '~/services'
 import { IconEdit, IconTrash, IconList, IconLayoutGrid, IconSearch } from '@tabler/icons-vue'
-import type { TemplateItem } from '~/types'
+import type { TemplateBroadcast, TemplateCreate, TemplateItem } from '~/types'
 import { usePaginatedData } from '~/composables/usePaginatedData'
+import { useCrudActions } from '~/composables/useCrudActions'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -26,9 +27,23 @@ const {
   12
 )
 
+const {
+	loading: loadingDelete,
+	remove
+} = useCrudActions<TemplateCreate>({
+	api: {
+		delete: API.template.delete
+	},
+	fetchData: fetchDataPage,
+	i18nKeys: {
+		deleted: 'templates.template_deleted'
+	}
+})
 
-const sentinel = ref<HTMLElement | null>(null)
 const activeLayout = ref(1)
+const loadingBroadcasts = ref(false)
+const showBroadcastsDialog = ref(false)
+const templateBroadcasts = ref<TemplateBroadcast[]>()
 const layoutOptions = ref([
 	{
 		label: 'list',
@@ -57,12 +72,30 @@ const templateOptions = ref([
 		{
 			label: 'template.delete',
 			class: 'text-red-600',
-			icon: IconTrash,
-			action: () => {}
+			icon: loadingBroadcasts.value ? IconLoader2 : IconTrash,
+			iconClass: loadingBroadcasts.value ? 'animate-spin' : '',
+			disabled: loadingBroadcasts.value,
+			action: async (item: TemplateItem) => {
+				try {
+					const { data: response } = await API.template.activeBroadcasts(item.id)
+					if(response.data.length === 0) {
+						deleteId.value = item.id
+						showDeleteDialog.value = true
+					}
+					else {
+						templateBroadcasts.value = response.data
+						showBroadcastsDialog.value = true
+					}
+				} catch(error) {
+					console.log(error)
+				}
+			}
 		}
 	]
 ])
 const popover = ref()
+const deleteId = ref('')
+const showDeleteDialog = ref(false)
 
 const changeLayout = (index: number) => {
 	activeLayout.value = index
@@ -88,22 +121,16 @@ const onPage = (event: DataTablePageEvent) => {
 	fetchDataPage(page, rowsPerPage.value)
 }
 
+const onDelete = () => {
+	remove(deleteId.value, {
+		onSuccess: () => {
+			showDeleteDialog.value = false
+		}
+	})
+}
+
 onMounted(() => {
 	fetchDataPage(1, rowsPerPage.value)
-
-	// To detect scroll
-	const observer = new IntersectionObserver(
-		async ([entry]) => {
-			if (entry.isIntersecting && activeLayout.value === 1) {
-				await loadNextPage()
-			}
-		},
-		{
-			rootMargin: '200px',
-		}
-	)
-
-	if (sentinel.value) observer.observe(sentinel.value)
 })
 </script>
 
@@ -211,30 +238,43 @@ onMounted(() => {
 			</DataTable>
 		</div>
 		<div v-else>
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7">
-				<div class="h-[340px] flex flex-col justify-between items-center rounded-md bg-slate-200 w-full">
-					<div class="flex justify-center py-5 border-b-2 border-slate-300 w-full">
-						<div class="font-bold text-xl">
-							{{ $t('templates.create_new_template') }}
-						</div>
-					</div>
-
-					<Button class="w-[48px] h-[48px] bg-blue-500 hover:bg-blue-700"
-						@click="router.push({ name: 'new-template' })" rounded>
-						<IconPlus size="32" class="text-white" />
-					</Button>
-
-					<div></div>
-				</div>
-				<TemplateCard class="h-[340px] md:max-w-full" v-for="template in dataPage.data" :key="template.id"
-					:template="template" :options="templateOptions" />
-			</div>
+			<TemplateCardList
+				:templates="dataPage.data"
+				:loading="loading"
+				showCreateCard
+				:cardProps="{
+					options: templateOptions
+				}"
+				@reach-end="loadNextPage"
+			/>
 		</div>
 
 		<ActionsPopover ref="popover" :options="templateOptions" />
-
-		<div ref="sentinel" class="h-10" />
-
-		<div v-if="loading && activeLayout === 1" class="text-center mt-4">{{ $t('loading') + '...' }}</div>
+		<WarningDialog 
+			v-model:visible="showDeleteDialog" 
+			:title="$t('templates.delete_template')"
+			:message="$t('templates.delete_message')"
+			:loading="loadingDelete"
+			@onConfirm="onDelete"
+		/>
+		<WarningDialog 
+			v-model:visible="showBroadcastsDialog" 
+			:title="$t('templates.active_broadcasts')"
+			:message="$t('templates.active_broadcasts_message')"
+			:confirmMessage="$t('accept')"
+			@onConfirm="showBroadcastsDialog = false"
+		>
+			<template #note>
+				<div class="flex flex-col gap-1 pb-4 px-6">
+					<div 
+						v-for="broadcast in templateBroadcasts" 
+						:key="broadcast.id"
+						class="text-sm text-surface-500 dark:text-surface-400 text-gray-600"
+					>
+						{{ broadcast.name }}
+					</div>
+				</div>
+			</template>
+		</WarningDialog>
 	</div>
 </template>

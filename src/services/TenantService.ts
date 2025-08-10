@@ -1,9 +1,8 @@
 import Http from '~/config/http'
+import type { UserCreate, UserItem } from '~/types/User'
 
 export default {
-  async storeLongLovedToken(token: string = '') {
-    return Http.post<{ data: any }>('/tenant/long-lived-token', {
-      access_token: token,
-    })
+  async finishSetup(accessToken: string) {
+    return Http.post('/tenant/finish-setup', { access_token: accessToken })
   },
 }

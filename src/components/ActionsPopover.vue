@@ -29,8 +29,8 @@ defineExpose({ show })
                 <template v-for="(optionList, index) in options" :key="index">
                     <li v-for="option in optionList" :key="option.label"
                         class="flex items-center gap-3 py-1.5 px-3 hover:bg-slate-100 cursor-pointer"
-                        :class="option.class ?? ''" @click="select(option)">
-                        <component :is="option.icon" class="w-[16px] h-[16px]" />
+                        :class="option.class ?? ''" @click="!option.disabled && select(option)">
+                        <component :is="option.icon" class="w-[16px] h-[16px]" :class="option.iconClass" />
                         {{ $t(option.label) }}
                     </li>
                     <Divider v-if="index !== options.length - 1" class="my-2.5!" />

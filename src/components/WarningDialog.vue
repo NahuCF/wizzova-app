@@ -4,7 +4,9 @@ defineProps<{
     visible: boolean,
     title: string,
     message: string,
-    note?: string
+    note?: string,
+    confirmMessage?: string,
+    unclosable?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -19,14 +21,16 @@ const emit = defineEmits<{
         @update:visible="emit('update:visible', $event)" 
         modal
         :draggable="false"
+        :closable="!unclosable"
         :header="title" 
         class="min-w-[25rem] max-w-[450px]"
     >
         <span class="text-surface-500 dark:text-surface-400 font-medium block mb-4">{{ message }}</span>
         <span v-if="note" class="text-surface-500 dark:text-surface-400 text-gray-600 block mb-8">{{ note }}</span>
+        <slot name="note"></slot>
         <div class="flex justify-end gap-2">
-            <Button type="button" severity="secondary" @click="emit('update:visible', false)">{{ $t('cancel') }}</Button>
-            <Button type="button" severity="danger" @click="emit('onConfirm')">{{ $t('delete') }}</Button>
+            <Button v-if="!unclosable" type="button" severity="secondary" @click="emit('update:visible', false)">{{ $t('cancel') }}</Button>
+            <Button type="button" severity="danger" @click="emit('onConfirm')">{{ confirmMessage ? confirmMessage : $t('delete') }}</Button>
         </div>
     </Dialog>
 </template>

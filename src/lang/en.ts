@@ -59,7 +59,6 @@ export default {
   business_email: 'Business email',
   already_have_an_account: 'Already have an account?',
   business: 'Business',
-  login: 'Log In',
   grow_your_business_with: 'Grow your business with',
   confirm_account: 'Confirm account',
   check_your_email: 'Check your email',
@@ -74,15 +73,39 @@ export default {
   the_email_is_required: 'The email is required.',
   password_is_required: 'Password is required.',
   dont_you_have_an_account: "Don't have an account?",
+  signup: {
+    company_name: {
+      label: 'Company name',
+      placeholder: 'Enter your company name'
+    }
+  },
+  login: {
+    title: 'Log In',
+    company: 'Company',
+    switch: 'Switch'
+  },
+  choose_tenant: {
+    title: 'Choose Company',
+  },
   conversations: 'Conversations',
   validation_errors: {
     'The work email has already been taken': 'The email has already been taken.',
+    'The email has already been taken': 'The email has already been taken.',
     'The provided credentials are incorrect': 'The provided credentials are incorrect',
     'Template name already exists': 'Template name already exists',
     'templater_name_already_exists': 'Template name already exists',
     'Contact already exists': 'Contact already exists',
     'Group name already exists': 'Group name already exists',
-    'Import name already exists': 'Import name already exists'
+    'Broadcast name already exists': 'Broadcast name already exists',
+    'Import name already exists': 'Import name already exists',
+    'You can not create an owner user': 'You can not create an owner user',
+    'A user with this email already exists': 'A user with this email already exists',
+    'You can not delete an owner user': 'You can not delete an owner user',
+    'User is not deleted': 'User is not deleted',
+    'A role with this name already exists': 'A role with this name already exists',
+    'This role is internal and cannot be updated': 'This role is internal and cannot be updated',
+    'A team with this name already exists': 'A team with this name already exists',
+    
   },
   submit_for_review: 'Submit for review',
   template_name: 'Template name',
@@ -187,6 +210,11 @@ Grab them today!`,
     create_new_template: 'Create New Template',
     create_new_template_card: 'Create new template',
     search_templates: 'Search templates',
+    delete_template: 'Delete template',
+    delete_message: 'Are you sure you want to delete this template?',
+    template_deleted: 'Template deleted successfully!',
+    active_broadcasts: 'Active broadcasts',
+    active_broadcasts_message: "You can't delete this template because is been use in the following active broadcasts:"
   },
   template: {
     title: 'Templates',
@@ -205,7 +233,8 @@ Grab them today!`,
     REJECTED: 'Rejected'
   },
   edit_template: {
-    title: 'Editar Plantilla'
+    title: 'Edit template',
+    template_updated: 'Template updated successfully!'
   },
   save: 'Save',
   cancel: 'Cancel',
@@ -395,8 +424,189 @@ Grab them today!`,
     ADD: 'Add new contacts',
     ADD_AND_REPLACE: 'Add and update contacts'
   },
+  broadcasts: {
+    title: 'Broadcasts',
+    select_number: 'Select Number',
+    new_broadcast: 'New Broadcast',
+    overview: 'Overview',
+    all_broadcasts: 'All Broadcasts',
+    empty: 'No broadcasts found',
+    headers: {
+      name: 'Name',
+      created_at: 'Created At',
+      created_by: 'Created by',
+      recipients: 'Recipients',
+      sent: 'Sent',
+      received: 'Received',
+      read: 'Read',
+      failed: 'Failed',
+      replied: 'Replied',
+      status: 'Status'
+    },
+    status: {
+      SCHEDULED: 'Scheduled',
+      PROCESSING: 'Processing',
+      COMPLETED: 'Completed'
+    }
+  },
   today: 'Today',
   yesterday: 'Yesterday',
   imported_by: 'Imported by: {author}',
-  imported_at: 'Imported at: {date}'
+  imported_at: 'Imported at: {date}',
+  continue: 'Continue',
+  leave: 'Leave',
+  unsaved_changes: 'Unsaved changes',
+  unsaved_changes_message: 'Are you sure you want to leave? You have unsaved changes.',
+  confirm: 'Confirm',
+  invite: 'Invite',
+  restore: 'Restore',
+  accept: 'Accept',
+  invalid_session: 'Invalid Session',
+  session_override_message: 'Another login has been detected, your current session will be logged out.',
+  new_broadcast: {
+    title: 'New Broadcast',
+    select_template: 'Select Template',
+    select_audience: 'Select Audience',
+    schedule_broadcast: 'Schedule Broadcast',
+    group_selected: '1 Group selected',
+    groups_selected: '{groups} Groups selected',
+    no_group_selected: 'No groups selected',
+    map_variables: 'Map variables',
+    variables: 'Variables',
+    map: 'Map',
+    values: 'Values',
+    contact_field: 'Contact field',
+    custom_value: 'Custom value',
+    enter_custom_value: 'Enter custom value',
+    select_contact_field: 'Select contact field',
+    custom_field_error: 'Please enter a custom value',
+    contact_field_error: 'Please select a contact field',
+    select_template_subtitle: 'Select template to generate broadcast',
+    add_template: 'Add template',
+    broadcast_details: 'Broadcast Details',
+    broadcast_name: 'Broadcast name',
+    send_broadcast: 'Send broadcast',
+    target_audience: 'Target Audience',
+    total_contacts: 'Total contacts',
+    selected_groups: 'Selected groups',
+    enter_broadcast_name: 'Enter broadcast name',
+    send_now: 'Send now',
+    schedule_later: 'Schedule later',
+    schedule_on: 'Schedule on',
+    schedule_at: 'Schedule at',
+    broadcast_created: 'Broadcast created successfully!',
+    missing_template_description: 'You must create a template to continue with the broadcast steps'
+  },
+  users_teams_roles: {
+    title: 'Users, Teams & Roles',
+    users_tab: 'Users',
+    deleted_users_tab: 'Deleted Users',
+    teams_tab: 'Teams',
+    roles_tab: 'Roles'
+  },
+  users: {
+    add: 'Add User',
+    edit: 'Edit User',
+    empty: 'No users found',
+    headers: {
+      name: 'Name',
+      email: 'Email',
+      role: 'Role',
+      status: 'Status'
+    },
+    status: {
+      SIGNED_UP: 'Signed Up',
+      ACTIVE: 'Active',
+      INACTIVE: 'Inactive',
+      DELETED: 'Deleted',
+      INVITATION_SENT: 'Invitation Sent',
+      INVITATION_ACCEPTED: 'Invitation Accepted'
+    },
+    create_user: 'Create User',
+    edit_user: 'Edit User',
+    delete_user: 'Delete User',
+    delete_message: 'Are you sure do you want to delete this user?',
+    name: {
+      label: 'Name',
+      placeholder: 'Enter name'
+    },
+    email: {
+      label: 'Email',
+      placeholder: 'Enter email'
+    },
+    role: {
+      label: 'Role',
+      placeholder: 'Select role'
+    },
+    teams: {
+      label: 'Teams',
+      placeholder: 'Select teams'
+    },
+    create_user_tooltip: 'You must fill all required fields',
+    user_created: 'User created successfully!',
+    user_updated: 'User updated successfully!',
+    user_deleted: 'User deleted successfully!'
+  },
+  deleted_users: {
+    restore: 'Restore',
+    restore_title: 'Restore user',
+    restore_message: 'Are you sure you want to restore this user?',
+    restored: 'User restored'
+  },
+  teams: {
+    add: 'Add Team',
+    edit: 'Edit Team',
+    empty: 'No teams found',
+    headers: {
+      name: 'Name',
+      created_by: 'Created By',
+      users_count: 'N° of users',
+      actions: 'Actions'
+    },
+    name: {
+      label: 'Name',
+      placeholder: 'Enter name'
+    },
+    users: {
+      label: 'Users',
+      placeholder: 'Select users'
+    },
+    create_team_tooltip: 'You must fill all required fields',
+    create_team: 'Create Team',
+    edit_team: 'Edit Team',
+    delete_team: 'Delete Team',
+    delete_message: 'Are you sure do you want to delete this team?',
+    team_created: 'Team created successfully!',
+    team_updated: 'Team updated successfully!',
+    team_deleted: 'Team deleted successfully!'
+  },
+  roles: {
+    add: 'Add Role',
+    edit: 'Edit Role',
+    empty: 'No roles found',
+    headers: {
+      name: 'Name',
+      created_by: 'Create By'
+    },
+    system: 'System',
+    name: {
+      label: 'Name',
+      placeholder: 'Enter name'
+    },
+    role_permissions: 'Role Permissions',
+    enable_all: 'Enable All',
+    create_role_tooltip: 'You must enter the role name and at least one permission to continue',
+    create_role: 'Create Role',
+    edit_role: 'Edit Role',
+    delete_role: 'Delete Role',
+    delete_message: 'Are you sure do you want to delete this team?',
+    role_created: 'Role created successfully!',
+    role_updated: 'Role updated successfully!',
+    role_deleted: 'Role deleted successfully!'
+  },
+  unauthorize_access: {
+    title: 'Access Denied',
+    message: 'You do not have sufficient permissions to access this module, contact your administrator.'
+  },
+  table_empty: 'No items found'
 }
