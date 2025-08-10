@@ -15,6 +15,7 @@ import GroupService from './GroupService'
 import BroadcastService from './BroadcastService'
 import TeamService from './TeamService'
 import RoleService from './RoleService'
+import TenantService from './TenantService'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -37,5 +38,6 @@ export const API = {
     templateLanguage: TemplateLanguageService,
     template: TemplateService,
     timezone: TimezoneService,
-    user: UserService
+    user: UserService,
+    tenant: TenantService
 }

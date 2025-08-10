@@ -5,6 +5,7 @@
 
 <script setup>
 import { onMounted } from 'vue'
+import { API } from '~/services'
 
 const loadFacebookSDK = () => {
   return new Promise((resolve, reject) => {
@@ -38,6 +39,9 @@ const launchWhatsAppSignup = () => {
     (response) => {
       if (response.authResponse) {
         console.log('Login successful:', response)
+        const accessToken = response.authResponse.accessToken
+
+        API.tenant.finishSetup({ access_token: accessToken })
       } else {
         console.error('Login failed:', response)
       }
