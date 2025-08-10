@@ -7,7 +7,7 @@ import { useCrudActions } from '~/composables/useCrudActions'
 import { API } from '~/services'
 import { useUserStore, useSessionStore, useTeamStore } from '~/stores'
 import { userStatusSeverity } from '~/types'
-import type { UserCreate, UserItem,  UserStatus } from '~/types'
+import type { Column, UserCreate, UserItem } from '~/types'
 
 const { hasPermission, isOwner } = useSessionStore()
 const userStore = useUserStore()
@@ -39,13 +39,6 @@ const {
 })
 
 const showDeleteDialog = ref(false)
-const optionsMenu = ref()
-const columns = [
-    { header: 'name', key: 'name' },
-    { header: 'email', key: 'email' },
-    { header: 'role', key:'roleName' },
-    { header: 'status', key: 'status' }
-]
 
 const userOptions = ref([
     [
@@ -70,11 +63,31 @@ const userOptions = ref([
 		}
 	]
 ])
-const currentOptions = ref(userOptions.value)
 
-const openActions = (event: Event, userItem: UserItem) => {
-    if(userItem.role.is_internal && userItem.role.name === 'Owner') {
-        currentOptions.value = [
+const columns = computed(() => {
+    let columnList: Column[] = [
+        { header: t('users.headers.name'), key: 'name' },
+        { header: t('users.headers.email'), key: 'email' },
+        { header: t('users.headers.role'), key:'roleName' },
+        { header: t('users.headers.status'), key: 'statusTag', type: 'TAG' }
+    ]
+
+    if(hasPermission('settings.manage_user_roles_and_teams')) {
+        columnList = [
+            ...columnList,
+            { header: '', key: 'actions', type: 'ACTIONS' }
+        ]
+    }
+
+    return columnList
+})
+
+const filterActions = (userItem: UserItem) => {
+    if((userItem.role.is_internal && userItem.role.name === 'Owner') && !isOwner) {
+        return []
+    }
+    else if(userItem.role.is_internal && userItem.role.name === 'Owner') {
+        return [
             [
                 {
                     label: 'users.edit',
@@ -88,16 +101,19 @@ const openActions = (event: Event, userItem: UserItem) => {
         ]
     }
     else {
-        currentOptions.value = userOptions.value
+        return userOptions.value
     }
-
-    optionsMenu.value?.show(event, userItem)
 }
 
 const transformedData = computed(() => {
 	return users.value.map(user => ({
 		...user,
-		roleName: user.role.name
+		roleName: user.role.name,
+        statusTag: {
+            label: t(`users.status.${user.status}`),
+            severity: userStatusSeverity[user.status]
+        },
+        actions: filterActions(user)
 	}))
 })
 
@@ -123,53 +139,13 @@ fetchUsers()
 
 <template>
 	<div class="flex flex-col h-full">
-		<div class="overflow-auto">
-            <DataTable 
-                :value="transformedData" 
-                dataKey="id" 
-                class="rounded-lg overflow-hidden"
-                :loading="loading"
-                scrollable
-                scrollHeight="flex"
-            >
-                <template #empty>
-                    <div class="text-center text-sm py-4 text-gray-500">
-                        {{ $t('users.empty') }}
-                    </div>
-                </template>
+        <Table 
+            :data="transformedData"
+            :columns="columns"
+            emptyMessage="users.empty"
+            :loading="loading"
+        />
 
-                <Column v-for="column in columns" :key="column.header" headerClass="bg-slate-200!">
-                    <template #header>
-                        <div class="uppercase text-sm font-semibold">
-                            {{ $t(`users.headers.${column.header}`) }}
-                        </div>
-                    </template>
-
-                    <template #body="{ data }">
-                        <Tag v-if="column.header === 'status'" :value="$t(`users.status.${data[column.key]}`)"
-                            :severity="userStatusSeverity[data[column.key] as UserStatus]" size="small" />
-
-                        <span v-else class="block whitespace-nowrap overflow-hidden text-ellipsis text-sm">
-                            {{ data[column.key] }}
-                        </span>
-                    </template>
-                </Column>
-
-				<Column v-if="hasPermission('settings.manage_user_roles_and_teams')" headerClass="bg-slate-200!" :bodyStyle="{ maxWidth: '50px' }">
-                    <template #body="{ data }: { data: UserItem }">
-                        <div class="flex justify-center">
-                            <Button v-if="!(data.role.is_internal && data.role.name === 'Owner') || isOwner" severity="secondary" variant="text" @click="(e: Event) => openActions(e, data)">
-                                <div>
-									<IconDotsVertical  size="13" />
-								</div>
-                            </Button>
-                        </div>
-                    </template>
-                </Column>
-            </DataTable>
-        </div>
-
-		<ActionsPopover ref="optionsMenu" :options="currentOptions" />
 		<UserDrawer
             v-model:visible="showCreateDialog"
             :title="selectedUser ? $t('users.edit_user') : $t('users.create_user')"

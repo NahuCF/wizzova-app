@@ -72,6 +72,7 @@ declare module 'vue' {
     Stepper: typeof import('primevue/stepper')['default']
     StepperDialog: typeof import('./src/components/StepperDialog.vue')['default']
     Tab: typeof import('primevue/tab')['default']
+    Table: typeof import('./src/components/common/Table.vue')['default']
     TabList: typeof import('primevue/tablist')['default']
     TabPanel: typeof import('primevue/tabpanel')['default']
     TabPanels: typeof import('primevue/tabpanels')['default']

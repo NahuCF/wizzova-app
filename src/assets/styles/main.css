@@ -5,6 +5,12 @@ html {
     font-family: 'Inter', sans-serif;
 }
 
+@layer base {
+    body {
+        @apply text-sm;
+    }
+}
+
 label {
     @apply text-slate-500 font-medium;
 }

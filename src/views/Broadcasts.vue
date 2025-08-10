@@ -7,7 +7,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
-import type { BroadcastNumber, BroadcastItem, BroadcastOverview, BroadcastStatus } from '~/types'
+import type { BroadcastNumber, BroadcastItem, BroadcastOverview, BroadcastStatus, Column } from '~/types'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -25,16 +25,16 @@ const {
     10
 )
 
-const columns = [
-    { header: 'name', key: 'name' },
-    { header: 'created_at', key: 'createdAtFormatted' },
-    { header: 'created_by', key:'createdByFormatted' },
-    { header: 'recipients', key: 'recipients_count' },
-    { header: 'sent', key: 'sentCount' },
-    { header: 'received', key: 'receivedCount' },
-    { header: 'read', key: 'readCount' },
-    { header: 'failed', key: 'failedCount' },
-    { header: 'status', key: 'status' }
+const columns: Column[] = [
+    { header: t('broadcasts.headers.name'), key: 'name' },
+    { header: t('broadcasts.headers.created_at'), key: 'createdAtFormatted' },
+    { header: t('broadcasts.headers.created_by'), key:'createdByFormatted' },
+    { header: t('broadcasts.headers.recipients'), key: 'recipients_count' },
+    { header: t('broadcasts.headers.sent'), key: 'sentCount', type: 'PROGRESS' },
+    { header: t('broadcasts.headers.received'), key: 'receivedCount', type: 'PROGRESS' },
+    { header: t('broadcasts.headers.read'), key: 'readCount', type: 'PROGRESS' },
+    { header: t('broadcasts.headers.failed'), key: 'failedCount', type: 'PROGRESS' },
+    { header: t('broadcasts.headers.status'), key: 'statusTag', type: 'TAG' }
 ]
 const loadingNumbers = ref(false)
 const loadingOverview = ref(false)
@@ -82,6 +82,10 @@ const transformedData = computed(() => {
                 ? Math.round((item.failed_count / item.recipients_count) * 100)
                 : 0,
             color: 'stroke-red-600'
+        },
+        statusTag: {
+            label: t(`broadcasts.status.${item.status}`),
+            severity: statusToSeverity(item.status)
         }
     }))
 })
@@ -273,66 +277,16 @@ fetchOverview()
             </div>
         </div>
 
-        <div class="overflow-auto">
-            <DataTable 
-                :value="transformedData" 
-                dataKey="id" 
-                class="rounded-lg overflow-hidden" 
-                :lazy="true"
-                :paginator="true" 
-                :loading="loading" 
-                :rows="rowsPerPage" 
-                :totalRecords="dataPage.meta.total" 
-                scrollable
-                scrollHeight="flex"
-                paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                :currentPageReportTemplate="currentPageReport"
-                @page="onPage"
-            >
-                <template #empty>
-                    <div class="text-center text-sm py-4 text-gray-500">
-                        {{ $t('broadcasts.empty') }}
-                    </div>
-                </template>
-
-                <template #paginatorstart>
-                    <div class="flex items-center gap-2">
-                        <label for="rows" class="text-sm font-bold!">
-                            {{ $t('show_rows_per_page') }}
-                        </label>
-                        <Select id="rows" v-model="rowsPerPage" :options="[10, 20, 50]" size="small" />
-                    </div>
-                </template>
-
-                <Column v-for="column in columns" :key="column.header" headerClass="bg-slate-200!">
-                    <template #header>
-                        <div class="uppercase text-sm font-semibold">
-                            {{ $t(`broadcasts.headers.${column.header}`) }}
-                        </div>
-                    </template>
-
-                    <template #body="{ data }">
-                        <Tag v-if="column.header === 'status'" :value="$t(`broadcasts.status.${data[column.key]}`)"
-                            :severity="statusToSeverity(data[column.key])" size="small" />
-
-                        <template v-else-if="data[column.key].percentage">
-                            <div class="flex gap-2 items-center">
-                                <CircularProgress :progress="data[column.key].percentage" :color="data[column.key].color" />
-                                <div class="flex flex-col gap-0.5 text-sm">
-                                    <span>{{ data[column.key].count }}</span>
-                                    <span class="text-gray-500">
-                                        {{ data[column.key].percentage }}%
-                                    </span>
-                                </div>
-                            </div>
-                        </template>
-
-                        <span v-else class="block whitespace-nowrap overflow-hidden text-ellipsis text-sm">
-                            {{ data[column.key] }}
-                        </span>
-                    </template>
-                </Column>
-            </DataTable>
-        </div>
+        <Table 
+            :data="transformedData"
+            :columns="columns"
+            emptyMessage="broadcasts.empty"
+            :loading="loading"
+            withPagination
+            :totalRecords="dataPage.meta.total"
+            v-model:rowsPerPage="rowsPerPage"
+            :currentPageReport="currentPageReport"
+            @onPage="onPage"
+        />
     </div>
 </template>

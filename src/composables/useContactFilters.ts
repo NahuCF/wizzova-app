@@ -3,7 +3,7 @@ import { IconCircleDot, IconHash, IconTypography, IconTextWrap,
 import { computed, type Component } from "vue"
 import { useI18n } from "vue-i18n"
 import { useContactFieldStore, useUserStore } from "~/stores"
-import type { ContactFieldType, FilterOperator, Column, ContactFilterCondition, Filter } from "~/types"
+import type { ContactFieldType, FilterOperator, FilterColumn, ContactFilterCondition, Filter } from "~/types"
 
 export function useContactFilters() {
     const { t } = useI18n()
@@ -30,7 +30,7 @@ export function useContactFilters() {
         DATE: IconCalendar
     }
 
-    const columns = computed<Column[]>(() => {
+    const columns = computed<FilterColumn[]>(() => {
         return contactFieldStore.contactFields
             .map(field => {
                 let options: { label: string; value: any }[] | undefined
