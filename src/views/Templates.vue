@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DataTablePageEvent } from 'primevue'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { IconLoader2, IconPlus } from '@tabler/icons-vue'

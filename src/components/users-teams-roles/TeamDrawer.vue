@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import type { FormSubmitEvent } from '@primevue/forms'
-import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { ref, watch } from 'vue'
-import { z } from 'zod'
 import { IconAsterisk, IconLoader2, IconTrash } from '@tabler/icons-vue'
 import type { TeamCreate, TeamItem, UserItem } from '~/types'
 import { useUserStore } from '~/stores'

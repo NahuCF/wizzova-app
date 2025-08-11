@@ -1,4 +1,4 @@
-import { ref, type Ref } from 'vue'
+import { ref } from 'vue'
 import { useToast } from 'primevue'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'

@@ -147,7 +147,7 @@ export default {
     'Create buttons so customers can reply to your message or take an action. If you add more than 3 buttons, they will appear as a list.',
   button_limit_reached: 'You have reached the maximum number of buttons',
   first_delete_a_button: 'To add a different type of button, first delete a button.',
-  example_body_text_template: `Hello {{name}}!\n\nYour amazing products from {{site_name}} are ready for you!
+  example_body_text_template: `Hello {'{{'}name{'}}'}!\n\nYour amazing products from {'{{'}site_name{'}}'} are ready for you!
 Grab them today!`,
   cta: 'Call to action',
   new_template_created: 'New template created succesfully',

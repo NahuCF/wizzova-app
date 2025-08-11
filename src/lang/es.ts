@@ -146,7 +146,7 @@ export default {
     'Crea botones para que los clientes puedan responder tu mensaje o realizar una acción. Si agregas más de 3 botones, aparecerán en forma de lista.',
   button_limit_reached: 'Has alcanzado el limite de botones.',
   first_delete_a_button: 'Para añadir un boton diferente, primero borra un botón.',
-  example_body_text_template: `¡Hola, {{name}}!\n\n¡Tus increíbles productos de {{site_name}} están listos para ti!`,
+  example_body_text_template: `¡Hola, {'{{'}name{'}}'}!\n\n¡Tus increíbles productos de {'{{'}site_name{'}}'} están listos para ti!`,
   cta: 'Llamada a la accion',
   new_template_created: 'Nueva plantilla creada exitosamente',
   new_template: {
