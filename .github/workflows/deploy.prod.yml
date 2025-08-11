@@ -17,7 +17,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           script: |
             cd /home/wha-client
-            git checkout -B main
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
             npm install
             npm run build-only
