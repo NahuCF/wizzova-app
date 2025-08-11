@@ -218,7 +218,7 @@ onMounted(() => {
 				<div class="flex flex-col gap-1 relative">
 					<div class="flex gap-1">
 						<label for="name">{{ $t('template_name') }}</label>
-						<IconAsterisk color="red" class="mt-1" size="8  " />
+						<IconAsterisk color="red" class="mt-1" size="8" />
 					</div>
 					<div class="relative">
 						<InputText 
@@ -243,7 +243,7 @@ onMounted(() => {
 							<div class="flex flex-col gap-1 relative">
 								<div class="flex gap-1">
 									<label for="category">{{ $t('category') }}</label>
-									<IconAsterisk color="red" class="mt-1" size="8  " />
+									<IconAsterisk color="red" class="mt-1" size="8" />
 								</div>
 								<Select 
 									v-model="template.category" 
@@ -258,7 +258,7 @@ onMounted(() => {
 							<div class="flex flex-col gap-1 relative">
 								<div class="flex gap-1">
 									<label for="language">{{ $t('language') }}</label>
-									<IconAsterisk color="red" class="mt-1" size="8  " />
+									<IconAsterisk color="red" class="mt-1" size="8" />
 								</div>
 								<Select 
 									v-model="template.language" 
