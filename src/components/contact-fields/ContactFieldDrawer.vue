@@ -137,7 +137,7 @@ watch(() => props.visible, () => {
             <div class="flex flex-col gap-1 relative">
                 <div class="flex gap-1">
                     <label for="name">{{ $t('contact_field.name') }}</label>
-                    <IconAsterisk color="red" class="mt-1" size="8  " />
+                    <IconAsterisk color="red" class="mt-1" size="8" />
                 </div>
                 <InputText 
                     v-model="contactField.name" 
@@ -161,7 +161,7 @@ watch(() => props.visible, () => {
             <div class="flex flex-col gap-1 relative">
                 <div class="flex gap-1">
                     <label for="internal_name">{{ $t('contact_field.internal_name') }}</label>
-                    <IconAsterisk color="red" class="mt-1" size="8  " />
+                    <IconAsterisk color="red" class="mt-1" size="8" />
                 </div>
                 <InputText 
                     v-model="contactField.internal_name" 
@@ -185,7 +185,7 @@ watch(() => props.visible, () => {
             <div class="flex flex-col gap-1 relative">
                 <div class="flex gap-1">
                     <label for="type">{{ $t('contact_field.type') }}</label>
-                    <IconAsterisk color="red" class="mt-1" size="8  " />
+                    <IconAsterisk color="red" class="mt-1" size="8" />
                 </div>
                 <Select
                     v-model="contactField.type"

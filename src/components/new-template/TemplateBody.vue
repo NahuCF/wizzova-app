@@ -149,7 +149,7 @@ contactFieldStore.fetchContactFields()
 	<div>
 		<div class="flex gap-1">
 			<h2 class="font-medium mb-1 text-lg">{{ $t('body') }}</h2>
-			<IconAsterisk color="red" class="mt-1" size="8  " />
+			<IconAsterisk color="red" class="mt-1" size="8" />
 		</div>
 
 		<div class="flex flex-col gap-1 relative">
