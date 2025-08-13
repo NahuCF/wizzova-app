@@ -41,7 +41,8 @@ const endSession = () => {
 			:confirmMessage="$t('accept')"
 			@onConfirm="endSession" 
 		/>
-		<CompleteProfileDialog 
+		<CompleteProfileDialog
+			v-if="sessionStore.tenant && !sessionStore.tenant?.is_profile_completed"
 			:visible="sessionStore.tenant && !sessionStore.tenant?.is_profile_completed"
 		/>
 	</div>
