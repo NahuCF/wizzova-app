@@ -7,6 +7,7 @@ import { useFacebookLogin } from '~/composables/useFacebookLogin'
 import router from '~/router'
 import { API } from '~/services'
 import { useSessionStore } from '~/stores'
+import type { WABAItem } from '~/types'
 
 defineProps<{
     visible: boolean
@@ -19,7 +20,7 @@ const handleError = useErrorHandler()
 
 const step = ref(1)
 const loading = ref(false)
-const selectedWabaId = ref<string | null>(null)
+const selectedWaba = ref<WABAItem | null>(null)
 const wabas = ref<{ id: string; name: string }[]>([])
 
 const { initialize, launchLogin } = useFacebookLogin()
@@ -54,18 +55,12 @@ const connectWaba = async () => {
 }
 
 const completeProfile = async () => {
-	if (!selectedWabaId.value) return
+	if (!selectedWaba.value || !sessionStore.user) return
 	try {
 		loading.value = true
-		const { data: response} = await API.tenant.completeProfile(selectedWabaId.value)
+		const { data: response} = await API.tenant.completeProfile(selectedWaba.value.id)
+		sessionStore.user.business = selectedWaba.value
 		sessionStore.tenant = response.data
-
-		toast.add({
-			severity: 'success',
-			summary: 'Success',
-			detail: t('complete_profile.account_configured_successfully'),
-			life: 3000,
-		})
 
 		await router.replace({ name: 'templates' })
 		window.location.reload()
@@ -140,10 +135,9 @@ onMounted(async () => {
 						</p>
 						<div class="flex justify-center w-full">
 							<Select
-								v-model="selectedWabaId"
+								v-model="selectedWaba"
 								:options="wabas"
 								optionLabel="name"
-								optionValue="id"
 								:placeholder="$t('complete_profile.select_account')"
 								class="w-full"
 							/>
@@ -152,7 +146,7 @@ onMounted(async () => {
 
 					<div class="flex justify-center">
 						<Button
-							:disabled="!selectedWabaId"
+							:disabled="!selectedWaba"
 							@click="completeProfile"
 						>
 							{{ $t('complete_profile.complete_profile') }}

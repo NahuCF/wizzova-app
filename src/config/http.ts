@@ -8,6 +8,12 @@ const Http = axios.create({
 	},
 })
 
+const allowedPaths = [
+	'/tenant/meta-access',
+	'/tenant/complete-profile',
+	'/meta/app-id'
+]
+
 export function setupInterceptors() {
 	const sessionStore = useSessionStore()
 
@@ -32,14 +38,11 @@ export function setupInterceptors() {
 			config.headers['X-Tenant'] = session.tenant.id
 		}
 
-		const allowedPaths = [
-			'/tenant/meta-access',
-			'/tenant/complete-profile',
-			'/meta/app-id'
-		]
+		if (session.user?.business) {
+			config.headers['X-Waba-id'] = session.user.business.id
+		}
 
 		const urlPath = config.url || ''
-
 		if (
 			session.tenant &&
 			!session.tenant?.is_profile_completed &&
