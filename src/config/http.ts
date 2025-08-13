@@ -32,6 +32,28 @@ export function setupInterceptors() {
 			config.headers['X-Tenant'] = session.tenant.id
 		}
 
+		const allowedPaths = [
+			'/tenant/meta-access',
+			'/tenant/complete-profile',
+			'/meta/app-id'
+		]
+
+		const urlPath = config.url || ''
+
+		if (
+			session.tenant &&
+			!session.tenant?.is_profile_completed &&
+			!allowedPaths.some((path) => urlPath.includes(path))
+		) {
+			return Promise.reject(
+				new AxiosError(
+					'Profile is not complete',
+					'PROFILE_INCOMPLETE',
+					config
+				)
+			)
+		}
+
 		return config
 	})
 }

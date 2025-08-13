@@ -606,5 +606,17 @@ export default {
     title: 'Acceso Denegado',
     message: 'No tienes permisos suficientes para acceder a este módulo, contacta a tu administrador'
   },
-  table_empty: 'No se encontraron elementos'
+  table_empty: 'No se encontraron elementos',
+  complete_profile: {
+    connect_account: 'Conectar cuenta',
+    select_account: 'Seleccionar cuenta',
+    connect_account_title: 'Conecta tu cuenta de WhatsApp Business para comenzar',
+    connect_account_description: 'Para continuar, conecta tu cuenta de WhatsApp Business a nuestra plataforma.',
+    connect: 'Conectar',
+    schedule_a_call: 'Agendar una llamada',
+    select_account_title: 'Selecciona tu cuenta',
+    select_account_description: 'Por favor elige la cuenta de WhatsApp Business que deseas usar',
+    complete_profile: 'Completar perfil',
+    account_configured_successfully: '¡Cuenta configurada con éxito!'
+  }
 }

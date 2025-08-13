@@ -2,12 +2,11 @@
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
 import { API } from '~/services'
 import { IconCircleCheck, IconUsers } from '@tabler/icons-vue'
 import type { ContactImportMode, MappingContact } from '~/types'
 import { useContactFieldStore } from '~/stores'
-import { useToast } from 'primevue'
+import { useErrorHandler } from '~/composables/useErrorHandler'
 
 const props = defineProps<{ visible: boolean }>()
 const emit = defineEmits<{ 
@@ -17,8 +16,8 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const router = useRouter()
-const toast = useToast()
 const contactFieldStore = useContactFieldStore()
+const handleError = useErrorHandler()
 
 const currentStep = ref(1)
 const mappingRows = ref<MappingContact[]>([])
@@ -139,20 +138,7 @@ const submitImport = async () => {
         await API.contact.importContacts(file, renamedFileName.value || originalName, importMode.value, mappings)
         success = true
     } catch (error) {
-        console.error(error)
-        let message = t('contacts.import_dialog.import_failed')
-
-        if (axios.isAxiosError(error) && error.status === 422 && error.response) {
-            const errorKey = error.response.data.message?.replace('.', '')
-            message = t(`validation_errors.${errorKey}`)
-        }
-
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: message,
-            life: 3000,
-        })
+        handleError(error)
     } finally {
         submitting.value = false
         return success

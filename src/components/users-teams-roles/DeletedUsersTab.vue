@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import axios from 'axios'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'primevue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useErrorHandler } from '~/composables/useErrorHandler'
 import { API } from '~/services'
 import { useUserStore, useSessionStore } from '~/stores'
 import { userStatusSeverity } from '~/types'
@@ -16,6 +16,7 @@ const { loadingDeleted: loading, deletedUsers: users } = storeToRefs(userStore)
 
 const { t } = useI18n()
 const toast = useToast()
+const handleError = useErrorHandler()
 
 const selectedUser = ref<UserItem>()
 const showRestoreDialog = ref(false)
@@ -58,20 +59,7 @@ const onRestore = async () => {
         fetchDeletedUsers(true)
         fetchUsers(true)
 	} catch(error) {
-		console.log(error)
-		let message = t('an_error_occurred')
-
-        if (axios.isAxiosError(error) && error.status === 422 && error.response) {
-            const errorKey = error.response.data.message?.replace('.', '')
-            message = t(`validation_errors.${errorKey}`)
-        }
-
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: message,
-            life: 3000,
-        })
+		handleError(error)
 	}
 }
 

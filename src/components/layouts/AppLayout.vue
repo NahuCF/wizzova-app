@@ -32,6 +32,7 @@ const endSession = () => {
 			</transition>
 		</RouterView>
 		<Toast position="bottom-right" />
+
 		<WarningDialog 
 			v-model:visible="sessionStore.showOverrideDialog" 
 			:title="$t('invalid_session')"
@@ -39,6 +40,9 @@ const endSession = () => {
 			unclosable
 			:confirmMessage="$t('accept')"
 			@onConfirm="endSession" 
+		/>
+		<CompleteProfileDialog 
+			:visible="sessionStore.tenant && !sessionStore.tenant?.is_profile_completed"
 		/>
 	</div>
 </template>

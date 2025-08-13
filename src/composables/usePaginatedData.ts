@@ -1,15 +1,16 @@
 import { computed, ref } from 'vue'
-import { useToast, type DataTablePageEvent } from 'primevue'
+import type { DataTablePageEvent } from 'primevue'
 import { useDebounceFn } from '~/composables/useDebounceFn'
 import type { Page } from '~/types'
 import { useI18n } from 'vue-i18n'
+import { useErrorHandler } from './useErrorHandler'
 
 export function usePaginatedData<T>(
 	fetchFn: (page: number, perPage: number, searchTerm: string) => Promise<any>,
 	perPageDefault = 10
 ) {
 	const { t } = useI18n()
-	const toast = useToast()
+	const handleError = useErrorHandler()
 
 	const dataPage = ref<Page<T>>({
 		data: [] as T[],
@@ -46,8 +47,8 @@ export function usePaginatedData<T>(
 			} else {
 				dataPage.value = response
 			}
-		} catch {
-			toast.add({ severity: 'error', summary: 'Error', detail: t('an_error_occurred'), life: 3000 })
+		} catch(error) {
+			handleError(error)
 		} finally {
 			loading.value = false
 		}

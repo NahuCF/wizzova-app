@@ -3,12 +3,18 @@
   <button @click="launchWhatsAppSignup">Connect WhatsApp</button>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted } from 'vue'
 import { API } from '~/services'
 
+declare global {
+  interface Window {
+    fbAsyncInit: () => void;
+  }
+}
+
 const loadFacebookSDK = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     if (document.getElementById('facebook-jssdk')) {
       resolve()
       return
@@ -16,7 +22,7 @@ const loadFacebookSDK = () => {
     const js = document.createElement('script')
     js.id = 'facebook-jssdk'
     js.src = 'https://connect.facebook.net/en_US/sdk.js'
-    js.onload = resolve
+    js.onload = () => resolve()
     js.onerror = () => reject(new Error('Failed to load Facebook SDK'))
     document.body.appendChild(js)
   })
@@ -33,6 +39,7 @@ const fetchAppId = async () => {
 
 const initializeFacebookSDK = async () => {
   const appId = await fetchAppId()
+  if(!appId) return
 
   window.fbAsyncInit = function () {
     FB.init({
@@ -52,13 +59,13 @@ const launchWhatsAppSignup = () => {
         console.log('Login successful:', response)
         const accessToken = response.authResponse.accessToken
 
-        API.tenant.finishSetup(accessToken)
+        API.tenant.getWABAs(accessToken)
       } else {
         console.error('Login failed:', response)
       }
     },
     {
-      scope: 'business_management,whatsapp_business_management',
+      scope: 'public_profile',
     },
   )
 }

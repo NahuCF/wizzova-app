@@ -17,7 +17,8 @@ export interface RegisterForm {
 
 export interface Tenant {
     id: string,
-    company_name: string
+    company_name: string,
+    is_profile_completed: boolean
 }
 
 export interface LoginResponse {
@@ -34,4 +35,10 @@ export interface TenantsResponse {
 
 export interface RegisterResponse {
     data: Tenant
+}
+
+export interface WABAItem {
+    id: string,
+    meta_business_id: string,
+    name: string
 }

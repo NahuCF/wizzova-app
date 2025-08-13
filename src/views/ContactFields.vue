@@ -8,9 +8,11 @@ import { API } from '~/services'
 import type { ContactFieldType, ContactFieldItem, ContactFieldCreate } from '~/types'
 import { useToast } from 'primevue'
 import { useCrudActions } from '~/composables/useCrudActions'
+import { useErrorHandler } from '~/composables/useErrorHandler'
 
 const { t } = useI18n()
 const toast = useToast()
+const handleError = useErrorHandler()
 const {
   dataPage,
   loading,
@@ -110,12 +112,7 @@ const handleUpdate = async <T>(action: () => Promise<T>) => {
             life: 3000,
         })
     } catch (error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: t('an_error_occurred'),
-            life: 3000,
-        })
+        handleError(error)
     }
 }
 

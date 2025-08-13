@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { useToast } from 'primevue'
 import { useI18n } from 'vue-i18n'
-import axios from 'axios'
+import { useErrorHandler } from './useErrorHandler'
 
 interface CrudApi<T> {
     create?: (data: T) => Promise<any>
@@ -25,28 +25,13 @@ export function useCrudActions<T extends { id?: string | number }>(
     const loading = ref(false)
     const toast = useToast()
     const { t } = useI18n()
+    const handleError = useErrorHandler()
 
     const showSuccess = (key: string) => {
         toast.add({
             severity: 'success',
             summary: 'Success',
             detail: t(key),
-            life: 3000,
-        })
-    }
-
-    const showError = (error: unknown) => {
-        let message = t('an_error_occurred')
-
-        if (axios.isAxiosError(error) && error.status === 422 && error.response) {
-            const errorKey = error.response.data.message?.replace('.', '')
-            message = t(`validation_errors.${errorKey}`)
-        }
-
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: message,
             life: 3000,
         })
     }
@@ -78,7 +63,7 @@ export function useCrudActions<T extends { id?: string | number }>(
             options.fetchData()
             opts?.onSuccess?.()
         } catch (error) {
-            showError(error)
+            handleError(error)
         } finally {
             loading.value = false
         }
@@ -99,7 +84,7 @@ export function useCrudActions<T extends { id?: string | number }>(
             showSuccess(options.i18nKeys.deleted || '')
             opts?.onSuccess?.()
         } catch (error) {
-            showError(error)
+            handleError(error)
         }
     }
 

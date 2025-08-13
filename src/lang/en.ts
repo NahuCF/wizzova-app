@@ -608,5 +608,17 @@ Grab them today!`,
     title: 'Access Denied',
     message: 'You do not have sufficient permissions to access this module, contact your administrator.'
   },
-  table_empty: 'No items found'
+  table_empty: 'No items found',
+  complete_profile: {
+    connect_account: 'Connect Account',
+    select_account: 'Select Account',
+    connect_account_title: 'Connect your WhatsApp Business Account to start',
+    connect_account_description: 'To proceed, please connect your WhatsApp Business Account to our platform.',
+    connect: 'Connect',
+    schedule_a_call: 'Schedule a call',
+    select_account_title: 'Select your account',
+    select_account_description: 'Please choose the WhatsApp Business Account you want to use',
+    complete_profile: 'Complete profile',
+    account_configured_successfully: 'Account configured successfully!'
+  }
 }
