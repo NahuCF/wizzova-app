@@ -26,6 +26,9 @@ app.use(i18n)
 app.use(PrimeVue, {
   theme: {
     preset: MyPreset,
+    options: {
+      darkModeSelector: false || 'none',
+    }
   },
 })
 app.directive('tooltip', Tooltip)
