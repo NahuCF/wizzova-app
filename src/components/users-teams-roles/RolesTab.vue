@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IconEdit, IconTrash, IconDotsVertical } from '@tabler/icons-vue'
+import { IconEdit, IconTrash } from '@tabler/icons-vue'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -7,6 +7,7 @@ import { useCrudActions } from '~/composables/useCrudActions'
 import { API } from '~/services'
 import { useSessionStore } from '~/stores'
 import { useRoleStore } from '~/stores/role'
+import type { Column } from '~/types'
 import type { RoleCreate, RoleItem } from '~/types/User'
 
 const { hasPermission } = useSessionStore()
@@ -35,12 +36,6 @@ const {
 })
 
 const showDeleteDialog = ref(false)
-const optionsMenu = ref()
-const columns = [
-    { header: 'name', key: 'name' },
-    { header: 'created_by', key: 'createdBy' }
-]
-
 const roleOptions = ref([
     [
 		{
@@ -65,12 +60,37 @@ const roleOptions = ref([
 	]
 ])
 
+const columns = computed(() => {
+    let columnList: Column[] = [
+        { header: t('roles.headers.name'), key: 'name' },
+        { header: t('roles.headers.created_by'), key: 'createdBy' }
+    ]
+
+    if(hasPermission('settings.manage_user_roles_and_teams')) {
+        columnList = [
+            ...columnList,
+            { header: '', key: 'actions', type: 'ACTIONS' }
+        ]
+    }
+
+    return columnList
+})
+
 const transformedData = computed(() => {
 	return roles.value.map(role => ({
 		...role,
-		createdBy: role.user?.name || t('roles.system')
+		createdBy: role.user?.name || t('roles.system'),
+        actions: filterActions(role)
 	}))
 })
+
+const filterActions = (roleItem: RoleItem) => {
+    if(roleItem.is_internal) {
+        return []
+    }
+    
+    return roleOptions.value
+}
 
 const onSave = (role: RoleCreate) => {
     createOrUpdate(role, {
@@ -91,50 +111,13 @@ fetchRoles()
 
 <template>
 	<div class="flex flex-col h-full">
-		<div class="overflow-auto">
-            <DataTable 
-                :value="transformedData" 
-                dataKey="id" 
-                class="rounded-lg overflow-hidden"
-                :loading="loading" 
-                scrollable
-                scrollHeight="flex"
-            >
-                <template #empty>
-                    <div class="text-center text-sm py-4 text-gray-500">
-                        {{ $t('roles.empty') }}
-                    </div>
-                </template>
+        <Table 
+            :data="transformedData"
+            :columns="columns"
+            emptyMessage="roles.empty"
+            :loading="loading"
+        />
 
-                <Column v-for="column in columns" :key="column.header" headerClass="bg-slate-200!">
-                    <template #header>
-                        <div class="uppercase text-sm font-semibold">
-                            {{ $t(`roles.headers.${column.header}`) }}
-                        </div>
-                    </template>
-
-                    <template #body="{ data }">
-                        <span class="block whitespace-nowrap overflow-hidden text-ellipsis text-sm">
-                            {{ data[column.key] }}
-                        </span>
-                    </template>
-                </Column>
-
-				<Column v-if="hasPermission('settings.manage_user_roles_and_teams')" headerClass="bg-slate-200!" :bodyStyle="{ maxWidth: '50px' }">
-                    <template #body="{ data }: { data: RoleItem }">
-                        <div class="flex justify-center">
-                            <Button v-if="!data.is_internal" severity="secondary" variant="text" @click="(e: Event) => optionsMenu?.show(e, data)">
-                                <div>
-									<IconDotsVertical  size="13" />
-								</div>
-                            </Button>
-                        </div>
-                    </template>
-                </Column>
-            </DataTable>
-        </div>
-
-		<ActionsPopover ref="optionsMenu" :options="roleOptions" />
         <RoleDrawer
             v-model:visible="showCreateDialog"
             :title="selectedRole ? $t('roles.edit_role') : $t('roles.create_role')"

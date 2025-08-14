@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { IconTrash, IconDotsVertical } from '@tabler/icons-vue'
+import { IconTrash, IconEdit } from '@tabler/icons-vue'
 import type { DataTablePageEvent } from 'primevue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useContactFieldStore } from '~/stores'
-import type { ContactFieldItem, ContactItem, Filter, Page } from '~/types'
+import type { Column, ContactFieldRecord, ContactFieldValue, ContactItem, Filter, Page } from '~/types'
 
 const props = defineProps<{
     loading: boolean,
@@ -22,22 +22,74 @@ const emit = defineEmits<{
     (e: 'delete-contact', contactItem: ContactItem): void, 
 }>()
 
-const { t } = useI18n()
+const { t, te } = useI18n()
 const contactFieldStore = useContactFieldStore()
 
 const contactOptions = ref([
+    [
+		{
+			label: 'contacts.edit',
+			icon: IconEdit,
+			action: (contactRecord: ContactFieldRecord) => {
+                const contactItem = props.dataPage.data.find(cf => cf.id === contactRecord['id'])
+                if(contactItem) {
+                    emit('update-contact', contactItem)
+                }
+            }
+		}
+	],
 	[
 		{
 			label: 'delete',
 			class: 'text-red-600',
 			icon: IconTrash,
-			action: (contactItem: ContactItem) => {
-                emit('delete-contact', contactItem)
+			action: (contactRecord: ContactFieldRecord) => {
+                const contactItem = props.dataPage.data.find(cf => cf.id === contactRecord['id'])
+                if(contactItem) {
+                    emit('delete-contact', contactItem)
+                }
             }
 		}
 	]
 ])
-const contactMenu = ref()
+
+const columns = computed(() => {
+    let fieldColumns: Column[] = contactFieldStore.primaryFields.map(cf => ({
+        header: te(`contacts.headers.${cf.name}`) ? t(`contacts.headers.${cf.name}`) :  cf.name,
+        key: cf.name,
+        type: 'CUSTOM',
+        bodyStyle: { maxWidth: '100px' }
+    }))
+
+    if(!props.readonly) {
+        fieldColumns = [
+            ...fieldColumns,
+            {
+                header: '',
+                key: 'actions',
+                type: 'ACTIONS',
+                bodyStyle: { maxWidth: '50px' }
+            }
+        ]
+    }
+
+    return fieldColumns
+})
+
+const transformedData = computed(() => {
+    return props.dataPage.data.map((contact) => {
+        const contactObject = contact.fields.reduce((acc, field) => {
+            acc[field.name] = field.value;
+            return acc;
+        }, {} as ContactFieldRecord)
+
+        return {
+            ...contactObject,
+            id: contact.id,
+            actions: contactOptions.value
+        }
+    })
+})
 
 const onPage = (event: DataTablePageEvent) => {
 	if(props.rowsPerPage !== event.rows) {
@@ -49,116 +101,53 @@ const onPage = (event: DataTablePageEvent) => {
     }
 }
 
-const getContactField = (contactFieldItem: ContactFieldItem, contact: ContactItem) => {
-    return contact.fields.find(f => f.name === contactFieldItem.name)
-}
-
-const formatField = (contactFieldItem: ContactFieldItem, contact: ContactItem) => {
-    const contactField = getContactField(contactFieldItem, contact)
-
-    if(!contactField) {
-        const header = t(`contacts.headers.${contactFieldItem.name}`, { default: contactFieldItem.name })
-        return `No ${header}`
+const formatField = (contactFieldValue: ContactFieldValue | undefined, columnName: string) => {
+    if(contactFieldValue === undefined) {
+        return `No ${columnName}`
     }
 
-    if(Array.isArray(contactField.value)) {
-        return contactField.value.join(', ')
+    if(Array.isArray(contactFieldValue)) {
+        return contactFieldValue.join(', ')
     } 
-    else if (typeof contactField.value === 'boolean') {
-        return Boolean(contactField.value) ? t('yes') : t('no')
+    else if (typeof contactFieldValue === 'boolean') {
+        return Boolean(contactFieldValue) ? t('yes') : t('no')
     }
     else {
-        return contactField.value
+        return contactFieldValue
     }
-}
-
-const onEditContact = ({ data }: { data: ContactItem }) => {
-    emit('update-contact', data)
 }
 </script>
 
 <template>
-    <div class="overflow-auto">
-        <DataTable 
-            :value="dataPage.data" 
-            dataKey="id" 
-            class="rounded-lg overflow-hidden" 
-            :lazy="true" 
-            :paginator="true"
-            :loading="loading || contactFieldStore.loading" 
-            :rows="rowsPerPage" 
-            :totalRecords="dataPage.meta.total"
-            scrollable 
-            scrollHeight="flex"
-            paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-            :currentPageReportTemplate="currentPageReport" 
-            :rowHover="!readonly" 
-            :rowClass="() => readonly ? '' : 'cursor-pointer'" 
-            @page="onPage"
-            @row-click="(props) => readonly ? {} : onEditContact(props)"
-        >
-            <template #empty>
-                <div class="text-center text-sm py-4 text-gray-500">
-                    {{ $t('contacts.empty') }}
-                </div>
-            </template>
-
-            <template #paginatorstart>
-                <div class="flex items-center gap-2">
-                    <label for="rows" class="text-sm font-bold!">
-                        {{ $t('show_rows_per_page') }}
-                    </label>
-                    <Select 
-                        id="rows" 
-                        :model-value="rowsPerPage" 
-                        @change="(value) => emit('update:rowsPerPage', value.value)" 
-                        :options="[10, 20, 50]" 
-                        size="small" 
-                    />
-                </div>
-            </template>
-
-            <Column 
-                v-for="cf in contactFieldStore.primaryFields" 
-                :key="cf.id" 
-                :bodyStyle="{ maxWidth: '100px', ...(readonly && { height: '50px' }) }" 
-                headerClass="bg-slate-200!" 
-            >
-                <template #header>
-                    <div class="uppercase text-sm font-semibold">
-                        {{ $te(`contacts.headers.${cf.name}`) ? $t(`contacts.headers.${cf.name}`) :  cf.name }}
-                    </div>
-                </template>
-
-                <template #body="{ data }: { data: ContactItem }">
-                    <span 
-                        class="block whitespace-nowrap overflow-hidden text-ellipsis text-sm"
-                        :class="{ 'opacity-25': getContactField(cf, data)?.value === undefined }"
-                        v-tooltip.bottom="
-                            Array.isArray(getContactField(cf, data)?.value) 
-                                ? {
-                                    value: (getContactField(cf, data)?.value as string[]).join('\n'),
-                                    class: 'text-sm max-w-[300px]!'
-                                } 
-                                : undefined
-                        "
-                    >
-                        {{ formatField(cf, data) }}
-                    </span>
-                </template>
-            </Column>
-
-            <Column v-if="!readonly" headerClass="bg-slate-200!" :bodyStyle="{ maxWidth: '50px' }">
-                <template #body="{ data }: { data: ContactItem }">
-                    <div class="flex justify-center">
-                        <Button severity="secondary" variant="text" @click="(e: Event) => contactMenu?.show(e, data)">
-                            <IconDotsVertical size="13" />
-                        </Button>
-                    </div>
-                </template>
-            </Column>
-        </DataTable>
-
-        <ActionsPopover ref="contactMenu" :options="contactOptions" />
-    </div>
+    <Table 
+        :data="transformedData"
+        :columns="columns"
+        emptyMessage="contacts.empty"
+        :loading="loading"
+        withPagination
+        :totalRecords="dataPage.meta.total"
+        :rowsPerPage="rowsPerPage"
+        @update:rowsPerPage="emit('update:rowsPerPage', $event)"
+        :currentPageReport="currentPageReport"
+        @onPage="onPage"
+    >
+        <template v-for="column in columns" :key="cf.key" #[column.key]="{ data }: { data: ContactFieldRecord }">
+            <div class="flex">
+                <span
+                    class="block whitespace-nowrap overflow-hidden text-ellipsis"
+                    :class="{ 'opacity-25': data[column.key] === undefined }"
+                    v-tooltip.bottom="
+                        Array.isArray(data[column.key]) 
+                            ? {
+                                value: (data[column.key] as string[]).join('\n'),
+                                class: 'text-sm max-w-[300px]!'
+                            } 
+                            : undefined
+                    "
+                >
+                    {{ formatField(data[column.key], column.header) }}
+                </span>
+            </div>
+        </template>
+    </Table>
 </template>

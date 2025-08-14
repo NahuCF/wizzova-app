@@ -47,5 +47,6 @@ export type ColumnType = 'TAG' | 'TAG_LIST' | 'PROGRESS' | 'ACTIONS' | 'CUSTOM'
 export interface Column {
   header: string,
   type?: ColumnType,
-  key: string
+  key: string,
+  bodyStyle?: Record<string, string>
 }

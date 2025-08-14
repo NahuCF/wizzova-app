@@ -36,18 +36,21 @@ export interface ContactItem {
     fields: ContactItemField[]
 }
 
+export type ContactFieldValue = string | string[] | number | boolean
+export type ContactFieldRecord = Record<string, ContactFieldValue | undefined>
+
 export interface CreateContact {
     id: string,
     fields: {
         id: string,
         name: string,
-        value: string | string[] | number | boolean
+        value: ContactFieldValue
     }[]
 }
 
 export interface MappingContact {
     excelColumn: string
-    value: string | string[] | number | boolean
+    value: ContactFieldValue
     contactField: ContactFieldItem | null
     status: 'MAPPED' | 'NOT_MAPPED'
 }

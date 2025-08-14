@@ -288,6 +288,7 @@ Grab them today!`,
   },
   contacts: {
     title: 'Contacts',
+    edit: 'Edit contact',
     contacts_tab: 'Contacts',
     groups_tab: 'Groups',
     import_file: 'Import file',

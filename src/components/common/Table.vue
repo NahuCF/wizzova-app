@@ -62,14 +62,6 @@ const openActionMenu = (event: MouseEvent, actionList: any[], item: any) => {
 	actionMenu.value?.show(event, item)
 }
 
-const bodyStyleByType = (type: ColumnType) => {
-	if(type === 'ACTIONS') {
-		return { maxWidth: '50px' }
-	}
-
-	return undefined
-}
-
 </script>
 
 <template>
@@ -114,7 +106,13 @@ const bodyStyleByType = (type: ColumnType) => {
 
 			<Column v-if="selection" selectionMode="multiple" headerStyle="width: 3rem" headerClass="bg-slate-200!"></Column>
 
-			<Column v-for="column in columns" :key="column.key" headerClass="bg-slate-200!" :bodyStyle="bodyStyleByType">
+			<Column 
+				v-for="column in columns" 
+				:key="column.key" 
+				headerClass="bg-slate-200!" 
+				bodyClass="h-[50px]" 
+				:bodyStyle="column.bodyStyle"
+			>
 				<template #header>
 					<div class="uppercase font-semibold">
 						{{ column.header }}

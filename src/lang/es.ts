@@ -285,6 +285,7 @@ export default {
   },
   contacts: {
     title: 'Contactos',
+    edit: 'Editar contacto',
     contacts_tab: 'Contactos',
     groups_tab: 'Grupos',
     import_file: 'Importar archivo',
