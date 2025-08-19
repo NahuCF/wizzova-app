@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 html {
-    font-size: 14px;
+    font-size: 12px;
     font-family: 'Inter', sans-serif;
 }
 
 @layer base {
     body {
-        @apply text-sm;
+        @apply text-lg;
     }
 }
 

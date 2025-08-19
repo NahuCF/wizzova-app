@@ -134,7 +134,7 @@ userStore.fetchUsers()
 
 <template>
     <div class="flex flex-col gap-6 h-full">
-        <div class="flex justify-between py-2.5">
+        <div class="flex justify-between py-2">
             <div class="flex gap-2">
                 <GenericFilters 
                     :columns="contactFilters"
@@ -148,14 +148,14 @@ userStore.fetchUsers()
                     @click="toggleImportMenu" 
                 >
                     <IconDownload size="14" />
-                    <span class="text-sm">
+                    <span>
                         {{ $t('import') }}
                     </span>
                 </Button>
                 <Menu ref="importMenu" id="overlay_menu" :model="importOptions" :popup="true">
                     <template #item="{ item, props }">
                         <div v-ripple v-bind="props.action" @click="item.action">
-                            <span class="text-sm">{{ item.label }}</span>
+                            <span>{{ item.label }}</span>
                         </div>
                     </template>
                 </Menu>
@@ -163,7 +163,7 @@ userStore.fetchUsers()
                     <IconSearch size="14" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                     <InputText
                         v-model="searchTerm"
-                        class="pl-8! max-w-[180px] text-sm! shadow-none!"
+                        class="pl-8! max-w-[180px] shadow-none!"
                         name="search"
                         id="search"
                         fluid
@@ -174,7 +174,7 @@ userStore.fetchUsers()
             </div>
             <Button @click="onCreateContact()">
                 <IconPlus size="16" class="mr-1" />
-                <span class="text-sm">
+                <span>
                     {{ $t('contacts.add_contact') }}
                 </span>
             </Button>
@@ -231,10 +231,6 @@ userStore.fetchUsers()
 </template>
 
 <style lang="css" scoped>
-:deep(.p-paginator-current) {
-    font-size: 0.875rem;
-}
-
 :deep(.p-datatable-paginator-bottom) {
     border: none;
 }

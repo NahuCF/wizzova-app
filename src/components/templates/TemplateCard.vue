@@ -53,10 +53,10 @@ const onClick = () => {
 		<div class="flex flex-col gap-2 w-full p-2 bg-slate-200 rounded-t-md">
 			<div class="flex justify-between items-center">
 				<div class="flex flex-col">
-					<h3 class="text-md font-semibold mb-2">{{ template.name }}</h3>
+					<h3 class="font-semibold mb-2">{{ template.name }}</h3>
 					<div class="flex items-center gap-2">
 						<StatusBadge :status="template.status" :label="$t(`template_status.${template.status}`)" />
-						<div class="text-sm font-normal text-slate-500">
+						<div class="text-base font-normal text-slate-500">
 							{{ template.category }}
 						</div>
 					</div>
@@ -72,7 +72,7 @@ const onClick = () => {
 				<div>
 					<IconBrandWhatsappFilled size="13" />
 				</div>
-				<div class="text-sm font-light text-slate-500">
+				<div class="text-base font-light text-slate-500">
 					{{ broadcastNumber.name }} || {{ broadcastNumber.number }}
 				</div>
 			</div>
@@ -92,14 +92,14 @@ const onClick = () => {
 
 		<!-- FOOTER -->
 		<div class="flex justify-between items-center p-2 bg-slate-200 rounded-b-md">
-			<div class="bg-slate-100 px-2 py-1 rounded-lg text-sm font-medium leading-none">
+			<div class="bg-slate-100 px-2 py-1 rounded-lg text-base font-medium leading-none">
 				{{ template.language }}
 			</div>
 			<div 
-				class="text-sm font-normal text-slate-500" 
+				class="text-base font-normal text-slate-500" 
 				v-tooltip.bottom="{
 					value: moment(template.created_at).format('DD/MM/YYYY HH:mm'),
-					class: 'text-sm'
+					class: 'text-base'
 				}"
 			>
 				{{ moment(template.created_at).format('DD/MM/YYYY') }}

@@ -44,7 +44,7 @@ onMounted(() => {
         <div v-if="showCreateCard"
             class="h-[340px] flex flex-col justify-between items-center rounded-md bg-slate-200 w-full">
             <div class="flex justify-center py-5 border-b-2 border-slate-300 w-full">
-                <div class="font-bold text-xl">
+                <div class="font-bold text-2xl">
                     {{ t('templates.create_new_template') }}
                 </div>
             </div>

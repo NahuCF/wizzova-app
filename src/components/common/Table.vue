@@ -14,10 +14,12 @@ const props = withDefaults(
 		withPagination?: boolean,
 		totalRecords?: number,
 		rowsPerPage?: number,
+		showPageSize?: boolean,
 		currentPageReport?: string
 	}>(),
 	{
-		emptyMessage: 'table_empty'
+		emptyMessage: 'table_empty',
+		showPageSize: true
 	}
 )
 
@@ -84,14 +86,14 @@ const openActionMenu = (event: MouseEvent, actionList: any[], item: any) => {
 			@page="emit('onPage', $event)"
 		>
 			<template #empty>
-				<div class="text-center text-sm py-4 text-gray-500">
+				<div class="text-center text-base py-4 text-gray-500">
 					{{ $t(emptyMessage) }}
 				</div>
 			</template>
 
-			<template v-if="withPagination" #paginatorstart>
+			<template v-if="withPagination && showPageSize" #paginatorstart>
 				<div class="flex items-center gap-2">
-					<label for="rows" class="text-sm font-bold!">
+					<label for="rows" class="text-base font-bold!">
 						{{ $t('show_rows_per_page') }}
 					</label>
 					<Select 
@@ -99,7 +101,6 @@ const openActionMenu = (event: MouseEvent, actionList: any[], item: any) => {
 						:model-value="rowsPerPage"
                         @change="(value) => emit('update:rowsPerPage', value.value)" 
 						:options="[10, 20, 50]"
-						size="small"
 					/>
 				</div>
 			</template>
@@ -114,7 +115,7 @@ const openActionMenu = (event: MouseEvent, actionList: any[], item: any) => {
 				:bodyStyle="column.bodyStyle"
 			>
 				<template #header>
-					<div class="uppercase font-semibold">
+					<div class="uppercase font-semibold text-base">
 						{{ column.header }}
 					</div>
 				</template>
@@ -123,13 +124,13 @@ const openActionMenu = (event: MouseEvent, actionList: any[], item: any) => {
 					<Tag 
 						v-if="column.type === 'TAG'" 
 						:value="data[column.key].label"
-						:severity="data[column.key].severity" 
-						size="small"
+						:severity="data[column.key].severity"
+						class="text-base!"
 					/>
 
 					<div v-else-if="column.type === 'TAG_LIST'" class="flex items-center gap-2">
 						<template v-for="(tag, index) in data[column.key]" :key="index">
-							<Tag v-if="index === 0" class="px-3! text-nowrap" rounded size="small">
+							<Tag v-if="index === 0" class="px-3! text-nowrap" rounded>
 								{{ tag }}
 							</Tag>
 						</template>
@@ -150,8 +151,8 @@ const openActionMenu = (event: MouseEvent, actionList: any[], item: any) => {
 						<div class="flex gap-2 items-center">
 							<CircularProgress :progress="data[column.key].percentage" :color="data[column.key].color" />
 							<div class="flex flex-col gap-0.5">
-								<span>{{ data[column.key].count }}</span>
-								<span class="text-gray-500">
+								<span class="text-base">{{ data[column.key].count }}</span>
+								<span class="text-base text-gray-500">
 									{{ data[column.key].percentage }}%
 								</span>
 							</div>
@@ -171,7 +172,7 @@ const openActionMenu = (event: MouseEvent, actionList: any[], item: any) => {
 						</slot>
 					</template>
 
-					<span v-else class="block whitespace-nowrap overflow-hidden text-ellipsis">
+					<span v-else class="block whitespace-nowrap overflow-hidden text-ellipsis text-base">
 						{{ data[column.key] }}
 					</span>
 				</template>
@@ -183,11 +184,11 @@ const openActionMenu = (event: MouseEvent, actionList: any[], item: any) => {
 			:showCloseIcon="false"
 			:dismissable="false"
 			placement="bottom"
-			class="p-2 text-sm shadow-md rounded-md bg-white border"
+			class="p-2 text-base shadow-md rounded-md bg-white border"
 		>
 			<div class="flex flex-col gap-2">
 				<template v-for="(tag, index) in hoverTags" :key="index">
-					<Tag v-if="index !== 0" class="px-3! text-nowrap" rounded size="small">
+					<Tag v-if="index !== 0" class="px-3! text-nowrap" rounded>
 						{{ tag }}
 					</Tag>
 				</template>
@@ -197,3 +198,9 @@ const openActionMenu = (event: MouseEvent, actionList: any[], item: any) => {
 		<ActionsPopover ref="actionMenu" :options="actions" />
 	</div>
 </template>
+
+<style lang="css" scoped>
+:deep(.p-paginator-current) {
+    font-size: 1rem;
+}
+</style>

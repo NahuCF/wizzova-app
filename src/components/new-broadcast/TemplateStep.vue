@@ -57,7 +57,7 @@ fetchBroadcastNumbers()
 
 <template>
     <div class="flex flex-col gap-6">
-        <div class="flex justify-between py-2.5">
+        <div class="flex justify-between py-2">
 			<div class="flex items-center gap-2">
                 <Button variant="text" @click="router.push({ name: 'broadcasts' })" size="small" severity="secondary">
                     <IconArrowLeft size="18" />

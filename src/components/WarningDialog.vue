@@ -25,7 +25,7 @@ const emit = defineEmits<{
         :header="title" 
         class="min-w-[25rem] max-w-[450px]"
     >
-        <span class="text-surface-500 dark:text-surface-400 font-medium block mb-4">{{ message }}</span>
+        <span class="text-surface-500 dark:text-surface-400 font-medium block mb-6">{{ message }}</span>
         <span v-if="note" class="text-surface-500 dark:text-surface-400 text-gray-600 block mb-8">{{ note }}</span>
         <slot name="note"></slot>
         <div class="flex justify-end gap-2">

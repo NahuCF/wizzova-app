@@ -54,7 +54,7 @@ watch([() => props.button, getSelectedCountry], () => {
 <template>
 	<div class="bg-white border border-slate-200 rounded-md p-4">
 		<div v-if="button.type == 'QUICK_REPLY'">
-			<div class="text-slate-500 text-sm mb-1">
+			<div class="text-slate-500 text-base mb-1">
 				{{ t('new_template.buttons.quick_reply.description') }}
 			</div>
 			<div class="flex w-full gap-4 items-center">
@@ -70,7 +70,7 @@ watch([() => props.button, getSelectedCountry], () => {
 						{{ button.text.length ?? 0 }} / 25
 					</div>
 				</div>
-				<button class="p-2 hover:cursor-pointer hover:bg-red-50 transition rounded-md" @click="emit('remove')">
+				<button class="p-4 hover:cursor-pointer hover:bg-red-50 transition rounded-md" @click="emit('remove')">
 					<IconTrash class="text-red-400 w-5 h-5" />
 				</button>
 			</div>
@@ -86,14 +86,14 @@ watch([() => props.button, getSelectedCountry], () => {
 					v-model="button.type"
 				>
 				</Select>
-				<button class="p-2 hover:cursor-pointer hover:bg-red-50 transition rounded-md" @click="emit('remove')">
+				<button class="p-4 hover:cursor-pointer hover:bg-red-50 transition rounded-md" @click="emit('remove')">
 					<IconTrash class="text-red-400 w-5 h-5" />
 				</button>
 			</div>
 			<div class="flex gap-3 mt-4">
 				<div class="flex gap-4">
 					<div class="!w-[25rem]">
-						<div class="text-slate-500 text-sm mb-1">
+						<div class="text-slate-500 text-base mb-1">
 							{{ t('new_template.button_text') }}
 						</div>
 						<div class="relative">
@@ -111,7 +111,7 @@ watch([() => props.button, getSelectedCountry], () => {
 					</div>
 
 					<div class="w-full">
-						<div class="text-slate-500 text-sm mb-1">
+						<div class="text-slate-500 text-base mb-1">
 							{{ t('new_template.buttons.url.label') }}
 						</div>
 						<div class="relative">
@@ -131,7 +131,7 @@ watch([() => props.button, getSelectedCountry], () => {
 			</div>
 
 			<div class="mt-5" v-if="button.type === 'DYNAMIC_URL'">
-				<div class="text-slate-500 text-sm mb-1">
+				<div class="text-slate-500 text-base mb-1">
 					{{ t('new_template.buttons.url.example_label') }}
 				</div>
 				<div class="relative">
@@ -146,22 +146,22 @@ watch([() => props.button, getSelectedCountry], () => {
 						{{ button.example?.length ?? 0 }} / 2000
 					</div>
 				</div>
-				<p class="mt-5 text-slate-400 text-sm">
+				<p class="mt-5 text-slate-400 text-base">
 					{{ t('new_template.buttons.url.example_description') }}
 				</p>
 			</div>
 		</div>
 		
 		<div v-else-if="isCallButton(button)">
-			<div class="text-slate-500 text-sm mb-1 flex items-center justify-between">
+			<div class="text-slate-500 text-base mb-1 flex items-center justify-between">
 				{{ t('new_template.buttons.phone_number.title') }}
-				<button class="p-2 hover:cursor-pointer hover:bg-red-50 transition rounded-md" @click="emit('remove')">
+				<button class="p-4 hover:cursor-pointer hover:bg-red-50 transition rounded-md" @click="emit('remove')">
 					<IconTrash class="text-red-400 w-5 h-5" />
 				</button>
 			</div>
 			<div class="flex gap-4 mt-4">
 				<div class="!w-[25rem]">
-					<div class="text-slate-500 text-sm mb-1 flex items-center justify-between">
+					<div class="text-slate-500 text-base mb-1 flex items-center justify-between">
 						{{ t('new_template.button_text') }}
 					</div>
 					<div class="relative">
@@ -178,7 +178,7 @@ watch([() => props.button, getSelectedCountry], () => {
 					</div>
 				</div>
 				<div class="w-full">
-					<div class="text-slate-500 text-sm mb-1 flex items-center justify-between">
+					<div class="text-slate-500 text-base mb-1 flex items-center justify-between">
 						{{ t('new_template.buttons.phone_number.label') }}
 					</div>
 					<div class="flex gap-2 relative">
@@ -197,7 +197,7 @@ watch([() => props.button, getSelectedCountry], () => {
 							<InputText 
 								name="cellphone" 
 								id="cellphone"
-								class="!pr-[5.5rem]"
+								class="!pr-[5.5rem] text-xl!"
 								:maxlength="20"
 								v-model="button.phone_number" 
 							/>

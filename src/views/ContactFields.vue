@@ -129,11 +129,11 @@ fetchTypes()
 </script>
 
 <template>
-    <div class="flex flex-col gap-5 custom-datatable p-6">
-        <div class="flex justify-between items-center py-5 z-2 bg-slate-100">
-			<h1 class="font-semibold text-xl">{{ t('contact_fields.field_collection') }}</h1>
+    <div class="flex flex-col gap-8 custom-datatable p-6">
+        <div class="flex justify-between items-center z-2 bg-slate-100">
+			<h1 class="font-semibold text-2xl">{{ t('contact_fields.field_collection') }}</h1>
 			<Button @click="openFieldDrawer()">
-				<IconPlus size="16" class="mr-2" />
+				<IconPlus size="16" />
 				<span>
 					{{ $t('contact_fields.add') }}
 				</span>
@@ -162,7 +162,7 @@ fetchTypes()
                 <template #header>
                     <div class="flex items-center gap-4">
                         <div class="w-[20px]"></div>
-                        <div class="flex items-center gap-1 text-sm uppercase">
+                        <div class="flex items-center gap-1 text-base uppercase">
                             {{ $t('contact_field.name') }}
                             <div
                                 v-tooltip.bottom="{
@@ -177,7 +177,7 @@ fetchTypes()
                 </template>
 
                 <template #body="{ data }: { data: ContactFieldItem }">
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-4 text-base">
                         <div
                             v-tooltip.bottom="{
                                 value: data.is_primary_field 
@@ -193,9 +193,9 @@ fetchTypes()
                 </template>
             </Column>
 
-            <Column field="internal_name" headerClass="text-sm uppercase">
+            <Column field="internal_name" headerClass="text-base uppercase" bodyClass="text-base">
                 <template #header>
-                    <div class="flex items-center gap-1 text-sm uppercase">
+                    <div class="flex items-center gap-1 text-base uppercase">
                         {{ $t('contact_field.internal_name') }}
                         <div
                             v-tooltip.bottom="{
@@ -209,9 +209,9 @@ fetchTypes()
                 </template>
             </Column>
 
-            <Column :header="$t('contact_field.type')" headerClass="text-sm uppercase">
+            <Column :header="$t('contact_field.type')" headerClass="text-base uppercase">
                 <template #body="{ data }: { data: ContactFieldItem }">
-                    <div class="flex flex-row items-center gap-2">
+                    <div class="flex flex-row items-center gap-2 text-base">
                         <component
                             :is="typeIcon[data.type]"
                             class="w-[22px] h-[22px]"
@@ -221,25 +221,29 @@ fetchTypes()
                 </template>
             </Column>
 
-            <Column :header="$t('contact_field.status')" headerClass="text-sm uppercase">
+            <Column :header="$t('contact_field.status')" headerClass="text-base uppercase">
                 <template #body="{ data }">
-                    <ToggleSwitch 
-                        :modelValue="data.is_active"
-                        @update:model-value="(value) => updateStatus(data.id, value)"
-                        :readonly="data.is_primary_field" 
-                        :class="{ 'opacity-50': data.is_primary_field }" 
-                    />
+                    <div class="flex items-center">
+                        <ToggleSwitch 
+                            :modelValue="data.is_active"
+                            @update:model-value="(value) => updateStatus(data.id, value)"
+                            :readonly="data.is_primary_field"
+                            :class="{ 'opacity-50': data.is_primary_field }" 
+                        />
+                    </div>
                 </template>
             </Column>
 
-            <Column :header="$t('contact_field.mandatory')" headerClass="text-sm uppercase">
+            <Column :header="$t('contact_field.mandatory')" headerClass="text-base uppercase">
                 <template #body="{ data }">
-                    <ToggleSwitch 
-                        :modelValue="data.is_mandatory"
-                        @update:model-value="(value) => updateMandatory(data.id, value)"
-                        :readonly="data.is_primary_field" 
-                        :class="{ 'opacity-50': data.is_primary_field }" 
-                    />
+                    <div class="flex items-center">
+                        <ToggleSwitch 
+                            :modelValue="data.is_mandatory"
+                            @update:model-value="(value) => updateMandatory(data.id, value)"
+                            :readonly="data.is_primary_field" 
+                            :class="{ 'opacity-50': data.is_primary_field }"
+                        />
+                    </div>
                 </template>
             </Column>
 

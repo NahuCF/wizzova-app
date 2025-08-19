@@ -189,11 +189,11 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="flex justify-center p-6">
-		<div class="w-[73rem] flex flex-col py-4 gap-4">
+	<div class="flex justify-center p-4">
+		<div class="w-[1024px] flex flex-col gap-4">
 			<div class="flex justify-between items-center py-4 sticky top-0 z-2 bg-slate-100">
-				<div class="flex items-center gap-2">
-					<Button variant="text" @click="returnToPage" size="small" severity="secondary">
+				<div class="flex items-center gap-1">
+					<Button variant="text" @click="returnToPage" class="p-1!" severity="secondary">
 						<IconArrowLeft size="22" />
 					</Button>
 					<h1 class="font-semibold text-2xl">
@@ -286,7 +286,7 @@ onMounted(() => {
 									optionLabel="name" 
 									optionValue="id"
 									name="allow_category_change" 
-									id="allow_category_change" 
+									id="allow_category_change"
 								/>
 							</div>
 						</div>
@@ -305,14 +305,14 @@ onMounted(() => {
 
 							<div>
 								<div class="flex items-center gap-2 mb-2">
-									<h2 class="font-medium mb-1 text-lg">{{ $t('footer') }}</h2>
+									<h2 class="font-medium mb-1 text-xl">{{ $t('footer') }}</h2>
 									<div v-tooltip.bottom="{
 										value: t('footer_tooltip'),
 										class: 'text-sm max-w-[300px]!'
 									}">
 										<IconInfoCircle class="text-slate-700 hover:cursor-pointer" size="16" />
 									</div>
-									<Badge severity="secondary">{{ $t('optional') }}</Badge>
+									<Badge severity="secondary" class="text-base!">{{ $t('optional') }}</Badge>
 								</div>
 								<div class="relative">
 									<InputText 

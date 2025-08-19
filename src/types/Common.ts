@@ -50,3 +50,5 @@ export interface Column {
   key: string,
   bodyStyle?: Record<string, string>
 }
+
+export type LayoutMode = 'LIST' | 'GRID'

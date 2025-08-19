@@ -124,7 +124,7 @@ watch(() => props.visible, () => {
 </script>
 
 <template>
-    <Drawer :visible="visible" @update:visible="emit('update:visible', $event)" class="w-[32rem]!" header="Add Contact Field" position="right">
+    <Drawer :visible="visible" @update:visible="emit('update:visible', $event)" class="w-[512px]!" header="Add Contact Field" position="right">
         <Form
             ref="formRef"
             v-slot="$form"

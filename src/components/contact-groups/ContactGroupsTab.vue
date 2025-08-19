@@ -162,12 +162,12 @@ contactFieldStore.fetchContactFields()
 
 <template>
     <div class="flex flex-col gap-6 h-full">
-        <div class="flex justify-between py-2.5">
+        <div class="flex justify-between py-2">
             <div class="relative">
                 <IconSearch size="14" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                 <InputText
                     v-model="searchTerm"
-                    class="pl-8! max-w-[180px] text-sm! shadow-none!"
+                    class="pl-8! max-w-[180px] shadow-none!"
                     name="search"
                     id="search"
                     fluid
@@ -177,7 +177,7 @@ contactFieldStore.fetchContactFields()
             </div>
             <Button @click="onCreateGroup()">
                 <IconPlus size="16" class="mr-1" />
-                <span class="text-sm">
+                <span>
                     {{ $t('contact_groups.add_group') }}
                 </span>
             </Button>
@@ -215,10 +215,6 @@ contactFieldStore.fetchContactFields()
 </template>
 
 <style lang="css" scoped>
-:deep(.p-paginator-current) {
-    font-size: 0.875rem;
-}
-
 :deep(.p-datatable-paginator-bottom) {
     border: none;
 }

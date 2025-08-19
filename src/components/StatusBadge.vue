@@ -28,7 +28,7 @@ const badgeStyle = computed(() => {
 
 <template>
     <div>
-        <div :class="`flex justify-between items-center gap-1 text-sm px-1 py-0.5 rounded-sm ${badgeStyle.color} ${badgeStyle.backgroundColor}`">
+        <div :class="`flex justify-between items-center gap-1 text-base px-1 py-0.5 rounded-sm ${badgeStyle.color} ${badgeStyle.backgroundColor}`">
             <component
                 :is="badgeStyle.icon"
                 class="w-[16px] h-[16px]"

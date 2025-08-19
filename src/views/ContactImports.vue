@@ -5,7 +5,7 @@ import { IconArrowLeft, IconDownload } from '@tabler/icons-vue'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { useRelativeDateLabel } from '~/composables/useRelativeDateLabel'
 import { API } from '~/services'
-import type { ContactImportItem } from '~/types'
+import type { Column, ContactImportItem } from '~/types'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -25,14 +25,14 @@ const {
 )
 
 const showImportContacts = ref(false)
-const columns = [
-    { header: 'name', key: 'name' },
-    { header: 'imported_on', key: 'createdAtFormatted' },
-    { header: 'import_type', key: 'importTypeFormatted' },
-    { header: 'total_contacts', key: 'total_contacts_count' },
-    { header: 'updated_contacts', key: 'addedContactsCount' },
-    { header: 'errored_contacts', key: 'errorContactsCount' },
-    { header: 'status', key: 'status' }
+const columns: Column[] = [
+    { header: t('contact_imports.headers.name'), key: 'name' },
+    { header: t('contact_imports.headers.imported_on'), key: 'createdAtFormatted', type: 'CUSTOM' },
+    { header: t('contact_imports.headers.import_type'), key: 'importTypeFormatted' },
+    { header: t('contact_imports.headers.total_contacts'), key: 'total_contacts_count' },
+    { header: t('contact_imports.headers.updated_contacts'), key: 'addedContactsCount', type: 'PROGRESS' },
+    { header: t('contact_imports.headers.errored_contacts'), key: 'errorContactsCount', type: 'PROGRESS' },
+    { header: t('contact_imports.headers.status'), key: 'statusTag', type: 'TAG' }
 ]
 
 const transformedData = computed(() => {
@@ -51,6 +51,10 @@ const transformedData = computed(() => {
             percentage: item.total_contacts_count > 0
                 ? Math.round((item.error_contacts_count / item.total_contacts_count) * 100)
                 : 0,
+        },
+        statusTag: {
+            label: t(`contact_imports.status.${item.status}`),
+            severity: statusToSeverity(item.status)
         }
     }))
 })
@@ -119,102 +123,49 @@ onUnmounted(() => {
         <div class="flex justify-between">
 			<div class="flex items-center">
                 <Button variant="text" @click="router.push({ name: 'contacts' })" size="small" severity="secondary">
-                    <IconArrowLeft size="18" />
+                    <IconArrowLeft size="22" />
                 </Button>
-                <h1 class="font-semibold text-lg">{{ $t('contact_imports.title') }}</h1>
+                <h1 class="font-semibold text-2xl">{{ $t('contact_imports.title') }}</h1>
             </div>
 			<Button @click="showImportContacts = true">
                 <IconDownload size="16" class="mr-1" />
-				<span class="text-sm">
+				<span>
 					{{ $t('import') }}
 				</span>
 			</Button>
 		</div>
 
-        <div class="overflow-auto">
-            <DataTable 
-                :value="transformedData" 
-                dataKey="id" 
-                class="rounded-lg overflow-hidden" 
-                :lazy="true"
-                :paginator="true" 
-                :loading="loading" 
-                :rows="rowsPerPage" 
-                :totalRecords="dataPage.meta.total" 
-                scrollable
-                scrollHeight="flex"
-                paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                :currentPageReportTemplate="currentPageReport" 
-                @page="onPage"
-            >
-                <template #empty>
-                    <div class="text-center text-sm py-4 text-gray-500">
-                        {{ $t('contact_imports.empty') }}
-                    </div>
-                </template>
-
-                <template #paginatorstart>
-                    <div class="flex items-center gap-2">
-                        <label for="rows" class="text-sm font-bold!">
-                            {{ $t('show_rows_per_page') }}
-                        </label>
-                        <Select id="rows" v-model="rowsPerPage" :options="[10, 20, 50]" size="small" />
-                    </div>
-                </template>
-
-                <Column v-for="column in columns" :key="column.header" headerClass="bg-slate-200!">
-                    <template #header>
-                        <div class="uppercase text-sm font-semibold">
-                            {{ $t(`contact_imports.headers.${column.header}`) }}
-                        </div>
-                    </template>
-
-                    <template #body="{ data }">
-                        <template v-if="column.header === 'imported_on'">
-                            <div class="flex">
-                                <span v-tooltip="data[column.key].tooltip.date"
-                                    v-tooltip.bottom="{
-                                        value: `${$t('imported_by', { author: data[column.key].tooltip.author })}\n${$t('imported_at', { date: data[column.key].tooltip.date })}`,
-                                        class: 'text-sm max-w-full!'
-                                    }"
-                                    class="block whitespace-nowrap overflow-hidden text-ellipsis text-sm"
-                                >
-                                    {{ data[column.key].label }}
-                                </span>
-                            </div>
-                        </template>
-
-                        <Tag 
-                            v-else-if="column.header === 'status'" 
-                            :value="$t(`contact_imports.status.${data[column.key]}`)"
-                            :severity="statusToSeverity(data[column.key])"
-                            size="small"
-                        />
-
-                        <template
-                            v-else-if="column.header === 'updated_contacts' || column.header === 'errored_contacts'">
-                            <div class="flex gap-2 items-center">
-                                <CircularProgress :progress="data[column.key].percentage" />
-                                <div class="flex flex-col gap-0.5 text-sm">
-                                    <span>{{ data[column.key].count }}</span>
-                                    <span class="text-gray-500">
-                                        {{ data[column.key].percentage }}%
-                                    </span>
-                                </div>
-                            </div>
-                        </template>
-
-                        <span v-else class="block whitespace-nowrap overflow-hidden text-ellipsis text-sm">
-                            {{ data[column.key] }}
-                        </span>
-                    </template>
-                </Column>
-            </DataTable>
-
-            <ImportContactDialog
-                v-model:visible="showImportContacts"
-                @success="fetchDataPage(1, rowsPerPage)"
-            />
-        </div>
+        <Table 
+            :data="transformedData"
+            :columns="columns"
+            emptyMessage="contact_imports.empty"
+            :loading="loading"
+            withPagination
+            :totalRecords="dataPage.meta.total"
+            v-model:rowsPerPage="rowsPerPage"
+            :currentPageReport="currentPageReport"
+            @onPage="onPage"
+        >
+            <template #createdAtFormatted="{ data }">
+                <div class="flex">
+                    <span
+                        v-tooltip.bottom="{
+                            value: `${
+                                $t('imported_by', { author: data['createdAtFormatted'].tooltip.author })}\n${$t('imported_at', { date: data['createdAtFormatted'].tooltip.date })
+                            }`,
+                            class: 'text-base max-w-full!'
+                        }"
+                        class="block whitespace-nowrap overflow-hidden text-ellipsis text-base"
+                    >
+                        {{ data['createdAtFormatted'].label }}
+                    </span>
+                </div>
+            </template>
+        </Table>
+            
+        <ImportContactDialog
+            v-model:visible="showImportContacts"
+            @success="fetchDataPage(1, rowsPerPage)"
+        />
     </div>
 </template>

@@ -148,7 +148,7 @@ contactFieldStore.fetchContactFields()
 <template>
 	<div>
 		<div class="flex gap-1">
-			<h2 class="font-medium mb-1 text-lg">{{ $t('body') }}</h2>
+			<h2 class="font-medium mb-1 text-xl">{{ $t('body') }}</h2>
 			<IconAsterisk color="red" class="mt-1" size="8" />
 		</div>
 
@@ -160,11 +160,12 @@ contactFieldStore.fetchContactFields()
 					rows="8" 
 					cols="30" 
 					fluid 
-					class="min-h-[15rem]"
+					class="text-xl! min-h-[16rem]"
 					:maxlength="1024" 
 					@keydown.enter="validateLineJump" 
 					@input="onBodyInput"
-					:placeholder="t('example_body_text_template')" />
+					:placeholder="t('example_body_text_template')"
+					size="large" />
 				<div class="absolute right-3 bottom-2 text-slate-400">
 					{{ localBodyText.length }} / 1024
 				</div>
@@ -174,7 +175,7 @@ contactFieldStore.fetchContactFields()
 		<div class="mt-3">
 			<div class="flex justify-between">
 				<div class="flex items-center gap-2">
-					<Button severity="info" variant="outlined" class="self-start !border !border-slate-300 font-bold" size="small"
+					<Button severity="info" variant="outlined" class="self-start !border !border-slate-300 font-bold text-sm" size="small"
 						@click="openVariablesPopover">
 						{{ t('new_template.body.add_variable') }}
 					</Button>

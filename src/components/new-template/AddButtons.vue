@@ -135,9 +135,9 @@ const removeButton = (toRemove: TemplateButton) => {
 <template>
 	<div>
 		<div class="flex flex-col gap-1">
-			<h2 class="font-medium text-lg">{{ $t('buttons') }}</h2>
+			<h2 class="font-medium text-xl">{{ $t('buttons') }}</h2>
 
-			<p class="text-slate-500 text-sm">{{ t('help_text_buttons') }}</p>
+			<p class="text-slate-500">{{ t('help_text_buttons') }}</p>
 
 			<Button 
 				severity="secondary" 

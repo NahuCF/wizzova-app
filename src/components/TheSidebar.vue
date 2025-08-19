@@ -84,7 +84,7 @@ const parentRouteName = computed(() => {
 </script>
 
 <template>
-	<div class="w-[13rem] shadow bg-white z-101">
+	<div class="w-[200px] shadow bg-white z-101">
 		<ul class="list-none p-0 m-0 flex flex-col">
 			<li 
 				v-for="page in pages" 
@@ -97,7 +97,7 @@ const parentRouteName = computed(() => {
 				@click="page.action"
 			>
 				<component :is="page.icon" :key="page.name" :class="page.iconClass" />
-				<div :class="`text-sm ${page.class}`">{{ page.name }}</div>
+				<div :class="`text-base ${page.class}`">{{ page.name }}</div>
 			</li>
 		</ul>
 	</div>

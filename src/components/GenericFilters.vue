@@ -192,14 +192,14 @@ const dateModel = (conditionIndex: number, valueIndex: number) =>
             ref="filterButton"
         >
             <IconFilter size="14" class="mr-1" />
-            <span class="text-sm">{{ $t('filter') }}</span>
+            <span>{{ $t('filter') }}</span>
         </Button>
 
         <Menu :model="menuItems" :popup="true" ref="menu">
             <template #item="{ item, props }">
                 <div v-ripple v-bind="props.action" @click="item.action" class="flex items-center gap-2">
                     <component v-if="item.icon" :is="item.icon" class="text-gray-500" size="14" />
-                    <span class="text-sm">{{ item.label }}</span>
+                    <span>{{ item.label }}</span>
                 </div>
             </template>
         </Menu>
@@ -209,9 +209,9 @@ const dateModel = (conditionIndex: number, valueIndex: number) =>
             <div class="flex justify-between gap-2 p-3">
                 <div class="flex items-center gap-2">
                     <component v-if="selectedColumn?.icon" :is="selectedColumn.icon" class="text-gray-500" size="14" />
-                    <span class="text-sm">{{ selectedColumn?.name }}</span>
+                    <span>{{ selectedColumn?.name }}</span>
                 </div>
-                <Button severity="secondary" variant="text" rounded class="p-1!" size="small" @click="closePopover">
+                <Button severity="secondary" variant="text" rounded class="p-1!" @click="closePopover">
                     <IconX size="14" />
                 </Button>
             </div>
@@ -222,9 +222,9 @@ const dateModel = (conditionIndex: number, valueIndex: number) =>
                 <template v-for="(condition, index) in currentFilter.conditions" :key="index">
                     <div class="flex items-center gap-2 mb-3">
                         <Select v-model="condition.operator" :options="getOperatorOptions(selectedColumn!)"
-                            optionLabel="label" optionValue="value" class="flex-1" size="small" />
+                            optionLabel="label" optionValue="value" class="flex-1" />
                         <Button v-if="currentFilter.conditions.length > 1" text @click="removeCondition(index)">
-                            <IconTrash class="w-4 h-4 text-red-500" />
+                            <IconTrash class="w-5 h-5 text-red-500" />
                         </Button>
                     </div>
 
@@ -244,7 +244,6 @@ const dateModel = (conditionIndex: number, valueIndex: number) =>
                                 dateFormat="yy-mm-dd" 
                                 mask="9999-99-99" 
                                 placeholder="yyyy-mm-dd"
-                                size="small"
                             />
 
                             <!-- NUMBER -->
@@ -253,7 +252,6 @@ const dateModel = (conditionIndex: number, valueIndex: number) =>
                                 v-model="condition.value[valIdx]"
                                 class="flex-1" v-keyfilter="/[0-9]/" 
                                 :placeholder="t('filters.enter_value')"
-                                size="small" 
                             />
 
                             <!-- SELECT or other with options -->
@@ -265,7 +263,6 @@ const dateModel = (conditionIndex: number, valueIndex: number) =>
                                 :placeholder="t('filters.enter_value')"
                                 optionLabel="label" 
                                 optionValue="value"
-                                size="small"  
                             />
 
                             <!-- Default to text input -->
@@ -273,20 +270,19 @@ const dateModel = (conditionIndex: number, valueIndex: number) =>
                                 v-else 
                                 v-model="condition.value[valIdx]" 
                                 class="flex-1"
-                                :placeholder="t('filters.enter_value')"
-                                size="small" 
+                                :placeholder="t('filters.enter_value')" 
                             />
 
                             <Button v-if="valIdx === condition.value.length - 1" text @click="addValue(index)">
-                                <IconPlus class="w-4 h-4 text-gray-500" />
+                                <IconPlus class="w-5 h-5 text-gray-500" />
                             </Button>
 
-                            <span v-if="valIdx < condition.value.length - 1" class="text-sm text-gray-500">
+                            <span v-if="valIdx < condition.value.length - 1" class="text-gray-500">
                                 {{ $t('filters.or') }}
                             </span>
 
                             <Button v-if="condition.value.length > 1" text @click="removeValue(index, valIdx)">
-                                <IconTrash class="w-4 h-4 text-red-500" />
+                                <IconTrash class="w-5 h-5 text-red-500" />
                             </Button>
                         </div>
                     </div>
@@ -296,7 +292,7 @@ const dateModel = (conditionIndex: number, valueIndex: number) =>
                     </Divider>
                 </template>
 
-                <Button text size="small" @click="addCondition">
+                <Button text @click="addCondition">
                     <IconPlus size="16" class="inline mr-1" />
                     {{ $t('filters.add_condition') }}
                 </Button>
@@ -306,8 +302,8 @@ const dateModel = (conditionIndex: number, valueIndex: number) =>
 
             <div class="flex flex-col gap-2 p-3">
                 <div class="flex justify-end gap-2">
-                    <Button :label="$t('cancel')" text size="small" @click="closePopover" />
-                    <Button :label="$t('apply')" size="small" @click="addFilter" />
+                    <Button :label="$t('cancel')" text @click="closePopover" />
+                    <Button :label="$t('apply')" @click="addFilter" />
                 </div>
             </div>
         </Popover>

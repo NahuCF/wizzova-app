@@ -87,7 +87,7 @@ fetchDeletedUsers()
         >
             <template #restore="{ data }: { data: UserItem }">
                 <div class="flex justify-center">
-                    <Button severity="secondary" @click="onRestoreUser(data)" size="small">
+                    <Button severity="secondary" @click="onRestoreUser(data)">
                         <div>
                             {{ $t('deleted_users.restore') }}
                         </div>

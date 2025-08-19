@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import type { DataTablePageEvent } from 'primevue'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, type Component } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { IconLoader2, IconPlus } from '@tabler/icons-vue'
 import moment from 'moment'
 import { API } from '~/services'
 import { IconEdit, IconTrash, IconList, IconLayoutGrid, IconSearch } from '@tabler/icons-vue'
-import type { TemplateBroadcast, TemplateCreate, TemplateItem } from '~/types'
+import type { Column, LayoutMode, TemplateBroadcast, TemplateCreate, TemplateItem } from '~/types'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { useCrudActions } from '~/composables/useCrudActions'
+import { useTemplateStore } from '~/stores/template'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -40,17 +41,24 @@ const {
 	}
 })
 
-const activeLayout = ref(1)
+const templateStore = useTemplateStore()
+
 const loadingBroadcasts = ref(false)
 const showBroadcastsDialog = ref(false)
 const templateBroadcasts = ref<TemplateBroadcast[]>()
-const layoutOptions = ref([
+const layoutOptions = ref<{ 
+	label: string,
+	mode: LayoutMode,
+	icon: Component
+}[]>([
 	{
 		label: 'list',
+		mode: 'LIST',
 		icon: IconList
 	},
 	{
 		label: 'grid',
+		mode: 'GRID',
 		icon: IconLayoutGrid
 	}
 ])
@@ -97,10 +105,54 @@ const popover = ref()
 const deleteId = ref('')
 const showDeleteDialog = ref(false)
 
-const changeLayout = (index: number) => {
-	activeLayout.value = index
+const columns = ref<Column[]>([
+    {
+        header: t('template.name'),
+        key: 'name',
+    },
+    {
+        header: t('template.message'),
+        key: 'message',
+		bodyStyle: { maxWidth: '300px' }
+    },
+    {
+        header: t('template.language_code'),
+        key: 'languageCode'
+    },
+    {
+        header: t('template.created_at'),
+        key: 'createdAt'
+    },
+    {
+        header: t('template.category'),
+        key: 'category'
+    },
+	{
+        header: t('template.status'),
+        key: 'status',
+		type: 'CUSTOM'
+    },
+    {
+        header: '',
+        key: 'actions',
+        type: 'ACTIONS'
+    }
+])
+
+const transformedData = computed(() => {
+    return dataPage.value.data.map(item => ({
+        ...item,
+		message: item.components.body?.content ?? '',
+		languageCode: item.language.toUpperCase(),
+        createdAt: moment(item.created_at).format('DD/MM/YYYY'),
+        actions: templateOptions.value,
+    }))
+})
+
+const changeLayout = (layoutMode: LayoutMode) => {
+	templateStore.activeLayout = layoutMode
 	
-	if (index === 1) {
+	if (layoutMode === 'GRID') {
 		rowsPerPage.value = 12
 	} else {
 		rowsPerPage.value = 10
@@ -136,21 +188,21 @@ onMounted(() => {
 
 <template>
 	<div class="flex flex-col p-6">
-		<div class="flex justify-between items-center py-5 z-2 bg-slate-100">
-			<h1 class="font-semibold text-xl">{{ t('templates.whatsapp_templates') }}</h1>
+		<div class="flex justify-between items-center z-2 bg-slate-100">
+			<h1 class="font-semibold text-2xl">{{ t('templates.whatsapp_templates') }}</h1>
 			<Button @click="router.push({ name: 'new-template' })">
-				<IconPlus size="16" class="mr-2" />
+				<IconPlus size="16" />
 				<span>
 					{{ $t('templates.create_new_template') }}
 				</span>
 			</Button>
 		</div>
-		<div class="flex gap-3 py-4">
+		<div class="flex items-center gap-3 pt-6 pb-8">
 			<div class="relative">
-				<IconSearch size="16" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+				<IconSearch size="14" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
 				<InputText
 					v-model="searchTerm"
-					class="pl-8! max-w-[300px]"
+					class="pl-8! max-w-[300px] shadow-none!"
 					name="search"
 					id="search"
 					fluid
@@ -161,81 +213,42 @@ onMounted(() => {
 
 			<ButtonGroup>
 				<Button 
-					v-for="(option, index) in layoutOptions" 
-					:key="index" 
-					:variant="activeLayout !== index ? 'outlined' : 'solid'"
-					class="py-1.5!"
-					@click="changeLayout(index)"
+					v-for="(option) in layoutOptions" 
+					:key="option.mode" 
+					:variant="templateStore.activeLayout !== option.mode ? 'outlined' : 'solid'"
+					class="border-emerald-500!"
+					@click="changeLayout(option.mode)"
 				>
 					<component
 						:is="option.icon"
-						class="w-[20px] h-[20px]"
+						class="w-[16px] h-[16px]"
 					/>
-					{{ $t(option.label) }}
+					<span>
+						{{ $t(option.label) }}
+					</span>
 				</Button>
 			</ButtonGroup>
 		</div>
 		
-		<div v-if="activeLayout === 0" class="flex flex-col h-full">
-			<DataTable 
-				:value="dataPage.data"
-				dataKey="id"
-				:lazy="true"
-				:paginator="true"
+		<div v-if="templateStore.activeLayout === 'LIST'" class="flex flex-col h-full">
+			<Table 
+				:data="transformedData"
+				:columns="columns"
+				emptyMessage="template.empty"
 				:loading="loading"
-				:rows="rowsPerPage"
+				withPagination
 				:totalRecords="dataPage.meta.total"
-				:rowsPerPageOptions="[10, 20, 50]"
-				scrollable
-  				scrollHeight="flex"
-				paginatorTemplate="CurrentPageReport PrevPageLink NextPageLink"
-				:currentPageReportTemplate="currentPageReport"
-				@page="onPage"
+				:rowsPerPage="rowsPerPage"
+				:showPageSize="false"
+				:currentPageReport="currentPageReport"
+				@onPage="onPage"
 			>
-				<template #empty>
-					<div class="text-center py-4 text-gray-500">
-						{{ $t('template.empty') }}
+				<template #status="{ data }: { data: TemplateItem }">
+					<div class="flex flex-col items-start">
+						<StatusBadge :status="data.status" :label="$t(`template_status.${data.status}`)" />
 					</div>
 				</template>
-
-				<Column field="name" :header="$t('template.name')" />
-
-				<Column :header="$t('template.message')" :bodyStyle="{ maxWidth: '300px' }" >
-					<template #body="{ data }">
-						<span class="block whitespace-nowrap overflow-hidden text-ellipsis">
-							{{ data.components.body?.content ?? '' }}
-						</span>
-					</template>
-				</Column>
-
-				<Column field="language" :header="$t('template.language_code')">
-					<template #body="{ data }">
-						{{ data.language.toUpperCase() }}
-					</template>
-				</Column>
-
-				<Column :header="$t('template.created_at')">
-					<template #body="{ data }">
-						{{ moment(data.created_at).format('DD/MM/YYYY') }}
-					</template>
-				</Column>
-
-				<Column field="category" :header="$t('template.category')" />
-
-				<Column :header="$t('template.status')">
-					<template #body="{ data }">
-						<div class="flex flex-col items-start">
-							<StatusBadge :status="data.status" :label="$t(`template_status.${data.status}`)" />
-						</div>
-					</template>
-				</Column>
-
-				<Column>
-					<template #body="{ data }">
-						<ActionButton @click="(e: Event) => popover?.show(e, data)" />
-					</template>
-				</Column>
-			</DataTable>
+			</Table>
 		</div>
 		<div v-else>
 			<TemplateCardList

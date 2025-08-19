@@ -87,7 +87,7 @@ watch(() => props.visible, () => {
     <Drawer 
 		:visible="visible" 
 		@update:visible="emit('update:visible', $event)" 
-		class="w-[32rem]!" 
+		class="w-[512px]!" 
 		:header="title" 
 		position="right"
 	>
@@ -96,7 +96,7 @@ watch(() => props.visible, () => {
         <div class="flex flex-col gap-6 pt-6">
             <div class="flex flex-col gap-1 relative">
                 <div class="flex gap-1">
-                    <label class="text-sm text-neutral-800! font-medium" for="name">{{ $t('teams.name.label') }}</label>
+                    <label class="text-neutral-800! font-medium" for="name">{{ $t('teams.name.label') }}</label>
                     <IconAsterisk color="red" class="mt-1" size="8" />
                 </div>
                 <InputText 
@@ -105,12 +105,11 @@ watch(() => props.visible, () => {
                     fluid
                     id="name"
                     name="name"
-					size="small"
                 />
             </div>
 
             <div class="flex flex-col gap-1 relative">
-                <label class="text-sm text-neutral-800! font-medium" for="users">{{ $t('teams.users.label') }}</label>
+                <label class="text-neutral-800! font-medium" for="users">{{ $t('teams.users.label') }}</label>
                 
                 <Select
                     v-model="emptySelect"
@@ -120,7 +119,6 @@ watch(() => props.visible, () => {
                     optionLabel="name"
                     :placeholder="$t('teams.users.placeholder')"
                     class="w-full" 
-                    size="small"
                 />
 
                 <DataTable 
@@ -133,20 +131,20 @@ watch(() => props.visible, () => {
                     scrollHeight="flex"
                 >
                     <template #empty>
-                        <div class="text-center text-sm py-4 text-gray-500">
+                        <div class="text-center text-base py-4 text-gray-500">
                             {{ $t('users.empty') }}
                         </div>
                     </template>
 
                     <Column headerClass="bg-slate-200!">
                         <template #header>
-                            <div class="uppercase text-sm font-semibold">
+                            <div class="uppercase text-base font-semibold">
                                 {{ $t(`users.headers.name`) }}
                             </div>
                         </template>
 
                         <template #body="{ data }: { data: UserItem }">
-                            <span class="block whitespace-nowrap overflow-hidden text-ellipsis text-sm">
+                            <span class="block whitespace-nowrap overflow-hidden text-ellipsis text-base">
                                 {{ data.name }}
                             </span>
                         </template>
@@ -154,7 +152,7 @@ watch(() => props.visible, () => {
 
                     <Column bodyClass="max-w-[30px]" headerClass="bg-slate-200! max-w-[60px]">
                         <template #header>
-                            <div class="uppercase text-sm font-semibold">
+                            <div class="uppercase text-base font-semibold">
                                 {{ $t(`teams.headers.actions`) }}
                             </div>
                         </template>
@@ -177,7 +175,7 @@ watch(() => props.visible, () => {
                     :disabled="loading || !canSubmit()"
                     v-tooltip.top="!canSubmit() && {
 						value: $t('teams.create_team_tooltip'),
-						class: 'text-sm max-w-[300px]!'
+						class: 'text-base max-w-[300px]!'
 					}"
                     @click="onConfirm" 
                 >

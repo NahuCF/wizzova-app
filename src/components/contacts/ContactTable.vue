@@ -134,13 +134,13 @@ const formatField = (contactFieldValue: ContactFieldValue | undefined, columnNam
         <template v-for="column in columns" :key="cf.key" #[column.key]="{ data }: { data: ContactFieldRecord }">
             <div class="flex">
                 <span
-                    class="block whitespace-nowrap overflow-hidden text-ellipsis"
+                    class="block whitespace-nowrap overflow-hidden text-ellipsis text-base"
                     :class="{ 'opacity-25': data[column.key] === undefined }"
                     v-tooltip.bottom="
                         Array.isArray(data[column.key]) 
                             ? {
                                 value: (data[column.key] as string[]).join('\n'),
-                                class: 'text-sm max-w-[300px]!'
+                                class: 'text-base max-w-[300px]!'
                             } 
                             : undefined
                     "

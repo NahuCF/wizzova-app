@@ -96,7 +96,7 @@ watch(() => props.visible, () => {
     <Drawer 
 		:visible="visible" 
 		@update:visible="emit('update:visible', $event)" 
-		class="w-[32rem]!" 
+		class="w-[512px]!" 
 		:header="title" 
 		position="right"
 	>
@@ -105,7 +105,7 @@ watch(() => props.visible, () => {
         <div class="flex flex-col gap-6 pt-6">
             <div class="flex flex-col gap-1 relative">
                 <div class="flex gap-1">
-                    <label class="text-sm text-neutral-800! font-medium" for="name">{{ $t('roles.name.label') }}</label>
+                    <label class="text-neutral-800! font-medium" for="name">{{ $t('roles.name.label') }}</label>
                     <IconAsterisk color="red" class="mt-1" size="8" />
                 </div>
                 <InputText 
@@ -114,14 +114,13 @@ watch(() => props.visible, () => {
                     fluid
                     id="name"
                     name="name"
-					size="small"
                 />
             </div>
 		</div>
 
 		<div class="flex flex-col gap-6 pt-6">
-			<div class="flex justify-between items-center pb-1 text-sm">
-				<div class="text-sm text-neutral-800! font-medium">
+			<div class="flex justify-between items-center pb-1">
+				<div class="text-base text-neutral-800! font-medium">
 					{{ $t('roles.role_permissions').toUpperCase() }}
 				</div>
 
@@ -129,21 +128,20 @@ watch(() => props.visible, () => {
 					:modelValue="hasAllPermissions"
 					@click="enableAllPermissions"
 					variant="text"
-					size="small"
 				>
 					{{ $t('roles.enable_all') }}
 				</Button>
 			</div>
 
 			<div v-for="[group, permissionList] in Object.entries(permissions?.meta.groups || {})" class="flex flex-col gap-1 relative">
-				<label class="text-sm text-neutral-800! font-medium pb-3" for="name">{{ group.toUpperCase() }}</label>
-				<div class="flex justify-between items-center pb-1 text-sm" v-for="permission in permissionList">
+				<label class="text-base text-neutral-800! font-medium pb-3" for="name">{{ group.toUpperCase() }}</label>
+				<div class="flex justify-between items-center pb-1 text-base" v-for="permission in permissionList">
 					<div class="flex items-center gap-2">
 						{{ permission.label }}
 						<div
 							v-tooltip.top="{
 								value: permission.description,
-								class: 'text-sm max-w-[300px]!'
+								class: 'text-base max-w-[300px]!'
 							}"
 						>
 							<IconInfoCircle
@@ -172,7 +170,7 @@ watch(() => props.visible, () => {
 					:disabled="loading || !canSubmit()"
 					v-tooltip.top="!canSubmit() && {
 						value: $t('roles.create_role_tooltip'),
-						class: 'text-sm max-w-[300px]!'
+						class: 'text-base max-w-[300px]!'
 					}"
 					@click="onConfirm()" 
 				>

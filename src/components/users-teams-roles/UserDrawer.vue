@@ -119,7 +119,7 @@ watch(() => user.value.email, (newEmail) => {
     <Drawer 
 		:visible="visible" 
 		@update:visible="emit('update:visible', $event)" 
-		class="w-[32rem]!" 
+		class="w-[512px]!" 
 		:header="title" 
 		position="right"
 	>
@@ -128,7 +128,7 @@ watch(() => user.value.email, (newEmail) => {
         <div class="flex flex-col gap-6 pt-6">
             <div class="flex flex-col gap-1 relative">
                 <div class="flex gap-1">
-                    <label class="text-sm text-neutral-800! font-medium" for="name">{{ $t('users.name.label') }}</label>
+                    <label class="text-neutral-800! font-medium" for="name">{{ $t('users.name.label') }}</label>
                     <IconAsterisk color="red" class="mt-1" size="8" />
                 </div>
                 <InputText 
@@ -137,13 +137,12 @@ watch(() => user.value.email, (newEmail) => {
                     fluid
                     id="name"
                     name="name"
-					size="small"
                 />
             </div>
 
 			<div class="flex flex-col gap-1 relative">
                 <div class="flex gap-1">
-                    <label class="text-sm text-neutral-800! font-medium" for="email">{{ $t('users.email.label') }}</label>
+                    <label class="text-neutral-800! font-medium" for="email">{{ $t('users.email.label') }}</label>
                     <IconAsterisk color="red" class="mt-1" size="8" />
                 </div>
                 <InputText 
@@ -152,7 +151,6 @@ watch(() => user.value.email, (newEmail) => {
                     fluid
                     id="email"
                     name="email"
-					size="small"
                 />
                 <Message
                     v-if="emailError"
@@ -165,7 +163,7 @@ watch(() => user.value.email, (newEmail) => {
 
             <div class="flex flex-col gap-1 relative">
 				<div class="flex gap-1">
-                    <label class="text-sm text-neutral-800! font-medium" for="users">{{ $t('users.role.label') }}</label>
+                    <label class="text-neutral-800! font-medium" for="users">{{ $t('users.role.label') }}</label>
                     <IconAsterisk color="red" class="mt-1" size="8" />
                 </div>
                 <Select
@@ -174,12 +172,11 @@ watch(() => user.value.email, (newEmail) => {
                     :placeholder="$t('users.role.placeholder')"
 					optionLabel="name"
                     class="w-full" 
-                    size="small"
                 />
             </div>
 
 			<div class="flex flex-col gap-1 relative">
-				<label class="text-sm text-neutral-800! font-medium" for="users">{{ $t('users.teams.label') }}</label>
+				<label class="text-neutral-800! font-medium" for="users">{{ $t('users.teams.label') }}</label>
                 <MultiSelect
                     v-model="user.teams"
                     :options="getTeams"
@@ -187,7 +184,6 @@ watch(() => user.value.email, (newEmail) => {
 					display="chip"
                     :placeholder="$t('users.teams.placeholder')"
                     class="w-full" 
-                    size="small"
                 />
             </div>
 		</div>
@@ -202,7 +198,7 @@ watch(() => user.value.email, (newEmail) => {
 					:disabled="loading || !canSubmit()"
 					v-tooltip.top="!canSubmit() && {
 						value: $t('users.create_user_tooltip'),
-						class: 'text-sm max-w-[300px]!'
+						class: 'text-base max-w-[300px]!'
 					}"
 					@click="onConfirm()" 
 				>

@@ -45,15 +45,15 @@ fetchHeaderComponentTypes()
 
 <template>
     <div>
-        <div class="flex items-center gap-2 mb-2">
-            <h2 class="font-medium text-lg">{{ $t('header') }}</h2>
+        <div class="flex items-center gap-2 mb-4">
+            <h2 class="font-medium text-xl">{{ $t('header') }}</h2>
             <div v-tooltip.bottom="{
                 value: t('header_tooltip'),
                 class: 'text-sm max-w-[250px]!'
             }">
                 <IconInfoCircle class="text-slate-700 hover:cursor-pointer" size="16" />
             </div>
-            <Badge severity="secondary">{{ $t('optional') }}</Badge>
+            <Badge severity="secondary" class="text-base!">{{ $t('optional') }}</Badge>
         </div>
         <div class="flex flex-wrap gap-4">
             <div v-for="headerType in fullHeaderTypes" :key="headerType.id" class="flex items-center gap-2">
@@ -63,7 +63,7 @@ fetchHeaderComponentTypes()
                     :inputId="headerType.code"
                     :value="headerType.code"
                 />
-                <label class="cursor-pointer" :for="headerType.code">{{ $t(`header_type.${headerType.code}`) }}</label>
+                <label class="text-xl cursor-pointer" :for="headerType.code">{{ $t(`header_type.${headerType.code}`) }}</label>
             </div>
         </div>
 
@@ -76,7 +76,7 @@ fetchHeaderComponentTypes()
                 id="header" 
                 fluid 
                 :maxlength="60"
-                :placeholder="$t('header_placeholder')" 
+                :placeholder="$t('header_placeholder')"
             />
             <div class="absolute right-3 top-2 text-slate-400">
                 {{ text.length }} / 60
