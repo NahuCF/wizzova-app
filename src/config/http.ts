@@ -11,7 +11,8 @@ const Http = axios.create({
 const allowedPaths = [
 	'/tenant/meta-access',
 	'/tenant/complete-profile',
-	'/meta/app-id'
+	'/meta/app-id',
+	'/login'
 ]
 
 export function setupInterceptors() {
