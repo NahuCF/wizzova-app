@@ -60,7 +60,6 @@ const updateItem = (index: number, value: string) => {
                         :placeholder="placeholder"
                         :value="item"
                         :invalid="invalid"
-                        size="small"
                         @input="(event: Event) => {
                             const target = event.target as HTMLInputElement
                             updateItem(index, target.value)

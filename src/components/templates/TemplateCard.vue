@@ -53,7 +53,7 @@ const onClick = () => {
 		<div class="flex flex-col gap-2 w-full p-2 bg-slate-200 rounded-t-md">
 			<div class="flex justify-between items-center">
 				<div class="flex flex-col">
-					<h3 class="font-semibold mb-2">{{ template.name }}</h3>
+					<h3 class="text-lg font-semibold mb-2">{{ template.name }}</h3>
 					<div class="flex items-center gap-2">
 						<StatusBadge :status="template.status" :label="$t(`template_status.${template.status}`)" />
 						<div class="text-base font-normal text-slate-500">
@@ -79,7 +79,7 @@ const onClick = () => {
 		</div>
 
 		<!-- MESSAGE TEMPLATE -->
-		<div class="mt-3 mb-2 px-6 pt-3 pb-5 overflow-y-scroll overflow-x-hidden h-100">
+		<div class="mt-3 mb-2 px-6 pt-3 pb-5 overflow-y-auto overflow-x-hidden h-100">
 			<MessagePreview 
 				:header="headerText" 
 				:body="template.components.body.content"

@@ -191,7 +191,7 @@ onMounted(() => {
 						<label for="your_name">{{ $t('your_name') }}</label>
 						<InputText v-model="form.name" name="name" id="your_name"
 							:placeholder="$t('enter_your_full_name')" />
-						<Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple"
+						<Message v-if="$form.name?.invalid" severity="error" variant="simple"
 							class="absolute bottom-[-1.4rem]">{{ $t($form.name.error?.message) }}</Message>
 					</div>
 
@@ -199,7 +199,7 @@ onMounted(() => {
 						<label for="company_name">{{ $t('signup.company_name.label') }}</label>
 						<InputText v-model="form.companyName" name="companyName" id="companyName"
 							:placeholder="$t('signup.company_name.placeholder')" />
-						<Message v-if="$form.companyName?.invalid" severity="error" size="small" variant="simple"
+						<Message v-if="$form.companyName?.invalid" severity="error" variant="simple"
 							class="absolute bottom-[-1.4rem]">{{ $t($form.companyName.error?.message) }}</Message>
 					</div>
 
@@ -220,7 +220,7 @@ onMounted(() => {
 									:formControl="{ validateOnValueUpdate: false }" />
 							</InputGroup>
 						</div>
-						<Message v-if="$form.cellphone?.invalid" severity="error" size="small" variant="simple"
+						<Message v-if="$form.cellphone?.invalid" severity="error" variant="simple"
 							class="absolute bottom-[-1.4rem]">{{ $t($form.cellphone.error?.message) }}</Message>
 					</div>
 					<div class="flex flex-col gap-1 relative">

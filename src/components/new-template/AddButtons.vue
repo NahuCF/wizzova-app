@@ -137,7 +137,7 @@ const removeButton = (toRemove: TemplateButton) => {
 		<div class="flex flex-col gap-1">
 			<h2 class="font-medium text-xl">{{ $t('buttons') }}</h2>
 
-			<p class="text-slate-500">{{ t('help_text_buttons') }}</p>
+			<p class="text-slate-500 text-lg">{{ t('help_text_buttons') }}</p>
 
 			<Button 
 				severity="secondary" 
@@ -163,7 +163,7 @@ const removeButton = (toRemove: TemplateButton) => {
 								@click="switchCategoryOrder(category)">
 								<IconSwitchVertical class="w-5 h-5" />
 							</button>
-							<h3>{{ t(category) }}</h3>
+							<h3 class="text-lg">{{ t(category) }}</h3>
 						</div>
 						<draggable
 							:list="buttons"

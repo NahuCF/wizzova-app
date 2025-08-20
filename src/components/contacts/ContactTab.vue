@@ -183,13 +183,12 @@ userStore.fetchUsers()
         <div v-if="filters.length > 0" class="flex flex-wrap gap-2">
             <template v-for="(filter, fIndex) in filters" :key="fIndex">
                 <template v-for="(condition, cIndex) in filter.conditions" :key="cIndex">
-                    <Tag class="px-3!" rounded size="small">
+                    <Tag class="px-3!" rounded>
                         {{ formatCondition(filter.columnId, condition) }}
                         <Button 
                             variant="text" 
                             rounded
                             class="p-0.5!"
-                            size="small"
                             @click="removeFromFilter(fIndex, cIndex)"
                         >
                             <IconX class="w-4 h-4" />

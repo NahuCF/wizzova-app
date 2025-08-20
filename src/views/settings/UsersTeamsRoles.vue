@@ -40,25 +40,25 @@ const debouncedFetchUsers = useDebounceFn(() => fetchUsers(true), 500)
     <div class="flex flex-col h-full">
         <div class="px-6 pt-6 text-2xl font-semibold">{{ $t('users_teams_roles.title') }}</div>
         <Tabs v-model:value="currentTab" class="py-4" lazy>
-            <TabList>
+            <TabList class="text-lg">
                 <Tab value="users">
                     <div class="flex items-center gap-2 text-inherit">
-                        <span class="text-base">{{ $t('users_teams_roles.users_tab') }}</span>
+                        <span>{{ $t('users_teams_roles.users_tab') }}</span>
                     </div>
                 </Tab>
                 <Tab value="deleted_users">
                     <div class="flex items-center gap-2 text-inherit">
-                        <span class="text-base">{{ $t('users_teams_roles.deleted_users_tab') }}</span>
+                        <span>{{ $t('users_teams_roles.deleted_users_tab') }}</span>
                     </div>
                 </Tab>
                 <Tab value="teams">
                     <div class="flex items-center gap-2 text-inherit">
-                        <span class="text-base">{{ $t('users_teams_roles.teams_tab') }}</span>
+                        <span>{{ $t('users_teams_roles.teams_tab') }}</span>
                     </div>
                 </Tab>
                 <Tab value="roles">
                     <div class="flex items-center gap-2 text-inherit">
-                        <span class="text-base">{{ $t('users_teams_roles.roles_tab') }}</span>
+                        <span>{{ $t('users_teams_roles.roles_tab') }}</span>
                     </div>
                 </Tab>
                 <div class="flex flex-col justify-center ms-auto">

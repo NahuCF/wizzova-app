@@ -70,7 +70,7 @@ onBeforeRouteLeave((to, from, next) => {
     <div class="flex flex-col justify-between h-full">
         <div class="flex flex-col w-full p-6">
             <Stepper v-model:value="currentStep" linear>
-                <StepList class="flex xl:px-70! ">
+                <StepList class="flex xl:px-70! text-xl">
                     <Step :value="1">{{ $t('new_broadcast.select_template') }}</Step>
                     <Step :value="2">{{ $t('new_broadcast.select_audience') }}</Step>
                     <Step :value="3">{{ $t('new_broadcast.schedule_broadcast') }}</Step>
@@ -107,7 +107,7 @@ onBeforeRouteLeave((to, from, next) => {
                     :disabled="newBroadcast.contactGroups.length === 0"
                     @click="goToSchedule"
                 >
-                    <span class="text-sm">
+                    <span>
                         {{ $t('continue') }}
                     </span>
                 </Button>
@@ -118,7 +118,7 @@ onBeforeRouteLeave((to, from, next) => {
                     severity="secondary"
                     @click="router.push({ name: 'broadcasts' })"
                 >
-                    <span class="text-sm">
+                    <span>
                         {{ $t('cancel') }}
                     </span>
                 </Button>
@@ -126,7 +126,7 @@ onBeforeRouteLeave((to, from, next) => {
                     :disabled="!canSubmit()"
                     @click="scheduleBroadcast"
                 >
-                    <span class="text-sm">
+                    <span>
                         {{ $t('new_broadcast.schedule_broadcast') }}
                     </span>
                 </Button>

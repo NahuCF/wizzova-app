@@ -122,7 +122,7 @@ onUnmounted(() => {
     <div class="flex flex-col gap-6 h-full p-6">
         <div class="flex justify-between">
 			<div class="flex items-center">
-                <Button variant="text" @click="router.push({ name: 'contacts' })" size="small" severity="secondary">
+                <Button class="p-1!" variant="text" @click="router.push({ name: 'contacts' })" severity="secondary">
                     <IconArrowLeft size="22" />
                 </Button>
                 <h1 class="font-semibold text-2xl">{{ $t('contact_imports.title') }}</h1>

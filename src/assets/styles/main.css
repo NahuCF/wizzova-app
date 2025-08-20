@@ -7,7 +7,15 @@ html {
 
 @layer base {
     body {
-        @apply text-lg;
+        @apply text-base;
+    }
+
+    .p-select-label {
+        @apply text-base;
+    }
+
+    .p-select-option {
+        @apply text-base;
     }
 }
 

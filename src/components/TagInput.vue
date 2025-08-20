@@ -44,7 +44,7 @@ const removeTag = (index: number) => {
         <div class="flex items-center flex-wrap gap-2">
             <Tag v-for="(tag, index) in modelValue" :key="`tag-${index}`"
                 class="px-2 py-1 rounded-full">
-                <div class="flex items-center gap-1">
+                <div class="flex items-center gap-1 text-base">
                     <span>{{ tag }}</span>
                     <IconX 
                         size="14" 
@@ -58,14 +58,14 @@ const removeTag = (index: number) => {
                 </div>
             </Tag>
 
-            <Button class="text-primary text-sm! underline" severity="secondary" variant="link" @click="showTagInput">
+            <Button class="text-primary underline" severity="secondary" variant="link" @click="showTagInput">
                 <IconPlus size="16" />
                 <span>{{ $t('contacts.add_tag') }}</span>
             </Button>
         </div>
 
         <InputText v-if="isAddingTag" v-model="newTag" @keyup.enter="addTag" @blur="addTag"
-            :placeholder="placeholder || $t('contacts.placeholder.tag')" class="text-sm w-full max-w-xs"
+            :placeholder="placeholder || $t('contacts.placeholder.tag')" class="w-full max-w-xs"
             ref="tagInput" />
     </div>
 </template>

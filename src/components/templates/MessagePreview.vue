@@ -77,13 +77,13 @@ const iconComponents: Record<TemplateBtnType, Component> = {
     class="flex flex-col gap-2.5 bg-white px-3 pt-2 pb-1 message rounded-lg self-start break-all relative shadow "
     :class="`${minWidth ?? 'min-w-[18rem]'} ${maxWidth ?? 'max-w-[100%]'}`"
   >
-    <div v-if="header.length > 0" class="font-semibold">
+    <div v-if="header.length > 0" class="font-semibold text-lg">
       {{ header }}
     </div>
 
-    <span class="font-regular" v-if="body.length > 0" v-html="formattedBodyText"></span>
+    <span class="font-regular text-lg" v-if="body.length > 0" v-html="formattedBodyText"></span>
 
-    <div class="text-slate-400 text-sm italic" v-if="body.length > 0 && footer.length > 0">
+    <div class="text-slate-400 italic" v-if="body.length > 0 && footer.length > 0">
       {{ footer }}
     </div>
     <div class="triangle"></div>
@@ -105,7 +105,7 @@ const iconComponents: Record<TemplateBtnType, Component> = {
 .triangle {
   position: absolute;
   z-index: -10;
-  top: 0.7rem;
+  top: 0.8rem;
   left: -4px;
   width: 0;
   height: 0;

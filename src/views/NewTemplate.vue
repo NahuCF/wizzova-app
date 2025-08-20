@@ -217,7 +217,7 @@ onMounted(() => {
 			<div class="flex flex-col gap-3">
 				<div class="flex flex-col gap-1 relative">
 					<div class="flex gap-1">
-						<label for="name">{{ $t('template_name') }}</label>
+						<label for="name" class="text-lg">{{ $t('template_name') }}</label>
 						<IconAsterisk color="red" class="mt-1" size="8" />
 					</div>
 					<div class="relative">
@@ -242,7 +242,7 @@ onMounted(() => {
 						<div class="gap-5 grid grid-cols-3">
 							<div class="flex flex-col gap-1 relative">
 								<div class="flex gap-1">
-									<label for="category">{{ $t('category') }}</label>
+									<label for="category" class="text-lg">{{ $t('category') }}</label>
 									<IconAsterisk color="red" class="mt-1" size="8" />
 								</div>
 								<Select 
@@ -257,7 +257,7 @@ onMounted(() => {
 
 							<div class="flex flex-col gap-1 relative">
 								<div class="flex gap-1">
-									<label for="language">{{ $t('language') }}</label>
+									<label for="language" class="text-lg">{{ $t('language') }}</label>
 									<IconAsterisk color="red" class="mt-1" size="8" />
 								</div>
 								<Select 
@@ -272,7 +272,7 @@ onMounted(() => {
 
 							<div class="flex flex-col gap-1 relative">
 								<div class="flex gap-1 items-center">
-									<label for="allow_category_change">{{ $t('allow_category_change') }}</label>
+									<label for="allow_category_change" class="text-lg">{{ $t('allow_category_change') }}</label>
 									<div v-tooltip.top="{
 										value: t('help_text_category_change'),
 										class: 'text-sm max-w-[300px]!'

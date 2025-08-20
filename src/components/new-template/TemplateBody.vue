@@ -175,7 +175,7 @@ contactFieldStore.fetchContactFields()
 		<div class="mt-3">
 			<div class="flex justify-between">
 				<div class="flex items-center gap-2">
-					<Button severity="info" variant="outlined" class="self-start !border !border-slate-300 font-bold text-sm" size="small"
+					<Button severity="info" variant="outlined" class="self-start !border !border-slate-300 font-bold text-base!" size="small"
 						@click="openVariablesPopover">
 						{{ t('new_template.body.add_variable') }}
 					</Button>
@@ -228,8 +228,8 @@ contactFieldStore.fetchContactFields()
 		<div v-if="props.variables.length > 0" class="flex flex-col gap-2 pt-8 pb-5 border-b-1 border-slate-200">
 			<div class="flex flex-col gap-2 w-[80%]">
 				<div class="flex gap-16">
-					<label class="w-full" for="language">{{ $t('new_template.body.variable_name') }}</label>
-					<label class="w-full" for="language">{{ $t('new_template.body.sample_value') }}</label>
+					<label class="w-full text-lg" for="language">{{ $t('new_template.body.variable_name') }}</label>
+					<label class="w-full text-lg" for="language">{{ $t('new_template.body.sample_value') }}</label>
 				</div>
 
 				<div v-for="(variable, index) in props.variables" :key="variable.name" class="flex gap-16">
@@ -247,7 +247,7 @@ contactFieldStore.fetchContactFields()
 				</div>
 			</div>
 
-			<p class="text-slate-500 text-sm italic">
+			<p class="text-slate-500 italic">
 				{{ t('new_template.body.variables_info') }}
 			</p>
 		</div>

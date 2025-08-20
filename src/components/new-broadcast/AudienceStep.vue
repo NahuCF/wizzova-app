@@ -73,29 +73,39 @@ contactFieldStore.fetchContactFields()
     <div class="flex flex-col gap-6">
         <div class="flex justify-between pt-2.5">
             <div class="flex items-center gap-2">
-                <Button variant="text" @click="toPrevStep" size="small" severity="secondary">
-                    <IconArrowLeft size="18" />
+                <Button class="p-1!" variant="text" @click="toPrevStep" severity="secondary">
+                    <IconArrowLeft size="22" />
                 </Button>
-                <h1 class="font-semibold text-lg">{{ $t('new_broadcast.select_audience') }}</h1>
+                <h1 class="font-semibold text-2xl">{{ $t('new_broadcast.select_audience') }}</h1>
             </div>
         </div>
 
         <ContactGroupsTab v-model:selectedGroups="newBroadcast.contactGroups" />
 
-        <Dialog v-if="newBroadcast.template" v-model:visible="showMapDialog" modal :draggable="false"
-            contentClass="p-0! h-full" class="min-w-[25rem] max-w-[1088px] w-full"
-            :header="$t('new_broadcast.map_variables')">
+        <Dialog 
+            v-if="newBroadcast.template" 
+            v-model:visible="showMapDialog" 
+            modal 
+            :draggable="false"
+            contentClass="p-0! h-full" 
+            class="min-w-[25rem] max-w-[1088px] w-full"
+        >
+            <template #header>
+                <div class="text-2xl font-semibold">
+                    {{ $t('new_broadcast.map_variables') }}
+                </div>
+            </template>
             <div class="flex flex-col gap-6 p-6">
                 <table class="table-auto w-full bg-slate-50 rounded-lg border-separate border-spacing-y-3">
                     <thead>
                         <tr>
-                            <th class="text-start font-semibold min-w-[20%] p-5">
+                            <th class="text-start font-semibold min-w-[20%] p-5 text-lg">
                                 {{ $t('new_broadcast.variables') }}
                             </th>
-                            <th class="text-start font-semibold p-5">
+                            <th class="text-start font-semibold p-5 text-lg">
                                 {{ $t('new_broadcast.map') }}
                             </th>
-                            <th class="text-start font-semibold min-w-[30%] p-5">
+                            <th class="text-start font-semibold min-w-[30%] p-5 text-lg">
                                 {{ $t('new_broadcast.values') }}
                             </th>
                         </tr>
@@ -104,7 +114,7 @@ contactFieldStore.fetchContactFields()
                         <tr 
                             v-for="variable in newBroadcast.variables" :key="variable.name"
                         >
-                            <td class="p-5 text-sm text-sky-500">
+                            <td class="p-5 text-sky-500">
                                 {{ formatVariable(variable.name) }}
                             </td>
 
@@ -115,8 +125,7 @@ contactFieldStore.fetchContactFields()
                                             v-model="radioStates[variable.name]" 
                                             :inputId="`contact_field_${variable.name}`"
                                             :name="`radio_${variable.name}`" 
-                                            value="contact_field" 
-                                            size="small" 
+                                            value="contact_field"
                                         />
                                         <label :for="`contact_field_${variable.name}`">
                                             {{ $t('new_broadcast.contact_field') }}
@@ -127,8 +136,7 @@ contactFieldStore.fetchContactFields()
                                             v-model="radioStates[variable.name]" 
                                             :inputId="`custom_value_${variable.name}`"
                                             :name="`radio_${variable.name}`"
-                                            value="custom_value" 
-                                            size="small" 
+                                            value="custom_value"
                                         />
                                         <label :for="`custom_value_${variable.name}`">
                                             {{ $t('new_broadcast.custom_value') }}
@@ -146,7 +154,6 @@ contactFieldStore.fetchContactFields()
                                     optionValue="id"
                                     :placeholder="$t('new_broadcast.select_contact_field')"
                                     class="w-full" 
-                                    size="small"
                                     :invalid="Boolean(errors[variable.name])"
                                 />
                                 <Message 
@@ -154,7 +161,6 @@ contactFieldStore.fetchContactFields()
                                     severity="error" 
                                     :closable="false" 
                                     class="mt-2"
-                                    size="small"
                                 >
                                     {{ $t('new_broadcast.contact_field_error') }}
                                 </Message>
@@ -166,7 +172,6 @@ contactFieldStore.fetchContactFields()
                                     v-model="getVariableMapping(variable.name).value" 
                                     class="w-full"
                                     :placeholder="$t('new_broadcast.enter_custom_value')"
-                                    size="small"
                                     :invalid="Boolean(errors[variable.name])"
                                 />
                                 <Message 
@@ -174,7 +179,6 @@ contactFieldStore.fetchContactFields()
                                     severity="error" 
                                     :closable="false" 
                                     class="mt-2"
-                                    size="small"
                                 >
                                     {{ $t('new_broadcast.custom_field_error') }}
                                 </Message>

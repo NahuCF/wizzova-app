@@ -92,7 +92,6 @@ onMounted(() => {
                     :formControl="{ validateOnValueUpdate: false }"
                     :placeholder="placeholder" 
                     :invalid="invalid"
-                    size="small"
                     v-keyfilter="/[0-9]/"
                     :value="localNumber"
                     @input="onInput"

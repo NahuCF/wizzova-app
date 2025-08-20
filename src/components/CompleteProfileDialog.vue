@@ -91,8 +91,8 @@ onMounted(async () => {
 		<template #container>
 			<div class="flex flex-col p-8">
 				<div class="flex justify-center pb-32">
-					<Stepper :value="step" class="max-w-[350px] w-full" linear>
-						<StepList>
+					<Stepper :value="step" class="max-w-[400px] w-full" linear>
+						<StepList class="text-xl">
 							<Step :value="1">{{ $t('complete_profile.connect_account') }}</Step>
 							<Step :value="2">{{ $t('complete_profile.select_account') }}</Step>
 						</StepList>
@@ -101,10 +101,10 @@ onMounted(async () => {
 
 				<div v-if="step === 1" class="flex flex-col items-center gap-32 w-full">
 					<div class="flex flex-col items-center gap-8 max-w-[400px]">
-						<h3 class="text-3xl font-semibold text-center">
+						<h3 class="text-4xl font-semibold text-center">
 							{{ $t('complete_profile.connect_account_title') }}
 						</h3>
-						<p class="text-lg text-center">
+						<p class="text-xl text-center">
 							{{ $t('complete_profile.connect_account_description') }}
 						</p>
 						<div class="flex justify-center">
@@ -118,7 +118,6 @@ onMounted(async () => {
 						<Button
 							class="bg-white! border-slate-200! hover:bg-slate-100!" 
 							severity="secondary" 
-							size="small"
 						>
 							{{ $t('complete_profile.schedule_a_call') }}
 						</Button>
@@ -127,10 +126,10 @@ onMounted(async () => {
 
 				<div v-if="step === 2" class="flex flex-col items-center gap-32 w-full">
 					<div class="flex flex-col items-center gap-8 max-w-[400px]">
-						<h3 class="text-3xl font-semibold text-center">
+						<h3 class="text-4xl font-semibold text-center">
 							{{ $t('complete_profile.select_account_title') }}
 						</h3>
-						<p class="text-lg text-center">
+						<p class="text-xl text-center">
 							{{ $t('complete_profile.select_account_description') }}
 						</p>
 						<div class="flex justify-center w-full">

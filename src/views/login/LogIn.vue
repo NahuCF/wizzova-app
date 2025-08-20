@@ -93,10 +93,10 @@ if(savedEmail.value) {
 				</h1>
 				<div v-if="selectedTenant && savedEmail === form.email" class="flex justify-between mb-6">
 					<div class="flex flex-col">
-						<div class="text-sm text-neutral-800! font-medium">
+						<div class="text-neutral-800! font-medium">
 							{{ $t('login.company').toUpperCase() }}
 						</div>
-						<div class="text-sm">
+						<div>
 							{{ selectedTenant.company_name }}
 						</div>
 					</div>
@@ -109,7 +109,7 @@ if(savedEmail.value) {
 						<label for="workEmail">{{ $t('email') }}</label>
 						<InputText v-model="form.email" name="email" id="email"
 							:placeholder="$t('your').toLowerCase() + '@email.com'" />
-						<Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple"
+						<Message v-if="$form.email?.invalid" severity="error" variant="simple"
 							class="absolute bottom-[-1.4rem]">
 							{{ $t($form.email.error?.message) }}
 						</Message>
@@ -118,7 +118,7 @@ if(savedEmail.value) {
 						<label for="password">{{ $t('password') }}</label>
 						<Password v-model="form.password" class="w-full" placeholder="********" name="password"
 							id="password" :toggleMask="true" :feedback="false"></Password>
-						<Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple"
+						<Message v-if="$form.password?.invalid" severity="error" variant="simple"
 							class="absolute bottom-[-1.4rem]">
 							{{ $t($form.password.error?.message) }}
 						</Message>

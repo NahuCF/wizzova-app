@@ -78,8 +78,8 @@ const digitIconMap: Record<string, any> = {
                     <slot name="title" />
                 </div>
 
-                <div class="flex flex-col gap-8 px-[18px] pb-6 text-sm">
-                    <div class="text-sm text-slate-500">
+                <div class="flex flex-col gap-8 px-[18px] pb-6 text-lg">
+                    <div class="text-slate-500 text-base">
                         <slot name="subtitle" />
                     </div>
 
@@ -117,7 +117,7 @@ const digitIconMap: Record<string, any> = {
                         severity="secondary" 
                         @click="emit('update:visible', false)"
                     >
-                        <span class="text-sm">
+                        <span>
                             {{ $t('contacts.import_dialog.cancel') }}
                         </span>
                     </Button>
@@ -127,19 +127,19 @@ const digitIconMap: Record<string, any> = {
                         variant="outlined"
                         @click="router.push({ name: 'contacts-import' })"
                     >
-                        <span class="text-sm">{{ $t('contacts.import_dialog.go_to_history') }}</span>
+                        <span>{{ $t('contacts.import_dialog.go_to_history') }}</span>
                     </Button>
 
                     <Button v-if="currentStep > 1 && currentStep !== 3" severity="secondary"
                         @click="goBack">
-                        <span class="text-sm">
+                        <span>
                             {{ backLabel || 'Back' }}
                         </span>
                     </Button>
 
                     <Button @click="goNext" :disabled="nextDisabled">
                         <IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
-                        <span v-else class="text-sm">
+                        <span v-else>
                             {{ nextLabel || 'Next' }}
                         </span>
                     </Button>

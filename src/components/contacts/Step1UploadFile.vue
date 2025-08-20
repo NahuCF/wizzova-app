@@ -112,14 +112,14 @@ watch(() => props.importMode, () => {
 
 <template>
     <div>
-        <div class="text-slate-500 font-bold text-base pb-3">
+        <div class="text-slate-500 font-bold text-lg pb-3">
             {{ $t('contacts.import_dialog.step1_title') }}
         </div>
-        <div class="text-sm pb-6">
+        <div class="pb-6">
             {{ $t('contacts.import_dialog.step1_hint') }}
         </div>
         <div class="pb-4">
-            <Button variant="link" class="underline ps-0! text-sm!" @click="downloadSample">
+            <Button variant="link" class="underline ps-0!" @click="downloadSample">
                 {{ $t('contacts.import_dialog.download_sample') }}
             </Button>
         </div>
@@ -128,7 +128,7 @@ watch(() => props.importMode, () => {
             :maxFileSize="25000000" customUpload :auto="false" :showUploadButton="false" :showCancelButton="false"
             @select="onFileSelect">
             <template #content>
-                <div class="h-[416px] flex flex-col justify-center items-center text-sm border-1 border-emerald-500 rounded-lg text-center cursor-pointer bg-slate-50 hover:bg-slate-100 transition"
+                <div class="h-[416px] flex flex-col justify-center items-center border-1 border-emerald-500 rounded-lg text-center cursor-pointer bg-slate-50 hover:bg-slate-100 transition"
                     @click="onClickDropArea">
                     <IconCloudUpload size="20" class="text-emerald-500 mb-3" />
                     <div>{{ $t('contacts.import_dialog.browse_hint') }}</div>
@@ -138,28 +138,27 @@ watch(() => props.importMode, () => {
         </FileUpload>
 
         <div v-else>
-            <label class="text-xs font-normal! text-slate-500 mb-1.5">
+            <label class="text-sm font-normal! text-slate-500 mb-2">
                 {{ $t('contacts.import_dialog.imported_file') }}:
             </label>
-            <div class="flex flex-col gap-2 py-7 px-4 bg-slate-50 border-slate-400 border-1 rounded-md text-sm">
+            <div class="flex flex-col gap-2 py-7 px-4 bg-slate-50 border-slate-400 border-1 rounded-md">
                 <div class="block font-medium text-slate-700">{{ props.file?.name }}</div>
                 <div v-if="fileSize" class="text-slate-500">{{ fileSize }}</div>
             </div>
 
             <div class="mt-4">
-                <label class="text-xs font-normal! text-slate-500 mb-1.5">
+                <label class="text-sm font-normal! text-slate-500 mb-2">
                     {{ $t('contacts.import_dialog.rename_imported_file') }}:
                 </label>
                 <InputText
                     :modelValue="localRenamedFileName"
                     class="w-full"
-                    size="small"
                     @update:modelValue="onRenamedFileNameChange"
                 />
             </div>
 
             <div class="mt-4">
-                <div class="flex flex-col gap-5 text-sm">
+                <div class="flex flex-col gap-5">
                     <div class="flex items-center gap-2">
                         <RadioButton inputId="addOnly" name="mode" value="ADD" :modelValue="props.importMode"
                             @update:modelValue="val => emit('update:importMode', val)" />

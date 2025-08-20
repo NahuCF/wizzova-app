@@ -25,20 +25,20 @@ const onFieldUpdate = (row: MappingContact, field: ContactFieldItem | null) => {
 
 <template>
     <div>
-        <div class="text-slate-500 font-bold text-base pb-4">
+        <div class="text-slate-500 font-bold text-lg pb-4">
             {{ t('contacts.import_dialog.map_columns') }}
         </div>
-        <div class="text-sm pb-8">
+        <div class="pb-8">
             {{ t('contacts.import_dialog.step2_description') }}
         </div>
 
         <DataTable :value="mappingRows" class="rounded-lg overflow-hidden" stripedRows responsiveLayout="scroll">
-            <Column field="excelColumn" :header="t('contacts.import_dialog.excel_column')" bodyClass="text-sm"
-                headerClass="text-sm bg-slate-200!" />
-            <Column field="value" :header="t('contacts.import_dialog.sample_value')" bodyClass="text-sm"
-                headerClass="text-sm bg-slate-200!" />
-            <Column :header="t('contacts.import_dialog.contact_field')" bodyClass="text-sm"
-                headerClass="text-sm bg-slate-200!">
+            <Column field="excelColumn" :header="t('contacts.import_dialog.excel_column')"
+                headerClass="bg-slate-200!" />
+            <Column field="value" :header="t('contacts.import_dialog.sample_value')"
+                headerClass="bg-slate-200!" />
+            <Column :header="t('contacts.import_dialog.contact_field')"
+                headerClass="bg-slate-200!">
                 <template #body="slotProps">
                     <Select 
                         v-model="slotProps.data.contactField" 
@@ -47,15 +47,14 @@ const onFieldUpdate = (row: MappingContact, field: ContactFieldItem | null) => {
                         :placeholder="t('contacts.import_dialog.select_placeholder')" 
                         class="w-full" 
                         showClear
-                        size="small" 
                         @update:modelValue="(val) => onFieldUpdate(slotProps.data, val)" 
                     />
                 </template>
             </Column>
             <Column field="status" :header="t('contacts.import_dialog.mapping_status')" bodyClass="text-sm"
-                headerClass="text-sm bg-slate-200!">
+                headerClass="bg-slate-200!">
                 <template #body="slotProps">
-                    <Tag :severity="slotProps.data.status === 'MAPPED' ? 'success' : 'danger'" size="small" rounded>
+                    <Tag :severity="slotProps.data.status === 'MAPPED' ? 'success' : 'danger'" rounded>
                         <div class="flex items-center gap-2">
                             <IconCheck v-if="slotProps.data.status === 'MAPPED'" size="14" />
                             <IconX v-else size="14" />

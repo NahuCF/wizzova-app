@@ -126,9 +126,13 @@ watch(() => props.visible, () => {
         modal
         :draggable="false"
         contentClass="p-0! h-full"
-        class="min-w-[25rem] max-w-[1088px] w-full" 
-        :header="title"
+        class="min-w-[25rem] max-w-[1088px] w-full"
     >
+        <template #header>
+            <div class="text-2xl font-semibold">
+                {{ title }}
+            </div>
+        </template>
         <div class="h-full px-5 pb-5 pt-1">
             <div class="flex justify-between items-center pb-6">
                 <div class="flex items-center flex-wrap gap-2">
@@ -141,13 +145,12 @@ watch(() => props.visible, () => {
                     <template v-for="(filter, fIndex) in filters" :key="fIndex">
                         <template v-for="(condition, cIndex) in filter.conditions" :key="cIndex">
                             <div v-if="fIndex + cIndex < 2">
-                                <Tag class="px-3!" rounded size="small">
+                                <Tag class="px-3!" rounded>
                                     {{ formatCondition(filter.columnId, condition) }}
                                     <Button 
                                         variant="text" 
                                         rounded
                                         class="p-0.5!"
-                                        size="small"
                                         @click="removeFromFilter(fIndex, cIndex)"
                                     >
                                         <IconX class="w-4 h-4" />
@@ -180,13 +183,12 @@ watch(() => props.visible, () => {
                             <template v-for="(filter, fIndex) in filters" :key="fIndex">
                                 <template v-for="(condition, cIndex) in filter.conditions" :key="cIndex">
                                     <div v-if="fIndex + cIndex >= 2">
-                                        <Tag class="px-3!" rounded size="small">
+                                        <Tag class="px-3!" rounded>
                                             {{ formatCondition(filter.columnId, condition) }}
                                             <Button 
                                                 variant="text" 
                                                 rounded
                                                 class="p-0.5!"
-                                                size="small"
                                                 @click="removeFromFilter(fIndex, cIndex)"
                                             >
                                                 <IconX class="w-4 h-4" />
@@ -201,7 +203,6 @@ watch(() => props.visible, () => {
                     <Button 
                         v-if="filters.length > 0" 
                         variant="text"
-                        size="small" 
                         @click="resetFilters" 
                     >
                         {{ $t('contact_groups.dialog.reset') }}
@@ -212,7 +213,7 @@ watch(() => props.visible, () => {
                     <div>
                         <InputText
                             v-model="name"
-                            class="max-w-[180px] text-sm! shadow-none!"
+                            class="max-w-[180px] shadow-none!"
                             name="name"
                             id="name"
                             fluid
@@ -225,11 +226,11 @@ watch(() => props.visible, () => {
                             @click="onConfirm"
                             v-tooltip.bottom="dataPage.data.length === 0 && {
                                 value: t('contact_groups.dialog.create_group_tooltip'),
-                                class: 'text-sm max-w-[300px]!'
+                                class: 'max-w-[300px]!'
                             }"
                         >
                             <IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
-                            <span v-else class="text-sm">
+                            <span v-else>
                                 {{ group ? $t('contact_groups.dialog.edit_group') : $t('contact_groups.dialog.create_group') }}
                             </span>
                         </Button>

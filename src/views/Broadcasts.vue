@@ -206,12 +206,11 @@ fetchOverview()
     <div class="flex flex-col gap-6 h-full p-6">
         <div class="flex justify-between items-center">
             <div class="flex items-center">
-                <h1 class="font-semibold text-xl">{{ $t('broadcasts.title') }}</h1>
+                <h1 class="font-semibold text-2xl">{{ $t('broadcasts.title') }}</h1>
             </div>
             <div class="flex justify-between gap-2">
                 <Button 
-                    class="bg-white! border-slate-200! hover:bg-slate-100!" 
-                    size="small" 
+                    class="bg-white! border-slate-200! hover:bg-slate-100!"
                     severity="secondary"
                     :disabled="!canRefresh || loading || loadingNumbers || loadingOverview"
                     @click="refreshData"
@@ -237,7 +236,7 @@ fetchOverview()
 
                 <Button @click="router.push({ name: 'new-broadcast' })">
                     <IconPlus size="16" class="mr-1" />
-                    <span class="text-sm">
+                    <span>
                         {{ $t('broadcasts.new_broadcast') }}
                     </span>
                 </Button>
@@ -261,12 +260,12 @@ fetchOverview()
         </div>
 
         <div class="flex justify-between items-center">
-            <div class="font-semibold text-lg">{{ $t('broadcasts.all_broadcasts') }}</div>
+            <div class="font-semibold text-xl">{{ $t('broadcasts.all_broadcasts') }}</div>
             <div class="relative">
-                <IconSearch size="14" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <IconSearch size="16" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                 <InputText
                     v-model="searchTerm"
-                    class="pl-8! max-w-[180px] text-sm! shadow-none!"
+                    class="pl-8! max-w-[180px] shadow-none!"
                     name="search"
                     id="search"
                     fluid

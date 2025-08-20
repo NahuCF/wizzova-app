@@ -5,17 +5,17 @@ import { IconUsers, IconLayoutGrid } from '@tabler/icons-vue'
 <template>
     <div class="h-screen">
         <Tabs value="0" class="py-4" lazy>
-            <TabList>
+            <TabList class="text-lg">
                 <Tab value="0">
                     <div class="flex items-center gap-2 text-inherit">
                         <IconUsers size="16" />
-                        <span class="text-base">{{ $t('contacts.contacts_tab') }}</span>
+                        <span>{{ $t('contacts.contacts_tab') }}</span>
                     </div>
                 </Tab>
                 <Tab value="1">
                     <div class="flex items-center gap-2 text-inherit">
                         <IconLayoutGrid size="16" />
-                        <span class="text-base">{{ $t('contacts.groups_tab') }}</span>
+                        <span>{{ $t('contacts.groups_tab') }}</span>
                     </div>
                 </Tab>
             </TabList>

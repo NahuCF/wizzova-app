@@ -61,7 +61,6 @@ const dateValue = computed({
 const commonInputProps = computed(() => ({
     name: props.field.name,
     id: props.field.name,
-    size: 'small' as const,
     invalid: !!props.errorMessage,
     placeholder: te(`contacts.placeholder.${props.field.name}`)
         ? t(`contacts.placeholder.${props.field.name}`)
@@ -89,7 +88,7 @@ const multitextIcon = () => {
             'rounded-xl': field.name === 'Marketing OptIn'
         }"
     >
-        <label class="text-sm flex items-center gap-1" :for="field.name">
+        <label class="text-lg flex items-center gap-1" :for="field.name">
             <span class="text-neutral-800">{{ $te(`contacts.headers.${field.name}`) ? $t(`contacts.headers.${field.name}`) : field.name }}</span>
             <IconAsterisk v-if="isMandatory" color="red" size="8" />
         </label>
@@ -163,7 +162,7 @@ const multitextIcon = () => {
             class="flex flex-col gap-2"
         >
             <template v-if="field.name === 'Marketing OptIn'">
-                <span class="text-xs text-slate-400 text-light">{{ t('contacts.marketing_optin_help') }}</span>
+                <span class="text-sm text-slate-400 text-light">{{ t('contacts.marketing_optin_help') }}</span>
             </template>
             <Select 
                 v-model="switchValue"
@@ -198,7 +197,6 @@ const multitextIcon = () => {
             placeholder="yyyy-mm-dd"
             :name="field.name"
             :id="field.name"
-            size="small"
             class="w-full"
             :invalid="!!errorMessage"
         />

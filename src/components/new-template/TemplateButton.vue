@@ -77,15 +77,17 @@ watch([() => props.button, getSelectedCountry], () => {
 		</div>
 
 		<div v-else-if="isUrlButton(button)">
-			<div class="flex justify-between">
-				<Select 
-					:options="urlOptions" 
-					option-label="name" 
-					option-value="id" 
-					class="!w-[14.5rem]"
-					v-model="button.type"
-				>
-				</Select>
+			<div class="flex justify-between items-center">
+				<div>
+					<Select 
+						:options="urlOptions" 
+						option-label="name" 
+						option-value="id" 
+						class="!w-[14.5rem]"
+						v-model="button.type"
+					>
+					</Select>
+				</div>
 				<button class="p-4 hover:cursor-pointer hover:bg-red-50 transition rounded-md" @click="emit('remove')">
 					<IconTrash class="text-red-400 w-5 h-5" />
 				</button>

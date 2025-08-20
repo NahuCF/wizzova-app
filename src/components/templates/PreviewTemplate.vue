@@ -17,28 +17,28 @@ defineProps<{
 </script>
 
 <template>
-	<div class="border border-slate-200 flex flex-col w-[23rem] preview rounded-lg overflow-hidden">
-		<div class="bg-[#00A884] h-[3rem] flex justify-between items-center px-3">
+	<div class="border border-slate-200 flex flex-col w-[290px] preview rounded-lg overflow-hidden">
+		<div class="bg-[#00A884] h-[4rem] flex justify-between items-center px-3">
 			<div class="flex gap-2 items-center">
 				<IconArrowLeft color="white" size="18" />
 				<div class="relative">
 					<div class="relative z-[300]">
-						<IconBrandWhatsappFilled size="20" class="icon-whatsapp" color="#25D366" />
+						<IconBrandWhatsappFilled size="24" class="icon-whatsapp" color="#25D366" />
 					</div>
-					<div class="w-3 h-3 bg-white absolute left-[.3rem] top-1 z-[200]"></div>
+					<div class="w-3 h-3 bg-white absolute left-[.6rem] top-2.5 z-[200]"></div>
 				</div>
-				<span class="text-white">Business</span>
+				<span class="text-white text-xl">Business</span>
 				<div class="relative">
 					<div class="relative z-[300]">
 						<IconRosetteDiscountCheckFilled color="#25D366" size="18" />
 					</div>
-					<div class="w-2 h-2 bg-white absolute left-1.5 top-2 z-[200]"></div>
+					<div class="w-2 h-2 bg-white absolute left-2 top-2 z-[200]"></div>
 				</div>
 			</div>
 			<IconDotsVertical color="white" size="18" />
 		</div>
 
-		<div class="p-5 flex h-[30rem] overflow-y-scroll">
+		<div class="p-5 flex h-[30rem] overflow-y-auto">
 			<MessagePreview 
 				:header="template.components.header?.text" 
 				:body="template.components.body.text"
@@ -51,7 +51,7 @@ defineProps<{
 			<div class="rounded-full bg-white shadow flex items-center gap-3 p-1 px-3 grow">
 				<div class="flex gap-2 grow items-center">
 					<IconMoodHappy size="20" color="#606060" />
-					<span class="text-slate-400"> Message </span>
+					<span class="text-slate-400 text-lg"> Message </span>
 				</div>
 				<IconPaperclip size="18" color="#606060" />
 				<IconCamera size="18" color="#606060" />

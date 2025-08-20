@@ -282,7 +282,7 @@ onMounted(() => {
 					<div 
 						v-for="broadcast in templateBroadcasts" 
 						:key="broadcast.id"
-						class="text-sm text-surface-500 dark:text-surface-400 text-gray-600"
+						class="text-surface-500 dark:text-surface-400 text-gray-600"
 					>
 						{{ broadcast.name }}
 					</div>

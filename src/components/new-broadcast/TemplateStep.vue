@@ -59,11 +59,11 @@ fetchBroadcastNumbers()
     <div class="flex flex-col gap-6">
         <div class="flex justify-between py-2">
 			<div class="flex items-center gap-2">
-                <Button variant="text" @click="router.push({ name: 'broadcasts' })" size="small" severity="secondary">
-                    <IconArrowLeft size="18" />
+                <Button class="p-1!" variant="text" @click="router.push({ name: 'broadcasts' })" severity="secondary">
+                    <IconArrowLeft size="22" />
                 </Button>
                 <div>
-                    <h1 class="font-semibold text-lg">{{ $t('new_broadcast.select_template') }}</h1>
+                    <h1 class="font-semibold text-xl">{{ $t('new_broadcast.select_template') }}</h1>
                     <div class="font-light">{{ $t('new_broadcast.select_template_subtitle') }}</div>
                 </div>
             </div>
@@ -71,10 +71,10 @@ fetchBroadcastNumbers()
             <div class="flex flex-col justify-center">
                 <div class="flex gap-2">
                     <div class="relative">
-                        <IconSearch size="14" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                        <IconSearch size="16" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                         <InputText
                             v-model="searchTerm"
-                            class="pl-8! max-w-[180px] text-sm! shadow-none!"
+                            class="pl-8! max-w-[180px] shadow-none!"
                             name="search"
                             id="search"
                             fluid
@@ -88,8 +88,7 @@ fetchBroadcastNumbers()
                         v-model="newBroadcast.broadcastNumber" 
                         :options="broadcastNumbers" 
                         option-id="id"
-                        option-label="name" 
-                        size="small"
+                        option-label="name"
                         :placeholder="$t('broadcasts.select_number')"
                         :loading="loadingNumbers"
                         :disabled="loadingNumbers"
@@ -102,7 +101,7 @@ fetchBroadcastNumbers()
                         })"
                     >
                         <IconPlus size="16" class="mr-1" />
-                        <span class="text-sm">
+                        <span>
                             {{ $t('new_broadcast.add_template') }}
                         </span>
                     </Button>
@@ -114,7 +113,7 @@ fetchBroadcastNumbers()
             v-if="dataPage.data.length === 0 && !loading"
             class="flex flex-col justify-center items-center py-20 gap-10"
         >
-            <div class="text-3xl font-semibold text-center max-w-[500px]">{{ $t('new_broadcast.missing_template_description') }}</div>
+            <div class="text-3xl font-semibold text-center max-w-[500px] leading-10">{{ $t('new_broadcast.missing_template_description') }}</div>
             <Button
                 @click="router.push({ 
                     name: 'new-template', 

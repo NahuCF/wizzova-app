@@ -105,7 +105,7 @@ watch(() => props.visible, () => {
         <div class="flex flex-col gap-6 pt-6">
             <div class="flex flex-col gap-1 relative">
                 <div class="flex gap-1">
-                    <label class="text-neutral-800! font-medium" for="name">{{ $t('roles.name.label') }}</label>
+                    <label class="text-neutral-800! font-medium text-lg" for="name">{{ $t('roles.name.label') }}</label>
                     <IconAsterisk color="red" class="mt-1" size="8" />
                 </div>
                 <InputText 

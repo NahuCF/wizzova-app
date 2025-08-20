@@ -30,10 +30,10 @@ const toPrevStep = () => {
         <div class="flex flex-col gap-10 w-full">
             <div class="flex justify-between">
                 <div class="flex items-center gap-2">
-                    <Button variant="text" @click="toPrevStep" size="small" severity="secondary">
-                        <IconArrowLeft size="18" />
+                    <Button class="p-1!" variant="text" @click="toPrevStep" severity="secondary">
+                        <IconArrowLeft size="22" />
                     </Button>
-                    <h1 class="font-semibold text-lg">{{ t('new_broadcast.schedule_broadcast') }}</h1>
+                    <h1 class="font-semibold text-2xl">{{ t('new_broadcast.schedule_broadcast') }}</h1>
                 </div>
             </div>
 
@@ -53,7 +53,6 @@ const toPrevStep = () => {
                                 v-model="newBroadcast.name"
                                 class="w-full"
                                 :placeholder="t('new_broadcast.enter_broadcast_name')"
-                                size="small" 
                             />
                         </div>
 
@@ -71,7 +70,6 @@ const toPrevStep = () => {
                                     :options="sendOptions"
                                     option-label="name"
                                     option-value="value"
-                                    size="small"
                                 />
 
                                 <DatePicker
@@ -83,7 +81,6 @@ const toPrevStep = () => {
                                     dateFormat="yy/mm/dd"
                                     mask="9999/99/99"
                                     :placeholder="t('new_broadcast.schedule_on')"
-                                    size="small"
                                 />
                                 <div class="w-full" v-else></div>
 
@@ -94,13 +91,12 @@ const toPrevStep = () => {
                                     showIcon
                                     iconDisplay="input"
                                     :placeholder="t('new_broadcast.schedule_at')"
-                                    size="small"
                                     hourFormat="12"
                                     :stepMinute="15"
                                     timeOnly
                                 >
                                     <template #inputicon="slotProps">
-                                        <IconClock size="16" @click="slotProps.clickCallback" />
+                                        <IconClock size="14" @click="slotProps.clickCallback" />
                                     </template>
                                 </DatePicker>
                                 <div class="w-full" v-else></div>
@@ -114,13 +110,13 @@ const toPrevStep = () => {
                 <div class="text-lg font-bold text-gray-500 pb-2">
                     {{ t('new_broadcast.target_audience') }}
                 </div>
-                <div class="flex bg-white border-1 border-slate-200 p-6 rounded-lg text-sm">
+                <div class="flex bg-white border-1 border-slate-200 p-6 rounded-lg">
                     <div class="flex flex-col w-full gap-6">
                         <div class="flex items-center">
                             <div class="min-w-[30%]">{{ t('new_broadcast.total_contacts') }}</div>
 
                             <div class="flex gap-2">
-                                <IconUsers size="16 "/>
+                                <IconUsers size="16"/>
                                 <div>{{ totalContactsCount }}</div>
                             </div>
                         </div>
@@ -131,6 +127,7 @@ const toPrevStep = () => {
                             <div class="flex gap-2 text-ellipsis">
                                 <Badge
                                     v-for="group in newBroadcast.contactGroups"
+                                    class="text-base!"
                                     severity="secondary"
                                 >
                                     {{ group.name }}

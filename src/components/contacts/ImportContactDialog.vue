@@ -219,16 +219,16 @@ watch(currentStep, () => {
 
         <template #step-3>
             <div class="flex flex-col justify-center h-full">
-                <div class="flex items-center gap-2 text-slate-500 font-bold text-base pb-4">
+                <div class="flex items-center gap-2 text-slate-500 font-bold text-lg pb-4">
                     {{ t('contacts.import_dialog.step3_title') }}
                     <IconCircleCheck class="text-emerald-500" size="22" />
                 </div>
-                <div class="text-sm pb-5">
+                <div class="pb-5">
                     {{ t('contacts.import_dialog.step3_hint') }}
                 </div>
                 <div class="pb-4">
                     <Button variant="link" class="underline p-0!" @click="router.push({ name: 'contacts-import' })">
-                        <span class="text-sm">{{ t('contacts.import_dialog.go_to_history') }}</span>
+                        <span>{{ t('contacts.import_dialog.go_to_history') }}</span>
                     </Button>
                 </div>
             </div>

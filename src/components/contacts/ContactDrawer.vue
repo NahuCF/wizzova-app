@@ -204,10 +204,10 @@ watch(
         <Divider class="mt-2!" />
 
         <div class="flex flex-col gap-6 pt-6">
-            <div v-if="contactId" class="flex items-center text-sm gap-1">
+            <div v-if="contactId" class="flex items-center gap-1">
                 <span class="text-neutral-800 font-medium">{{ $t('contacts.contact_id') }}:</span>
                 <span>{{ contactId }}</span>
-                <Button class="p-1!" severity="secondary" variant="text" size="small" rounded :aria-label="$t('copy')"
+                <Button class="p-1!" severity="secondary" variant="text" rounded :aria-label="$t('copy')"
                     :title="$t('copy')" @click="copyToClipboard">
                     <IconClipboard v-if="!copiedId" size="16" />
                     <IconClipboardCheck v-else size="16" />
@@ -221,7 +221,7 @@ watch(
             </template>
 
             <div class="flex flex-col gap-2" v-if="fields.filter(f => !f.is_primary_field).length > 0">
-                <label class="text-sm text-neutral-800! font-medium">
+                <label class="text-lg text-neutral-800! font-medium">
                     {{ $t('contacts.additional_details') }}
                 </label>
                 <div class="flex flex-col gap-6">
