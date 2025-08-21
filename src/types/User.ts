@@ -1,4 +1,4 @@
-import type { WABAItem } from "./Auth"
+import type { BusinessItem, WABAItem } from "./Auth"
 import type { PrimeVueSeverity } from "./PrimeVueDef"
 
 export interface User {
@@ -16,7 +16,9 @@ export interface UserItem {
   cellphone: string,
   role: Role,
   teams?: TeamItem[],
-  business?: WABAItem,
+  business?: BusinessItem,
+  wabas: WABAItem[],
+  default_waba?: WABAItem,
   permission_names: string[],
   is_deleted: boolean,
   status: UserStatus
@@ -38,7 +40,9 @@ export interface UserCreate {
   name: string,
   email: string,
   role: string,
-  team_ids: string[]
+  team_ids: string[],
+  waba_ids: string[],
+  default_waba_id?: string
 }
 
 export interface Permission {

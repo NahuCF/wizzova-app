@@ -96,7 +96,7 @@ watch(() => props.visible, () => {
         <div class="flex flex-col gap-6 pt-6">
             <div class="flex flex-col gap-1 relative">
                 <div class="flex gap-1">
-                    <label class="text-neutral-800! font-medium" for="name">{{ $t('teams.name.label') }}</label>
+                    <label class="text-lg text-neutral-800! font-medium" for="name">{{ $t('teams.name.label') }}</label>
                     <IconAsterisk color="red" class="mt-1" size="8" />
                 </div>
                 <InputText 
@@ -109,7 +109,7 @@ watch(() => props.visible, () => {
             </div>
 
             <div class="flex flex-col gap-1 relative">
-                <label class="text-neutral-800! font-medium" for="users">{{ $t('teams.users.label') }}</label>
+                <label class="text-lg text-neutral-800! font-medium" for="users">{{ $t('teams.users.label') }}</label>
                 
                 <Select
                     v-model="emptySelect"

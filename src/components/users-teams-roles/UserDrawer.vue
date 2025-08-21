@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { IconAsterisk, IconLoader2 } from '@tabler/icons-vue'
-import type { Role, TeamItem, UserCreate, UserItem } from '~/types'
-import { useRoleStore, useTeamStore } from '~/stores'
+import { IconAsterisk, IconLoader2, IconInfoCircle } from '@tabler/icons-vue'
+import type { Role, TeamItem, UserCreate, UserItem, WABAItem } from '~/types'
+import { useRoleStore, useSessionStore, useTeamStore } from '~/stores'
 import { storeToRefs } from 'pinia'
 import { z } from 'zod'
+import { useWabaStore } from '~/stores'
 
 const props = defineProps<{
 	title: string,
@@ -19,50 +20,32 @@ const emit = defineEmits<{
 
 const roleStore = useRoleStore()
 const teamStore = useTeamStore()
+const wabaStore = useWabaStore()
+const sessionStore = useSessionStore()
 const { fetchRoles } = roleStore
 const { fetchTeams } = teamStore
+const { fetchWabas } = wabaStore
 const { roles } = storeToRefs(roleStore)
 const { teams } = storeToRefs(teamStore)
+const { wabas } = storeToRefs(wabaStore)
 
 const user = ref<{
 	id: string,
 	name: string,
 	email: string,
 	role?: Role,
-	teams: TeamItem[]
+	teams: TeamItem[],
+    wabas: WABAItem[],
+    defaultWaba?: WABAItem
 }>({
     id: '',
     name: '',
 	email: '',
-	teams: []
+	teams: [],
+    wabas: []
 })
 const emailError = ref<string | null>(null)
 const emailSchema = z.string().email({ message: 'invalid_email' })
-
-const validateEmail = (email: string) => {
-    const result = emailSchema.safeParse(email)
-    emailError.value = result.success ? null : result.error.issues[0].message
-    return result.success
-}
-
-const canSubmit = () => {
-    return (
-        user.value.name &&
-        user.value.email &&
-        validateEmail(user.value.email) &&
-        user.value.role
-    )
-}
-
-const onConfirm = () => {
-    emit('onSave', {
-		id: user.value.id,
-		name: user.value.name,
-		email: user.value.email,
-		role: user.value.role?.name || '',
-		team_ids: user.value.teams.map(t => t.id)
-	})
-}
 
 const getRoles = computed(() => {
 	return roles.value.map(role => ({
@@ -79,6 +62,35 @@ const getTeams = computed(() => {
 	}))
 })
 
+const validateEmail = (email: string) => {
+    const result = emailSchema.safeParse(email)
+    emailError.value = result.success ? null : result.error.issues[0].message
+    return result.success
+}
+
+const canSubmit = () => {
+    return (
+        user.value.name &&
+        user.value.email &&
+        validateEmail(user.value.email) &&
+        user.value.role &&
+        user.value.wabas.length > 0 &&
+        (user.value.id || user.value.defaultWaba)
+    )
+}
+
+const onConfirm = () => {
+    emit('onSave', {
+		id: user.value.id,
+		name: user.value.name,
+		email: user.value.email,
+		role: user.value.role?.name || '',
+		team_ids: user.value.teams.map(t => t.id),
+        waba_ids: user.value.wabas.map(w => w.id),
+        default_waba_id: user.value.defaultWaba?.id
+	})
+}
+
 watch(() => props.visible, () => {
     if (!props.visible) {
         return
@@ -86,6 +98,9 @@ watch(() => props.visible, () => {
 
     fetchRoles()
     fetchTeams()
+    if(sessionStore.user?.business) {
+        fetchWabas(sessionStore.user.business.id)
+    }
 
     if(props.userEdited) {
         user.value = {
@@ -93,7 +108,9 @@ watch(() => props.visible, () => {
             name: props.userEdited.name,
 			email: props.userEdited.email,
 			role: props.userEdited.role,
-            teams: props.userEdited.teams ? props.userEdited.teams : []
+            teams: props.userEdited.teams ? props.userEdited.teams : [],
+            wabas: props.userEdited.wabas ? props.userEdited.wabas : [],
+            defaultWaba: props.userEdited.default_waba
         }
     }
     else {
@@ -101,7 +118,8 @@ watch(() => props.visible, () => {
             id: '',
 			name: '',
 			email: '',
-			teams: []
+			teams: [],
+            wabas: []
         }
     }
 })
@@ -128,7 +146,7 @@ watch(() => user.value.email, (newEmail) => {
         <div class="flex flex-col gap-6 pt-6">
             <div class="flex flex-col gap-1 relative">
                 <div class="flex gap-1">
-                    <label class="text-neutral-800! font-medium" for="name">{{ $t('users.name.label') }}</label>
+                    <label class="text-lg text-neutral-800! font-medium" for="name">{{ $t('users.name.label') }}</label>
                     <IconAsterisk color="red" class="mt-1" size="8" />
                 </div>
                 <InputText 
@@ -142,7 +160,7 @@ watch(() => user.value.email, (newEmail) => {
 
 			<div class="flex flex-col gap-1 relative">
                 <div class="flex gap-1">
-                    <label class="text-neutral-800! font-medium" for="email">{{ $t('users.email.label') }}</label>
+                    <label class="text-lg text-neutral-800! font-medium" for="email">{{ $t('users.email.label') }}</label>
                     <IconAsterisk color="red" class="mt-1" size="8" />
                 </div>
                 <InputText 
@@ -163,7 +181,7 @@ watch(() => user.value.email, (newEmail) => {
 
             <div class="flex flex-col gap-1 relative">
 				<div class="flex gap-1">
-                    <label class="text-neutral-800! font-medium" for="users">{{ $t('users.role.label') }}</label>
+                    <label class="text-lg text-neutral-800! font-medium" for="roles">{{ $t('users.role.label') }}</label>
                     <IconAsterisk color="red" class="mt-1" size="8" />
                 </div>
                 <Select
@@ -171,19 +189,63 @@ watch(() => user.value.email, (newEmail) => {
                     :options="getRoles"
                     :placeholder="$t('users.role.placeholder')"
 					optionLabel="name"
-                    class="w-full" 
+                    class="w-full"
+                    id="roles"
+                    name="roles"
                 />
             </div>
 
 			<div class="flex flex-col gap-1 relative">
-				<label class="text-neutral-800! font-medium" for="users">{{ $t('users.teams.label') }}</label>
+				<label class="text-lg text-neutral-800! font-medium" for="teams">{{ $t('users.teams.label') }}</label>
                 <MultiSelect
                     v-model="user.teams"
                     :options="getTeams"
                     optionLabel="name"
 					display="chip"
                     :placeholder="$t('users.teams.placeholder')"
-                    class="w-full" 
+                    class="w-full"
+                    id="teams"
+                    name="teams"
+                />
+            </div>
+
+            <div class="flex flex-col gap-1 relative">
+                <div class="flex gap-1">
+                    <label class="text-lg text-neutral-800! font-medium" for="wabas">{{ $t('users.wabas.label') }}</label>
+                    <div class="flex items-center" v-tooltip.bottom="{
+                        value: $t('users.wabas.tooltip'),
+                        class: 'max-w-[300px]!'
+                    }">
+                        <IconInfoCircle class="text-slate-700 hover:cursor-pointer" size="14" />
+                    </div>
+                    <IconAsterisk color="red" class="mt-1" size="8" />
+                </div>
+                <MultiSelect
+                    v-model="user.wabas"
+                    :options="wabas"
+                    optionLabel="name"
+					display="chip"
+                    :placeholder="$t('users.wabas.placeholder')"
+                    class="w-full"
+                    id="wabas"
+                    name="wabas"
+                />
+            </div>
+
+            <div v-if="!user.id" class="flex flex-col gap-1 relative">
+				<div class="flex gap-1">
+                    <label class="text-lg text-neutral-800! font-medium" for="waba">{{ $t('users.waba.label') }}</label>
+                    <IconAsterisk color="red" class="mt-1" size="8" />
+                </div>
+                <Select
+					v-model="user.defaultWaba"
+                    :options="user.wabas"
+                    :disabled="user.wabas.length === 0"
+                    :placeholder="$t('users.waba.placeholder')"
+					optionLabel="name"
+                    class="w-full"
+                    id="waba"
+                    name="waba"
                 />
             </div>
 		</div>

@@ -41,6 +41,7 @@ const createMockBroadcasts = (page: number, perPage: number): Page<BroadcastItem
                 name: '',
                 is_internal: false
             },
+            wabas: [],
             permission_names: [],
             status: 'ACTIVE',
             is_deleted: false

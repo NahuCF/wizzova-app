@@ -1,11 +1,14 @@
 import Http from '~/config/http'
-import type { Tenant, WABAItem } from '~/types'
+import type { Tenant, BusinessItem } from '~/types'
 
 export default {
-	async getWABAs(accessToken: string) {
-		return Http.post<{ data: WABAItem[] }>('/tenant/meta-access', { access_token: accessToken })
+	async getBusinesses(accessToken: string) {
+		return Http.post<{ data: BusinessItem[] }>('/tenant/meta-access', { access_token: accessToken })
 	},
-	async completeProfile(businessId: string) {
-		return Http.post<{ data: Tenant }>('/tenant/complete-profile', { business_id: businessId })
+	async completeProfile(businessId: string, wabaId: string) {
+		return Http.post<{ data: Tenant }>('/tenant/complete-profile', { 
+			business_id: businessId, 
+			waba_id: wabaId 
+		})
 	}
 }

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useToast } from 'primevue'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import { useFacebookLogin } from '~/composables/useFacebookLogin'
 import router from '~/router'
 import { API } from '~/services'
 import { useSessionStore } from '~/stores'
-import type { WABAItem } from '~/types'
+import type { BusinessItem, WABAItem } from '~/types'
 
 defineProps<{
     visible: boolean
@@ -20,8 +20,10 @@ const handleError = useErrorHandler()
 
 const step = ref(1)
 const loading = ref(false)
+const selectedBusiness = ref<BusinessItem | null>(null)
 const selectedWaba = ref<WABAItem | null>(null)
-const wabas = ref<{ id: string; name: string }[]>([])
+const businesses = ref<BusinessItem[]>([])
+const wabas = ref<WABAItem[]>([])
 
 const { initialize, launchLogin } = useFacebookLogin()
 
@@ -43,8 +45,8 @@ const connectWaba = async () => {
 		}
 
 		loading.value = true
-		const { data: response } = await API.tenant.getWABAs(authResponse.accessToken)
-		wabas.value = response.data || []
+		const { data: response } = await API.tenant.getBusinesses(authResponse.accessToken)
+		businesses.value = response.data || []
 
 		step.value = 2
 	} catch (error) {
@@ -55,11 +57,13 @@ const connectWaba = async () => {
 }
 
 const completeProfile = async () => {
-	if (!selectedWaba.value || !sessionStore.user) return
+	if (!selectedBusiness.value || !selectedWaba.value || !sessionStore.user) return
 	try {
 		loading.value = true
-		const { data: response} = await API.tenant.completeProfile(selectedWaba.value.id)
-		sessionStore.user.business = selectedWaba.value
+		const { data: response} = await API.tenant.completeProfile(selectedBusiness.value.id, selectedWaba.value.id)
+		sessionStore.user.business = selectedBusiness.value
+		sessionStore.user.default_waba = selectedWaba.value
+		sessionStore.user.wabas = wabas.value
 		sessionStore.tenant = response.data
 
 		await router.replace({ name: 'templates' })
@@ -70,6 +74,17 @@ const completeProfile = async () => {
 		loading.value = false
 	}
 }
+
+watch(selectedBusiness, () => {
+	if(selectedBusiness.value) {
+		selectedWaba.value = null
+		wabas.value = selectedBusiness.value.wabas || []
+	}
+	else {
+		selectedWaba.value = null
+		wabas.value = []
+	}
+})
 
 onMounted(async () => {
 	const appId = await fetchAppId()
@@ -134,6 +149,16 @@ onMounted(async () => {
 						</p>
 						<div class="flex justify-center w-full">
 							<Select
+								v-model="selectedBusiness"
+								:options="businesses"
+								optionLabel="name"
+								:placeholder="$t('complete_profile.select_business')"
+								class="w-full"
+							/>
+						</div>
+						<div class="flex justify-center w-full">
+							<Select
+								:disabled="wabas.length === 0"
 								v-model="selectedWaba"
 								:options="wabas"
 								optionLabel="name"

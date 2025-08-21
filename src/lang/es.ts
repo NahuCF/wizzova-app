@@ -541,6 +541,15 @@ export default {
       label: 'Equipos',
       placeholder: 'Selecciona equipos'
     },
+    wabas: {
+      label: 'Wabas',
+      placeholder: 'Selecciona cuentas',
+      tooltip: 'Selecciona las cuentas de WhatsApp Business a las que este usuario tendrá acceso. El usuario podrá enviar y recibir mensajes desde estas cuentas.'
+    },
+     waba: {
+      label: 'WABA por defecto',
+      placeholder: 'Selecciona cuenta por defecto'
+    },
     create_user_tooltip: 'Debes completar todos los campos requeridos',
     user_created: '¡Usuario creado con éxito!',
     user_updated: '¡Usuario actualizado con éxito!',
@@ -611,6 +620,7 @@ export default {
   complete_profile: {
     connect_account: 'Conectar cuenta',
     select_account: 'Seleccionar cuenta',
+    select_business: 'Seleccionar negocio',
     connect_account_title: 'Conecta tu cuenta de WhatsApp Business para comenzar',
     connect_account_description: 'Para continuar, conecta tu cuenta de WhatsApp Business a nuestra plataforma.',
     connect: 'Conectar',

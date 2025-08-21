@@ -39,8 +39,8 @@ export function setupInterceptors() {
 			config.headers['X-Tenant'] = session.tenant.id
 		}
 
-		if (session.user?.business) {
-			config.headers['X-Waba-id'] = session.user.business.id
+		if (session.user?.default_waba) {
+			config.headers['X-Waba-id'] = session.user.default_waba.id
 		}
 
 		const urlPath = config.url || ''

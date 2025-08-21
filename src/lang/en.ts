@@ -543,6 +543,15 @@ Grab them today!`,
       label: 'Teams',
       placeholder: 'Select teams'
     },
+    wabas: {
+      label: 'Wabas',
+      placeholder: 'Select accounts',
+      tooltip: 'Select the WhatsApp Business Accounts that this user will have access to. The user will be able to send and receive messages from these accounts.'
+    },
+    waba: {
+      label: 'Default WABA',
+      placeholder: 'Select default account'
+    },
     create_user_tooltip: 'You must fill all required fields',
     user_created: 'User created successfully!',
     user_updated: 'User updated successfully!',
@@ -613,6 +622,7 @@ Grab them today!`,
   complete_profile: {
     connect_account: 'Connect Account',
     select_account: 'Select Account',
+    select_business: 'Select Business',
     connect_account_title: 'Connect your WhatsApp Business Account to start',
     connect_account_description: 'To proceed, please connect your WhatsApp Business Account to our platform.',
     connect: 'Connect',

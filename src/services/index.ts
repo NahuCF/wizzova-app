@@ -17,6 +17,7 @@ import MetaService from './MetaService'
 import BroadcastService from './BroadcastService'
 import TeamService from './TeamService'
 import RoleService from './RoleService'
+import WabaService from './WabaService'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -41,5 +42,6 @@ export const API = {
     timezone: TimezoneService,
     user: UserService,
     tenant: TenantService,
-    meta: MetaService
+    meta: MetaService,
+    waba: WabaService
 }

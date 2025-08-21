@@ -37,8 +37,19 @@ export interface RegisterResponse {
     data: Tenant
 }
 
+export interface BusinessItem {
+    id: string,
+    meta_business_id: number,
+    name: string,
+    wabas?: WABAItem[]
+}
+
 export interface WABAItem {
     id: string,
-    meta_business_id: string,
-    name: string
+    business_id: string,
+    meta_waba_id: string,
+    name: string,
+    currency: string,
+    timezone_id: string,
+    message_template_namespace: string
 }
