@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n"
 
 export const useErrorHandler = () => {
 	const toast = useToast()
-	const { t } = useI18n()
+	const { t, te } = useI18n()
 
 	const handleError = (error: unknown) => {
 		if (axios.isAxiosError(error)) {
@@ -13,13 +13,15 @@ export const useErrorHandler = () => {
 			}
 
 			if (error.response?.status === 422 && error.response.data) {
-				const errorKey = error.response.data.message?.replace('.', '')
-				const message = t(`validation_errors.${errorKey}`)
+				const errorKey = error.response.data.message_code || error.response.data.message?.replace('.', '')
+				const messageExists = te(`validation_errors.${errorKey}`)
+				const message = messageExists ? t(`validation_errors.${errorKey}`) : t('an_error_occurred')
+
 				toast.add({
 					severity: 'error',
 					summary: 'Error',
 					detail: message,
-					life: 3000,
+					life: 1000000,
 				})
 				return
 			}

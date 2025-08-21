@@ -38,7 +38,6 @@ const defaultValue: TemplateCreate = {
     name: '',
     language: 'en',
     category: '',
-    allow_category_change: false,
     components: {
         header: {
             type: 'NONE',
@@ -239,7 +238,7 @@ onMounted(() => {
 
 				<div class="flex gap-6">
 					<div class="flex flex-col gap-6">
-						<div class="gap-5 grid grid-cols-3">
+						<div class="gap-5 grid grid-cols-2">
 							<div class="flex flex-col gap-1 relative">
 								<div class="flex gap-1">
 									<label for="category" class="text-lg">{{ $t('category') }}</label>
@@ -267,26 +266,6 @@ onMounted(() => {
 									optionValue="code" 
 									name="language" 
 									id="language"
-								/>
-							</div>
-
-							<div class="flex flex-col gap-1 relative">
-								<div class="flex gap-1 items-center">
-									<label for="allow_category_change" class="text-lg">{{ $t('allow_category_change') }}</label>
-									<div v-tooltip.top="{
-										value: t('help_text_category_change'),
-										class: 'text-sm max-w-[300px]!'
-									}">
-										<IconInfoCircle class="text-slate-700 hover:cursor-pointer" size="16" />
-									</div>
-								</div>
-								<Select 
-									v-model="template.allow_category_change"
-									:options="categoryChangeOptions" 
-									optionLabel="name" 
-									optionValue="id"
-									name="allow_category_change" 
-									id="allow_category_change"
 								/>
 							</div>
 						</div>

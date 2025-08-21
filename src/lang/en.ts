@@ -93,7 +93,8 @@ export default {
     'The email has already been taken': 'The email has already been taken.',
     'The provided credentials are incorrect': 'The provided credentials are incorrect',
     'Template name already exists': 'Template name already exists',
-    'templater_name_already_exists': 'Template name already exists',
+    'template_name_already_exists': 'Template name already exists',
+    'template_name_language_already_exists': 'Template name and language already exists',
     'Contact already exists': 'Contact already exists',
     'Group name already exists': 'Group name already exists',
     'Broadcast name already exists': 'Broadcast name already exists',
@@ -111,7 +112,6 @@ export default {
   template_name: 'Template name',
   template_name_placeholder: 'welcome_template',
   category: 'Category',
-  allow_category_change: 'Allow category change',
   language: 'Language',
   header: 'Header',
   header_type: {

@@ -93,7 +93,8 @@ export default {
     'The email has already been taken': 'El email ya ha sido tomado.',
     'The provided credentials are incorrect': 'Credenciales incorrectas',
     'Template name already exists': 'El nombre de la plantilla ya existe',
-    'templater_name_already_exists': 'El nombre de la plantilla ya existe',
+    'template_name_already_exists': 'El nombre de la plantilla ya existe',
+    'template_name_language_already_exists': 'El nombre de la plantilla con ese idioma ya existe',
     'Contact already exists': 'El contacto ya existe',
     'Group name already exists': 'El nombre del grupo ya existe',
     'Broadcast name already exists': 'El nombre de la campaña ya existe',
@@ -110,7 +111,6 @@ export default {
   template_name: 'Nombre del template',
   template_name_placeholder: 'welcome_template',
   category: 'Categoria',
-  allow_category_change: 'Permitir cambio de categoria',
   language: 'Idioma',
   header: 'Encabezado',
   header_type: {
@@ -127,7 +127,7 @@ export default {
   footer: 'Pie de página',
   footer_tooltip: 'Incluye una breve línea de texto al final de tu plantilla. Si activas el botón de cancelación de suscripción a marketing, el pie de página predeterminado aparecerá aquí automáticamente.',
   help_text_category_change:
-    'Habilitando esta opci&oacute;n prevendr&aacute; la rechazo del template debido a la miscategorizaci&oacute;n.',
+    'Habilitando esta opción prevendrá el rechazo del template debido a la miscategorización.',
   example_footer_text: 'Ej: Gracias por elegirnos!',
   yes: 'Si',
   no: 'No',

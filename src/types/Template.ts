@@ -16,7 +16,6 @@ export interface TemplateCreate {
   name: string,
   language: string,
   category: string,
-  allow_category_change?: boolean,
   components: {
     header?: {
       type: TemplateHeaderCode,
@@ -36,7 +35,6 @@ export interface TemplateEdit {
   name: string,
   language: string,
   category: string,
-  allow_category_change: boolean,
   components: {
     header: {
       type: TemplateHeaderCode,

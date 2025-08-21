@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
+:root {
+    --p-toast-detail-font-size: 1rem;
+}
+
 html {
     font-size: 12px;
     font-family: 'Inter', sans-serif;
+}
+
+@layer primevue {
+    :root {
+        --p-toast-detail-font-size: 1rem;
+    }
 }
 
 @layer base {
@@ -16,6 +26,10 @@ html {
 
     .p-select-option {
         @apply text-base;
+    }
+
+    .p-toast-detail {
+        font-size: 1rem;
     }
 }
 

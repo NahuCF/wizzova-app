@@ -25,7 +25,6 @@ export interface TemplateItem {
   language: string,
   category: string,
   status: TemplateStatus,
-  allow_category_change: false,
   components: TemplateComponents
   created_at: string
 }

@@ -4,7 +4,7 @@ import '~/assets/styles/primevue/flags.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
-import MyPreset from './theme'
+import { preset, passthrough } from './theme'
 import i18n from '~/config/i18n'
 import ToastService from 'primevue/toastservice'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
@@ -25,11 +25,12 @@ app.use(ToastService)
 app.use(i18n)
 app.use(PrimeVue, {
   theme: {
-    preset: MyPreset,
+    preset: preset,
     options: {
       darkModeSelector: false || 'none',
     }
   },
+  pt: passthrough
 })
 app.directive('tooltip', Tooltip)
 setupInterceptors()

@@ -1,7 +1,7 @@
 import Aura from '@primevue/themes/aura'
 import { definePreset } from '@primevue/themes'
 
-export default definePreset(Aura, {
+export const preset = definePreset(Aura, {
   primitive: {
     borderRadius: {
       none: '0',
@@ -658,3 +658,26 @@ export default definePreset(Aura, {
     },
   },
 })
+
+export const passthrough = {
+  toast: {
+    root: {
+      style: {
+        width: '29rem'
+      }
+    },
+    messageContent: { style: { padding: '0.875rem' } },
+    summary: { style: { fontSize: '1.125rem' } },
+    detail: { style: { fontSize: '1rem' } },
+    messageIcon: { style: { 
+      fontSize: '1.25rem',
+      height: '1.25rem',
+      width: '1.25rem'
+    }},
+    closeIcon: { style: { 
+      fontSize: '1.125rem',
+      height: '1.125rem',
+      width: '1.125rem'
+    }}
+  }
+}
