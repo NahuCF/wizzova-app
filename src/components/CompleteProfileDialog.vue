@@ -147,16 +147,20 @@ onMounted(async () => {
 						<p class="text-xl text-center">
 							{{ $t('complete_profile.select_account_description') }}
 						</p>
-						<div class="flex justify-center w-full">
+						<div class="flex flex-col gap-1 justify-center w-full">
+							<label class="text-lg" for="business">{{ $t('business') }}</label>
 							<Select
 								v-model="selectedBusiness"
 								:options="businesses"
 								optionLabel="name"
 								:placeholder="$t('complete_profile.select_business')"
 								class="w-full"
+								name="business"
+								id="business"
 							/>
 						</div>
-						<div class="flex justify-center w-full">
+						<div class="flex flex-col gap-1 justify-center w-full">
+							<label class="text-lg" for="waba">{{ $t('users.waba.label') }}</label>
 							<Select
 								:disabled="wabas.length === 0"
 								v-model="selectedWaba"
@@ -164,6 +168,8 @@ onMounted(async () => {
 								optionLabel="name"
 								:placeholder="$t('complete_profile.select_account')"
 								class="w-full"
+								name="waba"
+								id="waba"
 							/>
 						</div>
 					</div>

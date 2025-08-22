@@ -7,7 +7,7 @@ import { IconLoader2, IconPlus } from '@tabler/icons-vue'
 import moment from 'moment'
 import { API } from '~/services'
 import { IconEdit, IconTrash, IconList, IconLayoutGrid, IconSearch } from '@tabler/icons-vue'
-import type { Column, LayoutMode, TemplateBroadcast, TemplateCreate, TemplateItem } from '~/types'
+import type { Column, LayoutMode, PageWithTemplatesCount, TemplateBroadcast, TemplateCreate, TemplateItem } from '~/types'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { useCrudActions } from '~/composables/useCrudActions'
 import { useTemplateStore } from '~/stores/template'
@@ -23,7 +23,7 @@ const {
   fetchDataPage,
   loadNextPage,
   debouncedFetch,
-} = usePaginatedData<TemplateItem>(
+} = usePaginatedData<TemplateItem, PageWithTemplatesCount<TemplateItem>>(
   (page, perPage, search) => API.template.index(page, search, perPage).then(res => res.data),
   12
 )
@@ -42,6 +42,9 @@ const {
 })
 
 const templateStore = useTemplateStore()
+
+const dailyLimit = (item: TemplateItem) => item.days_since_meta_update < 1
+const monthlyLimit = (item: TemplateItem) => item.days_since_meta_update < 30 && item.updated_count_while_approved === 10
 
 const loadingBroadcasts = ref(false)
 const showBroadcastsDialog = ref(false)
@@ -68,6 +71,22 @@ const templateOptions = ref([
 			label: 'template.edit',
 			icon: IconEdit,
 			class: '',
+			disabled: (item: TemplateItem) => item.status === 'APPROVED' && 
+				(dailyLimit(item) || monthlyLimit(item)),
+			tooltip: (item: TemplateItem) => {
+				if(item.status !== 'APPROVED') {
+					return ''
+				}
+
+				if (dailyLimit(item)) {
+					return t('templates.daily_limit_reached')
+				}
+				if (monthlyLimit(item)) {
+					return t('templates.monthly_limit_reached')
+				}
+				
+				return ''
+			},
 			action: (item: TemplateItem) => {
 				router.push({ 
 					name: 'edit-template', 
@@ -82,7 +101,7 @@ const templateOptions = ref([
 			class: 'text-red-600',
 			icon: loadingBroadcasts.value ? IconLoader2 : IconTrash,
 			iconClass: loadingBroadcasts.value ? 'animate-spin' : '',
-			disabled: loadingBroadcasts.value,
+			disabled: () => loadingBroadcasts.value,
 			action: async (item: TemplateItem) => {
 				try {
 					const { data: response } = await API.template.activeBroadcasts(item.id)
@@ -149,6 +168,8 @@ const transformedData = computed(() => {
     }))
 })
 
+const templatesLimit = computed(() => dataPage.value.meta.templates_count >= 6000)
+
 const changeLayout = (layoutMode: LayoutMode) => {
 	templateStore.activeLayout = layoutMode
 	
@@ -190,7 +211,14 @@ onMounted(() => {
 	<div class="flex flex-col p-6">
 		<div class="flex justify-between items-center z-2 bg-slate-100">
 			<h1 class="font-semibold text-2xl">{{ t('templates.whatsapp_templates') }}</h1>
-			<Button @click="router.push({ name: 'new-template' })">
+			<Button 
+				:disabled="templatesLimit"
+				v-tooltip.bottom="templatesLimit && {
+					value: t('templates.templates_limit_reached'),
+					class: 'text-base max-w-[300px]!'
+				}"
+				@click="router.push({ name: 'new-template' })"
+			>
 				<IconPlus size="16" />
 				<span>
 					{{ $t('templates.create_new_template') }}

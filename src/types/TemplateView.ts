@@ -1,6 +1,7 @@
+import type { Page, PaginationMeta } from "./Pagination"
 import type { TemplateButton, TemplateHeaderCode } from "./Template"
 
-export type TemplateStatus = 'PENDING' | 'REJECTED'
+export type TemplateStatus = 'PENDING' | 'REJECTED' | 'APPROVED'
 
 export interface TemplateComponents {
   header: {
@@ -26,7 +27,9 @@ export interface TemplateItem {
   category: string,
   status: TemplateStatus,
   components: TemplateComponents
-  created_at: string
+  created_at: string,
+  days_since_meta_update: number,
+  updated_count_while_approved: number
 }
 
 export type TemplateStatusStyle = {
@@ -35,4 +38,12 @@ export type TemplateStatusStyle = {
     color: string,
     backgroundColor: string
   }
+}
+
+export interface PaginationMetaWithTemplatesCount extends PaginationMeta {
+  templates_count: number
+}
+
+export interface PageWithTemplatesCount<T> extends Page<T> {
+  meta: PaginationMetaWithTemplatesCount
 }

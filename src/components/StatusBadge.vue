@@ -11,14 +11,19 @@ const props = defineProps<{
 const badgeStatusStyles = {
 	PENDING: {
 		icon: IconAntennaBars5,
-		color: 'text-green-600',
-		backgroundColor: 'bg-green-200'
+		color: 'text-sky-600',
+		backgroundColor: 'bg-sky-200'
 	},
 	REJECTED: {
 		icon: IconXboxX,
 		color: 'text-red-600',
 		backgroundColor: 'bg-red-200'
-	}
+	},
+    APPROVED: {
+        icon: IconAntennaBars5,
+        color: 'text-green-600',
+        backgroundColor: 'bg-green-200'
+    },
 }
 
 const badgeStyle = computed(() => {

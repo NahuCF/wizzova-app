@@ -3,7 +3,7 @@ import { API } from '~/services'
 import { onMounted, ref, watch, computed } from 'vue'
 import { IconAsterisk, IconInfoCircle, IconLoader2, IconArrowLeft } from '@tabler/icons-vue'
 import { useI18n } from 'vue-i18n'
-import type { TemplateCategory, Language, TemplateCreate, TemplateHeaderCode, TemplateCallBtn, TemplateUrlBtn } from '~/types'
+import type { TemplateCategory, Language, TemplateCreate, TemplateHeaderCode, TemplateCallBtn, TemplateUrlBtn, TemplateStatus } from '~/types'
 import { useRoute, useRouter } from 'vue-router'
 import { useCrudActions } from '~/composables/useCrudActions'
 import { isCallButton, isUrlButton } from '~/types/guards'
@@ -54,10 +54,7 @@ const defaultValue: TemplateCreate = {
 const template = ref(defaultValue)
 const languages = ref<Language[]>([])
 const templateCategories = ref<TemplateCategory[]>([])
-const categoryChangeOptions = ref([
-	{ name: t('yes'), id: true },
-	{ name: t('no'), id: false },
-])
+const status = ref<TemplateStatus>('PENDING')
 
 const buttonsFilled = computed(() => {
 	return template.value.components.buttons.filter((b) => {
@@ -134,6 +131,7 @@ const fetchTemplate = async () => {
 				}))
 			}
 		}
+		status.value = templateEdit.status
 	}
 }
 
@@ -219,7 +217,13 @@ onMounted(() => {
 						<label for="name" class="text-lg">{{ $t('template_name') }}</label>
 						<IconAsterisk color="red" class="mt-1" size="8" />
 					</div>
-					<div class="relative">
+					<div 
+						class="relative"
+						v-tooltip.bottom="status === 'APPROVED' && {
+							value: $t('new_template.approved_field_tooltip'),
+							class: 'text-base max-w-[300px]!'
+						}"
+					>
 						<InputText 
 							v-model="template.name" 
 							class="!pr-[5.5rem]" 
@@ -229,6 +233,7 @@ onMounted(() => {
 							:maxlength="512" 
 							@input="formatInputName"
 							:placeholder="$t('template_name_placeholder')"
+							:disabled="status === 'APPROVED'"
 						/>
 						<div class="absolute right-3 top-2 text-slate-400">
 							{{ template.name.length }} / 512
@@ -244,14 +249,23 @@ onMounted(() => {
 									<label for="category" class="text-lg">{{ $t('category') }}</label>
 									<IconAsterisk color="red" class="mt-1" size="8" />
 								</div>
-								<Select 
-									v-model="template.category" 
-									:options="templateCategories"
-									optionLabel="name" 
-									optionValue="id" 
-									name="category" 
-									id="category"
-								/>
+								<div
+									v-tooltip.bottom="status === 'APPROVED' && {
+										value: $t('new_template.approved_field_tooltip'),
+										class: 'text-base max-w-[300px]!'
+									}"
+								>
+									<Select
+										v-model="template.category" 
+										:options="templateCategories"
+										optionLabel="name" 
+										optionValue="id" 
+										name="category" 
+										id="category"
+										:disabled="status === 'APPROVED'"
+										class="w-full"
+									/>
+								</div>
 							</div>
 
 							<div class="flex flex-col gap-1 relative">
@@ -259,14 +273,23 @@ onMounted(() => {
 									<label for="language" class="text-lg">{{ $t('language') }}</label>
 									<IconAsterisk color="red" class="mt-1" size="8" />
 								</div>
-								<Select 
-									v-model="template.language" 
-									:options="languages"
-									optionLabel="name" 
-									optionValue="code" 
-									name="language" 
-									id="language"
-								/>
+								<div
+									v-tooltip.bottom="status === 'APPROVED' && {
+										value: $t('new_template.approved_field_tooltip'),
+										class: 'text-base max-w-[300px]!'
+									}"
+								>
+									<Select 
+										v-model="template.language" 
+										:options="languages"
+										optionLabel="name" 
+										optionValue="code" 
+										name="language" 
+										id="language"
+										:disabled="status === 'APPROVED'"
+										class="w-full"
+									/>
+								</div>
 							</div>
 						</div>
 

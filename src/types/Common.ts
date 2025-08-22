@@ -4,8 +4,9 @@ export interface DropdownOption {
 	label: string
 	icon?: Component
 	class?: string
-  iconClass?: string,
-  disabled?: boolean,
+  iconClass?: string
+  disabled?: (selectedItem: any) => boolean
+  tooltip?: (selectedItem: any) => string
 	action: (selectedItem?: any) => void
 }
 

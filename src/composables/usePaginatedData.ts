@@ -5,19 +5,19 @@ import type { Page } from '~/types'
 import { useI18n } from 'vue-i18n'
 import { useErrorHandler } from './useErrorHandler'
 
-export function usePaginatedData<T>(
+export function usePaginatedData<T, PageType extends Page<T> = Page<T>>(
 	fetchFn: (page: number, perPage: number, searchTerm: string) => Promise<any>,
 	perPageDefault = 10
 ) {
 	const { t } = useI18n()
 	const handleError = useErrorHandler()
 
-	const dataPage = ref<Page<T>>({
-		data: [] as T[],
+	const dataPage = ref<PageType>({
+		data: [],
 		meta: {
-			current_page: 1, 
-			last_page: 1, 
-			total: 0, 
+			current_page: 1,
+			last_page: 1,
+			total: 0,
 			links: [],
 			from: 0,
 			path: '',
@@ -30,7 +30,8 @@ export function usePaginatedData<T>(
 			prev: null,
 			next: null
 		},
-	})
+	} as unknown as PageType)
+
 	const loading = ref(false)
 	const searchTerm = ref('')
 	const rowsPerPage = ref(perPageDefault)

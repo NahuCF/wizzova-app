@@ -152,6 +152,7 @@ export default {
   new_template: {
     title: 'Nuevo template',
     button_text: 'Texto del botón',
+    approved_field_tooltip: 'Este campo no es editable porque el template está aprobado.',
     body: {
       variable_placeholder: {
         name: 'Ex: John, Ram, Riya',
@@ -212,7 +213,10 @@ export default {
     delete_message: '¿Estás seguro de que deseas eliminar esta plantilla?',
     template_deleted: '¡Plantilla eliminada con éxito!',
     active_broadcasts: 'Campañas Activas',
-    active_broadcasts_message: 'No puedes eliminar esta plantilla porque se está utilizando en las siguientes campañas activas:'
+    active_broadcasts_message: 'No puedes eliminar esta plantilla porque se está utilizando en las siguientes campañas activas:',
+    daily_limit_reached: 'El límite diario fue alcanzado para esta plantilla',
+    monthly_limit_reached: 'El límite mensual fue alcanzado para esta plantilla',
+    templates_limit_reached: 'Alcanzo el limite de plantillas',
   },
   template: {
     empty: 'No se encontraron plantillas',
@@ -227,7 +231,8 @@ export default {
   },
   template_status: {
     PENDING: 'Pendiente',
-    REJECTED: 'Rechazado'
+    REJECTED: 'Rechazada',
+    APPROVED: 'Aprobada'
   },
   edit_template: {
     title: 'Editar Plantilla',

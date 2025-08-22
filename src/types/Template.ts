@@ -1,3 +1,5 @@
+import type { TemplateStatus } from "./TemplateView"
+
 export interface TemplateCategory {
   id: string
   name: string
@@ -48,6 +50,7 @@ export interface TemplateEdit {
     buttons: TemplateButton[]
   },
   created_at: string
+  status: TemplateStatus
 }
 
 export type TemplateBtnCategory = 'cta' | 'custom_reply'

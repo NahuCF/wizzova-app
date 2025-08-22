@@ -154,6 +154,7 @@ Grab them today!`,
   new_template: {
     title: 'New template',
     button_text: 'Button text',
+    approved_field_tooltip: 'This field is not editable because the template is approved.',
     body: {
       variable_placeholder: {
         name: 'Ex: John, Ram, Riya',
@@ -214,7 +215,10 @@ Grab them today!`,
     delete_message: 'Are you sure you want to delete this template?',
     template_deleted: 'Template deleted successfully!',
     active_broadcasts: 'Active broadcasts',
-    active_broadcasts_message: "You can't delete this template because is been use in the following active broadcasts:"
+    active_broadcasts_message: "You can't delete this template because is been use in the following active broadcasts:",
+    daily_limit_reached: 'Daily limit reached for this template',
+    monthly_limit_reached: 'Monthly limit reached for this template',
+    templates_limit_reached: 'Templates limit reached',
   },
   template: {
     title: 'Templates',
@@ -230,7 +234,8 @@ Grab them today!`,
   },
   template_status: {
     PENDING: 'Pending',
-    REJECTED: 'Rejected'
+    REJECTED: 'Rejected',
+    APPROVED: 'Approved'
   },
   edit_template: {
     title: 'Edit template',
