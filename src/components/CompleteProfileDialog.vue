@@ -38,7 +38,7 @@ const fetchAppId = async () => {
 
 const connectWaba = async () => {
 	try {
-		const authResponse = await launchLogin('business_management,whatsapp_business_management')
+		const authResponse = await launchLogin('business_management,whatsapp_business_management,whatsapp_business_messaging,whatsapp_business_manage_events ')
 		if (!authResponse) {
 			console.error('Failed to get access token')
 			return
