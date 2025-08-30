@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import EmojiPicker, { type EmojiExt } from 'vue3-emoji-picker'
+import 'vue3-emoji-picker/css'
 import { IconMoodSmile, IconLoader2 } from '@tabler/icons-vue'
 import moment from 'moment'
 import { computed, ref } from 'vue'
@@ -19,6 +21,7 @@ const { t } = useI18n()
 
 const inputTab = ref<'REPLY' | 'NOTES'>('REPLY')
 const newMessage = ref('')
+const emojiPopover = ref()
 
 const groupedMessages = computed(() => {
     const groups: Record<string, MessageItem[]> = {}
@@ -44,6 +47,11 @@ const dateLabel = (date: string) => {
 const shouldShowTail = (index: number, messages: MessageItem[]) => {
 	if (index === 0) return true
 	return messages[index].direction !== messages[index - 1].direction
+}
+
+const onSelectEmoji = (emoji: EmojiExt) => {
+	newMessage.value += emoji.i
+	emojiPopover.value?.hide()
 }
 
 const sendMessage = () => {
@@ -130,9 +138,13 @@ const sendMessage = () => {
 			/>
 
 			<div class="flex justify-between items-center">
-				<Button variant="text">
+				<Button variant="text" @click="emojiPopover?.toggle($event)">
 					<IconMoodSmile size="18" />
 				</Button>
+
+				<Popover ref="emojiPopover" :dismissable="true" unstyled class="">
+					<EmojiPicker :native="true" @select="onSelectEmoji" />
+				</Popover>
 					
 				<Button
 					:disabled="loading || newMessage.length === 0"
