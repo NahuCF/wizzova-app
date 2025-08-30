@@ -18,6 +18,8 @@ import BroadcastService from './BroadcastService'
 import TeamService from './TeamService'
 import RoleService from './RoleService'
 import WabaService from './WabaService'
+import ConversationService from './ConversationService'
+import MessageService from './MessageService'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -28,11 +30,13 @@ export const API = {
     broadcast: BroadcastService,
     contact: ContactService,
     contactField: ContactFieldService,
+    conversation: ConversationService,
     country: CountryService,
     currency: CurrencyService,
     group: GroupService,
     industry: IndustryService,
     knownPlace: KnownPLaceService,
+    message: MessageService,
     role: RoleService,
     team: TeamService,
     templateCategory: TemplateCategoryService,

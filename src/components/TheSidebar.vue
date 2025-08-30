@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { IconSpeakerphone, IconLayout, IconUsers, IconAddressBook, IconLogout, IconLoader2, IconForms } from '@tabler/icons-vue'
+import { IconSpeakerphone, IconLayout, IconUsers, IconAddressBook, 
+	IconLogout, IconLoader2, IconForms, IconMessage } from '@tabler/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import { API } from '~/services'
 import { defineStore, getActivePinia } from 'pinia'
@@ -40,6 +41,12 @@ const pages = computed(() => {
 			icon: IconSpeakerphone,
 			path: '/broadcasts',
 			action: () => router.push('/broadcasts')
+		},
+		{
+			name: 'Conversations',
+			icon: IconMessage,
+			path: '/conversations',
+			action: () => router.push('/conversations')
 		},
 		{
 			name: 'Templates',

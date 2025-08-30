@@ -87,7 +87,6 @@ export default {
   choose_tenant: {
     title: 'Choose Company',
   },
-  conversations: 'Conversations',
   validation_errors: {
     'The work email has already been taken': 'The email has already been taken.',
     'The email has already been taken': 'The email has already been taken.',
@@ -636,5 +635,16 @@ Grab them today!`,
     select_account_description: 'Please choose the WhatsApp Business Account you want to use',
     complete_profile: 'Complete profile',
     account_configured_successfully: 'Account configured successfully!'
+  },
+  conversations: {
+    status: {
+      UNASSIGNED: 'Unassigned',
+      MINE: 'Mine',
+      PINNED: 'Pinned',
+      OPENED: 'Opened',
+      RESOLVED: 'Resolved'
+    },
+    resolve: 'Resolve',
+    assign_to: 'Assign to',
   }
 }
