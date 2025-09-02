@@ -634,7 +634,28 @@ Grab them today!`,
     select_account_title: 'Select your account',
     select_account_description: 'Please choose the WhatsApp Business Account you want to use',
     complete_profile: 'Complete profile',
-    account_configured_successfully: 'Account configured successfully!'
+    account_configured_successfully: 'Account configured successfully!',
+    connect_your_number: 'Connect your number',
+    phone_number: 'Phone number',
+    select_number: 'Select number',
+    connect_new_number: 'Connect New Number',
+    connect_number: 'Connect number'
+  },
+  create_number: {
+    requirements: 'Requirements',
+    connect_number: 'Connect number',
+    verify: 'Verify',
+    number_requirements: 'A suitable business phone number to receive the verification SMS. This should not be your personal WhatsApp number.',
+    delete_number_required: 'If you are currently using WhatsApp with that number, please delete that account.',
+    can_connect_number: 'I am ready with the above pre-requisites',
+    whatsapp_business_display_name: 'WhatsApp business display name',
+    business_name: 'Business name',
+    select_number: 'Select number',
+    verify_your_phone_number: 'Verify your phone number',
+    receive_verification_code: 'You will receive a verification code via SMS to confirm your new number.',
+    verification_code: 'Verification code',
+    verication_code_length: 'Verification code must be 6 characters long',
+    verify_code: 'Verify code'
   },
   conversations: {
     status: {
@@ -646,5 +667,8 @@ Grab them today!`,
     },
     resolve: 'Resolve',
     assign_to: 'Assign to',
-  }
+  },
+  next: 'Next',
+  back: 'Back',
+  learn_more: 'Learn more'
 }

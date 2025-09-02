@@ -1,30 +1,29 @@
 <script setup lang="ts">
 import { parsePhoneNumberFromString, type CountryCode } from 'libphonenumber-js/min'
 import { computed, onMounted, ref } from 'vue'
+import { useCountryStore } from '~/stores'
 import type { CountryCellphone } from '~/types/Country'
 
 
 const props = defineProps<{
     modelValue: string,
+    countryCode?: CountryCode,
     placeholder?: string,
     invalid?: boolean
 }>()
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: string): void
+    (e: 'update:modelValue', value: string): void,
+    (e: 'update:countryCode', value: CountryCode): void
 }>()
 
-const selectedCountry = ref<CountryCode>('US')
-const countries = ref<CountryCellphone[]>([
-    { name: 'Argentina', code: 'AR', prefix: '+54' },
-    { name: 'Brazil', code: 'BR', prefix: '+55' },
-    { name: 'Spain', code: 'ES', prefix: '+34' },
-    { name: 'United States', code: 'US', prefix: '+1' },
-])
+const countryStore = useCountryStore()
+
+const selectedCountry = ref<CountryCode>(props.countryCode || 'US')
 const cellphonePopover = ref()
 
 const country = computed(() => {
-    return countries.value.find((country) => country.code === selectedCountry.value)
+    return countryStore.countryPhones.find((country) => country.code === selectedCountry.value)
 })
 
 const localNumber = computed(() => {
@@ -35,27 +34,34 @@ const localNumber = computed(() => {
 const selectCountry = (newCountry: CountryCellphone) => {
     const input = props.modelValue || ''
 
-    const matched = countries.value.find(c => input.startsWith(c.prefix))
+    const matched = countryStore.countryPhones.find(c => input.startsWith(c.prefix))
     const currentPrefix = matched?.prefix || ''
 
     const nationalNumber = input.slice(currentPrefix.length)
 
+    if(props.countryCode) {
+        emit('update:countryCode', newCountry.code)
+    }
     selectedCountry.value = newCountry.code
     cellphonePopover.value.hide()
 
-    emit('update:modelValue', newCountry.prefix + nationalNumber)
+    props.countryCode
+        ? emit('update:modelValue', nationalNumber)
+        : emit('update:modelValue', newCountry.prefix + nationalNumber)
 }
 
 const onInput = (event: Event) => {
     const target = event.target as HTMLInputElement | null
     if (!target) return
 
-    emit('update:modelValue', country.value?.prefix + target.value)
+    props.countryCode
+        ? emit('update:modelValue', target.value) 
+        : emit('update:modelValue', country.value?.prefix + target.value)
 }
 
 onMounted(() => {
     const phoneNumber = parsePhoneNumberFromString(props.modelValue || '')
-    const initCountry = countries.value.find(c => c.code === phoneNumber?.country)
+    const initCountry = countryStore.countryPhones.find(c => c.code === phoneNumber?.country)
 
     if (initCountry) {
         selectCountry(initCountry)
@@ -100,7 +106,7 @@ onMounted(() => {
         </div>
         <Popover ref="cellphonePopover" class="!p-0">
             <div class="flex flex-col">
-                <div v-for="country in countries" @click="selectCountry(country)" :key="country.code"
+                <div v-for="country in countryStore.countryPhones" @click="selectCountry(country)" :key="country.code"
                     class="flex gap-2 items-center hover:bg-slate-100 py-2 px-3 hover:cursor-pointer">
                     <img src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png"
                         :alt="`Country flag imagen ${country.name}`"

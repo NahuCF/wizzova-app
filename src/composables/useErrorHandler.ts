@@ -9,6 +9,7 @@ export const useErrorHandler = () => {
 	const handleError = (error: unknown) => {
 		if (axios.isAxiosError(error)) {
 			if (error.code === 'PROFILE_INCOMPLETE') {
+				console.log(error)
 				return
 			}
 

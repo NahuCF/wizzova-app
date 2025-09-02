@@ -10,7 +10,9 @@ const Http = axios.create({
 
 const allowedPaths = [
 	'/tenant/meta-access',
-	'/tenant/complete-profile',
+	'/tenant/store-default-waba',
+	'/tenant/select-number',
+	'/tenant/verify-number-code',
 	'/meta/app-id',
 	'/login'
 ]

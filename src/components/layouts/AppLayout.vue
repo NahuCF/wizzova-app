@@ -43,7 +43,11 @@ const endSession = () => {
 		/>
 		<CompleteProfileDialog
 			v-if="sessionStore.tenant && !sessionStore.tenant?.is_profile_completed"
-			:visible="sessionStore.tenant && !sessionStore.tenant?.is_profile_completed"
+			:visible="sessionStore.tenant && !sessionStore.tenant?.is_profile_completed && !sessionStore.createNumber"
+		/>
+		<CreateNumberDialog
+			v-if="sessionStore.tenant && !sessionStore.tenant?.is_profile_completed"
+			:visible="sessionStore.tenant && !sessionStore.tenant?.is_profile_completed && sessionStore.createNumber"
 		/>
 	</div>
 </template>

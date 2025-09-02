@@ -20,6 +20,7 @@ export interface UserItem {
   wabas: WABAItem[],
   default_waba?: WABAItem,
   permission_names: string[],
+  default_phone_id?: string,
   is_deleted: boolean,
   status: UserStatus
 }

@@ -87,7 +87,6 @@ export default {
   choose_tenant: {
     title: 'Elige la Compañia',
   },
-  conversations: 'Conversaciones',
   validation_errors: {
     'The work email has already been taken': 'El email de trabajo ya ha sido tomado.',
     'The email has already been taken': 'El email ya ha sido tomado.',
@@ -633,6 +632,37 @@ export default {
     select_account_title: 'Selecciona tu cuenta',
     select_account_description: 'Por favor elige la cuenta de WhatsApp Business que deseas usar',
     complete_profile: 'Completar perfil',
-    account_configured_successfully: '¡Cuenta configurada con éxito!'
-  }
+    account_configured_successfully: '¡Cuenta configurada con éxito!',
+    connect_your_number: 'Conecta tu número'
+  },
+  create_number: {
+    requirements: 'Requerimientos',
+    connect_number: 'Conectar número',
+    verify: 'Verificar',
+    number_requirements: 'Un número de teléfono comercial adecuado para recibir el SMS de verificación. No debe ser tu número personal de WhatsApp.',
+    delete_number_required: 'Si actualmente estás usando WhatsApp con ese número, elimina esa cuenta.',
+    can_connect_number: 'Cumplo con los prerrequisitos anteriores',
+    whatsapp_business_display_name: 'Nombre mostrado del WhatsApp Business',
+    business_name: 'Nombre de la empresa',
+    select_number: 'Seleccionar número',
+    verify_your_phone_number: 'Verifica tu número de teléfono',
+    receive_verification_code: 'Recibiras un codigo de verificacion por SMS para confirmar tu nuevo número.',
+    verification_code: 'Código de verificación',
+    verication_code_length: 'El código de verificación debe tener 6 caracteres',
+    verify_code: 'Verificar código'
+  },
+  conversations: {
+    status: {
+      UNASSIGNED: 'No asignado',
+      MINE: 'Mio',
+      PINNED: 'Fijado',
+      OPENED: 'Abierto',
+      RESOLVED: 'Resuelto'
+    },
+    resolve: 'Resolver',
+    assign_to: 'Asignar a',
+  },
+  next: 'Siguiente',
+  back: 'Volver',
+  learn_more: 'Aprender más'
 }

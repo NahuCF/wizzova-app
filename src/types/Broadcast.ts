@@ -1,5 +1,9 @@
 import type { UserItem } from "./User"
 
+type QualityRating = 'GREEN' | 'YELLOW' | 'RED' | 'UNKNOWN'
+type CodeVerificationStatus = 'VERIFIED' | 'NOT_VERIFIED'
+type WABANumberStatus = 'CONNECTED' | 'PENDING' | 'OFFLINE' | 'UNVERIFIED' | 'FLAGGED' | 'RESTRICTED'
+
 export interface BroadcastOverview {
     recipients: number,
     sent: {
@@ -28,6 +32,18 @@ export interface BroadcastNumber {
     id: string,
     number: string,
     name: string
+}
+
+export interface WABANumber {
+    id: string,
+    display_phone_number: string,
+    verified_name: string,
+    quality_rating: QualityRating,
+    code_verification_status: CodeVerificationStatus,
+    is_verified: boolean,
+    is_registed: boolean,
+    status: WABANumberStatus,
+    can_send_messages: boolean
 }
 
 export type BroadcastStatus = 'SCHEDULED' | 'PROCESSING' | 'COMPLETED'

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { Tenant, UserItem } from '~/types'
+import type { Tenant, UserItem, WABANumber } from '~/types'
 
 export const useSessionStore = defineStore('session', () => {
 	const user = ref<UserItem | null>(null)
@@ -8,6 +8,8 @@ export const useSessionStore = defineStore('session', () => {
 	const tenants = ref<Tenant[]>([])
 	const selectedTenant = ref<Tenant | null>(null)
 	const savedEmail = ref<string>('')
+	const wabaNumbers = ref<WABANumber[]>([])
+	const createNumber = ref(false)
 	const token = ref<string>('')
 	const showOverrideDialog = ref(false)
 
@@ -39,6 +41,8 @@ export const useSessionStore = defineStore('session', () => {
 		tenants.value = []
 		selectedTenant.value = null
 		savedEmail.value = ''
+		wabaNumbers.value = []
+		createNumber.value = false
 		token.value = ''
 		showOverrideDialog.value = false
 	}
@@ -49,6 +53,8 @@ export const useSessionStore = defineStore('session', () => {
 		tenants,
 		selectedTenant,
 		savedEmail,
+		wabaNumbers,
+		createNumber,
 		token,
 		showOverrideDialog,
 		isAuthenticated,
