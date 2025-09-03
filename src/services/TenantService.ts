@@ -1,5 +1,5 @@
 import Http from '~/config/http'
-import type { BusinessItem, WABANumber } from '~/types'
+import type { BusinessItem, Tenant, WABANumber } from '~/types'
 
 export default {
 	async getBusinesses(accessToken: string) {
@@ -12,19 +12,19 @@ export default {
 		})
 	},
 	async selectWABANumber(phoneId: string) {
-		return Http.post<{ data: WABANumber }>('/tenant/select-number', { 
+		return Http.post<{ data: WABANumber, meta: { tenant: Tenant } }>('/tenant/select-number', { 
 			phone_id: phoneId
 		})
 	},
 	async registerWABANumber(businessName: string, phoneNumber: string, countryPrefix: string) {
-		return Http.post<{ data: WABANumber }>('/tenant/select-number', { 
+		return Http.post<{ data: WABANumber, meta: { tenant: Tenant } }>('/tenant/select-number', { 
 			verified_name: businessName,
 			display_phone_number: phoneNumber,
 			cc: countryPrefix
 		})
 	},
 	async verifyNumberCode(phoneId: string, code: string) {
-		return Http.post<{ data: WABANumber }>('/tenant/verify-number-code', { 
+		return Http.post<{ data: WABANumber, meta: { tenant: Tenant } }>('/tenant/verify-number-code', { 
 			code: code,
 			phone_id: phoneId
 		})

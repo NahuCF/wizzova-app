@@ -26,6 +26,18 @@ export const useErrorHandler = () => {
 				})
 				return
 			}
+			else if (error.response?.status === 400 && error.response.data) {
+				const title = error.response.data.message
+				const message = error.response.data.error
+
+				toast.add({
+					severity: 'error',
+					summary: title ?? 'Error',
+					detail: message ?? t('an_error_occurred'),
+					life: 1000000,
+				})
+				return
+			}
 		}
 
 		toast.add({

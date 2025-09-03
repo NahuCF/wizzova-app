@@ -85,7 +85,7 @@ const selectWABANumber = async () => {
 
 		const { data: response } = await API.tenant.selectWABANumber(selectedWabaNumber.value.id)
 		sessionStore.user.default_phone_id = response.data.id
-		sessionStore.tenant.is_profile_completed = true
+		sessionStore.tenant = response.meta.tenant
 
 		await router.replace({ name: 'templates' })
 		window.location.reload()
@@ -175,7 +175,7 @@ onMounted(async () => {
 						<p class="text-xl text-center">
 							{{ $t('complete_profile.select_account_description') }}
 						</p>
-						<div class="flex flex-col gap-1 justify-center w-full">
+						<div class="flex flex-col gap-1 justify-center w-full px-12">
 							<label class="text-lg" for="business">{{ $t('business') }}</label>
 							<Select
 								v-model="selectedBusiness"
@@ -187,7 +187,7 @@ onMounted(async () => {
 								id="business"
 							/>
 						</div>
-						<div class="flex flex-col gap-1 justify-center w-full">
+						<div class="flex flex-col gap-1 justify-center w-full px-12">
 							<label class="text-lg" for="waba">{{ $t('users.waba.label') }}</label>
 							<Select
 								:disabled="wabas.length === 0"
@@ -219,32 +219,34 @@ onMounted(async () => {
 				</div>
 
 				<div v-if="step === 3" class="flex flex-col items-center gap-32 w-full">
-					<div class="flex flex-col items-center gap-8 max-w-[400px]">
+					<div class="flex flex-col items-center gap-8 max-w-[400px] w-full">
 						<h3 class="text-4xl font-semibold text-center mb-12">
 							{{ $t('complete_profile.connect_your_number') }}
 						</h3>
-						<div class="flex flex-col gap-1 justify-center w-full">
-							<label class="text-lg" for="wabaNumbers">{{ $t('complete_profile.phone_number') }}</label>
-							<Select
-								v-model="selectedWabaNumber"
-								:options="sessionStore.wabaNumbers"
-								optionLabel="display_phone_number"
-								:placeholder="$t('complete_profile.select_number')"
-								class="w-full"
-								name="wabaNumbers"
-								id="wabaNumbers"
-							/>
-						</div>
-						<div class="w-full">
-							<Divider layout="horizontal" align="center" class="font-medium">OR</Divider>
-						</div>
-						<div class="flex flex-col gap-1 justify-center w-full">
-							<Button
-								class="font-medium"
-								@click="sessionStore.createNumber = true"
-							>
-								{{ $t('complete_profile.connect_new_number') }}
-							</Button>
+						<div class="flex flex-col items-center gap-8 w-full px-12">
+							<div class="flex flex-col gap-1 justify-center w-full">
+								<label class="text-lg" for="wabaNumbers">{{ $t('complete_profile.phone_number') }}</label>
+								<Select
+									v-model="selectedWabaNumber"
+									:options="sessionStore.wabaNumbers"
+									optionLabel="display_phone_number"
+									:placeholder="$t('complete_profile.select_number')"
+									class="w-full"
+									name="wabaNumbers"
+									id="wabaNumbers"
+								/>
+							</div>
+							<div class="w-full">
+								<Divider layout="horizontal" align="center" class="font-medium">OR</Divider>
+							</div>
+							<div class="flex flex-col gap-1 justify-center w-full">
+								<Button
+									class="text-lg font-medium"
+									@click="sessionStore.createNumber = true"
+								>
+									{{ $t('complete_profile.connect_new_number') }}
+								</Button>
+							</div>
 						</div>
 					</div>
 

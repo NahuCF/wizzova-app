@@ -84,6 +84,7 @@ const validateForm = async () => {
 			selectedCountry.value.prefix
 		)
 		newWabaNumber.value = response.data
+		sessionStore.tenant = response.meta.tenant
 
 		step.value = 3
 	} catch(error) {
@@ -103,7 +104,7 @@ const verifyCode = async () => {
 		loading.value = true
 		const { data: response } = await API.tenant.verifyNumberCode(newWabaNumber.value.id, verificationCode.value)
 		sessionStore.user.default_phone_id = response.data.id
-		sessionStore.tenant.is_profile_completed = true
+		sessionStore.tenant = response.meta.tenant
 
 		await router.replace({ name: 'templates' })
 		window.location.reload()
@@ -188,6 +189,7 @@ watch(() => props.visible, () => {
 								v-if="sessionStore.wabaNumbers.length > 0"
 								class="bg-white! border-slate-200! hover:bg-slate-100!"
 								severity="secondary"
+								:disabled="loading"
 								@click="sessionStore.createNumber = false"
 							>
 								{{ $t('back') }}
@@ -210,8 +212,8 @@ watch(() => props.visible, () => {
 				</div>
 
 				<div v-if="step === 2" class="flex flex-col items-center gap-32 w-full">
-					<div class="flex flex-col items-center gap-8 max-w-[400px]">
-						<div class="flex flex-col gap-2 relative">
+					<div class="flex flex-col items-center gap-12 max-w-[400px] w-full px-12">
+						<div class="flex flex-col gap-2 relative w-full">
 							<label class="text-lg flex items-center gap-1" for="phone">
 								<span class="text-neutral-800">{{ $t(`create_number.whatsapp_business_display_name`) }}</span>
 								<IconAsterisk color="red" size="8" />
@@ -258,6 +260,7 @@ watch(() => props.visible, () => {
 							<Button
 								class="bg-white! border-slate-200! hover:bg-slate-100!"
 								severity="secondary"
+								:disabled="loading"
 								@click="step = 1"
 							>
 								{{ $t('back') }}
