@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { IconCheck, IconBrandWhatsappFilled } from '@tabler/icons-vue'
-import type { BroadcastNumber, DropdownOption, TemplateItem } from '~/types'
+import type { WABANumber, DropdownOption, TemplateItem } from '~/types'
 import moment from 'moment'
 
 const props = defineProps<{
 	template: TemplateItem,
 	options?: DropdownOption[][],
 	clickable?: boolean,
-	broadcastNumber?: BroadcastNumber
+	broadcastNumber?: WABANumber
 }>()
 
 const emit = defineEmits<{
@@ -73,7 +73,7 @@ const onClick = () => {
 					<IconBrandWhatsappFilled size="13" />
 				</div>
 				<div class="text-base font-light text-slate-500">
-					{{ broadcastNumber.name }} || {{ broadcastNumber.number }}
+					{{ broadcastNumber.verified_name }} || {{ broadcastNumber.verified_name }}
 				</div>
 			</div>
 		</div>

@@ -449,9 +449,12 @@ Grab them today!`,
       status: 'Status'
     },
     status: {
-      SCHEDULED: 'Scheduled',
-      PROCESSING: 'Processing',
-      COMPLETED: 'Completed'
+      queued: 'Queued',
+      scheduled: 'Scheduled',
+      sending: 'Sending',
+      sent: 'Sent',
+      failed: 'Failed',
+      cancelled: 'Cancelled'
     }
   },
   today: 'Today',
@@ -670,5 +673,8 @@ Grab them today!`,
   },
   next: 'Next',
   back: 'Back',
-  learn_more: 'Learn more'
+  learn_more: 'Learn more',
+  last_n_days: 'Past {count} days',
+  select_date_range: 'Select date range',
+  reset: 'Reset'
 }

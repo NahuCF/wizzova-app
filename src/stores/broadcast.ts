@@ -1,11 +1,11 @@
 import { defineStore } from "pinia"
 import { computed, ref, watchEffect } from "vue"
-import type { BroadcastNumber, ContactGroupItem, TemplateItem, VariableMapping } from "~/types"
+import type { WABANumber, ContactGroupItem, TemplateItem, VariableMapping } from "~/types"
 
 interface CreateBroadcast {
     name: string,
     sendOption: 'SEND_NOW' | 'SCHEDULE_LATER',
-    broadcastNumber?: BroadcastNumber,
+    broadcastNumber?: WABANumber,
     template?: TemplateItem,
     contactGroups: ContactGroupItem[],
     scheduledDate?: Date,

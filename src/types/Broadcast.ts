@@ -5,33 +5,30 @@ type CodeVerificationStatus = 'VERIFIED' | 'NOT_VERIFIED'
 type WABANumberStatus = 'CONNECTED' | 'PENDING' | 'OFFLINE' | 'UNVERIFIED' | 'FLAGGED' | 'RESTRICTED'
 
 export interface BroadcastOverview {
-    recipients: number,
-    sent: {
+    recipients_count: {
         count: number,
         percentage: number
     },
-    received: {
+    sent_count: {
         count: number,
         percentage: number
     },
-    read: {
+    delivered_count: {
         count: number,
         percentage: number
     },
-    responded: {
+    readed_count: {
         count: number,
         percentage: number
     },
-    failed: {
+    replied_count: {
+        count: number,
+        percentage: number
+    },
+    failed_count: {
         count: number,
         percentage: number
     }
-}
-
-export interface BroadcastNumber {
-    id: string,
-    number: string,
-    name: string
 }
 
 export interface WABANumber {
@@ -46,7 +43,7 @@ export interface WABANumber {
     can_send_messages: boolean
 }
 
-export type BroadcastStatus = 'SCHEDULED' | 'PROCESSING' | 'COMPLETED'
+export type BroadcastStatus = 'queued' | 'scheduled' | 'sending' | 'sent' | 'failed' | 'cancelled'
 
 export interface BroadcastItem {
     id: string,

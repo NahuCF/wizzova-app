@@ -451,9 +451,12 @@ export default {
       status: 'Estado'
     },
     status: {
-      SCHEDULED: 'Agendado',
-      PROCESSING: 'Procesando',
-      COMPLETED: 'Completado'
+      queued: 'En cola',
+      scheduled: 'Agendada',
+      sending: 'Enviando',
+      sent: 'Completada',
+      failed: 'Fallida',
+      cancelled: 'Cancelada'
     }
   },
   continue: 'Continuar',
@@ -664,5 +667,8 @@ export default {
   },
   next: 'Siguiente',
   back: 'Volver',
-  learn_more: 'Aprender más'
+  learn_more: 'Aprender más',
+  last_n_days: 'Últimos {count} días',
+  select_date_range: 'Rango de fechas',
+  reset: 'Resetear'
 }

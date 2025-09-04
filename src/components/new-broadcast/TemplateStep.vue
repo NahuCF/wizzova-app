@@ -3,7 +3,7 @@ import { useRouter } from 'vue-router'
 import { IconArrowLeft, IconSearch, IconPlus } from '@tabler/icons-vue'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
-import type { BroadcastNumber, TemplateItem } from '~/types'
+import type { WABANumber, TemplateItem } from '~/types'
 import { ref } from 'vue'
 import { useBroadcastStore } from '~/stores/broadcast'
 import { storeToRefs } from 'pinia'
@@ -25,13 +25,13 @@ const {
 )
 
 const loadingNumbers = ref(false)
-const broadcastNumbers = ref<BroadcastNumber[]>([])
+const broadcastNumbers = ref<WABANumber[]>([])
 
 const fetchBroadcastNumbers = async () => {
     loadingNumbers.value = true
     try {
         const { data: response } = await API.broadcast.broadcastNumbers()
-        broadcastNumbers.value = response
+        broadcastNumbers.value = response.data
 
         if(!newBroadcast.value.broadcastNumber && broadcastNumbers.value.length > 0) {
             newBroadcast.value.broadcastNumber = broadcastNumbers.value[0]

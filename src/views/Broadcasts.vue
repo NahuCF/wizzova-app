@@ -1,13 +1,28 @@
 <script setup lang="ts">
 import { IconRefresh, IconPlus, IconUsers, IconCheck, IconChecks, 
-    IconExclamationCircle, IconArrowBackUp, IconSearch } from '@tabler/icons-vue'
+    IconExclamationCircle, IconArrowBackUp, IconSearch, IconFilter, 
+    IconStopwatch,
+    IconCalendarClock,
+    IconSend,
+    IconX,
+    IconCancel} from '@tabler/icons-vue'
 import moment from 'moment'
+import type { MenuItem } from 'primevue/menuitem'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
-import type { BroadcastNumber, BroadcastItem, BroadcastOverview, BroadcastStatus, Column } from '~/types'
+import type { WABANumber, BroadcastItem, BroadcastOverview, BroadcastStatus, Column, PrimeVueSeverity } from '~/types'
+
+const selectedNumber = ref<WABANumber>()
+const dateRange = ref<(Date | null)[] | null>()
+const selectedFilter = ref<{
+    label: string,
+    value: BroadcastStatus,
+    iconClass: string,
+    iconEl: any
+}>()
 
 const { t } = useI18n()
 const router = useRouter()
@@ -21,7 +36,21 @@ const {
     debouncedFetch,
     onPage
 } = usePaginatedData<BroadcastItem>(
-    (page, perPage, search) => API.broadcast.index(page, perPage, search).then(res => res.data),
+    (_, perPage, search) => {
+        if(!selectedNumber.value) return new Promise(resolve => resolve({ data: [], meta: {} }))
+
+        const start_date = dateRange.value && dateRange.value[0] && dateRange.value[0].toISOString()
+        const end_date = dateRange.value && dateRange.value[1] && dateRange.value[1].toISOString()
+
+        return API.broadcast.index({
+            phone_number_id: selectedNumber.value.id,
+            rows_per_page: perPage,
+            ...(search && { search }),
+            ...(start_date && { start_date }),
+            ...(end_date && { end_date }),
+            ...(selectedFilter.value && { status: selectedFilter.value.value })
+        }).then(res => res.data)
+    },
     10
 )
 
@@ -37,18 +66,80 @@ const columns: Column[] = [
     { header: t('broadcasts.headers.status'), key: 'statusTag', type: 'TAG' }
 ]
 const loadingNumbers = ref(false)
-const loadingOverview = ref(false)
+const loadingOverview = ref(true)
 const canRefresh = ref(true)
-const broadcastNumbers = ref<BroadcastNumber[]>([])
-const selectedNumber = ref<BroadcastNumber>()
+const broadcastNumbers = ref<WABANumber[]>([])
 const overviewData = ref<BroadcastOverview>({
-    recipients: 0,
-    sent: { count: 0, percentage: 0 },
-    received: { count: 0, percentage: 0 },
-    read: { count: 0, percentage: 0 },
-    responded: { count: 0, percentage: 0 },
-    failed: { count: 0, percentage: 0 }
+    recipients_count: { count: 0, percentage: 100 },
+    sent_count: { count: 0, percentage: 0 },
+    delivered_count: { count: 0, percentage: 0 },
+    readed_count: { count: 0, percentage: 0 },
+    replied_count: { count: 0, percentage: 0 },
+    failed_count: { count: 0, percentage: 0 }
 })
+const overviewDays = ref(7)
+const overviewDaysOptions = ref([
+    {
+        label: t('today'),
+        value: 1
+    },
+    {
+        label: t('last_n_days', 7),
+        value: 7
+    },
+    {
+        label: t('last_n_days', 30),
+        value: 30
+    },
+    {
+        label: t('last_n_days', 90),
+        value: 90
+    }
+])
+const filterMenu = ref()
+const filterOptions = ref<{
+    label: string,
+    value: BroadcastStatus,
+    iconClass: string,
+    iconEl: any
+}[]>([
+    {
+        label: t('broadcasts.status.queued'),
+        value: 'queued',
+        iconClass: 'text-neutral-900',
+        iconEl: IconStopwatch
+    },
+    {
+        label: t('broadcasts.status.scheduled'),
+        value: 'scheduled',
+        iconClass: 'text-sky-300',
+        iconEl: IconCalendarClock
+    },
+    {
+        label: t('broadcasts.status.sending'),
+        value: 'sending',
+        iconClass: 'text-yellow-600',
+        iconEl: IconSend
+    },
+    {
+        label: t('broadcasts.status.sent'),
+        value: 'sent',
+        iconClass: 'text-green-600',
+        iconEl: IconCheck
+    },
+    {
+        label: t('broadcasts.status.failed'),
+        value: 'failed',
+        iconClass: 'text-red-600',
+        iconEl: IconX
+    },
+    {
+        label: t('broadcasts.status.cancelled'),
+        value: 'cancelled',
+        iconClass: 'text-red-600',
+        iconEl: IconCancel
+    }
+])
 
 const transformedData = computed(() => {
     return dataPage.value.data.map(item => ({
@@ -96,66 +187,84 @@ const overviewCards = computed(() => [
         label: t('broadcasts.headers.recipients'),
         icon: IconUsers,
         colorClass: '',
-        count: overviewData.value.recipients
+        count: overviewData.value.recipients_count.count
     },
     {
         key: 'sent',
         label: t('broadcasts.headers.sent'),
         icon: IconCheck,
         colorClass: 'text-gray-500',
-        count: overviewData.value.sent.count,
-        percentage: overviewData.value.sent.percentage
+        count: overviewData.value.sent_count.count,
+        percentage: overviewData.value.sent_count.percentage
     },
     {
         key: 'received',
         label: t('broadcasts.headers.received'),
         icon: IconChecks,
         colorClass: 'text-neutral-900',
-        count: overviewData.value.received.count,
-        percentage: overviewData.value.received.percentage
+        count: overviewData.value.delivered_count.count,
+        percentage: overviewData.value.delivered_count.percentage
     },
     {
         key: 'read',
         label: t('broadcasts.headers.read'),
         icon: IconChecks,
         colorClass: 'text-sky-600',
-        count: overviewData.value.read.count,
-        percentage: overviewData.value.read.percentage
+        count: overviewData.value.readed_count.count,
+        percentage: overviewData.value.readed_count.percentage
     },
     {
         key: 'replied',
         label: t('broadcasts.headers.replied'),
         icon: IconArrowBackUp,
         colorClass: 'text-emerald-500',
-        count: overviewData.value.responded.count,
-        percentage: overviewData.value.responded.percentage
+        count: overviewData.value.replied_count.count,
+        percentage: overviewData.value.replied_count.percentage
     },
     {
         key: 'failed',
         label: t('broadcasts.headers.failed'),
         icon: IconExclamationCircle,
         colorClass: 'text-red-600',
-        count: overviewData.value.failed.count,
-        percentage: overviewData.value.failed.percentage
+        count: overviewData.value.failed_count.count,
+        percentage: overviewData.value.failed_count.percentage
     }
 ])
 
-const statusToSeverity = (status: BroadcastStatus) => {
+const openFilterMenu = (event: MouseEvent) => {
+    filterMenu.value?.toggle(event)
+}
+
+const statusToSeverity = (status: BroadcastStatus): PrimeVueSeverity => {
     switch (status) {
-        case 'COMPLETED':
-            return 'success'
-        case 'PROCESSING':
+        case 'queued':
+            return 'secondary'
+        case 'scheduled':
+            return 'info'
+        case 'sending':
             return 'warn'
-        case 'SCHEDULED':
+        case 'sent':
+            return 'success'
+        case 'sending':
+            return 'warn'
+        case 'cancelled':
+            return 'danger'
+        case 'failed':
+            return 'danger'
+        default:
             return 'info'
     }
+}
+
+const setFilter = (filter: MenuItem) => {
+    selectedFilter.value = filterOptions.value.find(f => f.label === filter.label)
 }
 
 const fetchBroadcastNumbers = async () => {
     loadingNumbers.value = true
     try {
         const { data: response } = await API.broadcast.broadcastNumbers()
-        broadcastNumbers.value = response
+        broadcastNumbers.value = response.data
 
         if(!selectedNumber.value && broadcastNumbers.value.length > 0) {
             selectedNumber.value = broadcastNumbers.value[0]
@@ -168,9 +277,14 @@ const fetchBroadcastNumbers = async () => {
 }
 
 const fetchOverview = async () => {
+    if(!selectedNumber.value) return
+
     loadingOverview.value = true
     try {
-        const { data: response } = await API.broadcast.overview()
+        const { data: response } = await API.broadcast.overview({
+            phone_number_id: selectedNumber.value.id,
+            overview_days: overviewDays.value
+        })
         overviewData.value = response
     } catch(error) {
         console.log(error)
@@ -185,7 +299,6 @@ const refreshData = () => {
     canRefresh.value = false
 
     fetchDataPage(1, rowsPerPage.value)
-    fetchBroadcastNumbers()
     fetchOverview()
 
     setTimeout(() => {
@@ -194,12 +307,23 @@ const refreshData = () => {
 }
 
 watch(rowsPerPage, 
-    () => fetchDataPage(1, rowsPerPage.value), 
-    { immediate: true }
+    () => fetchDataPage(1, rowsPerPage.value)
 )
 
+watch(selectedNumber, refreshData)
+watch(overviewDays, fetchOverview)
+watch(selectedFilter, () => fetchDataPage(1, rowsPerPage.value))
+
+watch(dateRange, () => {
+    const rangeSelected = dateRange.value && dateRange.value[0] && dateRange.value[1]
+    const rangeCleared = dateRange.value === null
+    
+    if(rangeSelected || rangeCleared) {
+        fetchDataPage(1, rowsPerPage.value)
+    }
+})
+
 fetchBroadcastNumbers()
-fetchOverview()
 </script>
 
 <template>
@@ -228,7 +352,7 @@ fetchOverview()
                     v-model="selectedNumber" 
                     :options="broadcastNumbers" 
                     option-id="id"
-                    option-label="name"
+                    option-label="verified_name"
                     :placeholder="$t('broadcasts.select_number')"
                     :loading="loadingNumbers"
                     :disabled="loadingNumbers"
@@ -244,7 +368,18 @@ fetchOverview()
         </div>
 
         <div class="flex flex-col gap-5 p-6 bg-slate-200 rounded-lg border border-gray-300">
-            <div class="text-lg font-bold text-gray-500">{{ $t('broadcasts.overview') }}</div>
+            <div class="flex justify-between">
+                <div class="text-xl font-medium text-gray-500">{{ $t('broadcasts.overview') }}</div>
+                <Select 
+                    id="overviewDays" 
+                    v-model="overviewDays" 
+                    :options="overviewDaysOptions" 
+                    option-value="value"
+                    option-label="label"
+                    :loading="loadingOverview"
+                    :disabled="loadingOverview"
+                />
+            </div>
             <div class="grid gap-4 grid-cols-3 lg:grid-cols-6">
                 <ValueCard 
                     v-for="item in overviewCards" 
@@ -261,19 +396,72 @@ fetchOverview()
 
         <div class="flex justify-between items-center">
             <div class="font-semibold text-xl">{{ $t('broadcasts.all_broadcasts') }}</div>
-            <div class="relative">
-                <IconSearch size="16" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <InputText
-                    v-model="searchTerm"
-                    class="pl-8! max-w-[180px] shadow-none!"
-                    name="search"
-                    id="search"
-                    fluid
-                    :placeholder="$t('search')"
-                    @input="debouncedFetch()"
-                />
+            <div class="flex gap-2">
+                <div class="relative">
+                    <IconSearch size="16" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <InputText
+                        v-model="searchTerm"
+                        class="pl-8! max-w-[180px] shadow-none!"
+                        name="search"
+                        id="search"
+                        fluid
+                        :placeholder="$t('search')"
+                        @input="debouncedFetch()"
+                    />
+                </div>
+
+                <DatePicker
+                    v-model="dateRange"
+                    selectionMode="range"
+                    :manualInput="false"
+                    showIcon
+                    iconDisplay="input"
+
+                    :placeholder="$t('select_date_range')"
+                >
+                    <template #footer>
+                        <Divider class="my-2!" />
+                        <div class="flex justify-between">
+                            <Button class="text-base!" variant="text" size="small" @click="dateRange = [new Date(), null]">
+                                {{ $t('today') }}
+                            </Button>
+
+                            <Button class="text-base!" variant="text" size="small" @click="dateRange = null">
+                                {{ $t('reset') }}
+                            </Button>
+                        </div>
+                    </template>
+                </DatePicker>
+
+                <Button 
+                    severity="secondary" 
+                    class="bg-white! border-slate-300! hover:bg-slate-100!"
+                    :disabled="loading || loadingNumbers"
+                    :loading="loading || loadingNumbers"
+                    @click="openFilterMenu"
+                >
+                    <div v-if="!selectedFilter" class="flex items-center gap-2">
+                        <IconFilter size="14" />
+                        <span>{{ $t('filter') }}</span>
+                        
+                    </div>
+                    <div v-else class="flex items-center gap-2">
+                        <component :is="selectedFilter.iconEl" size="14" :class="selectedFilter.iconClass" />
+                        <span>{{ selectedFilter.label }}</span>
+                        <IconX @click.stop="selectedFilter = undefined" size="12" class="ml-1" />
+                    </div>
+                </Button>
             </div>
         </div>
+
+        <Menu :model="filterOptions" :popup="true" ref="filterMenu">
+            <template #item="{ item, props }">
+                <div v-ripple v-bind="props.action" @click="setFilter(item)" class="flex items-center gap-3">
+                    <component v-if="item.iconEl" :is="item.iconEl" :class="item.iconClass" size="16" />
+                    <span>{{ item.label }}</span>
+                </div>
+            </template>
+        </Menu>
 
         <Table 
             :data="transformedData"

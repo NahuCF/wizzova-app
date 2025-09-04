@@ -27,7 +27,7 @@ defineProps<{
                 <div v-else class="h-6 bg-gray-200 rounded w-12 animate-pulse"></div>
             </div>
 
-            <span v-if="percentage && !loading" class="font-normal text-gray-500">({{ percentage }}%)</span>
+            <span v-if="percentage !== undefined && !loading" class="font-normal text-gray-500">({{ percentage }}%)</span>
             <div v-else-if="percentage && loading" class="h-4 bg-gray-200 rounded w-10 animate-pulse"></div>
         </div>
     </div>

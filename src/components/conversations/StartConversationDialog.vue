@@ -6,7 +6,7 @@ import { useErrorHandler } from '~/composables/useErrorHandler'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
 import { useContactFieldStore, useSessionStore } from '~/stores'
-import type { BroadcastNumber, ContactItem, ContactItemField, ConversationItem } from '~/types'
+import type { WABANumber, ContactItem, ContactItemField, ConversationItem } from '~/types'
 
 const props = defineProps<{
     visible: boolean,
@@ -37,8 +37,8 @@ const { getContactName, getContactPhone } = useContactUtils()
 const scrollContainer = ref<HTMLElement>()
 const sentinel = ref<HTMLElement | null>(null)
 const loadingNumbers = ref(false)
-const broadcastNumbers = ref<BroadcastNumber[]>([])
-const selectedNumber = ref<BroadcastNumber>()
+const broadcastNumbers = ref<WABANumber[]>([])
+const selectedNumber = ref<WABANumber>()
 const showNewContact = ref(false)
 const name = ref('')
 const phone = ref('')
@@ -78,7 +78,7 @@ const fetchBroadcastNumbers = async () => {
     loadingNumbers.value = true
     try {
         const { data: response } = await API.broadcast.broadcastNumbers()
-        broadcastNumbers.value = response
+        broadcastNumbers.value = response.data
 
         if(!selectedNumber.value && broadcastNumbers.value.length > 0) {
             selectedNumber.value = broadcastNumbers.value[0]
