@@ -10,7 +10,7 @@ import type { DataTablePageEvent } from 'primevue'
 import { useI18n } from 'vue-i18n'
 import { useContactFieldStore } from '~/stores'
 
-defineProps<{
+const props = defineProps<{
     selectedGroups?: ContactGroupItem[]
 }>()
 
@@ -152,6 +152,21 @@ const onDelete = () => {
     }
 }
 
+const onRowSelect = ({ data: group }: { data: ContactGroupItem }) => {
+    if(!props.selectedGroups) return
+
+    if(props.selectedGroups.find(g => g.id === group.id)) {
+        emit('update:selectedGroups', props.selectedGroups.filter(g => g.id !== group.id))
+    }
+    else {
+        emit('update:selectedGroups', [
+            ...props.selectedGroups,
+            group
+        ])
+    }
+    
+}
+
 watch(rowsPerPage, 
     () => fetchDataPage(1, rowsPerPage.value), 
     { immediate: true }
@@ -187,7 +202,9 @@ contactFieldStore.fetchContactFields()
             :data="transformedData"
             :columns="columns"
             :selection="selectedGroups"
+            :hoverable="!!selectedGroups"
             @update:selection="(groups: ContactGroupItem[]) => emit('update:selectedGroups', groups)"
+            @onRowClick="onRowSelect"
             emptyMessage="contact_groups.empty"
             :loading="loading"
             withPagination

@@ -71,7 +71,7 @@ const columns: Column[] = [
     { header: t('broadcasts.headers.read'), key: 'readCount', type: 'PROGRESS' },
     { header: t('broadcasts.headers.failed'), key: 'failedCount', type: 'PROGRESS' },
     { header: t('broadcasts.headers.status'), key: 'statusTag', type: 'CUSTOM' },
-    { header: '', key: 'actions', type: 'ACTIONS' }
+    { header: t('actions'), key: 'actions', type: 'ACTIONS' }
 ]
 const loadingNumbers = ref(false)
 const loadingOverview = ref(true)

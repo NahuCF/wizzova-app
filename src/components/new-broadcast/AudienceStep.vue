@@ -96,6 +96,9 @@ contactFieldStore.fetchContactFields()
                 </div>
             </template>
             <div class="flex flex-col gap-6 p-6">
+                <div class="text-lg text-gray-400 font-medium">
+                    {{ $t('new_broadcast.map_variables_notes') }}
+                </div>
                 <table class="table-auto w-full bg-slate-50 rounded-lg border-separate border-spacing-y-3">
                     <thead>
                         <tr>

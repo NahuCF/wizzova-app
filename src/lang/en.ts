@@ -484,6 +484,7 @@ Grab them today!`,
     groups_selected: '{groups} Groups selected',
     no_group_selected: 'No groups selected',
     map_variables: 'Map variables',
+    map_variables_notes: "Note: If a contact field is selected and the contact does not have that field, the contact's name will be used to autocomplete the variable.",
     variables: 'Variables',
     map: 'Map',
     values: 'Values',
@@ -680,5 +681,6 @@ Grab them today!`,
   learn_more: 'Learn more',
   last_n_days: 'Past {count} days',
   select_date_range: 'Select date range',
-  reset: 'Reset'
+  reset: 'Reset',
+  actions: 'Actions'
 }

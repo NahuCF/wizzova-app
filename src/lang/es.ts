@@ -482,6 +482,7 @@ export default {
     groups_selected: '{groups} Grupos seleccionados',
     no_group_selected: 'Ningún grupo seleccionado',
     map_variables: 'Mapea Variables',
+    map_variables_notes: 'Nota: Si se selecciona un campo de contacto y el contacto no tiene ese campo, se usará el nombre del contacto para autocompletar la variable.',
     variables: 'Variables',
     map: 'Mapeos',
     values: 'Valores',
@@ -674,5 +675,6 @@ export default {
   learn_more: 'Aprender más',
   last_n_days: 'Últimos {count} días',
   select_date_range: 'Rango de fechas',
-  reset: 'Resetear'
+  reset: 'Resetear',
+  actions: 'Acciones'
 }
