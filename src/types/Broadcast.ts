@@ -57,6 +57,7 @@ export interface BroadcastItem {
     failed_count?: number,
     status?: BroadcastStatus,
     send_at: string | null,
+    scheduled_at?: string,
     created_at: string
 }
 

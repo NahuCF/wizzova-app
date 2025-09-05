@@ -273,7 +273,7 @@ const broadcastActions = (item: BroadcastItem) => {
         }
     }
 
-    if(item.status !== 'sent') {
+    if(item.status !== 'sent' && item.status !== 'cancelled') {
         return [
             [ downloadReport ],
             [ cancel ]
@@ -380,7 +380,6 @@ const onCancel = async () => {
 }
 
 const goToShow = (event: { data: BroadcastItem }) => {
-    console.log('Row click: ', event.data.id)
     router.push({ name: 'broadcast-details', params: { id: event.data.id } })
 }
 
@@ -555,16 +554,15 @@ fetchBroadcastNumbers()
             @onRowClick="goToShow"
         >
             <template #statusTag="{ data }: { data: BroadcastItem }">
-                <div
-                    v-tooltip.bottom="data.send_at && {
-                        value: moment(data.send_at).format('dd-mm-yyyy'),
-                        class: 'text-base max-w-[300px]!'
-                    }"
-                >
+                <div>
                     <Tag 
                         :value="$t(`broadcasts.status.${data.status ?? 'queued'}`)"
                         :severity="statusToSeverity(data.status ?? 'queued')"
                         class="text-base!"
+                        v-tooltip.bottom="data.scheduled_at && data.status === 'scheduled' && {
+                            value: moment(data.scheduled_at).format('DD-MM-YYYY'),
+                            class: 'text-base max-w-[300px]!'
+                        }"
                     />
                 </div>
             </template>
