@@ -78,8 +78,9 @@ const toPrevStep = () => {
                                     class="w-full"
                                     showIcon
                                     iconDisplay="input"
-                                    dateFormat="yy/mm/dd"
-                                    mask="9999/99/99"
+                                    dateFormat="dd/mm/yy"
+                                    mask="99/99/9999"
+                                    :minDate="new Date()"
                                     :placeholder="t('new_broadcast.schedule_on')"
                                 />
                                 <div class="w-full" v-else></div>

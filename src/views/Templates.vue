@@ -65,61 +65,62 @@ const layoutOptions = ref<{
 		icon: IconLayoutGrid
 	}
 ])
-const templateOptions = ref([
-	[
-		{
-			label: 'template.edit',
-			icon: IconEdit,
-			class: '',
-			disabled: (item: TemplateItem) => item.status === 'APPROVED' && 
-				(dailyLimit(item) || monthlyLimit(item)),
-			tooltip: (item: TemplateItem) => {
-				if(item.status !== 'APPROVED') {
-					return ''
-				}
+const templateActions = (item: TemplateItem) => {
+	let tooltip = ''
 
-				if (dailyLimit(item)) {
-					return t('templates.daily_limit_reached')
-				}
-				if (monthlyLimit(item)) {
-					return t('templates.monthly_limit_reached')
-				}
-				
-				return ''
-			},
-			action: (item: TemplateItem) => {
-				router.push({ 
-					name: 'edit-template', 
-					params: { id: item.id }
-				})
-			}
-		}
-	],
-	[
-		{
-			label: 'template.delete',
-			class: 'text-red-600',
-			icon: loadingBroadcasts.value ? IconLoader2 : IconTrash,
-			iconClass: loadingBroadcasts.value ? 'animate-spin' : '',
-			disabled: () => loadingBroadcasts.value,
-			action: async (item: TemplateItem) => {
-				try {
-					const { data: response } = await API.template.activeBroadcasts(item.id)
-					if(response.data.length === 0) {
-						deleteId.value = item.id
-						showDeleteDialog.value = true
-					}
-					else {
-						templateBroadcasts.value = response.data
-						showBroadcastsDialog.value = true
-					}
-				} catch(error) {
-					console.log(error)
+	if (item.status === 'APPROVED' && dailyLimit(item)) {
+		tooltip = t('templates.daily_limit_reached')
+	}
+	if (item.status === 'APPROVED' && monthlyLimit(item)) {
+		tooltip = t('templates.monthly_limit_reached')
+	}
+
+	return [
+		[
+			{
+				label: t('template.edit'),
+				icon: IconEdit,
+				class: '',
+				disabled: item.status === 'APPROVED' && (dailyLimit(item) || monthlyLimit(item)),
+				tooltip: tooltip,
+				action: () => {
+					router.push({ 
+						name: 'edit-template', 
+						params: { id: item.id }
+					})
 				}
 			}
-		}
+		],
+		[
+			{
+				label: t('template.delete'),
+				class: 'text-red-600',
+				icon: loadingBroadcasts.value ? IconLoader2 : IconTrash,
+				iconClass: loadingBroadcasts.value ? 'animate-spin' : '',
+				disabled: loadingBroadcasts.value,
+				action: async () => {
+					loadingBroadcasts.value = true
+					try {
+						const { data: response } = await API.template.activeBroadcasts(item.id)
+						
+						if(response.data.length === 0) {
+							deleteId.value = item.id
+							showDeleteDialog.value = true
+						}
+						else {
+							templateBroadcasts.value = response.data
+							showBroadcastsDialog.value = true
+						}
+					} catch(error) {
+						console.log(error)
+					} finally {
+						loadingBroadcasts.value = false
+					}
+				}
+			}
+		]
 	]
-])
+}
 const popover = ref()
 const deleteId = ref('')
 const showDeleteDialog = ref(false)
@@ -164,7 +165,7 @@ const transformedData = computed(() => {
 		message: item.components.body?.content ?? '',
 		languageCode: item.language.toUpperCase(),
         createdAt: moment(item.created_at).format('DD/MM/YYYY'),
-        actions: templateOptions.value,
+        actions: templateActions,
     }))
 })
 
@@ -284,13 +285,12 @@ onMounted(() => {
 				:loading="loading"
 				showCreateCard
 				:cardProps="{
-					options: templateOptions
+					actions: templateActions
 				}"
 				@reach-end="loadNextPage"
 			/>
 		</div>
 
-		<ActionsPopover ref="popover" :options="templateOptions" />
 		<WarningDialog 
 			v-model:visible="showDeleteDialog" 
 			:title="$t('templates.delete_template')"

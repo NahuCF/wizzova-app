@@ -1,3 +1,4 @@
+import type { VariableMapping } from "./Template"
 import type { UserItem } from "./User"
 
 type QualityRating = 'GREEN' | 'YELLOW' | 'RED' | 'UNKNOWN'
@@ -49,11 +50,37 @@ export interface BroadcastItem {
     id: string,
     name: string,
     user: UserItem,
-    recipients_count: number,
-    sent_count: number,
-    received_count: number,
-    read_count: number,
-    failed_count: number,
-    status: BroadcastStatus,
+    recipients_count?: number,
+    sent_count?: number,
+    received_count?: number,
+    read_count?: number,
+    failed_count?: number,
+    status?: BroadcastStatus,
+    send_at: string | null,
     created_at: string
+}
+
+export interface BroadcastFilters {
+    phone_number_id: string,
+    page?: number,
+    rows_per_page?: number,
+    search?: string,
+    start_date?: string,
+    end_date?: string,
+    status?: BroadcastStatus
+}
+
+export interface BroadcastOverviewFilters { 
+    phone_number_id: string,
+    overview_days: number
+}
+
+export interface BroadcastCreate {
+    name: string,
+    scheduled_at?: string,
+    follow_whatsapp_business_policy?: boolean,
+    template_id: string,
+    group_ids: string[],
+    phone_number_id: string,
+    variables?: VariableMapping[]
 }

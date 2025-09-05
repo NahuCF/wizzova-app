@@ -5,12 +5,17 @@ import { IconRefresh, IconPlus, IconUsers, IconCheck, IconChecks,
     IconCalendarClock,
     IconSend,
     IconX,
-    IconCancel} from '@tabler/icons-vue'
+    IconCancel,
+    IconDownload,
+    IconTrash,
+    IconLoader2} from '@tabler/icons-vue'
 import moment from 'moment'
+import { useToast } from 'primevue'
 import type { MenuItem } from 'primevue/menuitem'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { useErrorHandler } from '~/composables/useErrorHandler'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
 import type { WABANumber, BroadcastItem, BroadcastOverview, BroadcastStatus, Column, PrimeVueSeverity } from '~/types'
@@ -26,6 +31,8 @@ const selectedFilter = ref<{
 
 const { t } = useI18n()
 const router = useRouter()
+const toast = useToast()
+const handleError = useErrorHandler()
 const {
     dataPage,
     loading,
@@ -63,7 +70,8 @@ const columns: Column[] = [
     { header: t('broadcasts.headers.received'), key: 'receivedCount', type: 'PROGRESS' },
     { header: t('broadcasts.headers.read'), key: 'readCount', type: 'PROGRESS' },
     { header: t('broadcasts.headers.failed'), key: 'failedCount', type: 'PROGRESS' },
-    { header: t('broadcasts.headers.status'), key: 'statusTag', type: 'TAG' }
+    { header: t('broadcasts.headers.status'), key: 'statusTag', type: 'CUSTOM' },
+    { header: '', key: 'actions', type: 'ACTIONS' }
 ]
 const loadingNumbers = ref(false)
 const loadingOverview = ref(true)
@@ -140,45 +148,53 @@ const filterOptions = ref<{
         iconEl: IconCancel
     }
 ])
+const cancelId = ref('')
+const showCancelDialog = ref(false)
+const loadingCancel = ref(false)
 
 const transformedData = computed(() => {
-    return dataPage.value.data.map(item => ({
-        ...item,
-        createdAtFormatted: moment(item.created_at).format('DD/MM/YYYY'),
-        createdByFormatted: item.user.name,
-        sentCount: {
-            count: item.sent_count,
-            percentage: item.recipients_count > 0
-                ? Math.round((item.sent_count / item.recipients_count) * 100)
-                : 0,
-            color: 'stroke-gray-500'
-        },
-        receivedCount: {
-            count: item.received_count,
-            percentage: item.recipients_count > 0
-                ? Math.round((item.received_count / item.recipients_count) * 100)
-                : 0,
-            color: 'stroke-neutral-900'
-        },
-        readCount: {
-            count: item.read_count,
-            percentage: item.recipients_count > 0
-                ? Math.round((item.read_count / item.recipients_count) * 100)
-                : 0,
-            color: 'stroke-sky-600'
-        },
-        failedCount: {
-            count: item.failed_count,
-            percentage: item.recipients_count > 0
-                ? Math.round((item.failed_count / item.recipients_count) * 100)
-                : 0,
-            color: 'stroke-red-600'
-        },
-        statusTag: {
-            label: t(`broadcasts.status.${item.status}`),
-            severity: statusToSeverity(item.status)
-        }
-    }))
+    return dataPage.value.data.map(item => {
+        const recipients = item.recipients_count ?? 0
+        const sent = item.sent_count ?? 0
+        const received = item.received_count ?? 0
+        const read = item.read_count ?? 0
+        const failed = item.failed_count ?? 0
+
+        return ({
+            ...item,
+            createdAtFormatted: moment(item.created_at).format('DD/MM/YYYY'),
+            createdByFormatted: item.user.name,
+            sentCount: {
+                count: sent,
+                percentage: recipients > 0
+                    ? Math.round((sent / recipients) * 100)
+                    : 0,
+                color: 'stroke-gray-500'
+            },
+            receivedCount: {
+                count: received,
+                percentage: recipients > 0
+                    ? Math.round((received / recipients) * 100)
+                    : 0,
+                color: 'stroke-neutral-900'
+            },
+            readCount: {
+                count: read,
+                percentage: recipients > 0
+                    ? Math.round((read / recipients) * 100)
+                    : 0,
+                color: 'stroke-sky-600'
+            },
+            failedCount: {
+                count: failed,
+                percentage: recipients > 0
+                    ? Math.round((failed / recipients) * 100)
+                    : 0,
+                color: 'stroke-red-600'
+            },
+            actions: broadcastActions
+        })
+    })
 })
 
 const overviewCards = computed(() => [
@@ -230,6 +246,42 @@ const overviewCards = computed(() => [
         percentage: overviewData.value.failed_count.percentage
     }
 ])
+
+const broadcastActions = (item: BroadcastItem) => {
+    const downloadReport = {
+        label: t('broadcasts.download_report'),
+        icon: IconDownload,
+        class: '',
+        disabled: true,
+        action: () => {
+            // TODO: Download report
+        }
+    }
+    const cancel = {
+        label: t('broadcasts.cancel_broadcast'),
+        class: 'text-red-600',
+        icon: loading.value || loadingCancel.value ? IconLoader2 : IconTrash,
+        iconClass: loading.value || loadingCancel.value ? 'animate-spin' : '',
+        disabled: loading.value || loadingCancel.value,
+        action: async () => {
+            try {
+                cancelId.value = item.id
+                showCancelDialog.value = true
+            } catch(error) {
+                console.log(error)
+            }
+        }
+    }
+
+    if(item.status !== 'sent') {
+        return [
+            [ downloadReport ],
+            [ cancel ]
+        ]
+    }
+
+    return [ [ downloadReport ] ]
+}
 
 const openFilterMenu = (event: MouseEvent) => {
     filterMenu.value?.toggle(event)
@@ -293,8 +345,8 @@ const fetchOverview = async () => {
     }
 }
 
-const refreshData = () => {
-    if (!canRefresh.value) return
+const refreshData = (forced?: boolean) => {
+    if (!canRefresh.value && !forced) return
 
     canRefresh.value = false
 
@@ -306,11 +358,37 @@ const refreshData = () => {
     }, 3000)
 }
 
+const onCancel = async () => {
+    loadingCancel.value = true
+    try {
+        await API.broadcast.updateStatus(cancelId.value, 'cancelled')
+        showCancelDialog.value = false
+
+        toast.add({
+			severity: 'success',
+			summary: 'Success',
+			detail: t('broadcasts.broadcast_canceled'),
+			life: 3000,
+		})
+
+        refreshData(true)
+    } catch(error) {
+        handleError(error)
+    } finally {
+        loadingCancel.value = false
+    }
+}
+
+const goToShow = (event: { data: BroadcastItem }) => {
+    console.log('Row click: ', event.data.id)
+    router.push({ name: 'broadcast-details', params: { id: event.data.id } })
+}
+
 watch(rowsPerPage, 
     () => fetchDataPage(1, rowsPerPage.value)
 )
 
-watch(selectedNumber, refreshData)
+watch(selectedNumber, () => refreshData())
 watch(overviewDays, fetchOverview)
 watch(selectedFilter, () => fetchDataPage(1, rowsPerPage.value))
 
@@ -337,7 +415,7 @@ fetchBroadcastNumbers()
                     class="bg-white! border-slate-200! hover:bg-slate-100!"
                     severity="secondary"
                     :disabled="!canRefresh || loading || loadingNumbers || loadingOverview"
-                    @click="refreshData"
+                    @click="() => refreshData()"
                 >
                     <IconRefresh 
                         v-if="loading || loadingNumbers || loadingOverview" 
@@ -472,7 +550,33 @@ fetchBroadcastNumbers()
             :totalRecords="dataPage.meta.total"
             v-model:rowsPerPage="rowsPerPage"
             :currentPageReport="currentPageReport"
+            hoverable
             @onPage="onPage"
-        />
+            @onRowClick="goToShow"
+        >
+            <template #statusTag="{ data }: { data: BroadcastItem }">
+                <div
+                    v-tooltip.bottom="data.send_at && {
+                        value: moment(data.send_at).format('dd-mm-yyyy'),
+                        class: 'text-base max-w-[300px]!'
+                    }"
+                >
+                    <Tag 
+                        :value="$t(`broadcasts.status.${data.status ?? 'queued'}`)"
+                        :severity="statusToSeverity(data.status ?? 'queued')"
+                        class="text-base!"
+                    />
+                </div>
+            </template>
+        </Table>
+
+        <WarningDialog 
+			v-model:visible="showCancelDialog" 
+			:title="$t('broadcasts.cancel_broadcast')"
+			:message="$t('broadcasts.cancel_message')"
+            :confirm-message="$t('confirm')"
+			:loading="loadingCancel"
+			@onConfirm="onCancel"
+		/>
     </div>
 </template>

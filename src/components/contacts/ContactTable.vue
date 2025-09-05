@@ -25,12 +25,12 @@ const emit = defineEmits<{
 const { t, te } = useI18n()
 const contactFieldStore = useContactFieldStore()
 
-const contactOptions = ref([
+const contactActions = (contactRecord: ContactFieldRecord) => [
     [
 		{
-			label: 'contacts.edit',
+			label: t('contacts.edit'),
 			icon: IconEdit,
-			action: (contactRecord: ContactFieldRecord) => {
+			action: () => {
                 const contactItem = props.dataPage.data.find(cf => cf.id === contactRecord['id'])
                 if(contactItem) {
                     emit('update-contact', contactItem)
@@ -40,10 +40,10 @@ const contactOptions = ref([
 	],
 	[
 		{
-			label: 'delete',
+			label: t('delete'),
 			class: 'text-red-600',
 			icon: IconTrash,
-			action: (contactRecord: ContactFieldRecord) => {
+			action: () => {
                 const contactItem = props.dataPage.data.find(cf => cf.id === contactRecord['id'])
                 if(contactItem) {
                     emit('delete-contact', contactItem)
@@ -51,7 +51,7 @@ const contactOptions = ref([
             }
 		}
 	]
-])
+]
 
 const columns = computed(() => {
     let fieldColumns: Column[] = contactFieldStore.primaryFields.map(cf => ({
@@ -86,7 +86,7 @@ const transformedData = computed(() => {
         return {
             ...contactObject,
             id: contact.id,
-            actions: contactOptions.value
+            actions: contactActions
         }
     })
 })

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { IconPlus } from '@tabler/icons-vue'
-import type { DropdownOption, TemplateItem } from '~/types'
+import type { ActionGenerator, TemplateItem } from '~/types'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -12,7 +12,7 @@ defineProps<{
     showCreateCard?: boolean
     cardProps?: {
         clickable?: boolean,
-        options?: DropdownOption[][]
+        actions?: ActionGenerator<TemplateItem>
     }
 }>()
 

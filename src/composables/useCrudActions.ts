@@ -78,6 +78,7 @@ export function useCrudActions<T extends { id?: string | number }>(
             return
         }
 
+        loading.value = true
         try {
             await options.api.delete(id)
             options.fetchData()
@@ -85,6 +86,8 @@ export function useCrudActions<T extends { id?: string | number }>(
             opts?.onSuccess?.()
         } catch (error) {
             handleError(error)
+        } finally {
+            loading.value = false
         }
     }
 

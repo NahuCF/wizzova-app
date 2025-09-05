@@ -1,20 +1,26 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useToast } from 'primevue'
+import { IconLoader2 } from '@tabler/icons-vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave, useRouter } from 'vue-router'
+import { useErrorHandler } from '~/composables/useErrorHandler'
+import { API } from '~/services'
 import { useBroadcastStore } from '~/stores/broadcast'
+import type { BroadcastCreate } from '~/types'
 
 const router = useRouter()
 const { t } = useI18n()
 const toast = useToast()
+const handleError = useErrorHandler()
 const broadcastStore = useBroadcastStore()
-const { currentStep, newBroadcast, showMapDialog } = storeToRefs(broadcastStore)
+const { currentStep, newBroadcast, showMapDialog, scheduledAt } = storeToRefs(broadcastStore)
 
 const showLeaveDialog = ref(false)
 const pendingNext = ref<Function | null>(null)
 const success = ref(false)
+const loading = ref(false)
 
 const canSubmit = () => {
     const timeSelected = newBroadcast.value.scheduledDate && newBroadcast.value.scheduledTime
@@ -23,17 +29,37 @@ const canSubmit = () => {
         (newBroadcast.value.sendOption === 'SEND_NOW' || timeSelected )
 }
 
-const scheduleBroadcast = () => {
-    toast.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: t('new_broadcast.broadcast_created'),
-        life: 3000,
-    })
-    
-    success.value = true
-    router.push({ name: 'broadcasts' })
-    broadcastStore.clear()
+const scheduleBroadcast = async () => {
+    if(!newBroadcast.value.template || !newBroadcast.value.broadcastNumber) return
+
+    loading.value = true
+    try {
+        const createBroadcast: BroadcastCreate = {
+            name: newBroadcast.value.name,
+            template_id: newBroadcast.value.template.id,
+            group_ids: newBroadcast.value.contactGroups.map(group => group.id),
+            phone_number_id: newBroadcast.value.broadcastNumber.id,
+            ...(scheduledAt.value && { scheduled_at: scheduledAt.value }),
+            ...(newBroadcast.value.variables && { variables: newBroadcast.value.variables })
+        }
+
+        await API.broadcast.create(createBroadcast)
+
+        toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: t('new_broadcast.broadcast_created'),
+            life: 3000,
+        })
+        
+        success.value = true
+        router.push({ name: 'broadcasts' })
+        broadcastStore.clear()
+    } catch(error) {
+        handleError(error)
+    } finally {
+        loading.value = false
+    }
 }
 
 const confirmLeave = () => {
@@ -126,7 +152,8 @@ onBeforeRouteLeave((to, from, next) => {
                     :disabled="!canSubmit()"
                     @click="scheduleBroadcast"
                 >
-                    <span>
+                    <IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
+                    <span v-else>
                         {{ $t('new_broadcast.schedule_broadcast') }}
                     </span>
                 </Button>

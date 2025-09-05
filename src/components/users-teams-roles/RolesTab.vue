@@ -36,29 +36,35 @@ const {
 })
 
 const showDeleteDialog = ref(false)
-const roleOptions = ref([
-    [
-		{
-			label: 'roles.edit',
-			icon: IconEdit,
-			action: (role: RoleItem) => {
-                selectedRole.value = role
-                showCreateDialog.value = true
+const roleActions = (role: RoleItem) => {
+    if(role.is_internal) {
+        return []
+    }
+
+    return [
+        [
+            {
+                label: t('roles.edit'),
+                icon: IconEdit,
+                action: () => {
+                    selectedRole.value = role
+                    showCreateDialog.value = true
+                }
             }
-		}
-	],
-	[
-		{
-			label: 'delete',
-			class: 'text-red-600',
-			icon: IconTrash,
-			action: (role: RoleItem) => {
-                selectedRole.value = role
-                showDeleteDialog.value = true
+        ],
+        [
+            {
+                label: t('delete'),
+                class: 'text-red-600',
+                icon: IconTrash,
+                action: () => {
+                    selectedRole.value = role
+                    showDeleteDialog.value = true
+                }
             }
-		}
-	]
-])
+        ]
+    ]
+}
 
 const columns = computed(() => {
     let columnList: Column[] = [
@@ -80,17 +86,9 @@ const transformedData = computed(() => {
 	return roles.value.map(role => ({
 		...role,
 		createdBy: role.user?.name || t('roles.system'),
-        actions: filterActions(role)
+        actions: roleActions
 	}))
 })
-
-const filterActions = (roleItem: RoleItem) => {
-    if(roleItem.is_internal) {
-        return []
-    }
-    
-    return roleOptions.value
-}
 
 const onSave = (role: RoleCreate) => {
     createOrUpdate(role, {

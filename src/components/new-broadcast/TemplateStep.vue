@@ -88,7 +88,7 @@ fetchBroadcastNumbers()
                         v-model="newBroadcast.broadcastNumber" 
                         :options="broadcastNumbers" 
                         option-id="id"
-                        option-label="name"
+                        option-label="verified_name"
                         :placeholder="$t('broadcasts.select_number')"
                         :loading="loadingNumbers"
                         :disabled="loadingNumbers"

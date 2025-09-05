@@ -1,21 +1,22 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import type { DataTablePageEvent } from 'primevue'
 import { IconDotsVertical } from '@tabler/icons-vue'
 import { computed, ref } from 'vue'
-import type { Column, ColumnType } from '~/types'
+import type { ActionGenerator, Column } from '~/types'
 
 const props = withDefaults(
 	defineProps<{
-		data: any[],
+		data: T[],
 		columns: Column[],
-		selection?: any[],
+		selection?: T[],
 		emptyMessage?: string,
 		loading?: boolean,
 		withPagination?: boolean,
 		totalRecords?: number,
 		rowsPerPage?: number,
 		showPageSize?: boolean,
-		currentPageReport?: string
+		currentPageReport?: string,
+		hoverable?: boolean
 	}>(),
 	{
 		emptyMessage: 'table_empty',
@@ -25,11 +26,12 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     (e: 'update:rowsPerPage', value: number): void,
-	(e: 'update:selection', data: any[]): void
+	(e: 'update:selection', data: T[]): void
 	(e: 'onPage', event: DataTablePageEvent): void,
+	(e: 'onRowClick', event: { data: T, originalEvent: any }): void,
 }>()
 
-const actions = ref<any[]>([])
+const actionGenerator = ref<ActionGenerator<T>>()
 const taglistPopover = ref()
 const actionMenu = ref()
 const hoverTags = ref<string[]>([])
@@ -59,8 +61,8 @@ const onLeave = () => {
     }, 300)
 }
 
-const openActionMenu = (event: MouseEvent, actionList: any[], item: any) => {
-	actions.value = actionList
+const openActionMenu = (event: MouseEvent, actions: ActionGenerator<T>, item: T) => {
+	actionGenerator.value = actions
 	actionMenu.value?.show(event, item)
 }
 
@@ -83,6 +85,9 @@ const openActionMenu = (event: MouseEvent, actionList: any[], item: any) => {
 			scrollHeight="flex"
 			:paginatorTemplate="paginatorTemplate"
 			:currentPageReportTemplate="currentPageReport"
+			:rowHover="hoverable"
+			:rowClass="() => hoverable ? 'cursor-pointer' : ''"
+			@rowClick="emit('onRowClick', $event)"
 			@page="emit('onPage', $event)"
 		>
 			<template #empty>
@@ -160,7 +165,7 @@ const openActionMenu = (event: MouseEvent, actionList: any[], item: any) => {
 					</template>
 
 					<template v-else-if="column.type === 'ACTIONS'">
-						<div v-if="data[column.key].length > 0" class="flex justify-center">
+						<div v-if="data[column.key](data).length > 0" class="flex justify-center">
 							<Button severity="secondary" variant="text" @click="openActionMenu($event, data[column.key], data)">
 								<IconDotsVertical  size="13" />
 							</Button>
@@ -195,7 +200,7 @@ const openActionMenu = (event: MouseEvent, actionList: any[], item: any) => {
 			</div>
 		</Popover>
 
-		<ActionsPopover ref="actionMenu" :options="actions" />
+		<ActionsPopover ref="actionMenu" :actions="actionGenerator" />
 	</div>
 </template>
 

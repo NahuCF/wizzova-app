@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { IconCheck, IconBrandWhatsappFilled } from '@tabler/icons-vue'
-import type { WABANumber, DropdownOption, TemplateItem } from '~/types'
+import type { WABANumber, TemplateItem, ActionGenerator } from '~/types'
 import moment from 'moment'
 
 const props = defineProps<{
 	template: TemplateItem,
-	options?: DropdownOption[][],
+	actions?: ActionGenerator<TemplateItem>,
 	clickable?: boolean,
 	broadcastNumber?: WABANumber
 }>()
@@ -61,19 +61,19 @@ const onClick = () => {
 						</div>
 					</div>
 				</div>
-				<div v-if="options && options.length > 0" class="flex">
+				<div v-if="actions && actions(template).length > 0" class="flex">
 					<ActionButton @click="(e: Event) => popover?.show(e, template)" />
 				</div>
 				
 
-				<ActionsPopover v-if="options && options.length > 0" ref="popover" :options="options" />
+				<ActionsPopover v-if="actions && actions(template).length > 0" ref="popover" :actions="actions" />
 			</div>
 			<div v-if="broadcastNumber" class="flex items-center gap-2">
 				<div>
 					<IconBrandWhatsappFilled size="13" />
 				</div>
 				<div class="text-base font-light text-slate-500">
-					{{ broadcastNumber.verified_name }} || {{ broadcastNumber.verified_name }}
+					{{ broadcastNumber.verified_name }} || {{ broadcastNumber.display_phone_number }}
 				</div>
 			</div>
 		</div>

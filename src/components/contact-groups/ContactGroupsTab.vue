@@ -90,7 +90,7 @@ const transformedData = computed(() => {
         created_by: item.user.name,
         last_update: moment(item.updated_at).format('YYYY-MM-DD'),
         filterTags: item.filters.map(condition => formatCondition(condition.contact_field_id, condition)),
-        actions: groupOptions.value
+        actions: groupActions
     }))
 })
 
@@ -99,26 +99,26 @@ const onCreateGroup = (contactGroup?: ContactGroupItem) => {
     showGroupDialog.value = true
 }
 
-const groupOptions = ref([
+const groupActions = (contactGroup: ContactGroupItem) => [
     [
 		{
-			label: 'contact_groups.edit',
+			label: t('contact_groups.edit'),
 			icon: IconEdit,
-			action: onCreateGroup
+			action: () => onCreateGroup(contactGroup)
 		}
 	],
 	[
 		{
-			label: 'delete',
+			label: t('delete'),
 			class: 'text-red-600',
 			icon: IconTrash,
-			action: (contactGroup: ContactGroupItem) => {
+			action: () => {
                 selectedGroup.value = contactGroup
                 showDeleteDialog.value = true
             }
 		}
 	]
-])
+]
 
 const onPage = (event: DataTablePageEvent) => {
 	rowsPerPage.value = event.rows

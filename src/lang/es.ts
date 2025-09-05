@@ -457,7 +457,11 @@ export default {
       sent: 'Completada',
       failed: 'Fallida',
       cancelled: 'Cancelada'
-    }
+    },
+    download_report: 'Descargar reporte',
+    cancel_broadcast: 'Cancelar campaña',
+    cancel_message: '¿Estás seguro de que deseas cancelar esta campaña?',
+    broadcast_canceled: '¡Campaña cancelada con éxito!'
   },
   continue: 'Continuar',
   leave: 'Salir',

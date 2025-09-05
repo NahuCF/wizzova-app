@@ -62,26 +62,26 @@ const openFieldDrawer = (contactField?: ContactFieldItem) => {
     showFieldDrawer.value = true
 }
 
-const fieldOptions = ref([
+const fieldActions = (contactField: ContactFieldItem) => [
 	[
 		{
-			label: 'contact_field.edit',
+			label: t('contact_field.edit'),
 			icon: IconEdit,
-			action: openFieldDrawer
+			action: () => openFieldDrawer(contactField)
 		}
 	],
 	[
 		{
-			label: 'delete',
+			label: t('delete'),
 			class: 'text-red-600',
 			icon: IconTrash,
-			action: (contactField: ContactFieldItem) => {
+			action: () => {
                 selectedField.value = contactField
                 showDeleteDialog.value = true
             }
 		}
 	]
-])
+]
 
 const fetchTypes = async () => {
     const response = await API.contactField.types()
@@ -248,8 +248,8 @@ fetchTypes()
             </Column>
 
             <Column>
-                <template #body="{ data }">
-                    <ActionButton v-if="!data.is_primary_field" @click="(e: Event) => popover?.show(e, data)" />
+                <template #body="{ data }: { data: ContactFieldItem }">
+                    <ActionButton v-if="!data.is_primary_field && fieldActions(data).length > 0" @click="(e) => popover?.show(e, data)" />
                 </template>
             </Column>
         </DataTable>
@@ -266,7 +266,7 @@ fetchTypes()
             </Button>
         </div>
 
-        <ActionsPopover ref="popover" :options="fieldOptions" />
+        <ActionsPopover ref="popover" :actions="fieldActions" />
         <ContactFieldDrawer 
             v-model:visible="showFieldDrawer"
             :loading="loadingDrawer"

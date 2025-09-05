@@ -40,29 +40,46 @@ const {
 
 const showDeleteDialog = ref(false)
 
-const userOptions = ref([
-    [
-		{
-			label: 'users.edit',
-			icon: IconEdit,
-			action: (user: UserItem) => {
-				selectedUser.value = user
-    			showCreateDialog.value = true
-			}
-		}
-	],
-	[
-		{
-			label: 'delete',
-			class: 'text-red-600',
-			icon: IconTrash,
-			action: (user: UserItem) => {
-                selectedUser.value = user
-                showDeleteDialog.value = true
-            }
-		}
-	]
-])
+const userActions = (user: UserItem) => {
+    const editUser = {
+        label: t('users.edit'),
+        icon: IconEdit,
+        action: () => {
+            selectedUser.value = user
+            showCreateDialog.value = true
+        }
+    }
+    const deleteUser = {
+        label: t('delete'),
+        class: 'text-red-600',
+        icon: IconTrash,
+        action: () => {
+            selectedUser.value = user
+            showDeleteDialog.value = true
+        }
+    }
+
+    if ((user.role.is_internal && user.role.name === 'Owner') && !isOwner) {
+        return []
+    }
+    
+    if (user.role.is_internal && user.role.name === 'Owner') {
+        return [
+            [
+                editUser
+            ]
+        ]
+    }
+
+    return [
+        [
+            editUser
+        ],
+        [
+            deleteUser
+        ]
+    ]
+}
 
 const columns = computed(() => {
     let columnList: Column[] = [
@@ -82,29 +99,6 @@ const columns = computed(() => {
     return columnList
 })
 
-const filterActions = (userItem: UserItem) => {
-    if((userItem.role.is_internal && userItem.role.name === 'Owner') && !isOwner) {
-        return []
-    }
-    else if(userItem.role.is_internal && userItem.role.name === 'Owner') {
-        return [
-            [
-                {
-                    label: 'users.edit',
-                    icon: IconEdit,
-                    action: (user: UserItem) => {
-                        selectedUser.value = user
-                        showCreateDialog.value = true
-                    }
-                }
-            ]
-        ]
-    }
-    else {
-        return userOptions.value
-    }
-}
-
 const transformedData = computed(() => {
 	return users.value.map(user => ({
 		...user,
@@ -113,7 +107,7 @@ const transformedData = computed(() => {
             label: t(`users.status.${user.status}`),
             severity: userStatusSeverity[user.status]
         },
-        actions: filterActions(user)
+        actions: userActions
 	}))
 })
 

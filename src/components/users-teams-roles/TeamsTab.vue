@@ -39,12 +39,12 @@ const {
 })
 
 const showDeleteDialog = ref(false)
-const teamOptions = ref([
+const teamActions = (team: TeamItem) => [
     [
 		{
-			label: 'teams.edit',
+			label: t('teams.edit'),
 			icon: IconEdit,
-			action: (team: TeamItem) => {
+			action: () => {
                 selectedTeam.value = team
                 showCreateDialog.value = true
             }
@@ -52,16 +52,16 @@ const teamOptions = ref([
 	],
 	[
 		{
-			label: 'delete',
+			label: t('delete'),
 			class: 'text-red-600',
 			icon: IconTrash,
-			action: (team: TeamItem) => {
+			action: () => {
                 selectedTeam.value = team
                 showDeleteDialog.value = true
             }
 		}
 	]
-])
+]
 
 const columns = computed(() => {
     let columnList: Column[] = [
@@ -84,7 +84,7 @@ const transformedData = computed(() => {
 	return teams.value.map(team => ({
 		...team,
         createdBy: team.owner.name,
-        actions: teamOptions.value
+        actions: teamActions
 	}))
 })
 

@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { IconLoader2 } from '@tabler/icons-vue'
 
 defineProps<{
     visible: boolean,
     title: string,
     message: string,
+    loading?: boolean,
     note?: string,
     confirmMessage?: string,
     unclosable?: boolean
@@ -30,7 +32,12 @@ const emit = defineEmits<{
         <slot name="note"></slot>
         <div class="flex justify-end gap-2">
             <Button v-if="!unclosable" type="button" severity="secondary" @click="emit('update:visible', false)">{{ $t('cancel') }}</Button>
-            <Button type="button" severity="danger" @click="emit('onConfirm')">{{ confirmMessage ? confirmMessage : $t('delete') }}</Button>
+            <Button type="button" severity="danger" @click="emit('onConfirm')">
+                <IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
+                <span v-else>
+                    {{ confirmMessage ? confirmMessage : $t('delete') }}
+                </span>
+            </Button>
         </div>
     </Dialog>
 </template>

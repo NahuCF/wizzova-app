@@ -1,3 +1,4 @@
+import moment from "moment"
 import { defineStore } from "pinia"
 import { computed, ref, watchEffect } from "vue"
 import type { WABANumber, ContactGroupItem, TemplateItem, VariableMapping } from "~/types"
@@ -24,6 +25,16 @@ export const useBroadcastStore = defineStore('broadcast', () => {
 
     const totalContactsCount = computed(() => {
         return newBroadcast.value.contactGroups.reduce((total, group) => total + group.contact_count, 0)
+    })
+
+    const scheduledAt = computed(() => {
+        if (!newBroadcast.value.scheduledDate || !newBroadcast.value.scheduledTime) return null
+
+        return moment(newBroadcast.value.scheduledDate)
+            .hour(newBroadcast.value.scheduledTime.getHours())
+            .minute(newBroadcast.value.scheduledTime.getMinutes())
+            .second(newBroadcast.value.scheduledTime.getSeconds())
+            .toISOString()
     })
 
     const getVariableMapping = (name: string) => {
@@ -76,6 +87,7 @@ export const useBroadcastStore = defineStore('broadcast', () => {
         newBroadcast,
         showMapDialog,
         totalContactsCount,
+        scheduledAt,
         getVariableMapping,
         clear,
         $reset

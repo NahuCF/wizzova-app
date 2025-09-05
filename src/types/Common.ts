@@ -1,13 +1,25 @@
 import type { Component } from "vue"
 
-export interface DropdownOption {
-	label: string
-	icon?: Component
-	class?: string
+export type ActionItem = {
+  label: string
+  icon?: Component
+  class?: string
   iconClass?: string
-  disabled?: (selectedItem: any) => boolean
-  tooltip?: (selectedItem: any) => string
-	action: (selectedItem?: any) => void
+  disabled?: boolean,
+  tooltip?: string
+  action: () => void | Promise<void>
+};
+
+export type ActionGroup = ActionItem[];
+
+export type ActionGenerator<T> = (item: T) => ActionGroup[]
+
+export const createActions = <T>(config: (item: T) => (ActionGroup | null)[]): ActionGenerator<T> => {
+  return (item: T) => {
+    const groups = config(item)
+
+    return groups.filter((group): group is ActionGroup => group !== null)
+  }
 }
 
 export interface FilterColumn {

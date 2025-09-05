@@ -1,20 +1,5 @@
-import type { Page, BroadcastItem, BroadcastOverview, WABANumber, BroadcastStatus } from '~/types'
+import type { Page, BroadcastItem, BroadcastOverview, WABANumber, BroadcastStatus, BroadcastFilters, BroadcastOverviewFilters, BroadcastCreate } from '~/types'
 import Http from '~/config/http'
-
-interface BroadcastFilters {
-    phone_number_id: string,
-    page?: number,
-    rows_per_page?: number,
-    search?: string,
-    start_date?: string,
-    end_date?: string,
-    status?: BroadcastStatus
-}
-
-interface BroadcastOverviewFilters { 
-    phone_number_id: string,
-    overview_days: number
-}
 
 export default {
     async index(filters: BroadcastFilters) {
@@ -23,6 +8,14 @@ export default {
     async overview(filters: BroadcastOverviewFilters) {
         return Http.get<BroadcastOverview>('/broadcasts/overview', { params: filters })
     },
+    async create(broadcast: BroadcastCreate) {
+        return Http.post<{ data: BroadcastItem }>('/broadcasts', broadcast)
+    },
+    async updateStatus(broadcastId: string, status: BroadcastStatus) {
+        return Http.post<{ data: BroadcastItem }>(`/broadcasts/${broadcastId}/update-status`, {
+            status: status
+        })
+    }, 
     async broadcastNumbers() {
         return Http.get<{ data: WABANumber[] }>('/phone-numbers')
     }

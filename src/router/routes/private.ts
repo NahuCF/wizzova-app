@@ -8,6 +8,7 @@ import NewBroadcast from '~/views/NewBroadcast.vue'
 import NewTemplate from '~/views/NewTemplate.vue'
 import UsersTeamsRoles from '~/views/settings/UsersTeamsRoles.vue'
 import Templates from '~/views/Templates.vue'
+import BroadcastDetails from '~/views/BroadcastDetails.vue'
 
 const routes = [
   {
@@ -35,6 +36,12 @@ const routes = [
             name: 'new-broadcast',
             meta: { titleKey: 'new_broadcast.title' },
             component: NewBroadcast
+          },
+          {
+            path: ':id/detail',
+            name: 'broadcast-details',
+            meta: { titleKey: 'broadcast_details.title' },
+            component: BroadcastDetails
           }
         ]
       },

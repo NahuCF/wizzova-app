@@ -455,7 +455,11 @@ Grab them today!`,
       sent: 'Sent',
       failed: 'Failed',
       cancelled: 'Cancelled'
-    }
+    },
+    download_report: 'Download report',
+    cancel_broadcast: 'Cancel broadcast',
+    cancel_message: 'Are you sure do you want to cancel this broadcast?',
+    broadcast_canceled: 'Broadcast canceled successfully!'
   },
   today: 'Today',
   yesterday: 'Yesterday',
