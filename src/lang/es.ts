@@ -444,8 +444,8 @@ export default {
       created_by: 'Creado por',
       recipients: 'Receptores',
       sent: 'Enviados',
-      received: 'Recibidos',
-      read: 'Leidos',
+      delivered: 'Recibidos',
+      readed: 'Leidos',
       failed: 'Fallidos',
       replied: 'Respondidos',
       status: 'Estado'
@@ -507,6 +507,15 @@ export default {
     schedule_at: 'Programar la hora',
     broadcast_created: '¡Campaña creada con éxito!',
     missing_template_description: 'Debes crear una plantilla para continuar con los pasos de la campaña'
+  },
+  broadcast_details: {
+    title: 'Detalles de campaña',
+    headers: {
+      name: 'Nombre',
+      phone: 'Teléfono',
+      status: 'Estado'
+    },
+    messages_empty: 'No messages to show'
   },
   users_teams_roles: {
     title: 'Usuarios, Equipos y Roles',
@@ -676,5 +685,13 @@ export default {
   last_n_days: 'Últimos {count} días',
   select_date_range: 'Rango de fechas',
   reset: 'Resetear',
-  actions: 'Acciones'
+  actions: 'Acciones',
+  message_status: {
+    pending: 'Pendiente',
+    sent: 'Enviado',
+    delivered: 'Recibido',
+    read: 'Leído',
+    failed: 'Fallído',
+    deleted: 'Eliminado'
+  }
 }

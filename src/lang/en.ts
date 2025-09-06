@@ -442,8 +442,8 @@ Grab them today!`,
       created_by: 'Created by',
       recipients: 'Recipients',
       sent: 'Sent',
-      received: 'Received',
-      read: 'Read',
+      delivered: 'Delivered',
+      readed: 'Readed',
       failed: 'Failed',
       replied: 'Replied',
       status: 'Status'
@@ -509,6 +509,15 @@ Grab them today!`,
     schedule_at: 'Schedule at',
     broadcast_created: 'Broadcast created successfully!',
     missing_template_description: 'You must create a template to continue with the broadcast steps'
+  },
+  broadcast_details: {
+    title: 'Broadcast details',
+    headers: {
+      name: 'Name',
+      phone: 'Phone',
+      status: 'Status'
+    },
+    messages_empty: 'No messages to show'
   },
   users_teams_roles: {
     title: 'Users, Teams & Roles',
@@ -682,5 +691,13 @@ Grab them today!`,
   last_n_days: 'Past {count} days',
   select_date_range: 'Select date range',
   reset: 'Reset',
-  actions: 'Actions'
+  actions: 'Actions',
+  message_status: {
+    pending: 'Pending',
+    sent: 'Sent',
+    delivered: 'Delivered',
+    read: 'Read',
+    failed: 'Failed',
+    deleted: 'Deleted'
+  }
 }

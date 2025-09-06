@@ -1,4 +1,4 @@
-import type { Page, BroadcastItem, BroadcastOverview, WABANumber, BroadcastStatus, BroadcastFilters, BroadcastOverviewFilters, BroadcastCreate } from '~/types'
+import type { Page, BroadcastItem, BroadcastOverview, WABANumber, BroadcastStatus, BroadcastFilters, BroadcastOverviewFilters, BroadcastCreate, BroadcastDetail } from '~/types'
 import Http from '~/config/http'
 
 export default {
@@ -15,7 +15,10 @@ export default {
         return Http.post<{ data: BroadcastItem }>(`/broadcasts/${broadcastId}/update-status`, {
             status: status
         })
-    }, 
+    },
+    async get(id: string) {
+		return Http.get<{ data: BroadcastDetail }>(`/broadcasts/${id}`)
+	},
     async broadcastNumbers() {
         return Http.get<{ data: WABANumber[] }>('/phone-numbers')
     }

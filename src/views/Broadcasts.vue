@@ -17,6 +17,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import { usePaginatedData } from '~/composables/usePaginatedData'
+import { useSeverityMapper } from '~/composables/useSeverityMapper'
 import { API } from '~/services'
 import type { WABANumber, BroadcastItem, BroadcastOverview, BroadcastStatus, Column, PrimeVueSeverity } from '~/types'
 
@@ -33,6 +34,7 @@ const { t } = useI18n()
 const router = useRouter()
 const toast = useToast()
 const handleError = useErrorHandler()
+const { broadcastSeverity } = useSeverityMapper()
 const {
     dataPage,
     loading,
@@ -67,8 +69,8 @@ const columns: Column[] = [
     { header: t('broadcasts.headers.created_by'), key:'createdByFormatted' },
     { header: t('broadcasts.headers.recipients'), key: 'recipients_count' },
     { header: t('broadcasts.headers.sent'), key: 'sentCount', type: 'PROGRESS' },
-    { header: t('broadcasts.headers.received'), key: 'receivedCount', type: 'PROGRESS' },
-    { header: t('broadcasts.headers.read'), key: 'readCount', type: 'PROGRESS' },
+    { header: t('broadcasts.headers.delivered'), key: 'deliveredCount', type: 'PROGRESS' },
+    { header: t('broadcasts.headers.readed'), key: 'readedCount', type: 'PROGRESS' },
     { header: t('broadcasts.headers.failed'), key: 'failedCount', type: 'PROGRESS' },
     { header: t('broadcasts.headers.status'), key: 'statusTag', type: 'CUSTOM' },
     { header: t('actions'), key: 'actions', type: 'ACTIONS' }
@@ -156,8 +158,8 @@ const transformedData = computed(() => {
     return dataPage.value.data.map(item => {
         const recipients = item.recipients_count ?? 0
         const sent = item.sent_count ?? 0
-        const received = item.received_count ?? 0
-        const read = item.read_count ?? 0
+        const delivered = item.delivered_count ?? 0
+        const readed = item.readed_count ?? 0
         const failed = item.failed_count ?? 0
 
         return ({
@@ -171,17 +173,17 @@ const transformedData = computed(() => {
                     : 0,
                 color: 'stroke-gray-500'
             },
-            receivedCount: {
-                count: received,
+            deliveredCount: {
+                count: delivered,
                 percentage: recipients > 0
-                    ? Math.round((received / recipients) * 100)
+                    ? Math.round((delivered / recipients) * 100)
                     : 0,
                 color: 'stroke-neutral-900'
             },
-            readCount: {
-                count: read,
+            readedCount: {
+                count: readed,
                 percentage: recipients > 0
-                    ? Math.round((read / recipients) * 100)
+                    ? Math.round((readed / recipients) * 100)
                     : 0,
                 color: 'stroke-sky-600'
             },
@@ -215,7 +217,7 @@ const overviewCards = computed(() => [
     },
     {
         key: 'received',
-        label: t('broadcasts.headers.received'),
+        label: t('broadcasts.headers.delivered'),
         icon: IconChecks,
         colorClass: 'text-neutral-900',
         count: overviewData.value.delivered_count.count,
@@ -223,7 +225,7 @@ const overviewCards = computed(() => [
     },
     {
         key: 'read',
-        label: t('broadcasts.headers.read'),
+        label: t('broadcasts.headers.readed'),
         icon: IconChecks,
         colorClass: 'text-sky-600',
         count: overviewData.value.readed_count.count,
@@ -285,27 +287,6 @@ const broadcastActions = (item: BroadcastItem) => {
 
 const openFilterMenu = (event: MouseEvent) => {
     filterMenu.value?.toggle(event)
-}
-
-const statusToSeverity = (status: BroadcastStatus): PrimeVueSeverity => {
-    switch (status) {
-        case 'queued':
-            return 'secondary'
-        case 'scheduled':
-            return 'info'
-        case 'sending':
-            return 'warn'
-        case 'sent':
-            return 'success'
-        case 'sending':
-            return 'warn'
-        case 'cancelled':
-            return 'danger'
-        case 'failed':
-            return 'danger'
-        default:
-            return 'info'
-    }
 }
 
 const setFilter = (filter: MenuItem) => {
@@ -557,7 +538,7 @@ fetchBroadcastNumbers()
                 <div>
                     <Tag 
                         :value="$t(`broadcasts.status.${data.status ?? 'queued'}`)"
-                        :severity="statusToSeverity(data.status ?? 'queued')"
+                        :severity="broadcastSeverity(data.status ?? 'queued')"
                         class="text-base!"
                         v-tooltip.bottom="data.scheduled_at && data.status === 'scheduled' && {
                             value: moment(data.scheduled_at).format('DD-MM-YYYY'),

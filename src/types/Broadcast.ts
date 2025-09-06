@@ -1,3 +1,4 @@
+import type { ContactGroupItem } from "./Contact"
 import type { VariableMapping } from "./Template"
 import type { UserItem } from "./User"
 
@@ -52,13 +53,19 @@ export interface BroadcastItem {
     user: UserItem,
     recipients_count?: number,
     sent_count?: number,
-    received_count?: number,
-    read_count?: number,
+    delivered_count?: number,
+    readed_count?: number,
     failed_count?: number,
     status?: BroadcastStatus,
     send_at: string | null,
     scheduled_at?: string,
-    created_at: string
+    created_at: string,
+}
+
+export interface BroadcastDetail extends BroadcastItem {
+    replied_count?: number,
+    groups: ContactGroupItem[],
+    phone_number: WABANumber
 }
 
 export interface BroadcastFilters {

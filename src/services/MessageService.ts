@@ -1,22 +1,27 @@
 import Http from '~/config/http'
 import type { CreateMessage, MessageItem, Page } from '~/types'
 
-type MessageFilters = {
+type MessageFiltersBase = {
 	page?: number
 	rows_per_page?: number
-	conversation_id: string
 }
+
+type MessageFilters =
+	| (MessageFiltersBase & { conversation_id: string; broadcast_id?: never })
+	| (MessageFiltersBase & { broadcast_id: string; conversation_id?: never })
 
 export default {
     async index({
 		page,
 		rows_per_page,
-		conversation_id
+		conversation_id,
+		broadcast_id
 	}: MessageFilters) {
 		const params = {
-			page: page ? page : 1,
-			rows_per_page: rows_per_page ? rows_per_page : 10,
-			conversation_id
+			page: page ?? 1,
+			rows_per_page: rows_per_page ?? 10,
+			conversation_id,
+			broadcast_id
 		}
 
         return Http.get<Page<MessageItem>>('/messages', { params })
