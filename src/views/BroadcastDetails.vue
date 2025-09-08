@@ -43,7 +43,7 @@ const loading = ref(false)
 const canRefresh = ref(true)
 const columns: Column[] = [
     { header: t('broadcast_details.headers.name'), key: 'name', type: 'CUSTOM' },
-	{ header: t('broadcast_details.headers.phone'), key: 'from_phone' },
+	{ header: t('broadcast_details.headers.phone'), key: 'to_phone' },
     { header: t('broadcast_details.headers.status'), key: 'status', type: 'CUSTOM' },
 ]
 
@@ -136,7 +136,7 @@ const overviewCards = computed(() => {
 const transformedData = computed(() => {
 	return dataPage.value.data.map(item => ({
 		...item,
-		name: item.from_phone
+		name: item.to_phone
 	}))
 })
 
@@ -176,7 +176,7 @@ fetchDataPage(1, rowsPerPage.value)
 	<div class="flex flex-col gap-8 h-full p-6">
 		<div class="flex justify-between items-center">
 			<div class="flex items-center gap-2">
-                <Button class="p-1!" variant="text" @click="router.back()" severity="secondary">
+                <Button class="p-1!" variant="text" @click="router.push({ name: 'broadcasts' })" severity="secondary">
                     <IconArrowLeft size="22" />
                 </Button>
 				<div v-if="!broadcast">

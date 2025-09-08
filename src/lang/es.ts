@@ -105,6 +105,7 @@ export default {
     'A role with this name already exists': 'Ya existe un rol con este nombre',
     'This role is internal and cannot be updated': 'Este rol es interno y no puede actualizarce',
     'A team with this name already exists': 'Ya existe un equipo con este nombre',
+    'contact_has_active_broadcasts': 'No se puede modificar un contacto cuando tiene campañas activas'
   },
   submit_for_review: 'Enviar para revision',
   template_name: 'Nombre del template',
@@ -456,7 +457,8 @@ export default {
       sending: 'Enviando',
       sent: 'Completada',
       failed: 'Fallida',
-      cancelled: 'Cancelada'
+      cancelled: 'Cancelada',
+      completed: 'Completada'
     },
     download_report: 'Descargar reporte',
     cancel_broadcast: 'Cancelar campaña',
@@ -506,7 +508,9 @@ export default {
     schedule_on: 'Programar el día',
     schedule_at: 'Programar la hora',
     broadcast_created: '¡Campaña creada con éxito!',
-    missing_template_description: 'Debes crear una plantilla para continuar con los pasos de la campaña'
+    missing_template_title: 'No se há encontrado plantillas aprobadas',
+    missing_template_description: 'Debes crear una plantilla para continuar con los pasos de la campaña.',
+    send_to_all_numbers: 'Enviar a todos los números'
   },
   broadcast_details: {
     title: 'Detalles de campaña',

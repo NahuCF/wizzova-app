@@ -24,7 +24,7 @@ const {
   loadNextPage,
   debouncedFetch,
 } = usePaginatedData<TemplateItem, PageWithTemplatesCount<TemplateItem>>(
-  (page, perPage, search) => API.template.index(page, search, perPage).then(res => res.data),
+  (page, perPage, search) => API.template.index({ page, name: search, perPage }).then(res => res.data),
   12
 )
 

@@ -22,7 +22,8 @@ const {
   loadNextPage,
   debouncedFetch,
 } = usePaginatedData<TemplateItem>(
-  (page, perPage, search) => API.template.index(page, search, perPage).then(res => res.data),
+  (page, perPage, search) => API.template.index({ page, name: search, perPage, status: 'APPROVED' })
+    .then(res => res.data),
   12
 )
 
@@ -115,9 +116,14 @@ fetchBroadcastNumbers()
 
         <div 
             v-if="dataPage.data.length === 0 && !loading"
-            class="flex flex-col justify-center items-center py-20 gap-10"
+            class="flex flex-col justify-center items-center py-30 gap-10"
         >
-            <div class="text-3xl font-semibold text-center max-w-[500px] leading-10">{{ $t('new_broadcast.missing_template_description') }}</div>
+            <div class="text-3xl font-semibold text-center max-w-[500px] leading-10">
+                {{ $t('new_broadcast.missing_template_title') }}
+            </div>
+            <div class="text-2xl font-medium text-gray-400 text-center max-w-[500px] leading-10">
+                {{ $t('new_broadcast.missing_template_description') }}
+            </div>
             <Button
                 @click="router.push({ 
                     name: 'new-template', 

@@ -110,6 +110,21 @@ watch(() => newBroadcast.value.sendOption, (newOption) => {
                                 <div class="w-full" v-else></div>
                             </div>
                         </div>
+
+                        <div class="flex items-center">
+                            <div class="flex gap-1 min-w-[30%]">
+                                <label for="sendToAll" class="cursor-pointer"> 
+                                    {{ $t('new_broadcast.send_to_all_numbers') }} 
+                                </label>
+                            </div>
+							<Checkbox
+                                v-model="newBroadcast.sendToAll"
+                                binary
+                                inputId="sendToAll"
+                                name="sendToAll"
+                                size="large"
+                            />
+						</div>
                     </div>
                 </div>
             </div>

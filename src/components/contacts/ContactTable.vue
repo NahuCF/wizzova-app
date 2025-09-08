@@ -25,33 +25,40 @@ const emit = defineEmits<{
 const { t, te } = useI18n()
 const contactFieldStore = useContactFieldStore()
 
-const contactActions = (contactRecord: ContactFieldRecord) => [
-    [
-		{
-			label: t('contacts.edit'),
-			icon: IconEdit,
-			action: () => {
-                const contactItem = props.dataPage.data.find(cf => cf.id === contactRecord['id'])
-                if(contactItem) {
-                    emit('update-contact', contactItem)
+const contactActions = (contactRecord: ContactFieldRecord) => {
+    const contactItem = props.dataPage.data.find(cf => cf.id === contactRecord['id'])
+    const inActiveBroadcast = contactItem?.active_broadcast_count
+    
+    return [
+        [
+            {
+                label: t('contacts.edit'),
+                icon: IconEdit,
+                disabled: inActiveBroadcast,
+                tooltip: inActiveBroadcast ? t('validation_errors.contact_has_active_broadcasts') : undefined,
+                action: () => {
+                    if(contactItem) {
+                        emit('update-contact', contactItem)
+                    }
                 }
             }
-		}
-	],
-	[
-		{
-			label: t('delete'),
-			class: 'text-red-600',
-			icon: IconTrash,
-			action: () => {
-                const contactItem = props.dataPage.data.find(cf => cf.id === contactRecord['id'])
-                if(contactItem) {
-                    emit('delete-contact', contactItem)
+        ],
+        [
+            {
+                label: t('delete'),
+                class: 'text-red-600',
+                icon: IconTrash,
+                disabled: inActiveBroadcast,
+                tooltip: inActiveBroadcast ? t('validation_errors.contact_has_active_broadcasts') : undefined,
+                action: () => {
+                    if(contactItem) {
+                        emit('delete-contact', contactItem)
+                    }
                 }
             }
-		}
-	]
-]
+        ]
+    ]
+}
 
 const columns = computed(() => {
     let fieldColumns: Column[] = contactFieldStore.primaryFields.map(cf => ({

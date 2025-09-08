@@ -176,7 +176,7 @@ watch(() => props.visible, () => {
 						</div>
 
 						<div class="flex items-center gap-4 pt-6">
-							<Checkbox v-model="canConnect" inputId="canConnect" name="canConnect" :value="false" size="large" />
+							<Checkbox v-model="canConnect" inputId="canConnect" name="canConnect" size="large" binary />
 							<label for="canConnect" class="text-lg text-neutral-800! cursor-pointer"> 
 								{{ $t('create_number.can_connect_number') }} 
 							</label>

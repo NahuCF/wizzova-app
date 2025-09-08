@@ -1,12 +1,21 @@
 import Http from '~/config/http'
-import type { Page, TemplateBroadcast, TemplateCreate, TemplateEdit, TemplateItem } from '~/types'
+import type { Page, TemplateBroadcast, TemplateCreate, 
+	TemplateEdit, TemplateItem, TemplateStatus } from '~/types'
+
+type TemplateFilters = {
+	page?: number,
+	name?: string,
+	perPage?: number,
+	status?: TemplateStatus
+}
 
 export default {
-	async index(page: number = 1, name: string = '', perPage: number = 12) {
+	async index(filters: TemplateFilters) {
 		const params: Record<string, string | number> = {
-			page,
-			...(name && { name }),
-			rows_per_page: perPage
+			page: filters.page || 1,
+			rows_per_page: filters.perPage || 12,
+			...(filters.name && { name: filters.name }),
+			...(filters.status && { status: filters.status }),
 		}
 
 		return Http.get<Page<TemplateItem>>('/templates', { params })

@@ -6,6 +6,7 @@ import type { WABANumber, ContactGroupItem, TemplateItem, VariableMapping } from
 interface CreateBroadcast {
     name: string,
     sendOption: 'SEND_NOW' | 'SCHEDULE_LATER',
+    sendToAll: boolean,
     broadcastNumber?: WABANumber,
     template?: TemplateItem,
     contactGroups: ContactGroupItem[],
@@ -19,7 +20,8 @@ export const useBroadcastStore = defineStore('broadcast', () => {
     const newBroadcast = ref<CreateBroadcast>({
         name: '',
         contactGroups: [],
-        sendOption: 'SEND_NOW'
+        sendOption: 'SEND_NOW',
+        sendToAll: false
     })
     const showMapDialog = ref(false)
 
@@ -39,17 +41,6 @@ export const useBroadcastStore = defineStore('broadcast', () => {
 
     const getVariableMapping = (name: string) => {
         return newBroadcast.value.variables?.find(v => v.name === name)!
-    }
-
-    const clear = () => {
-        currentStep.value = 1
-        newBroadcast.value = {
-            name: '',
-            contactGroups: [],
-            sendOption: 'SEND_NOW'
-        }
-        newBroadcast.value.variables = undefined
-        showMapDialog.value = false
     }
 
     watchEffect(() => {
@@ -77,8 +68,10 @@ export const useBroadcastStore = defineStore('broadcast', () => {
         newBroadcast.value = {
             name: '',
             contactGroups: [],
-            sendOption: 'SEND_NOW'
+            sendOption: 'SEND_NOW',
+            sendToAll: false
         }
+        newBroadcast.value.variables = undefined
         showMapDialog.value = false
     }
 
@@ -89,7 +82,6 @@ export const useBroadcastStore = defineStore('broadcast', () => {
         totalContactsCount,
         scheduledAt,
         getVariableMapping,
-        clear,
         $reset
     }
 }, {

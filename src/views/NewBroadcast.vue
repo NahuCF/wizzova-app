@@ -39,7 +39,7 @@ const scheduleBroadcast = async () => {
             template_id: newBroadcast.value.template.id,
             group_ids: newBroadcast.value.contactGroups.map(group => group.id),
             phone_number_id: newBroadcast.value.broadcastNumber.id,
-            send_to_all_numbers: true,
+            send_to_all_numbers: newBroadcast.value.sendToAll,
             send_now: !scheduledAt.value,
             ...(scheduledAt.value && { scheduled_at: scheduledAt.value }),
             ...(newBroadcast.value.variables && { variables: newBroadcast.value.variables })
@@ -56,7 +56,7 @@ const scheduleBroadcast = async () => {
         
         success.value = true
         router.push({ name: 'broadcast-details', params: { id: response.data.id } })
-        broadcastStore.clear()
+        broadcastStore.$reset()
     } catch(error) {
         handleError(error)
     } finally {
@@ -65,7 +65,7 @@ const scheduleBroadcast = async () => {
 }
 
 const confirmLeave = () => {
-    broadcastStore.clear()
+    broadcastStore.$reset()
     showLeaveDialog.value = false
     if (pendingNext.value) pendingNext.value()
 }

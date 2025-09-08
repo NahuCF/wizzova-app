@@ -82,7 +82,7 @@ userStore.fetchUsers()
 			<Divider type="solid" />
 
 			<div class="flex items-center gap-2">
-				<Checkbox v-model="filters.unread" inputId="unreadChats" name="unreadChats" :value="true" />
+				<Checkbox v-model="filters.unread" inputId="unreadChats" name="unreadChats" binary />
 				<label for="unreadChats" class="text-lg font-normal cursor-pointer"> 
 					{{ $t('Unread chats') }} 
 				</label>

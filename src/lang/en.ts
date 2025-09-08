@@ -105,7 +105,7 @@ export default {
     'A role with this name already exists': 'A role with this name already exists',
     'This role is internal and cannot be updated': 'This role is internal and cannot be updated',
     'A team with this name already exists': 'A team with this name already exists',
-    
+    'contact_has_active_broadcasts': 'Cannot modify contact while it has active broadcasts'
   },
   submit_for_review: 'Submit for review',
   template_name: 'Template name',
@@ -454,7 +454,8 @@ Grab them today!`,
       sending: 'Sending',
       sent: 'Sent',
       failed: 'Failed',
-      cancelled: 'Cancelled'
+      cancelled: 'Cancelled',
+      completed: 'Completed'
     },
     download_report: 'Download report',
     cancel_broadcast: 'Cancel broadcast',
@@ -508,7 +509,9 @@ Grab them today!`,
     schedule_on: 'Schedule on',
     schedule_at: 'Schedule at',
     broadcast_created: 'Broadcast created successfully!',
-    missing_template_description: 'You must create a template to continue with the broadcast steps'
+    missing_template_title: 'Approved templates were not found',
+    missing_template_description: 'You must create a template to continue with the broadcast steps.',
+    send_to_all_numbers: 'Send to all numbers'
   },
   broadcast_details: {
     title: 'Broadcast details',

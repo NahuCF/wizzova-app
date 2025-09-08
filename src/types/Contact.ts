@@ -33,7 +33,8 @@ export interface ContactItemField {
 
 export interface ContactItem {
     id: string,
-    fields: ContactItemField[]
+    fields: ContactItemField[],
+    active_broadcast_count?: number
 }
 
 export type ContactFieldValue = string | string[] | number | boolean
