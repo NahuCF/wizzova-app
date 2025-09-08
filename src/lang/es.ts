@@ -302,6 +302,7 @@ export default {
     contact_deleted: '¡Contacto eliminado con éxito!',
     create_contact: 'Crear Contacto',
     edit_contact: 'Editar Contacto',
+    error: 'Error de contacto',
     contact_id: 'ID de Contacto',
     headers: {
       Name: 'Nombre',
@@ -404,7 +405,9 @@ export default {
     },
     group_created: '¡Grupo creado con éxito!',
     group_updated: '¡Grupo actualizado con éxito!',
-    group_deleted: '¡Grupo eliminado con éxito!'
+    group_deleted: '¡Grupo eliminado con éxito!',
+    async_processing_title: 'Group creado',
+    async_processing_warning: 'Este grupo contiene {count} contactos y puede tomar unos minutos en crearse. Lo procesaremos automáticamente y te notificaremos cuando esté listo.'
   },
   today: 'Hoy',
   yesterday: 'Ayer',

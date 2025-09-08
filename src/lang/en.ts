@@ -304,6 +304,7 @@ Grab them today!`,
     contact_deleted: 'Contact deleted successfully!',
     create_contact: 'Create Contact',
     edit_contact: 'Edit Contact',
+    error: 'Contact error',
     contact_id: 'Contact ID',
     headers: {
       Name: 'Name',
@@ -405,7 +406,9 @@ Grab them today!`,
     },
     group_created: 'Group created successfully!',
     group_updated: 'Group updated successfully!',
-    group_deleted: 'Group deleted successfully!'
+    group_deleted: 'Group deleted successfully!',
+    async_processing_title: 'Group created',
+    async_processing_warning: "This group contains {count} contacts and may take a few minutes to be created. We will process it automatically and notify you when it’s ready."
   },
   contact_imports: {
     title: 'Import contact',

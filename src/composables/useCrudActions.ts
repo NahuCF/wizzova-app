@@ -2,15 +2,16 @@ import { ref } from 'vue'
 import { useToast } from 'primevue'
 import { useI18n } from 'vue-i18n'
 import { useErrorHandler } from './useErrorHandler'
+import type { AxiosResponse } from 'axios'
 
-interface CrudApi<T> {
-    create?: (data: T) => Promise<any>
-    update?: (data: T) => Promise<any>
+interface CrudApi<Req, Res = unknown> {
+    create?: (data: Req) => Promise<AxiosResponse<Res>>
+    update?: (data: Req) => Promise<AxiosResponse<Res>>
     delete?: (id: string) => Promise<any>
 }
 
-interface UseCrudActionsOptions<T> {
-    api: CrudApi<T>
+interface UseCrudActionsOptions<Req, Res> {
+    api: CrudApi<Req, Res>
     fetchData: () => void
     i18nKeys: {
         created?: string
@@ -19,8 +20,8 @@ interface UseCrudActionsOptions<T> {
     }
 }
 
-export function useCrudActions<T extends { id?: string | number }>(
-    options: UseCrudActionsOptions<T>
+export function useCrudActions<Req extends { id?: string | number }, Res = unknown>(
+    options: UseCrudActionsOptions<Req, Res>
 ) {
     const loading = ref(false)
     const toast = useToast()
@@ -37,18 +38,20 @@ export function useCrudActions<T extends { id?: string | number }>(
     }
 
     const createOrUpdate = async (
-        item: T,
-        opts?: { onSuccess?: () => void }
+        item: Req,
+        opts?: { onSuccess?: (response?: Res) => void, onError?: (e: unknown) => void }
     ) => {
         loading.value = true
         try {
+            let response
+
             if (item.id) {
                 if (!options.api.update) {
                     console.warn('Update operation is not available.')
                     return
                 }
 
-                await options.api.update(item)
+                response = await options.api.update(item)
                 showSuccess(options.i18nKeys.updated || '')
             } else {
                 if (!options.api.create) {
@@ -56,14 +59,19 @@ export function useCrudActions<T extends { id?: string | number }>(
                     return
                 }
 
-                await options.api.create(item)
+                response = await options.api.create(item)
                 showSuccess(options.i18nKeys.created || '')
             }
 
             options.fetchData()
-            opts?.onSuccess?.()
+            opts?.onSuccess?.(response.data)
         } catch (error) {
-            handleError(error)
+            if (opts?.onError) {
+                opts?.onError(error)
+            }
+            else {
+                handleError(error)
+            }
         } finally {
             loading.value = false
         }
@@ -71,7 +79,7 @@ export function useCrudActions<T extends { id?: string | number }>(
 
     const remove = async (
         id: string,
-        opts?: { onSuccess?: () => void }
+        opts?: { onSuccess?: () => void, onError?: (e: unknown) => void }
     ) => {
         if (!options.api.delete) {
             console.warn('Delete operation is not available.')
@@ -85,7 +93,12 @@ export function useCrudActions<T extends { id?: string | number }>(
             showSuccess(options.i18nKeys.deleted || '')
             opts?.onSuccess?.()
         } catch (error) {
-            handleError(error)
+            if (opts?.onError) {
+                opts?.onError(error)
+            }
+            else {
+                handleError(error)
+            }
         } finally {
             loading.value = false
         }

@@ -9,9 +9,12 @@ import type { ContactItem, CreateContact, Filter, FilterOperator } from '~/types
 import { IconSearch, IconPlus, IconDownload, IconX } from '@tabler/icons-vue'
 import { useCrudActions } from '~/composables/useCrudActions'
 import { useContactFilters } from '~/composables/useContactFilters'
+import axios from 'axios'
+import { useErrorHandler } from '~/composables/useErrorHandler'
 
 const { t } = useI18n()
 const router = useRouter()
+const handleError = useErrorHandler()
 const contactFieldStore = useContactFieldStore()
 const userStore = useUserStore()
 const { columns: contactFilters, flattenFilters } = useContactFilters()
@@ -52,6 +55,7 @@ const selectedContact = ref<ContactItem | undefined>()
 const showDeleteDialog = ref(false)
 const showContactDrawer = ref(false)
 const showImportContacts = ref(false)
+const showActiveBroadcast = ref(false)
 const filters = ref<Filter[]>([])
 
 const importOptions = ref([
@@ -106,16 +110,34 @@ const removeFromFilter = (filterIndex: number, conditionIndex: number) => {
 
 const onSave = (contact: CreateContact) => {
     createOrUpdate(contact, {
-        onSuccess: () => showContactDrawer.value = false
+        onSuccess: () => showContactDrawer.value = false,
+        onError: handleActiveCampaign
     })
+}
+
+const handleActiveCampaign = (error: unknown) => {
+    if (axios.isAxiosError(error) && error.response?.data.message_code === 'contact_has_active_broadcasts') {
+        showDeleteDialog.value = false
+        showActiveBroadcast.value = true
+    }
+    else {
+        handleError(error)
+    }
 }
 
 const onDelete = () => {
     if (selectedContact.value?.id) {
         remove(selectedContact.value.id, {
-            onSuccess: () => showDeleteDialog.value = false
+            onSuccess: () => showDeleteDialog.value = false,
+            onError: handleActiveCampaign
         })
     }
+}
+
+const closeDialogsAndReload = () => {
+    showContactDrawer.value = false
+    showActiveBroadcast.value = false
+    fetchDataPage(1, rowsPerPage.value)
 }
 
 watch(rowsPerPage, 
@@ -225,6 +247,14 @@ userStore.fetchUsers()
         />
         <ImportContactDialog
             v-model:visible="showImportContacts"
+        />
+        <WarningDialog 
+            v-model:visible="showActiveBroadcast" 
+            :title="$t('contacts.error')"
+            :message="$t('validation_errors.contact_has_active_broadcasts')"
+            :confirm-message="$t('accept')"
+            unclosable
+            @onConfirm="closeDialogsAndReload" 
         />
     </div>
 </template>
