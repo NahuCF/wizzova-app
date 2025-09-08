@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 import { IconArrowLeft, IconUsers, IconClock, IconAsterisk } from '@tabler/icons-vue'
 import { useBroadcastStore } from '~/stores/broadcast'
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const { t } = useI18n()
 const broadcastStore = useBroadcastStore()
@@ -23,6 +23,13 @@ const sendOptions = ref([
 const toPrevStep = () => {
     currentStep.value--
 }
+
+watch(() => newBroadcast.value.sendOption, (newOption) => {
+    if(newOption === 'SEND_NOW') {
+        newBroadcast.value.scheduledDate = undefined
+        newBroadcast.value.scheduledTime = undefined
+    }
+})
 </script> 
 
 <template>

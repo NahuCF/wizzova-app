@@ -45,11 +45,11 @@ const phone = ref('')
 
 const startConversation = async (contact: ContactItem) => {
     try {
-        if(!sessionStore.user || !sessionStore.user.default_waba) return
+        if(!sessionStore.user || !sessionStore.defaultWaba) return
 
         const { data: response } = await API.conversation.create({
             contact_id: contact.id,
-            waba_id: sessionStore.user.default_waba.id,
+            waba_id: sessionStore.defaultWaba.id,
             meta_id: getContactPhone(contact) ?? '',
             user_id: sessionStore.user.id,
             is_solved: false,
@@ -75,9 +75,11 @@ const createContactWithConversation = async () => {
 }
 
 const fetchBroadcastNumbers = async () => {
+    if(!sessionStore.defaultWaba) return
+
     loadingNumbers.value = true
     try {
-        const { data: response } = await API.broadcast.broadcastNumbers()
+        const { data: response } = await API.broadcast.broadcastNumbers(sessionStore.defaultWaba.id)
         broadcastNumbers.value = response.data
 
         if(!selectedNumber.value && broadcastNumbers.value.length > 0) {

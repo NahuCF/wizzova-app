@@ -19,7 +19,9 @@ export default {
     async get(id: string) {
 		return Http.get<{ data: BroadcastDetail }>(`/broadcasts/${id}`)
 	},
-    async broadcastNumbers() {
-        return Http.get<{ data: WABANumber[] }>('/phone-numbers')
+    async broadcastNumbers(wabaId: string) {
+        return Http.get<{ data: WABANumber[] }>('/phone-numbers', { 
+            params: { waba_id: wabaId }
+        })
     }
 }

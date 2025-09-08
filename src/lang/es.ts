@@ -515,7 +515,9 @@ export default {
       phone: 'Teléfono',
       status: 'Estado'
     },
-    messages_empty: 'No messages to show'
+    messages_empty: 'No hay mensajes para mostrar',
+    groups: '{count} Grupo | {count} Grupos',
+    selected_number: 'Teléfono seleccionado'
   },
   users_teams_roles: {
     title: 'Usuarios, Equipos y Roles',

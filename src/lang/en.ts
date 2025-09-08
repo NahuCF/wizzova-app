@@ -517,7 +517,9 @@ Grab them today!`,
       phone: 'Phone',
       status: 'Status'
     },
-    messages_empty: 'No messages to show'
+    messages_empty: 'No messages to show',
+    groups: '{count} Group | {count} Groups',
+    selected_number: 'Selected number'
   },
   users_teams_roles: {
     title: 'Users, Teams & Roles',

@@ -7,9 +7,11 @@ import type { WABANumber, TemplateItem } from '~/types'
 import { ref } from 'vue'
 import { useBroadcastStore } from '~/stores/broadcast'
 import { storeToRefs } from 'pinia'
+import { useSessionStore } from '~/stores'
 
 const router = useRouter()
 const broadcastStore = useBroadcastStore()
+const session = useSessionStore()
 const { currentStep, newBroadcast } = storeToRefs(broadcastStore)
 
 const {
@@ -28,9 +30,11 @@ const loadingNumbers = ref(false)
 const broadcastNumbers = ref<WABANumber[]>([])
 
 const fetchBroadcastNumbers = async () => {
+    if(!session.defaultWaba) return
+
     loadingNumbers.value = true
     try {
-        const { data: response } = await API.broadcast.broadcastNumbers()
+        const { data: response } = await API.broadcast.broadcastNumbers(session.defaultWaba.id)
         broadcastNumbers.value = response.data
 
         if(!newBroadcast.value.broadcastNumber && broadcastNumbers.value.length > 0) {

@@ -2,8 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { IconArrowLeft, IconRefresh, IconDownload, IconLoader2, 
 	IconArrowBackUp, IconCheck, IconChecks, IconExclamationCircle, IconUsers, 
-	IconClock,
-	IconTrash} from '@tabler/icons-vue'
+	IconClock, IconTrash, IconInfoCircle} from '@tabler/icons-vue'
 import { computed, ref, type Component } from 'vue'
 import type { BroadcastDetail, Column, MessageItem, MessageStatus } from '~/types'
 import { API } from '~/services'
@@ -253,35 +252,60 @@ fetchDataPage(1, rowsPerPage.value)
 			/>
 		</div>
 
+		<div class="flex items-center gap-12">
+			<div class="flex gap-2">
+				<div class="text-lg">
+					{{ $t('broadcast_details.groups', broadcast?.groups.length ?? 0) }}
+				</div>
+				<div 
+					v-if="broadcast?.groups"
+					class="flex items-center" 
+					v-tooltip.bottom="{
+						value: broadcast?.groups.map(g => g.name).join(`\n`),
+						class: 'max-w-[300px]!'
+					}"
+				>
+					<IconInfoCircle class="text-slate-700 hover:cursor-pointer" size="14" />
+				</div>
+			</div>
+
+			<span class="flex items-center gap-2 text-lg">
+				<div>{{ $t('broadcast_details.selected_number') }}</div>
+				<div class="text-gray-400">
+					{{ broadcast?.phone_number.display_phone_number }}
+				</div>
+			</span>
+		</div>
+
 		<Table 
-            :data="transformedData"
-            :columns="columns"
-            emptyMessage="broadcast_details.messages_empty"
-            :loading="loadingMessages"
-            withPagination
-            :totalRecords="dataPage.meta.total"
-            v-model:rowsPerPage="rowsPerPage"
-            :currentPageReport="currentPageReport"
-            @onPage="onPage"
-        >
-            <template #name="{ data }: { data: MessageItem }">
-                <div class="flex items-center gap-2">
+			:data="transformedData"
+			:columns="columns"
+			emptyMessage="broadcast_details.messages_empty"
+			:loading="loadingMessages"
+			withPagination
+			:totalRecords="dataPage.meta.total"
+			v-model:rowsPerPage="rowsPerPage"
+			:currentPageReport="currentPageReport"
+			@onPage="onPage"
+		>
+			<template #name="{ data }: { data: MessageItem }">
+				<div class="flex items-center gap-2">
 					<Avatar
 						:label="'Max Power'.charAt(0).toLocaleUpperCase()"
 						shape="circle"
 					/>
-                    {{ 'Max Power' }}
-                </div>
-            </template>
+					{{ 'Max Power' }}
+				</div>
+			</template>
 
 			<template #status="{ data }: { data: MessageItem }">
-                <div class="flex items-center gap-2">
+				<div class="flex items-center gap-2">
 					<component :is="statusIcon[data.status].icon" class="w-5 h-5" :class="statusIcon[data.status].class" />
-                    <span class="uppercase text-gray-400">
+					<span class="uppercase text-gray-400">
 						{{ $t(`message_status.${data.status}`) }}
 					</span>
-                </div>
-            </template>
-        </Table>
+				</div>
+			</template>
+		</Table>
 	</div>
 </template>

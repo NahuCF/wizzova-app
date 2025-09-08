@@ -19,6 +19,7 @@ import { useErrorHandler } from '~/composables/useErrorHandler'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { useSeverityMapper } from '~/composables/useSeverityMapper'
 import { API } from '~/services'
+import { useSessionStore } from '~/stores'
 import type { WABANumber, BroadcastItem, BroadcastOverview, BroadcastStatus, Column, PrimeVueSeverity } from '~/types'
 
 const selectedNumber = ref<WABANumber>()
@@ -62,6 +63,7 @@ const {
     },
     10
 )
+const sessionStore = useSessionStore()
 
 const columns: Column[] = [
     { header: t('broadcasts.headers.name'), key: 'name' },
@@ -294,9 +296,11 @@ const setFilter = (filter: MenuItem) => {
 }
 
 const fetchBroadcastNumbers = async () => {
+    if(!sessionStore.defaultWaba) return
+
     loadingNumbers.value = true
     try {
-        const { data: response } = await API.broadcast.broadcastNumbers()
+        const { data: response } = await API.broadcast.broadcastNumbers(sessionStore.defaultWaba.id)
         broadcastNumbers.value = response.data
 
         if(!selectedNumber.value && broadcastNumbers.value.length > 0) {

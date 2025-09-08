@@ -21,6 +21,10 @@ export const useSessionStore = defineStore('session', () => {
 		return user.value?.role.name === 'Owner' && user.value.role.is_internal
 	})
 
+	const defaultWaba = computed(() => {
+		return user.value?.default_waba
+	})
+
 	const hasPermission = (permissionName: string) => {
 		return !!user.value?.permission_names.find(permission => permission === permissionName)
 	}
@@ -59,6 +63,7 @@ export const useSessionStore = defineStore('session', () => {
 		showOverrideDialog,
 		isAuthenticated,
 		isOwner,
+		defaultWaba,
 		hasPermission,
 		hasAllPermissions,
 		hasAnyPermission,

@@ -90,5 +90,7 @@ export interface BroadcastCreate {
     template_id: string,
     group_ids: string[],
     phone_number_id: string,
-    variables?: VariableMapping[]
+    variables?: VariableMapping[],
+    send_now: boolean,
+    send_to_all_numbers: boolean
 }

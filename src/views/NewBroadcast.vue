@@ -39,11 +39,13 @@ const scheduleBroadcast = async () => {
             template_id: newBroadcast.value.template.id,
             group_ids: newBroadcast.value.contactGroups.map(group => group.id),
             phone_number_id: newBroadcast.value.broadcastNumber.id,
+            send_to_all_numbers: true,
+            send_now: !scheduledAt.value,
             ...(scheduledAt.value && { scheduled_at: scheduledAt.value }),
             ...(newBroadcast.value.variables && { variables: newBroadcast.value.variables })
         }
 
-        await API.broadcast.create(createBroadcast)
+        const { data: response } = await API.broadcast.create(createBroadcast)
 
         toast.add({
             severity: 'success',
@@ -53,7 +55,7 @@ const scheduleBroadcast = async () => {
         })
         
         success.value = true
-        router.push({ name: 'broadcasts' })
+        router.push({ name: 'broadcast-details', params: { id: response.data.id } })
         broadcastStore.clear()
     } catch(error) {
         handleError(error)
