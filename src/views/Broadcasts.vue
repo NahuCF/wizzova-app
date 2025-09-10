@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import { IconRefresh, IconPlus, IconUsers, IconCheck, IconChecks, 
+import { 
+    IconRefresh, IconPlus, IconUsers, IconCheck, IconChecks, 
     IconExclamationCircle, IconArrowBackUp, IconSearch, IconFilter, 
     IconStopwatch, IconCalendarClock, IconSend, IconX, IconCancel 
 } from '@tabler/icons-vue'
-import { useToast } from 'primevue'
 import type { MenuItem } from 'primevue/menuitem'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { useErrorHandler } from '~/composables/useErrorHandler'
 import { usePaginatedData } from '~/composables/usePaginatedData'
-import { useSeverityMapper } from '~/composables/useSeverityMapper'
 import { API } from '~/services'
 import { useSessionStore } from '~/stores'
-import type { WABANumber, BroadcastItem, BroadcastOverview, BroadcastStatus, Column, PrimeVueSeverity } from '~/types'
+import type { WABANumber, BroadcastItem, BroadcastOverview, BroadcastStatus } from '~/types'
 
 const selectedNumber = ref<WABANumber>()
 const dateRange = ref<(Date | null)[] | null>()
