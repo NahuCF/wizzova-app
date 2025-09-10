@@ -45,7 +45,7 @@ export interface WABANumber {
     can_send_messages: boolean
 }
 
-export type BroadcastStatus = 'queued' | 'scheduled' | 'sending' | 'sent' | 'failed' | 'cancelled'
+export type BroadcastStatus = 'queued' | 'scheduled' | 'sending' | 'sent' | 'failed' | 'cancelled' | 'completed'
 
 export interface BroadcastItem {
     id: string,
@@ -59,6 +59,7 @@ export interface BroadcastItem {
     status?: BroadcastStatus,
     send_at: string | null,
     scheduled_at?: string,
+    template_id?: string,
     created_at: string,
 }
 
@@ -94,3 +95,5 @@ export interface BroadcastCreate {
     send_now: boolean,
     send_to_all_numbers: boolean
 }
+
+export type BroadcastRepeat = { send_now: boolean } | { scheduled_at: string }

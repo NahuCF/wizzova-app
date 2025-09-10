@@ -2,19 +2,22 @@
 import { useRoute, useRouter } from 'vue-router'
 import { IconArrowLeft, IconRefresh, IconDownload, IconLoader2, 
 	IconArrowBackUp, IconCheck, IconChecks, IconExclamationCircle, IconUsers, 
-	IconClock, IconTrash, IconInfoCircle} from '@tabler/icons-vue'
+	IconClock, IconTrash, IconInfoCircle,
+	IconRepeat} from '@tabler/icons-vue'
 import { computed, ref, type Component } from 'vue'
-import type { BroadcastDetail, Column, MessageItem, MessageStatus } from '~/types'
+import type { BroadcastDetail, BroadcastRepeat, Column, MessageItem, MessageStatus } from '~/types'
 import { API } from '~/services'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import moment from 'moment'
 import { useSeverityMapper } from '~/composables/useSeverityMapper'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { useI18n } from 'vue-i18n'
+import { useToast } from 'primevue'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+const toast = useToast()
 const handleError = useErrorHandler()
 const { broadcastSeverity } = useSeverityMapper()
 const {
@@ -41,6 +44,8 @@ const {
 const broadcast = ref<BroadcastDetail>()
 const loading = ref(false)
 const canRefresh = ref(true)
+const loadingRepeat = ref(false)
+const showRepeatDialog = ref(false)
 const columns: Column[] = [
     { header: t('broadcast_details.headers.name'), key: 'name', type: 'CUSTOM' },
 	{ header: t('broadcast_details.headers.phone'), key: 'to_phone' },
@@ -168,6 +173,27 @@ const refreshData = (forced?: boolean) => {
     }, 3000)
 }
 
+const onRepeat = async (data: BroadcastRepeat) => {
+	const broadcastId = route.params.id
+	if(typeof broadcastId !== 'string') return
+
+	loadingRepeat.value = true
+	try {
+		const { data: response } = await API.broadcast.repeat(broadcastId, data)
+		showRepeatDialog.value = false
+		toast.add({ 
+			severity: 'success', 
+			summary: 'Success', 
+			detail: t('new_broadcast.broadcast_created'), 
+			life: 3000
+		})
+		
+		router.push({ name: 'broadcast-details', params: { id: response.data.id } })
+	} finally {
+		loadingRepeat.value = false
+	}
+}
+
 fetchBroadcastDetails()
 fetchDataPage(1, rowsPerPage.value)
 </script>
@@ -219,6 +245,19 @@ fetchDataPage(1, rowsPerPage.value)
 							size="16"
 						/>
 						<IconRefresh v-else size="16" />
+					</Button>
+
+					<Button 
+						class="bg-white! border-slate-200! hover:bg-slate-100!"
+						severity="secondary"
+						:disabled="loadingRepeat || !broadcast?.template_id"
+						v-tooltip.bottom="!broadcast?.template_id && {
+							value: t('broadcasts.missing_template'),
+							class: 'max-w-[300px]!'
+						}"
+						@click="showRepeatDialog = true"
+					>
+						<IconRepeat size="16" />
 					</Button>
 
 					<Button 
@@ -307,5 +346,11 @@ fetchDataPage(1, rowsPerPage.value)
 				</div>
 			</template>
 		</Table>
+
+		<RepeatBroadcastDialog
+			v-model:visible="showRepeatDialog"
+			:loading="loadingRepeat"
+			@onConfirm="onRepeat"
+		/>
 	</div>
 </template>

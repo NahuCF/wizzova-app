@@ -464,9 +464,11 @@ export default {
       completed: 'Completada'
     },
     download_report: 'Descargar reporte',
+    repeat_broadcast: 'Repetir campaña',
     cancel_broadcast: 'Cancelar campaña',
     cancel_message: '¿Estás seguro de que deseas cancelar esta campaña?',
-    broadcast_canceled: '¡Campaña cancelada con éxito!'
+    broadcast_canceled: '¡Campaña cancelada con éxito!',
+    missing_template: 'No se puede repetir la campaña debido a que falta la plantilla'
   },
   continue: 'Continuar',
   leave: 'Salir',

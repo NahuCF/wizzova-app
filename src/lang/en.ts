@@ -461,9 +461,11 @@ Grab them today!`,
       completed: 'Completed'
     },
     download_report: 'Download report',
+    repeat_broadcast: 'Repeat broadcast',
     cancel_broadcast: 'Cancel broadcast',
     cancel_message: 'Are you sure do you want to cancel this broadcast?',
-    broadcast_canceled: 'Broadcast canceled successfully!'
+    broadcast_canceled: 'Broadcast canceled successfully!',
+    missing_template: 'The broadcast cannot be repeated due to a missing template'
   },
   today: 'Today',
   yesterday: 'Yesterday',
