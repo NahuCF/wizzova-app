@@ -38,6 +38,13 @@ const fetchBroadcastNumbers = async () => {
         const { data: response } = await API.broadcast.broadcastNumbers(session.defaultWaba.id)
         broadcastNumbers.value = response.data
 
+        const invalidSelectedNumber = newBroadcast.value.broadcastNumber && 
+            !broadcastNumbers.value.includes(newBroadcast.value.broadcastNumber)
+
+        if(invalidSelectedNumber) {
+            newBroadcast.value.broadcastNumber = undefined
+        }
+
         if(!newBroadcast.value.broadcastNumber && broadcastNumbers.value.length > 0) {
             newBroadcast.value.broadcastNumber = broadcastNumbers.value[0]
         }
@@ -91,8 +98,7 @@ fetchBroadcastNumbers()
                     <Select 
                         id="broadcastNumbers" 
                         v-model="newBroadcast.broadcastNumber" 
-                        :options="broadcastNumbers" 
-                        option-id="id"
+                        :options="broadcastNumbers"
                         :option-label="(item: WABANumber) => `${item.verified_name} (${item.display_phone_number})`"
                         :placeholder="$t('broadcasts.select_number')"
                         :loading="loadingNumbers"
