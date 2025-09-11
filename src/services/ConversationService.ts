@@ -1,5 +1,5 @@
 import Http from '~/config/http'
-import type { ConversationItem, CreateConversation, Page } from '~/types'
+import type { ConversationItem, ConversationStats, CreateConversation, Page } from '~/types'
 
 type ConversationFilters = {
 	page?: number
@@ -35,7 +35,16 @@ export default {
 
         return Http.get<Page<ConversationItem>>('/conversations', { params })
     },
+	async stats() {
+        return Http.get<{ data: ConversationStats }>('/conversations/stats')
+    },
     async create(conversation: CreateConversation) {
         return Http.post<{ data: ConversationItem }>('/conversations', conversation)
+    },
+	async changeSolved(id: string, is_solved: boolean) {
+        return Http.put<{ data: ConversationItem }>(`/conversations/${id}/change-solved`, { is_solved })
+    },
+	async changeOwner(id: string, user_id?: string) {
+        return Http.put<{ data: ConversationItem }>(`/conversations/${id}/change-owner`, { user_id })
     }
 }

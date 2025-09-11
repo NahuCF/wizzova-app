@@ -45,15 +45,20 @@ const phone = ref('')
 
 const startConversation = async (contact: ContactItem) => {
     try {
-        if(!sessionStore.user || !sessionStore.defaultWaba) return
+        const contactPhones = contact.fields.find(field => field.name === 'Phone')
+
+        if(!sessionStore.user || !sessionStore.defaultWaba || !selectedNumber.value) return
+        if(!Array.isArray(contactPhones?.value) || contactPhones?.value.length === 0) {
+            throw new Error('Contact has no valid phone')
+        }
+
+        contactPhones?.value.length
 
         const { data: response } = await API.conversation.create({
             contact_id: contact.id,
             waba_id: sessionStore.defaultWaba.id,
-            meta_id: getContactPhone(contact) ?? '',
-            user_id: sessionStore.user.id,
-            is_solved: false,
-            expires_at: ''
+            phone_number_id: selectedNumber.value.id,
+            to_phone: contactPhones.value[0]
         })
 
         emit('onStartConversation', response.data)
@@ -135,7 +140,7 @@ watch(() => props.visible, async () => {
         modal
         :draggable="false"
         :showHeader="false"
-        class="min-w-[25rem] max-w-[450px]"
+        class="min-w-[25rem] max-w-[500px]"
     >
         <div v-if="!showNewContact" class="flex flex-col gap-6 pt-6">
             <div class="flex justify-between items-center gap-3">
@@ -144,9 +149,9 @@ watch(() => props.visible, async () => {
                 <Select 
                     id="broadcastNumbers" 
                     v-model="selectedNumber" 
-                    :options="broadcastNumbers" 
+                    :options="broadcastNumbers"
                     option-id="id"
-                    option-label="name"
+                    :option-label="(item: WABANumber) => `${item.verified_name} (${item.display_phone_number})`"
                     :placeholder="$t('broadcasts.select_number')"
                     :loading="loadingNumbers"
                     :disabled="loadingNumbers"
@@ -261,7 +266,7 @@ watch(() => props.visible, async () => {
                     v-model="selectedNumber" 
                     :options="broadcastNumbers" 
                     option-id="id"
-                    option-label="name"
+                    :option-label="(item: WABANumber) => `${item.verified_name} (${item.display_phone_number})`"
                     :placeholder="$t('broadcasts.select_number')"
                     :loading="loadingNumbers"
                     :disabled="loadingNumbers"

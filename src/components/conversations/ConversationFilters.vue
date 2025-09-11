@@ -2,40 +2,37 @@
 import { IconAt } from '@tabler/icons-vue'
 import { ref } from 'vue'
 import { useUserStore } from '~/stores'
-import type { UserItem } from '~/types'
-
-interface ConversationFilters {
-	status?: 'OPEN' | 'RESOLVED'
-	unread?: boolean
-	assignedUser?: UserItem
-}
+import type { ConversationFilters } from '~/types'
 
 const emit = defineEmits<{
-	(e: 'applyFilters', filter: ConversationFilters): void
+	(e: 'onApply', filter: ConversationFilters): void
 }>()
 
 const userStore = useUserStore()
 
 const popover = ref()
 const filters = ref<ConversationFilters>({
-	status: 'OPEN',
+	status: 'opened',
 	unread: false
 })
 
 const resetFilters = () => {
-	emit('applyFilters', {})
+	emit('onApply', {})
 	popover.value?.hide()
-	filters.value = {}
+	filters.value = {
+		status: 'opened',
+		unread: false
+	}
 }
 
 const applyFilters = () => {
-	emit('applyFilters', filters.value)
+	emit('onApply', filters.value)
 	popover.value?.hide()
-	filters.value = {}
 }
 
 defineExpose({
 	show: (e: MouseEvent) => popover.value?.toggle(e),
+	reset: resetFilters
 })
 
 userStore.fetchUsers()
@@ -49,7 +46,7 @@ userStore.fetchUsers()
 				variant="text"
 				@click="resetFilters" 
 			>
-				{{ $t('Reset') }}
+				{{ $t('reset') }}
 			</Button>
 		</div>
 
@@ -60,20 +57,20 @@ userStore.fetchUsers()
 				<div class="flex items-center gap-2">
 					<RadioButton
 						v-model="filters.status"
-						inputId="OPEN"
-						value="OPEN"
+						inputId="opened"
+						value="opened"
 					/>
-					<label for="OPEN" class="text-lg font-normal cursor-pointer">
+					<label for="opened" class="text-lg font-normal cursor-pointer">
 						{{ $t('Open chats') }}
 					</label>
 				</div>
 				<div class="flex items-center gap-2">
 					<RadioButton
 						v-model="filters.status"
-						inputId="RESOLVED"
-						value="RESOLVED"
+						inputId="resolved"
+						value="resolved"
 					/>
-					<label for="RESOLVED" class="text-lg font-normal cursor-pointer">
+					<label for="resolved" class="text-lg font-normal cursor-pointer">
 						{{ $t('Resolved chats') }}
 					</label>
 				</div>
@@ -84,7 +81,7 @@ userStore.fetchUsers()
 			<div class="flex items-center gap-2">
 				<Checkbox v-model="filters.unread" inputId="unreadChats" name="unreadChats" binary />
 				<label for="unreadChats" class="text-lg font-normal cursor-pointer"> 
-					{{ $t('Unread chats') }} 
+					{{ $t('conversations.unread_chats') }} 
 				</label>
 			</div>
 

@@ -15,16 +15,16 @@ const session = useSessionStore()
 const { currentStep, newBroadcast } = storeToRefs(broadcastStore)
 
 const {
-  dataPage,
-  loading,
-  searchTerm,
-  fetchDataPage,
-  loadNextPage,
-  debouncedFetch,
+    dataPage,
+    loading,
+    searchTerm,
+    fetchDataPage,
+    loadNextPage,
+    debouncedFetch,
 } = usePaginatedData<TemplateItem>(
-  (page, perPage, search) => API.template.index({ page, name: search, perPage, status: 'APPROVED' })
-    .then(res => res.data),
-  12
+    (page, perPage, search) => API.template.index({ page, name: search, perPage, status: 'APPROVED' })
+        .then(res => res.data),
+    12
 )
 
 const loadingNumbers = ref(false)

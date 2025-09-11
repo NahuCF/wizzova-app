@@ -2,10 +2,12 @@
 import { IconPlus, IconSearch, IconFilter, IconX, IconStack, 
 	IconUserPlus, IconPin, IconMessageDots, IconMessageCheck, IconLoader2 } from '@tabler/icons-vue'
 import moment from 'moment'
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n';
-import { useContactUtils } from '~/composables/useContactUtils';
-import type { ConversationItem, ConversationStatus } from '~/types'
+import { storeToRefs } from 'pinia'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useContactUtils } from '~/composables/useContactUtils'
+import { useConversationStore } from '~/stores/conversations'
+import type { ConversationFilters, ConversationItem, ConversationStatus } from '~/types'
 
 const props = defineProps<{
 	initialTab?: ConversationStatus,
@@ -25,12 +27,15 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const conversationStore = useConversationStore()
+const { stats } = storeToRefs(conversationStore)
 const { getContactName } = useContactUtils()
 
 const searchWrapper = ref()
 const focusSearch = ref(false)
-const currentTab = ref<ConversationStatus>(props.initialTab ?? 'UNASSIGNED')
+const currentTab = ref<ConversationStatus>(props.initialTab ?? 'unassigned')
 const filtersPopover = ref()
+const filters = ref<ConversationFilters>()
 const showStartConversationDialog = ref(false)
 const searchTypes = ref([
 	{
@@ -43,6 +48,34 @@ const searchTypes = ref([
 	}
 ])
 const selectOpen = ref(false)
+
+const tabs = computed(() => [
+	{
+		value: 'unassigned',
+		stats: stats.value.unassigned,
+		icon: IconStack
+	},
+	{
+		value: 'mine',
+		stats: stats.value.mine,
+		icon: IconUserPlus
+	},
+	{
+		value: 'pinned',
+		stats: 0,
+		icon: IconPin
+	},
+	{
+		value: 'opened',
+		stats: stats.value.opened,
+		icon: IconMessageDots
+	},
+	{
+		value: 'resolved',
+		stats: stats.value.resolved,
+		icon: IconMessageCheck
+	}
+])
 
 const handleDocumentClick = (e: MouseEvent) => {
 	const clickTarget = e.target as Node
@@ -69,6 +102,14 @@ const selectConversation = (conversation: ConversationItem) => {
 const startConversation = (conversation: ConversationItem) => {
 	emit('onStartConversation', conversation)
 	showStartConversationDialog.value = false
+}
+
+const onApplyFilters = (newFilters: ConversationFilters) => {
+	filters.value = { ...newFilters }
+
+	if(!filters.value.status) {
+
+	}
 }
 
 watch(currentTab, (newTab) => {
@@ -141,62 +182,53 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 			</div>
 		</div>
 
-		<div v-if="!focusSearch">
+		<div v-if="filters?.status" class="flex flex-col gap-1 px-6 pb-6">
+			<div class="flex justify-between items-center">
+				<div class="text-lg font-semibold">
+					{{ filters.status === 'opened' ? $t('conversations.open_chats') : $t('conversations.resolved_chats') }}
+				</div>
+				<Button 
+					variant="text"
+					size="small"
+					@click="filtersPopover.reset()" 
+				>
+					{{ $t('reset') }}
+				</Button>
+			</div>
+
+			<div class="flex flex-wrap gap-2">
+				<Tag severity="secondary" class="text-nowrap">
+					{{ filters.status === 'opened' ? $t('conversations.open_chats') : $t('conversations.resolved_chats') }}
+				</Tag>
+				<Tag v-if="filters?.unread" severity="secondary" class="text-nowrap">
+					{{ $t('conversations.unread_chats') }}
+				</Tag>
+				<Tag v-if="filters?.assignedUser" severity="secondary" class="text-nowrap">
+					{{ filters.assignedUser.name }}
+				</Tag>
+			</div>
+		</div>
+
+		<div v-if="!focusSearch && !filters?.status">
 			<Tabs v-model:value="currentTab" lazy>
 				<TabList class="text-lg px-[3px]">
-					<Tab value="UNASSIGNED" class="flex-1">
+					<Tab v-for="tab in tabs" :value="tab.value" class="flex-1">
 						<div 
 							class="flex justify-center items-center text-inherit"
 							v-tooltip.top="{
-								value: $t('conversations.status.UNASSIGNED'),
+								value: $t(`conversations.status.${tab.value}`),
 								class: 'text-base max-w-[300px]!'
 							}"
 						>
-							<IconStack size="18" />
-						</div>
-					</Tab>
-					<Tab value="MINE" class="flex-1">
-						<div 
-							class="flex justify-center items-center text-inherit"
-							v-tooltip.top="{
-								value: $t('conversations.status.MINE'),
-								class: 'text-base max-w-[300px]!'
-							}"
-						>
-							<IconUserPlus size="18" />
-						</div>
-					</Tab>
-					<Tab value="PINNED" class="flex-1">
-						<div 
-							class="flex justify-center items-center text-inherit"
-							v-tooltip.top="{
-								value: $t('conversations.status.PINNED'),
-								class: 'text-base max-w-[300px]!'
-							}"
-						>
-							<IconPin size="18" />
-						</div>
-					</Tab>
-					<Tab value="OPENED" class="flex-1">
-						<div 
-							class="flex justify-center items-center text-inherit"
-							v-tooltip.top="{
-								value: $t('conversations.status.OPENED'),
-								class: 'text-base max-w-[300px]!'
-							}"
-						>
-							<IconMessageDots size="18" />
-						</div>
-					</Tab>
-					<Tab value="SOLVED" class="flex-1">
-						<div 
-							class="flex justify-center items-center text-inherit"
-							v-tooltip.top="{
-								value: $t('conversations.status.RESOLVED'),
-								class: 'text-base max-w-[300px]!'
-							}"
-						>
-							<IconMessageCheck size="18" />
+							<OverlayBadge 
+								v-if="tab.stats > 0"
+								:value="tab.stats"
+								severity="danger"
+								size="small"
+							>
+								<component :is="tab.icon" size="18" />
+							</OverlayBadge>
+							<component v-else :is="tab.icon" size="18" />
 						</div>
 					</Tab>
 				</TabList>
@@ -230,7 +262,9 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 					</div>
 				</div>
 				<div class="flex flex-col justify-between items-end gap-2">
-					<div class="text-sm text-gray-400">{{ moment(conversation.last_message_at).format('h:mm A') }}</div>
+					<div class="text-sm text-gray-400">
+						{{ conversation.last_message_at && moment(conversation.last_message_at).format('h:mm A') }}
+					</div>
 					<Badge
 						v-if="conversation.unread_count > 0"
 						rounded
@@ -247,7 +281,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 			<IconLoader2 class="animate-spin text-emerald-500" size="24" />
 		</div>
 
-		<ConversationFilters ref="filtersPopover" />
+		<ConversationFilters ref="filtersPopover" @onApply="onApplyFilters" />
 
 		<StartConversationDialog
 			v-model:visible="showStartConversationDialog"

@@ -686,14 +686,19 @@ Grab them today!`,
   },
   conversations: {
     status: {
-      UNASSIGNED: 'Unassigned',
-      MINE: 'Mine',
-      PINNED: 'Pinned',
-      OPENED: 'Opened',
-      RESOLVED: 'Resolved'
+      unassigned: 'Unassigned',
+      mine: 'Mine',
+      pinned: 'Pinned',
+      opened: 'Opened',
+      resolved: 'Resolved'
     },
-    resolve: 'Resolve',
+    reopen: 'Reopen',
+    close: 'Close',
     assign_to: 'Assign to',
+    open_chats: 'Open chats',
+    resolved_chats: 'Resolved chats',
+    unread_chats: 'Unread chats',
+    not_assigned: 'Not assigned'
   },
   next: 'Next',
   back: 'Back',

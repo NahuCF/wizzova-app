@@ -10,11 +10,14 @@ import type { MessageItem, UserItem } from '~/types'
 const props = defineProps<{
 	messages: MessageItem[],
 	assignedUser?: UserItem,
-	loading?: boolean
+	disableReply?: boolean,
+	customEvent?: string,
+	loading?: boolean,
 }>()
 
 const emit = defineEmits<{
 	(e: 'onSendMessage', { message, type }: { message: string, type: 'REPLY' | 'NOTES' }): void
+	(e: 'onCustomEvent'): void
 }>()
 
 const { t } = useI18n()
@@ -34,6 +37,16 @@ const groupedMessages = computed(() => {
     return Object.entries(groups)
         .sort(([a], [b]) => (a > b ? 1 : -1))
         .map(([date, messages]) => ({ date, messages }))
+})
+
+const sendDisabled = computed(() => {
+	const replyDisabled = props.disableReply && inputTab.value === 'REPLY'
+	const emptyMessage = newMessage.value.length === 0
+	const isCustomEvent = props.customEvent && inputTab.value === 'REPLY'
+
+	const shouldDisable = props.loading || emptyMessage || replyDisabled
+
+	return shouldDisable && !isCustomEvent
 })
 
 const dateLabel = (date: string) => {
@@ -135,6 +148,7 @@ const sendMessage = () => {
 				:placeholder="inputTab === 'REPLY' ? $t('Message Alexis') : $t('Add your private notes')"
 				variant="outlined"
 				size="large"
+				:disabled="disableReply && inputTab === 'REPLY'"
 			/>
 
 			<div class="flex justify-between items-center">
@@ -147,10 +161,13 @@ const sendMessage = () => {
 				</Popover>
 					
 				<Button
-					:disabled="loading || newMessage.length === 0"
-					@click="sendMessage"
+					:disabled="sendDisabled"
+					@click="() => customEvent ? emit('onCustomEvent') : sendMessage()"
 				>
 					<IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
+					<span v-else-if="customEvent && inputTab === 'REPLY'">
+						{{ customEvent }}
+					</span>
 					<span v-else>
 						{{ $t('Send') }}
 					</span>

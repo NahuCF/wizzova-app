@@ -1,8 +1,9 @@
 import type { WABAItem } from "./Auth"
+import type { WABANumber } from "./Broadcast"
 import type { ContactItem } from "./Contact"
 import type { UserItem } from "./User"
 
-export type ConversationStatus = 'UNASSIGNED' | 'MINE' | 'PINNED' | 'OPENED' | 'SOLVED'
+export type ConversationStatus = 'unassigned' | 'mine' | 'pinned' | 'opened' | 'resolved'
 export type MessageStatus = 'pending' | 'sent' | 'delivered' | 'read' | 'failed' | 'deleted'
 export type MessageDirection = 'inbound' | 'outbound'
 export type MessageType = 'text' | 'image' | 'video' | 'audio' | 'document' | 'location' | 
@@ -13,10 +14,12 @@ export interface ConversationItem {
 	meta_id: string,
 	is_solved: boolean,
 	is_expired: boolean,
+	is_initiated: boolean,
 	unread_count: number,
 	contact: ContactItem,
 	assigned_user?: UserItem,
 	waba: WABAItem,
+	phone_number: WABANumber,
 	last_message?: MessageItem,
 	last_message_at: string,
 	expires_at: string
@@ -25,10 +28,8 @@ export interface ConversationItem {
 export interface CreateConversation {
 	contact_id: string,
 	waba_id: string,
-	meta_id: string,
-	user_id: string,
-	is_solved: boolean,
-	expires_at: string
+	phone_number_id: string,
+	to_phone: string
 }
 
 export interface MessageItem {
@@ -66,4 +67,17 @@ export interface CreateMessage {
 	content: string,
 	from_phone: string,
 	to_phone: string
+}
+
+export interface ConversationStats {
+	unassigned: number,
+	mine: number,
+	opened: number,
+	resolved: number
+}
+
+export interface ConversationFilters {
+	status?: 'opened' | 'resolved'
+	unread?: boolean
+	assignedUser?: UserItem
 }

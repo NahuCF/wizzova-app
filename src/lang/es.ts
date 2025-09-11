@@ -681,14 +681,19 @@ export default {
   },
   conversations: {
     status: {
-      UNASSIGNED: 'No asignado',
-      MINE: 'Mio',
-      PINNED: 'Fijado',
-      OPENED: 'Abierto',
-      RESOLVED: 'Resuelto'
+      unassigned: 'No asignado',
+      mine: 'Mio',
+      pinned: 'Fijado',
+      opened: 'Abierto',
+      resolved: 'Resuelto'
     },
-    resolve: 'Resolver',
+    reopen: 'Reabrir',
+    close: 'Cerrar',
     assign_to: 'Asignar a',
+    open_chats: 'Chats abiertos',
+    resolved_chats: 'Chats resueltos',
+    unread_chats: 'Chats no leídos',
+    not_assigned: 'Sin asignar'
   },
   next: 'Siguiente',
   back: 'Volver',
