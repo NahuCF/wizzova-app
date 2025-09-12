@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { IconX, IconSearch, IconUserPlus, IconArrowLeft, IconAsterisk } from '@tabler/icons-vue'
-import { nextTick, ref, watch } from 'vue'
+import { IconX, IconSearch, IconUserPlus, IconArrowLeft, IconAsterisk, IconLoader2 } from '@tabler/icons-vue'
+import parsePhoneNumberFromString from 'libphonenumber-js/min'
+import { storeToRefs } from 'pinia'
+import { computed, nextTick, ref, watch } from 'vue'
+import { z } from 'zod'
 import { useContactUtils } from '~/composables/useContactUtils'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
 import { useContactFieldStore, useSessionStore } from '~/stores'
-import type { WABANumber, ContactItem, ContactItemField, ConversationItem } from '~/types'
+import type { WABANumber, ContactItem, ConversationItem, ConversationExists } from '~/types'
 
 const props = defineProps<{
     visible: boolean,
@@ -15,6 +18,7 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'update:visible', value: boolean): void
     (e: 'onStartConversation', value: ConversationItem): void
+    (e: 'onConversationExists', value: ConversationExists): void
 }>()
 
 const {
@@ -32,18 +36,50 @@ const {
 const handleError = useErrorHandler()
 const sessionStore = useSessionStore()
 const contactFieldStore = useContactFieldStore()
+const { nameField, phoneField } = storeToRefs(contactFieldStore)
 const { getContactName, getContactPhone } = useContactUtils()
 
 const scrollContainer = ref<HTMLElement>()
 const sentinel = ref<HTMLElement | null>(null)
+
 const loadingNumbers = ref(false)
 const broadcastNumbers = ref<WABANumber[]>([])
 const selectedNumber = ref<WABANumber>()
+
 const showNewContact = ref(false)
-const name = ref('')
-const phone = ref('')
+const newContact = ref({
+    name: '',
+    phone: ''
+})
+const contactErrors = ref<{
+    name: string[],
+    phone: string[]
+}>({
+    name: [],
+    phone: []
+})
+const formErrors = ref<Record<string, string | null>>({})
+const loadingConversation = ref(false)
+
+const contactSchema = computed(() => z.object({
+    name: z.string().refine((value) => value.length > 0, {
+        message: 'contact_fields.name.is_required',
+    }),
+    phone: z.string().refine(
+        (value) => {
+            try {
+                const phoneNumber = parsePhoneNumberFromString(value)
+                return phoneNumber?.isValid() ?? false
+            } catch {
+                return false
+            }
+        },
+        { message: 'invalid_cellphone' }
+    )
+}))
 
 const startConversation = async (contact: ContactItem) => {
+    loadingConversation.value = true
     try {
         const contactPhones = contact.fields.find(field => field.name === 'Phone')
 
@@ -61,21 +97,63 @@ const startConversation = async (contact: ContactItem) => {
             to_phone: contactPhones.value[0]
         })
 
-        emit('onStartConversation', response.data)
+        if('message_code' in response) {
+            emit('onConversationExists', response)
+        }
+        else {
+            emit('onStartConversation', response.data)
+        }
     } catch(error) {
         handleError(error)
+    } finally {
+        loadingConversation.value = false
     }
 }
 
-const createContactWithConversation = async () => {
-    try {
-        // await API.contact.createWithConversation({
-        //     broadcast_number_id: selectedNumber.value.id
-        // })
+const validateContact = () => {
+    const result = contactSchema.value.safeParse(newContact.value)
 
-        emit('update:visible', false)
+    formErrors.value = {}
+    if (!result.success) {
+        contactErrors.value = {
+            name: result.error.formErrors.fieldErrors.name || [],
+            phone: result.error.formErrors.fieldErrors.phone || []
+        }
+        return false
+    }
+    return true
+}
+
+const createContactWithConversation = async () => {
+    if(!nameField.value || !phoneField.value) {
+        throw new Error('Internal contact fields missing')
+    }
+    
+    if(!validateContact()) return
+
+    const contact = {
+        id: '',
+        fields: [
+            {
+                id: nameField.value.id,
+                name: nameField.value.internal_name,
+                value: newContact.value.name
+            },
+            {
+                id: phoneField.value.id,
+                name: phoneField.value.internal_name,
+                value: [ newContact.value.phone ]
+            }
+        ]
+    }
+
+    loadingConversation.value = true
+    try {
+        const { data: response } = await API.contact.create(contact)
+        startConversation(response.data)
     } catch(error) {
         handleError(error)
+        loadingConversation.value = false
     }
 }
 
@@ -96,10 +174,6 @@ const fetchBroadcastNumbers = async () => {
         loadingNumbers.value = false
     }
 }
-
-fetchBroadcastNumbers()
-contactFieldStore.fetchContactFields()
-fetchDataPage(1, rowsPerPage.value)
 
 const initScroll = () => {
     if (!sentinel.value || !scrollContainer.value) return
@@ -122,13 +196,19 @@ const initScroll = () => {
 
 watch(() => props.visible, async () => {
     if(props.visible) {
+        fetchBroadcastNumbers()
+        contactFieldStore.fetchContactFields()
+        fetchDataPage(1, rowsPerPage.value)
         await nextTick()
         initScroll()
     }
     else {
         showNewContact.value = false
         searchTerm.value = ''
-        fetchDataPage(1, rowsPerPage.value)
+        newContact.value = {
+            name: '',
+            phone: ''
+        }
     }
 })
 </script>
@@ -244,11 +324,21 @@ watch(() => props.visible, async () => {
                 </label>
 
                 <InputText 
-                    v-model="name"
+                    v-model="newContact.name"
                     fluid
                     class="shadow-none!"
                     name="name"
                 />
+
+                <Message
+                    v-if="contactErrors.name?.length > 0"
+                    severity="error"
+                    size="small"
+                    variant="simple"
+					class="absolute bottom-[-1.6rem]"
+                >
+                    {{ $t(contactErrors.name[0]) }}
+                </Message>
             </div>
 
             <div class="flex flex-col gap-2 relative">
@@ -257,7 +347,17 @@ watch(() => props.visible, async () => {
                     <IconAsterisk color="red" size="8" />
                 </label>
 
-                <CellphoneInput v-model="phone" />
+                <CellphoneInput v-model="newContact.phone" />
+
+                <Message
+                    v-if="contactErrors.phone?.length > 0"
+                    severity="error"
+                    size="small"
+                    variant="simple"
+					class="absolute bottom-[-1.6rem]"
+                >
+                    {{ $t(contactErrors.phone[0]) }}
+                </Message>
             </div>
 
             <div class="grid grid-cols-2 gap-2">
@@ -270,11 +370,13 @@ watch(() => props.visible, async () => {
                     :placeholder="$t('broadcasts.select_number')"
                     :loading="loadingNumbers"
                     :disabled="loadingNumbers"
-                    
                 />
 
-                <Button @click="createContactWithConversation()" >
-                    {{ $t(`Start Conversation`) }}
+                <Button :disabled="loadingConversation" @click="createContactWithConversation()" >
+                    <IconLoader2 v-if="loadingConversation" class="animate-spin w-6 h-6" />
+                    <span v-else>
+                        {{ $t(`Start Conversation`) }}
+                    </span>
                 </Button>
             </div>
         </div>

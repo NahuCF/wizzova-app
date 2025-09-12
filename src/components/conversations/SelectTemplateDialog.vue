@@ -4,14 +4,16 @@ import { useRouter } from 'vue-router'
 import { IconSearch, IconPlus } from '@tabler/icons-vue'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
-import type { TemplateItem } from '~/types'
+import type { CreateMessage, TemplateItem } from '~/types'
 
-defineProps<{
+const props = defineProps<{
     visible: boolean,
+	conversationId: string
 }>()
 
 const emit = defineEmits<{
     (e: 'update:visible', value: boolean): void
+	(e: 'onConfirm', value: CreateMessage): void
 }>()
 
 const {
@@ -30,10 +32,28 @@ const router = useRouter()
 
 const currentStep = ref(1)
 const selectedTemplate = ref<TemplateItem>()
+const initialMessage = ref<CreateMessage>({
+	conversation_id: props.conversationId,
+	template_id: '',
+	variables: [],
+	type: 'template',
+	to_phone: ''
+})
 
 const onTemplateSelected = (template: TemplateItem) => {
 	selectedTemplate.value = template
+	initialMessage.value.template_id = template.id
 	currentStep.value++
+}
+
+const toPrevStep = () => {
+	selectedTemplate.value = undefined
+	currentStep.value--
+}
+
+const onConfirmVariables = () => {
+	initialMessage.value.variables = selectedTemplate.value?.components.body.variables
+	emit('onConfirm', initialMessage.value)
 }
 
 fetchDataPage(1)
@@ -45,69 +65,83 @@ fetchDataPage(1)
         @update:visible="emit('update:visible', $event)"
         modal
         :draggable="false"
-        :header="$t('new_broadcast.select_template')"
-        class="min-w-[25rem] max-w-[1088px] w-full min-h-[500px]"
+        :header="currentStep === 1 ? $t('new_broadcast.select_template') : $t('new_broadcast.map_variables')"
+        class="min-w-[25rem] max-w-[1088px] w-full"
+		:class="{
+			'min-h-[500px]': currentStep === 1
+		}"
     >
-		<div class="flex flex-col justify-center pb-6">
-			<div class="flex gap-2">
-				<div class="relative">
-					<IconSearch size="16" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-					<InputText
-						v-model="searchTerm"
-						class="pl-8! max-w-[180px] shadow-none!"
-						name="search"
-						id="search"
-						fluid
-						:placeholder="$t('search')"
-						@input="debouncedFetch()"
-					/>
-				</div>
+		<div v-if="currentStep === 1">
+			<div class="flex flex-col justify-center pb-6">
+				<div class="flex gap-2">
+					<div class="relative">
+						<IconSearch size="16" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+						<InputText
+							v-model="searchTerm"
+							class="pl-8! max-w-[180px] shadow-none!"
+							name="search"
+							id="search"
+							fluid
+							:placeholder="$t('search')"
+							@input="debouncedFetch()"
+						/>
+					</div>
 
-				<Button 
+					<Button 
+						@click="router.push({ 
+							name: 'new-template', 
+							query: { redirectTo: 'conversations' }
+						})"
+					>
+						<IconPlus size="16" class="mr-1" />
+						<span>
+							{{ $t('new_broadcast.add_template') }}
+						</span>
+					</Button>
+				</div>
+			</div>
+
+			<div 
+				v-if="dataPage.data.length === 0 && !loading"
+				class="flex flex-col justify-center items-center py-30 gap-10"
+			>
+				<div class="text-3xl font-semibold text-center max-w-[500px] leading-10">
+					{{ $t('new_broadcast.missing_template_title') }}
+				</div>
+				<div class="text-2xl font-medium text-gray-400 text-center max-w-[500px] leading-10">
+					{{ $t('new_broadcast.missing_template_description') }}
+				</div>
+				<Button
 					@click="router.push({ 
 						name: 'new-template', 
 						query: { redirectTo: 'new-broadcast' }
 					})"
 				>
-					<IconPlus size="16" class="mr-1" />
-					<span>
+					<span class="text">
 						{{ $t('new_broadcast.add_template') }}
 					</span>
 				</Button>
 			</div>
-		</div>
 
-		<div 
-			v-if="dataPage.data.length === 0 && !loading"
-			class="flex flex-col justify-center items-center py-30 gap-10"
-		>
-			<div class="text-3xl font-semibold text-center max-w-[500px] leading-10">
-				{{ $t('new_broadcast.missing_template_title') }}
-			</div>
-			<div class="text-2xl font-medium text-gray-400 text-center max-w-[500px] leading-10">
-				{{ $t('new_broadcast.missing_template_description') }}
-			</div>
-			<Button
-				@click="router.push({ 
-					name: 'new-template', 
-					query: { redirectTo: 'new-broadcast' }
-				})"
-			>
-				<span class="text">
-					{{ $t('new_broadcast.add_template') }}
-				</span>
-			</Button>
+			<TemplateCardList
+				v-else
+				:templates="dataPage.data"
+				:loading="loading"
+				:cardProps="{
+					clickable: true
+				}"
+				@reach-end="loadNextPage"
+				@select="onTemplateSelected"
+			/>
 		</div>
-
-		<TemplateCardList
-			v-else
-			:templates="dataPage.data"
-			:loading="loading"
-			:cardProps="{
-				clickable: true
-			}"
-			@reach-end="loadNextPage"
-			@select="onTemplateSelected"
-		/>
+		<div v-else>
+			<MapTemplateVariables
+                v-if="selectedTemplate?.components.body.variables"
+                :variables="selectedTemplate.components.body.variables"
+				:loading="false"
+                @onCancel="toPrevStep"
+                @onConfirm="onConfirmVariables"
+            />
+		</div>
 	</Dialog>
 </template>

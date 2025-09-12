@@ -3,11 +3,12 @@ import { IconPlus, IconSearch, IconFilter, IconX, IconStack,
 	IconUserPlus, IconPin, IconMessageDots, IconMessageCheck, IconLoader2 } from '@tabler/icons-vue'
 import moment from 'moment'
 import { storeToRefs } from 'pinia'
+import { useToast } from 'primevue'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useContactUtils } from '~/composables/useContactUtils'
 import { useConversationStore } from '~/stores/conversations'
-import type { ConversationFilters, ConversationItem, ConversationStatus } from '~/types'
+import type { ConversationExists, ConversationFilters, ConversationItem, ConversationStatus } from '~/types'
 
 const props = defineProps<{
 	initialTab?: ConversationStatus,
@@ -23,10 +24,12 @@ const emit = defineEmits<{
 	(e: 'update:selectedConversation', value?: ConversationItem): void,
 	(e: 'update:search', value?: string): void,
 	(e: 'update:searchType', value?: 'contact' | 'message'): void,
-	(e: 'onStartConversation', conversation: ConversationItem): void
+	(e: 'onStartConversation', conversation: ConversationItem): void,
+	(e: 'navigateToConversation', conversationId: string): void
 }>()
 
 const { t } = useI18n()
+const toast = useToast()
 const conversationStore = useConversationStore()
 const { stats } = storeToRefs(conversationStore)
 const { getContactName } = useContactUtils()
@@ -37,6 +40,7 @@ const currentTab = ref<ConversationStatus>(props.initialTab ?? 'unassigned')
 const filtersPopover = ref()
 const filters = ref<ConversationFilters>()
 const showStartConversationDialog = ref(false)
+const showNavigateToConversation = ref(false)
 const searchTypes = ref([
 	{
 		id: 'contact',
@@ -48,6 +52,8 @@ const searchTypes = ref([
 	}
 ])
 const selectOpen = ref(false)
+const conversationId = ref('')
+const assignedUser = ref()
 
 const tabs = computed(() => [
 	{
@@ -102,6 +108,29 @@ const selectConversation = (conversation: ConversationItem) => {
 const startConversation = (conversation: ConversationItem) => {
 	emit('onStartConversation', conversation)
 	showStartConversationDialog.value = false
+}
+
+const onConversationExists = (conversationExists: ConversationExists) => {
+	conversationId.value = conversationExists.data.conversation_id
+	assignedUser.value = conversationExists.data.assigned_user_name
+
+	if(!assignedUser.value) {
+		showStartConversationDialog.value = false
+		showNavigateToConversation.value = true
+	}
+	else {
+		toast.add({
+			severity: 'info',
+			summary: 'Conversation exists',
+			detail: `There is a conversation in progress already assigned to user ${assignedUser.value}`,
+			life: 1000000,
+		})
+	}
+}
+
+const onConfirmNavigate = () => {
+	emit('navigateToConversation', conversationId.value)
+	showNavigateToConversation.value = false
 }
 
 const onApplyFilters = (newFilters: ConversationFilters) => {
@@ -286,6 +315,18 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 		<StartConversationDialog
 			v-model:visible="showStartConversationDialog"
 			@onStartConversation="startConversation"
+			@onConversationExists="onConversationExists"
+		/>
+
+		<WarningDialog 
+			v-model:visible="showNavigateToConversation" 
+			:title="$t('Conversation exists')"
+			:message="$t('Do you want to navigate to the conversation with this contact?')"
+			:cancelMessage="$t('no')"
+			:confirm-message="$t('yes')"
+			:loading="loading"
+			@onCancel="showStartConversationDialog = true"
+			@onConfirm="onConfirmNavigate"
 		/>
 	</div>
 </template>

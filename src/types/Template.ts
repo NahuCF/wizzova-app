@@ -44,7 +44,11 @@ export interface TemplateEdit {
     } | []
     body: {
       content: string,
-      variables?: VariableMapping[]
+      variables?: {
+        contact_field_id: string,
+        name: string,
+        value: string
+      } []
     },
     footer: string,
     buttons: TemplateButton[]

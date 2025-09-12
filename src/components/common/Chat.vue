@@ -5,13 +5,15 @@ import { IconMoodSmile, IconLoader2 } from '@tabler/icons-vue'
 import moment from 'moment'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n';
-import type { MessageItem, UserItem } from '~/types'
+import type { MessageItem, TemplateItem, UserItem } from '~/types'
 
 const props = defineProps<{
 	messages: MessageItem[],
 	assignedUser?: UserItem,
 	disableReply?: boolean,
+	disableReplyButton?: boolean,
 	customEvent?: string,
+	templates?: TemplateItem[]
 	loading?: boolean,
 }>()
 
@@ -40,13 +42,13 @@ const groupedMessages = computed(() => {
 })
 
 const sendDisabled = computed(() => {
-	const replyDisabled = props.disableReply && inputTab.value === 'REPLY'
+	const replyDisabled = props.disableReplyButton && inputTab.value === 'REPLY'
 	const emptyMessage = newMessage.value.length === 0
 	const isCustomEvent = props.customEvent && inputTab.value === 'REPLY'
 
-	const shouldDisable = props.loading || emptyMessage || replyDisabled
+	const shouldDisable = props.loading || (emptyMessage && !isCustomEvent) || replyDisabled
 
-	return shouldDisable && !isCustomEvent
+	return shouldDisable
 })
 
 const dateLabel = (date: string) => {
@@ -74,6 +76,30 @@ const sendMessage = () => {
 	})
 	newMessage.value = ''
 }
+
+const getTemplate = (templateId: string) => {
+	return props.templates?.find(templ => templ.id === templateId)
+}
+
+const templateBody = (templateId: string) => {
+	const template = getTemplate(templateId)
+
+	if(template?.components.body) {
+		return template?.components.body.content
+	}
+
+	return ''
+}
+
+const templateHeader = (templateId: string) => {
+	const template = getTemplate(templateId)
+
+	if(template?.components.header && !Array.isArray(template?.components.header)) {
+		return template?.components.header.text
+	}
+
+	return ''
+}
 </script>
 
 <template>
@@ -92,6 +118,20 @@ const sendMessage = () => {
 					:class="message.direction === 'inbound' ? 'justify-start' : 'justify-end'"
 				>
 					<MessagePreview
+						v-if="message.type === 'template' && message.template_id"
+						:header="templateHeader(message.template_id)" 
+						:body="templateBody(message.template_id)"
+						:footer="getTemplate(message.template_id)?.components.footer"
+						:buttons="getTemplate(message.template_id)?.components.buttons || []"
+						:date="moment(message.created_at).format('h:mm A')"
+						:status="message.status"
+						:side="message.direction === 'inbound' ? 'left' : 'right'"
+						:bubbleColor="message.direction === 'inbound' ? 'white' : 'sky'"
+						:showTail="shouldShowTail(index, group.messages)"
+					/>
+
+					<MessagePreview
+						v-else-if="message.type === 'text'"
 						:body="message.content ?? ''"
 						:buttons="[]"
 						:date="moment(message.created_at).format('h:mm A')"
@@ -100,7 +140,7 @@ const sendMessage = () => {
 						:bubbleColor="message.direction === 'inbound' ? 'white' : 'sky'"
 						:showTail="shouldShowTail(index, group.messages)"
 					/>
-
+					
 					<div 
 						v-if="message.direction === 'outbound' && assignedUser" 
 						class="pl-4 flex"

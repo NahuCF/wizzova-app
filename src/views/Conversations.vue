@@ -8,11 +8,15 @@ import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
 import { useSessionStore, useUserStore } from '~/stores'
 import { useConversationStore } from '~/stores/conversations'
-import type { ConversationItem, ConversationStatus, CreateMessage, MessageItem, UserItem } from '~/types'
+import type { 
+	TemplateItem,  ConversationItem, ConversationStatus, 
+	CreateMessage, MessageItem, UserItem
+} from '~/types'
 
 const sessionStore = useSessionStore()
 const conversationTab = ref<ConversationStatus>('mine')
 const searchType = ref<'contact' | 'message'>('contact')
+const templates = ref<TemplateItem[]>([])
 
 const {
     dataPage: conversations,
@@ -46,14 +50,23 @@ const {
     rowsPerPage: messagesPerPage,
     fetchDataPage: fetchMessages,
 } = usePaginatedData<MessageItem>(
-    (page, rows_per_page) => {
+    async (page, rows_per_page) => {
 		if(!selectedConversation.value) return new Promise(resolve => resolve([]))
-		
-		return API.message.index({
+
+		const { data: response } = await API.message.index({
 			page,
 			rows_per_page,
 			conversation_id: selectedConversation.value?.id
-		}).then(res => res.data)
+		})
+
+		response.data.forEach(message => {
+			const isTemplate = message.type === 'template' && message.template_id
+			if(isTemplate && !hasTemplate(message.template_id)) {
+				addTemplate(message.template_id)
+			}
+		})
+		
+		return response
 	},
     15
 )
@@ -91,6 +104,12 @@ const users = computed(() => [
 	notAssigned,
 	...userStore.users
 ])
+
+const disableReply = computed(() => 
+	selectedConversation.value?.is_solved || 
+	selectedConversation.value?.is_expired || 
+	!selectedConversation.value?.is_initiated
+)
 
 const startConversation = (conversation: ConversationItem) => {
 	showStartConversationDialog.value = false
@@ -146,23 +165,26 @@ const changeSolved = async (solved: boolean) => {
 	}
 }
 
-const sendMessage = async ({ message, type }: { message: string, type: 'REPLY' | 'NOTES'}) => {
+const sendTextMessage = async ({ message, type }: { message: string, type: 'REPLY' | 'NOTES'}) => {
+	if(!selectedConversation.value) return
+
+	const newMessage: CreateMessage = {
+		conversation_id: selectedConversation.value.id,
+		type: 'text',
+		to_phone: '',
+		content: message
+	}
+	
+	sendMessage(newMessage)
+}
+
+const sendMessage = async (newMessage: CreateMessage) => {
 	const contactPhone = selectedConversation.value && getContactPhone(selectedConversation.value.contact)
+	if(!contactPhone) return
 
-	if(!selectedConversation.value || !contactPhone) return
-
+	newMessage.to_phone = contactPhone
 	sendingMessage.value = true
 	try {
-		const newMessage: CreateMessage = {
-			conversation_id: selectedConversation.value.id,
-			direction: 'outbound',
-			type: 'text',
-			status: 'pending',
-			from_phone: '',
-			to_phone: contactPhone,
-			content: message
-		}
-
 		const { data: response } = await API.message.create(newMessage)
 
 		messages.value.data.push(response.data)
@@ -173,6 +195,43 @@ const sendMessage = async ({ message, type }: { message: string, type: 'REPLY' |
 	}
 
 	// TODO: Update new messages and messages states through socket updates
+}
+
+const hasTemplate = (templateId: string) => {
+	return !!templates.value.find(template => template.id === templateId)
+}
+
+const addTemplate = async (templateId: string) => {
+	try {
+		const { data: response } = await API.template.get(templateId)
+		templates.value.push({
+			...response.data,
+			days_since_meta_update: 0,
+			updated_count_while_approved: 0
+		})
+	} catch(error) {
+		handleError(error)
+	}
+}
+
+const navigateToConversation = async (conversationId: string) => {
+	const index = conversations.value.data.findIndex(c => c.id === conversationId)
+	if (index >= 0) {
+		const first = conversations.value.data[0]
+		conversations.value.data[0] = conversations.value.data[index]
+		conversations.value.data[index] = first
+
+		selectedConversation.value = conversations.value.data[0]
+		return
+	}
+
+	try {
+		const { data: response } = await API.conversation.get(conversationId)
+		conversations.value.data.unshift(response.data)
+		selectedConversation.value = conversations.value.data[0]
+	} catch(error) {
+		handleError(error)
+	}
 }
 
 watch(selectedConversation, () => {
@@ -207,6 +266,7 @@ fetchConversations(1, conversationsPerPage.value)
 			:initialTab="conversationTab"
 			@onStartConversation="startConversation"
 			@onTabChanged="tabChanged"
+			@navigateToConversation="navigateToConversation"
 		/>
 
 		<div v-if="!selectedConversation" class="col-span-4">
@@ -248,7 +308,7 @@ fetchConversations(1, conversationsPerPage.value)
 					</div>
 				</div>
 
-				<div v-if="!selectedConversation.is_initiated" class="flex items-center gap-2">
+				<div v-if="selectedConversation.is_initiated" class="flex items-center gap-2">
 					<div v-if="!selectedConversation.is_solved && !selectedConversation.is_expired">
 						<Button
 							severity="secondary"
@@ -307,9 +367,11 @@ fetchConversations(1, conversationsPerPage.value)
 				:messages="messages.data"
 				:assignedUser="selectedConversation.assigned_user"
 				:loading="sendingMessage"
-				:disableReply="selectedConversation.is_solved || selectedConversation.is_expired"
+				:disableReply="disableReply"
+				:disableReplyButton="selectedConversation.is_solved || selectedConversation.is_expired"
 				:customEvent="!selectedConversation.is_initiated ? $t('new_broadcast.select_template') : undefined"
-				@onSendMessage="sendMessage"
+				:templates="templates"
+				@onSendMessage="sendTextMessage"
 				@onCustomEvent="showTemplateDialog = true"
 			/>
 		</div>
@@ -323,7 +385,10 @@ fetchConversations(1, conversationsPerPage.value)
 		/>
 
 		<SelectTemplateDialog
+			v-if="showTemplateDialog && selectedConversation"
 			v-model:visible="showTemplateDialog"
+			:conversationId="selectedConversation.id"
+			@onConfirm="(message) => { showTemplateDialog = false, sendMessage(message) }"
 		/>
 	</div>
 </template>

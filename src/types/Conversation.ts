@@ -1,6 +1,7 @@
 import type { WABAItem } from "./Auth"
 import type { WABANumber } from "./Broadcast"
 import type { ContactItem } from "./Contact"
+import type { VariableMapping } from "./Template"
 import type { UserItem } from "./User"
 
 export type ConversationStatus = 'unassigned' | 'mine' | 'pinned' | 'opened' | 'resolved'
@@ -23,6 +24,15 @@ export interface ConversationItem {
 	last_message?: MessageItem,
 	last_message_at: string,
 	expires_at: string
+}
+
+export interface ConversationExists {
+	message: string,
+	message_code: string,
+	data: {
+		conversation_id: string,
+		assigned_user_name?: string
+	}
 }
 
 export interface CreateConversation {
@@ -60,12 +70,12 @@ export interface MessageItem {
 
 export interface CreateMessage {
 	conversation_id: string,
-	meta_message_id?: string,
-	direction: MessageDirection,
+	template_id?: string,
+	variables?: VariableMapping[],
+	reply_to_message_id?: string,
 	type: MessageType,
-	status: MessageStatus,
-	content: string,
-	from_phone: string,
+	content?: string,
+	media?: string,
 	to_phone: string
 }
 

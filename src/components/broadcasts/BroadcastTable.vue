@@ -6,7 +6,6 @@ import { useRouter } from 'vue-router'
 import { API } from '~/services'
 import { useSeverityMapper } from '~/composables/useSeverityMapper'
 import type { BroadcastItem, BroadcastRepeat, Column, Page } from '~/types'
-import WarningDialog from '~/components/WarningDialog.vue'
 import { useI18n } from 'vue-i18n'
 import { IconDownload, IconLoader2, IconRepeat, IconTrash } from '@tabler/icons-vue'
 
