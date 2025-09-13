@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { IconSpeakerphone, IconLayout, IconUsers, IconAddressBook, 
 	IconLogout, IconLoader2, IconForms, IconMessage } from '@tabler/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -10,6 +10,7 @@ const router = useRouter()
 const route = useRoute()
 
 const loadingLogout = ref(false)
+const isCollapsed = ref(false)
 
 const resetAllStores = () => {
     const activepinia = getActivePinia()
@@ -46,6 +47,7 @@ const pages = computed(() => {
 			name: 'Conversations',
 			icon: IconMessage,
 			path: '/conversations',
+			hidden: true,
 			action: () => router.push('/conversations')
 		},
 		{
@@ -88,23 +90,40 @@ const parentRouteName = computed(() => {
 	}
 	return null
 })
+
+const currentPage = computed(() => pages.value.find(page => page.path === parentRouteName.value))
+
+watch(currentPage, (page) => {
+	isCollapsed.value = !!page?.hidden
+}, { immediate: true })
 </script>
 
 <template>
-	<div class="w-[200px] shadow bg-white z-101">
-		<ul class="list-none p-0 m-0 flex flex-col">
+	<div
+		class="shadow bg-white z-101 h-screen transition-all duration-300 ease-in-out"
+		:class="isCollapsed ? 'w-[60px]' : 'w-[200px]'"
+	>
+		<ul class="list-none p-3 m-0 flex flex-col gap-1.5">
 			<li 
 				v-for="page in pages" 
 				:key="page.name" 
-				class="flex items-center gap-3 py-1.5 px-3 hover:bg-slate-100 cursor-pointer" 
+				class="flex items-center py-1.5 px-3 hover:bg-slate-100 rounded-lg cursor-pointer" 
 				:class="{
 					'text-sky-600': parentRouteName === page.path,
 					'bg-sky-100': parentRouteName === page.path,
+					'gap-3': !isCollapsed
 				}"
 				@click="page.action"
 			>
-				<component :is="page.icon" :key="page.name" :class="page.iconClass" />
-				<div :class="`text-base ${page.class}`">{{ page.name }}</div>
+				<div>
+					<component :is="page.icon" :key="page.name" :class="page.iconClass" />
+				</div>
+				<div
+					v-if="!isCollapsed"
+					:class="`text-base truncate ${page.class}`"
+				>
+					{{ page.name }}
+				</div>
 			</li>
 		</ul>
 	</div>

@@ -10,7 +10,8 @@ import { useSessionStore, useUserStore } from '~/stores'
 import { useConversationStore } from '~/stores/conversations'
 import type { 
 	TemplateItem,  ConversationItem, ConversationStatus, 
-	CreateMessage, MessageItem, UserItem
+	CreateMessage, MessageItem, UserItem,
+	ContactItem
 } from '~/types'
 
 const sessionStore = useSessionStore()
@@ -188,6 +189,10 @@ const sendMessage = async (newMessage: CreateMessage) => {
 		const { data: response } = await API.message.create(newMessage)
 
 		messages.value.data.push(response.data)
+
+		if(response.data.template_id && !hasTemplate(response.data.template_id)) {
+			addTemplate(response.data.template_id)
+		}
 	} catch(error) {
 		handleError(error)
 	} finally {
@@ -234,6 +239,21 @@ const navigateToConversation = async (conversationId: string) => {
 	}
 }
 
+const updateContact = (contact: ContactItem) => {
+	if(selectedConversation.value) {
+		selectedConversation.value = {
+			...selectedConversation.value,
+			contact
+		}
+		
+		conversations.value.data = conversations.value.data.map(conv =>
+			conv.id === selectedConversation.value?.id
+				? { ...conv, contact }
+				: conv
+		)
+	}
+}
+
 watch(selectedConversation, () => {
 	if (selectedConversation.value) {
 		fetchMessages(1, messagesPerPage.value)
@@ -272,13 +292,13 @@ fetchConversations(1, conversationsPerPage.value)
 		<div v-if="!selectedConversation" class="col-span-4">
 			<div class="flex flex-col gap-4 justify-center items-center h-full">
 				<div class="text-[1.6rem] font-bold">
-					{{ $t('Select Conversation') }}
+					{{ $t('conversations.select_conversation') }}
 				</div>
 				<div class="text-lg text-gray-400">
-					{{ $t('Select any conversation to view all the messages.') }}
+					{{ $t('conversations.select_conversation_description') }}
 				</div>
 				<Button class="text-lg font-semibold mt-4" @click="showStartConversationDialog = true">
-					{{ $t('Initiate new conversation') }}
+					{{ $t('conversations.initiate_conversation') }}
 				</Button>
 			</div>
 		</div>
@@ -376,7 +396,11 @@ fetchConversations(1, conversationsPerPage.value)
 			/>
 		</div>
 
-		<div v-if="selectedConversation" class="bg-white">
+		<div v-if="selectedConversation" class="bg-white border-l-2 border-slate-100">
+			<ContactPanel
+				:contact="selectedConversation.contact"
+				@onContactUpdated="updateContact"
+			/>
 		</div>
 
 		<StartConversationDialog

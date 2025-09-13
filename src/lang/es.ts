@@ -680,6 +680,13 @@ export default {
     verify_code: 'Verificar código'
   },
   conversations: {
+    title: 'Conversaciones',
+    select_conversation: 'Selecciona una conversación',
+    select_conversation_description: 'Selecciona una de las conversaciones para ver todos sus mensajes.',
+    initiate_conversation: 'Inicia una conversación nueva',
+    start_conversation: 'Empezar Conversación',
+    contacts: 'Contactos',
+    messages: 'Mensajes',
     status: {
       unassigned: 'No asignado',
       mine: 'Mio',
@@ -687,13 +694,26 @@ export default {
       opened: 'Abierto',
       resolved: 'Resuelto'
     },
+    filters: {
+      title: 'Filters',
+      open_chats: 'Chats abiertos',
+      resolved_chats: 'Chats resueltos',
+      unread_chats: 'Chats no leídos',
+      assigned_to: 'Asignado a',
+      select_user: 'Seleccionar usuario'
+    },
     reopen: 'Reabrir',
     close: 'Cerrar',
     assign_to: 'Asignar a',
-    open_chats: 'Chats abiertos',
-    resolved_chats: 'Chats resueltos',
-    unread_chats: 'Chats no leídos',
-    not_assigned: 'Sin asignar'
+    not_assigned: 'Sin asignar',
+    no_conversations_found: 'No se encontraron conversaciones',
+    exists: 'Conversación existente',
+    navigate_to_conversation: '¿Deseas navegar a la conversación con este contacto?',
+    conversation_assigned_to: 'Ya hay una conversación en curso asignada al usuario {user}',
+    reply: 'Responde',
+    notes: 'Notas',
+    write_your_message: 'Escribe tu mensaje...',
+    add_private_notes: 'Agrega tus notas privadas'
   },
   next: 'Siguiente',
   back: 'Volver',
@@ -702,6 +722,8 @@ export default {
   select_date_range: 'Rango de fechas',
   reset: 'Resetear',
   actions: 'Acciones',
+  new: 'Nuevo',
+  send: 'Enviar',
   message_status: {
     pending: 'Pendiente',
     sent: 'Enviado',

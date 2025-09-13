@@ -93,3 +93,14 @@ export interface CreateContactGroup {
     name: string,
     filters: ContactFilterCondition[]
 }
+
+export type ContactFormValue = string | number | boolean | string[] | Date | null
+
+export type ContactFormExpose = {
+  	validate: () => {
+        id: string,
+        name: string,
+        value: ContactFieldValue
+    } [],
+    reset: () => void
+}

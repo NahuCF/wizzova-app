@@ -41,7 +41,7 @@ userStore.fetchUsers()
 <template>
 	<Popover ref="popover" class="border rounded shadow w-sm">
 		<div class="flex justify-between items-center gap-2 p-3">
-			<span class="text-lg font-semibold">{{ $t('Filters') }}</span>
+			<span class="text-lg font-semibold">{{ $t('conversations.filters.title') }}</span>
 			<Button 
 				variant="text"
 				@click="resetFilters" 
@@ -61,7 +61,7 @@ userStore.fetchUsers()
 						value="opened"
 					/>
 					<label for="opened" class="text-lg font-normal cursor-pointer">
-						{{ $t('Open chats') }}
+						{{ $t('conversations.filters.open_chats') }}
 					</label>
 				</div>
 				<div class="flex items-center gap-2">
@@ -71,7 +71,7 @@ userStore.fetchUsers()
 						value="resolved"
 					/>
 					<label for="resolved" class="text-lg font-normal cursor-pointer">
-						{{ $t('Resolved chats') }}
+						{{ $t('conversations.filters.resolved_chats') }}
 					</label>
 				</div>
 			</div>
@@ -81,7 +81,7 @@ userStore.fetchUsers()
 			<div class="flex items-center gap-2">
 				<Checkbox v-model="filters.unread" inputId="unreadChats" name="unreadChats" binary />
 				<label for="unreadChats" class="text-lg font-normal cursor-pointer"> 
-					{{ $t('conversations.unread_chats') }} 
+					{{ $t('conversations.filters.unread_chats') }} 
 				</label>
 			</div>
 
@@ -90,13 +90,13 @@ userStore.fetchUsers()
 			<div class="flex flex-col gap-2">
 				<label class="flex items-center gap-2 text-lg font-normal">
 					<IconAt size="16" />
-					{{ $t('Assigned to') }}
+					{{ $t('conversations.filters.assigned_to') }}
 				</label>
 				<Select
 					v-model="filters.assignedUser" 
 					class="flex-1"
 					:options="userStore.users" 
-					:placeholder="$t('Select user')"
+					:placeholder="$t('conversations.filters.select_user')"
 					optionLabel="name"
 				/>
 			</div>

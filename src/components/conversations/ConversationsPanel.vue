@@ -44,11 +44,11 @@ const showNavigateToConversation = ref(false)
 const searchTypes = ref([
 	{
 		id: 'contact',
-		name: t('Contacts')
+		name: t('conversations.contacts')
 	},
 	{
 		id: 'message',
-		name: t('Messages')
+		name: t('conversations.messages')
 	}
 ])
 const selectOpen = ref(false)
@@ -121,8 +121,8 @@ const onConversationExists = (conversationExists: ConversationExists) => {
 	else {
 		toast.add({
 			severity: 'info',
-			summary: 'Conversation exists',
-			detail: `There is a conversation in progress already assigned to user ${assignedUser.value}`,
+			summary: t('conversations.exists'),
+			detail: t('conversations.conversation_assigned_to', { user:  assignedUser.value }),
 			life: 1000000,
 		})
 	}
@@ -198,7 +198,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 						<IconPlus size="16" />
 					</div>
 					<span>
-						{{ $t(`New`) }}
+						{{ $t(`new`) }}
 					</span>
 				</Button>
 			</div>
@@ -214,7 +214,11 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 		<div v-if="filters?.status" class="flex flex-col gap-1 px-6 pb-6">
 			<div class="flex justify-between items-center">
 				<div class="text-lg font-semibold">
-					{{ filters.status === 'opened' ? $t('conversations.open_chats') : $t('conversations.resolved_chats') }}
+					{{ 
+						filters.status === 'opened' 
+							? $t('conversations.filters.open_chats') 
+							: $t('conversations.filters.resolved_chats')
+					}}
 				</div>
 				<Button 
 					variant="text"
@@ -227,10 +231,14 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 
 			<div class="flex flex-wrap gap-2">
 				<Tag severity="secondary" class="text-nowrap">
-					{{ filters.status === 'opened' ? $t('conversations.open_chats') : $t('conversations.resolved_chats') }}
+					{{ 
+						filters.status === 'opened' 
+							? $t('conversations.filters.open_chats') 
+							: $t('conversations.filters.resolved_chats')
+					}}
 				</Tag>
 				<Tag v-if="filters?.unread" severity="secondary" class="text-nowrap">
-					{{ $t('conversations.unread_chats') }}
+					{{ $t('conversations.filters.unread_chats') }}
 				</Tag>
 				<Tag v-if="filters?.assignedUser" severity="secondary" class="text-nowrap">
 					{{ filters.assignedUser.name }}
@@ -304,7 +312,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 			</div>
 		</div>
 		<div v-else-if="!loading" class="flex justify-center p-8">
-			<div class="text-gray-400">{{ $t('No conversations found') }}</div>
+			<div class="text-gray-400">{{ $t('conversations.no_conversations_found') }}</div>
 		</div>
 		<div v-else class="flex justify-center p-8">
 			<IconLoader2 class="animate-spin text-emerald-500" size="24" />
@@ -320,8 +328,8 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 
 		<WarningDialog 
 			v-model:visible="showNavigateToConversation" 
-			:title="$t('Conversation exists')"
-			:message="$t('Do you want to navigate to the conversation with this contact?')"
+			:title="$t('conversations.exists')"
+			:message="$t('conversations.navigate_to_conversation')"
 			:cancelMessage="$t('no')"
 			:confirm-message="$t('yes')"
 			:loading="loading"

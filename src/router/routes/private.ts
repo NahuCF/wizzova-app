@@ -18,9 +18,14 @@ const routes = [
     children: [
       {
         path: '/conversations',
-        name: 'conversations',
-        meta: { titleKey: 'conversations' },
-        component: Conversations,
+        children: [
+          {
+            path: '',
+            name: 'conversations',
+            meta: { titleKey: 'conversations.title' },
+            component: Conversations
+          }
+        ]
       },
       {
         path: '/broadcasts',

@@ -53,8 +53,8 @@ const sendDisabled = computed(() => {
 
 const dateLabel = (date: string) => {
     const m = moment(date)
-    if (m.isSame(moment(), 'day')) return t('Today')
-    if (m.isSame(moment().subtract(1, 'day'), 'day')) return t('Yesterday')
+    if (m.isSame(moment(), 'day')) return t('today')
+    if (m.isSame(moment().subtract(1, 'day'), 'day')) return t('yesterday')
     if (m.isAfter(moment().subtract(7, 'days'))) return m.format('dddd')
     return m.format('MMM D, YYYY')
 }
@@ -166,14 +166,14 @@ const templateHeader = (templateId: string) => {
 						<div 
 							class="flex justify-center items-center text-inherit"
 						>
-							{{ $t('Reply') }}
+							{{ $t('conversations.reply') }}
 						</div>
 					</Tab>
 					<Tab value="NOTES">
 						<div 
 							class="flex justify-center items-center text-inherit"
 						>
-							{{ $t('Notes') }}
+							{{ $t('conversations.notes') }}
 						</div>
 					</Tab>
 				</TabList>
@@ -185,7 +185,7 @@ const templateHeader = (templateId: string) => {
 				class="text-lg!"
 				:class="[inputTab === 'REPLY' ? 'bg-white' : 'bg-yellow-50!']"
 				:maxlength="1024"
-				:placeholder="inputTab === 'REPLY' ? $t('Message Alexis') : $t('Add your private notes')"
+				:placeholder="inputTab === 'REPLY' ? $t('conversations.write_your_message') : $t('conversations.add_private_notes')"
 				variant="outlined"
 				size="large"
 				:disabled="disableReply && inputTab === 'REPLY'"
@@ -209,7 +209,7 @@ const templateHeader = (templateId: string) => {
 						{{ customEvent }}
 					</span>
 					<span v-else>
-						{{ $t('Send') }}
+						{{ $t('send') }}
 					</span>
 				</Button>
 			</div>

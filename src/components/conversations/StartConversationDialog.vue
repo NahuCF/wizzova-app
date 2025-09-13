@@ -220,11 +220,11 @@ watch(() => props.visible, async () => {
         modal
         :draggable="false"
         :showHeader="false"
-        class="min-w-[25rem] max-w-[500px]"
+        class="min-w-[25rem] max-w-[550px]"
     >
         <div v-if="!showNewContact" class="flex flex-col gap-6 pt-6">
             <div class="flex justify-between items-center gap-3">
-                <div class="text-lg font-normal">{{ $t('Initiate new conversation') }}</div>
+                <div class="text-lg font-normal">{{ $t('conversations.initiate_conversation') }}</div>
 
                 <Select 
                     id="broadcastNumbers" 
@@ -264,7 +264,7 @@ watch(() => props.visible, async () => {
                     <IconUserPlus size="20" class="text-emerald-600" />
                 </Avatar>
 
-                <div class="text-emerald-600 font-semibold">{{ $t('Create contact') }}</div>
+                <div class="text-emerald-600 font-semibold">{{ $t('contacts.create_contact') }}</div>
             </div>
 
             <div 
@@ -309,7 +309,7 @@ watch(() => props.visible, async () => {
                     <Button variant="text" @click="showNewContact = false" class="p-1!" severity="secondary">
                         <IconArrowLeft size="18" />
                     </Button>
-                    <div class="text-lg font-normal">{{ $t('Create Contact') }}</div>
+                    <div class="text-lg font-normal">{{ $t('contacts.create_contact') }}</div>
                 </div>
 
                 <Button severity="secondary" variant="text" rounded @click="emit('update:visible', false)">
@@ -375,7 +375,7 @@ watch(() => props.visible, async () => {
                 <Button :disabled="loadingConversation" @click="createContactWithConversation()" >
                     <IconLoader2 v-if="loadingConversation" class="animate-spin w-6 h-6" />
                     <span v-else>
-                        {{ $t(`Start Conversation`) }}
+                        {{ $t(`conversations.start_conversation`) }}
                     </span>
                 </Button>
             </div>
