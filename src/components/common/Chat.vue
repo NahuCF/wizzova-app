@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import EmojiPicker, { type EmojiExt } from 'vue3-emoji-picker'
 import 'vue3-emoji-picker/css'
-import { IconMoodSmile, IconLoader2 } from '@tabler/icons-vue'
+import { IconMoodSmile, IconLoader2, IconNote } from '@tabler/icons-vue'
 import moment from 'moment'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n';
 import type { MessageItem, TemplateItem, UserItem } from '~/types'
+import { useMentions } from '~/composables/useMentions'
 
 const props = defineProps<{
 	messages: MessageItem[],
@@ -15,6 +16,7 @@ const props = defineProps<{
 	customEvent?: string,
 	templates?: TemplateItem[]
 	loading?: boolean,
+	users?: UserItem[]
 }>()
 
 const emit = defineEmits<{
@@ -23,6 +25,12 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const {
+	showSelect, 
+	filteredUsers, 
+	updateMention, 
+	selectUser 
+} = useMentions(props.users || [])
 
 const inputTab = ref<'REPLY' | 'NOTES'>('REPLY')
 const newMessage = ref('')
@@ -100,6 +108,15 @@ const templateHeader = (templateId: string) => {
 
 	return ''
 }
+
+const onInput = (e: Event) => {
+	newMessage.value = (e.target as HTMLTextAreaElement).value
+	updateMention(newMessage.value)
+}
+
+const onSelectMention = (user: UserItem) => {
+  	newMessage.value = selectUser(newMessage.value, user)
+}
 </script>
 
 <template>
@@ -140,6 +157,20 @@ const templateHeader = (templateId: string) => {
 						:bubbleColor="message.direction === 'inbound' ? 'white' : 'sky'"
 						:showTail="shouldShowTail(index, group.messages)"
 					/>
+
+					<MessagePreview
+						v-else-if="message.type === 'note'"
+						:body="message.content ?? ''"
+						:buttons="[]"
+						:date="moment(message.created_at).format('h:mm A')"
+						:side="message.direction === 'inbound' ? 'left' : 'right'"
+						bubbleColor="yellow"
+						:showTail="shouldShowTail(index, group.messages)"
+					>
+						<template #status>
+							<IconNote class="text-yellow-600" size="16" />
+						</template>
+					</MessagePreview>
 					
 					<div 
 						v-if="message.direction === 'outbound' && assignedUser" 
@@ -179,17 +210,26 @@ const templateHeader = (templateId: string) => {
 				</TabList>
 			</Tabs>
 
-			<Textarea 
-				v-model="newMessage"
-				fluid 
-				class="text-lg!"
-				:class="[inputTab === 'REPLY' ? 'bg-white' : 'bg-yellow-50!']"
-				:maxlength="1024"
-				:placeholder="inputTab === 'REPLY' ? $t('conversations.write_your_message') : $t('conversations.add_private_notes')"
-				variant="outlined"
-				size="large"
-				:disabled="disableReply && inputTab === 'REPLY'"
-			/>
+			<div class="relative w-full">
+				<MentionsSelect
+					:options="filteredUsers"
+					:show="showSelect"
+					@select="onSelectMention"
+				/>
+			
+				<Textarea
+					v-model="newMessage"
+					fluid 
+					class="text-lg!"
+					:class="[inputTab === 'REPLY' || disableReply ? 'bg-white' : 'bg-yellow-50!']"
+					:maxlength="1024"
+					:placeholder="inputTab === 'REPLY' ? $t('conversations.write_your_message') : $t('conversations.add_private_notes')"
+					variant="outlined"
+					size="large"
+					:disabled="disableReply"
+					@input="onInput"
+				/>
+			</div>
 
 			<div class="flex justify-between items-center">
 				<Button variant="text" @click="emojiPopover?.toggle($event)">
@@ -202,7 +242,7 @@ const templateHeader = (templateId: string) => {
 					
 				<Button
 					:disabled="sendDisabled"
-					@click="() => customEvent ? emit('onCustomEvent') : sendMessage()"
+					@click="() => customEvent && inputTab === 'REPLY' ? emit('onCustomEvent') : sendMessage()"
 				>
 					<IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
 					<span v-else-if="customEvent && inputTab === 'REPLY'">

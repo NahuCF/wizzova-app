@@ -661,7 +661,11 @@ export default {
     select_account_description: 'Por favor elige la cuenta de WhatsApp Business que deseas usar',
     complete_profile: 'Completar perfil',
     account_configured_successfully: '¡Cuenta configurada con éxito!',
-    connect_your_number: 'Conecta tu número'
+    connect_your_number: 'Conecta tu número',
+    phone_number: 'Número de teléfono',
+    select_number: 'Seleccionar número',
+    connect_new_number: 'Conecta tu número',
+    connect_number: 'Conectar número'
   },
   create_number: {
     requirements: 'Requerimientos',
@@ -690,7 +694,7 @@ export default {
     status: {
       unassigned: 'No asignado',
       mine: 'Mio',
-      pinned: 'Fijado',
+      mentioned: 'Fijado',
       opened: 'Abierto',
       resolved: 'Resuelto'
     },

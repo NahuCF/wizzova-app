@@ -166,8 +166,13 @@ const iconComponents: Record<TemplateBtnType, Component> = {
 					<span class="text-sm text-slate-400">
 						{{ date }}
 					</span>
-					<component v-if="status" :is="statusIcons[status].icon" size="14"
-						:class="[statusIcons[status].color]" />
+					<component
+						v-if="status"
+						:is="statusIcons[status].icon"
+						size="14"
+						:class="[statusIcons[status].color]"
+					/>
+					<slot name="status"></slot>
 				</div>
 			</div>
 		</div>

@@ -1,9 +1,12 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
+import { useI18n } from "vue-i18n"
 import { API } from "~/services"
 import type { UserItem } from "~/types/User"
 
 export const useUserStore = defineStore('user', () => {
+    const { t } = useI18n()
+
     const users = ref<UserItem[]>([])
     const deletedUsers = ref<UserItem[]>([])
     const loading = ref(false)
@@ -13,6 +16,23 @@ export const useUserStore = defineStore('user', () => {
     const search = ref<string>()
     const showCreateDialog = ref(false)
     const selectedUser = ref<UserItem>()
+    const notAssigned: UserItem = {
+        id: 'not_assigned',
+        email: '',
+        name: t('conversations.not_assigned'),
+        cellphone_number: '',
+        cellphone_prefix: '',
+        cellphone: '',
+        role: {
+            id: 0,
+            name: '',
+            is_internal: false
+        },
+        wabas: [],
+        permission_names: [],
+        is_deleted: false,
+        status: 'SIGNED_UP'
+    }
 
     const fetchUsers = async (force = false) => {
         if (loading.value || (loaded.value && !force)) return
@@ -68,6 +88,7 @@ export const useUserStore = defineStore('user', () => {
         search,
         showCreateDialog,
         selectedUser,
+        notAssigned,
         fetchUsers,
         fetchDeletedUsers,
         $reset

@@ -4,11 +4,11 @@ import type { ContactItem } from "./Contact"
 import type { VariableMapping } from "./Template"
 import type { UserItem } from "./User"
 
-export type ConversationStatus = 'unassigned' | 'mine' | 'pinned' | 'opened' | 'resolved'
+export type ConversationStatus = 'unassigned' | 'mine' | 'mentioned' | 'opened' | 'resolved'
 export type MessageStatus = 'pending' | 'sent' | 'delivered' | 'read' | 'failed' | 'deleted'
 export type MessageDirection = 'inbound' | 'outbound'
 export type MessageType = 'text' | 'image' | 'video' | 'audio' | 'document' | 'location' | 
-	'contacts' | 'sticker' | 'template' | 'interactive' | 'button' | 'reaction' | 'order' | 'system' | 'invoice'
+	'contacts' | 'sticker' | 'template' | 'interactive' | 'button' | 'reaction' | 'order' | 'system' | 'invoice' | 'note'
 
 export interface ConversationItem {
 	id: string,

@@ -43,7 +43,14 @@ const initialMessage = ref<CreateMessage>({
 const onTemplateSelected = (template: TemplateItem) => {
 	selectedTemplate.value = template
 	initialMessage.value.template_id = template.id
-	currentStep.value++
+	const variables = template.components.body.variables
+	
+	if(variables && variables.length > 0) {
+		currentStep.value++
+	}
+	else {
+		emit('onConfirm', initialMessage.value)
+	}
 }
 
 const toPrevStep = () => {
@@ -114,7 +121,7 @@ fetchDataPage(1)
 				<Button
 					@click="router.push({ 
 						name: 'new-template', 
-						query: { redirectTo: 'new-broadcast' }
+						query: { redirectTo: 'conversations' }
 					})"
 				>
 					<span class="text">

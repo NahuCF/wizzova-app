@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { IconPlus, IconSearch, IconFilter, IconX, IconStack, 
 	IconUserPlus, IconPin, IconMessageDots, IconMessageCheck, IconLoader2 } from '@tabler/icons-vue'
-import moment from 'moment'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'primevue'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useContactUtils } from '~/composables/useContactUtils'
 import { useConversationStore } from '~/stores/conversations'
 import type { ConversationExists, ConversationFilters, ConversationItem, ConversationStatus } from '~/types'
 
@@ -32,7 +30,6 @@ const { t } = useI18n()
 const toast = useToast()
 const conversationStore = useConversationStore()
 const { stats } = storeToRefs(conversationStore)
-const { getContactName } = useContactUtils()
 
 const searchWrapper = ref()
 const focusSearch = ref(false)
@@ -67,7 +64,7 @@ const tabs = computed(() => [
 		icon: IconUserPlus
 	},
 	{
-		value: 'pinned',
+		value: 'mentioned',
 		stats: 0,
 		icon: IconPin
 	},
@@ -103,6 +100,8 @@ const selectConversation = (conversation: ConversationItem) => {
 		// TODO: Mark messages as read in backend
 		conversation.unread_count = 0
 	}
+
+	focusSearch.value = false
 }
 
 const startConversation = (conversation: ConversationItem) => {
@@ -273,46 +272,16 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 		</div>
 
 		<div v-if="!loading && conversations.length > 0" @click="emit('update:selectedConversation')" class="flex-1">
-			<div 
-				v-for="conversation in conversations" :key="conversation.id" 
-				class="flex justify-between p-4 border-l-3 hover:bg-emerald-50 cursor-pointer overflow-hidden"
-				:class="{
-					'bg-emerald-50': selectedConversation?.id === conversation.id,
-					'border-emerald-500': selectedConversation?.id === conversation.id,
-					'border-transparent': selectedConversation?.id !== conversation.id
-				}"
-				@click.stop="() => {  selectConversation(conversation), focusSearch = false }"
-			>
-				<div class="flex items-center gap-3 flex-1 overflow-hidden">
-					<div>
-						<Avatar
-							:label="getContactName(conversation.contact)?.charAt(0).toLocaleUpperCase()"
-							size="large"
-							shape="circle"
-						/>
-					</div>
-					<div class="flex flex-col justify-between gap-1 min-w-0 flex-1">
-						<div>{{ getContactName(conversation.contact) }}</div>
-						<div class="text-gray-400 font-light truncate">
-							{{ conversation.last_message?.content }}
-						</div>
-					</div>
-				</div>
-				<div class="flex flex-col justify-between items-end gap-2">
-					<div class="text-sm text-gray-400">
-						{{ conversation.last_message_at && moment(conversation.last_message_at).format('h:mm A') }}
-					</div>
-					<Badge
-						v-if="conversation.unread_count > 0"
-						rounded
-						:value="conversation.unread_count"
-						size="small"
-					/>
-				</div>
-			</div>
+			<ConversationItem
+				v-for="conversation in conversations"
+				:key="conversation.id"
+				:conversation="conversation"
+				:highlight="selectedConversation?.id === conversation.id"
+				@onClick="selectConversation($event)"
+			/>
 		</div>
 		<div v-else-if="!loading" class="flex justify-center p-8">
-			<div class="text-gray-400">{{ $t('conversations.no_conversations_found') }}</div>
+			<div class="text-center text-gray-400">{{ $t('conversations.no_conversations_found') }}</div>
 		</div>
 		<div v-else class="flex justify-center p-8">
 			<IconLoader2 class="animate-spin text-emerald-500" size="24" />

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
 import { API } from "~/services"
-import type { ConversationStats } from "~/types"
+import type { ConversationStats, ConversationStatus } from "~/types"
 
 export const useConversationStore = defineStore('conversation', () => {
 	const stats = ref<ConversationStats>({
@@ -11,9 +11,9 @@ export const useConversationStore = defineStore('conversation', () => {
 		resolved: 0
 	})
 
-	const fetchStats = async () => {
+	const fetchStats = async (status: ConversationStatus) => {
 		try {
-			const { data: response} = await API.conversation.stats()
+			const { data: response} = await API.conversation.stats(status)
 			stats.value = response.data
 		} catch(error) {
 			console.log(error)

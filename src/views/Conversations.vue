@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { IconInfoCircle, IconSearch, IconCircleMinus, IconReload, IconLoader2 } from '@tabler/icons-vue'
 import { computed, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useContactUtils } from '~/composables/useContactUtils'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import { usePaginatedData } from '~/composables/usePaginatedData'
@@ -31,7 +29,7 @@ const {
 		const statusFilter = {
 			unassigned: { only_unassigned: true },
 			mine: sessionStore.user && { user_id: sessionStore.user?.id },
-			pinned: sessionStore.user && { user_id: sessionStore.user?.id, only_pinned: true },
+			mentioned: sessionStore.user && { user_id: sessionStore.user?.id, only_pinned: true },
 			opened: { only_opened: true },
 			resolved: { only_solved: true }
 		}
@@ -71,11 +69,10 @@ const {
 	},
     15
 )
-const { t } = useI18n()
 const userStore = useUserStore()
 const { fetchStats } = useConversationStore()
 const handleError = useErrorHandler()
-const { getContactName, getContactPhone } = useContactUtils()
+const { getContactPhone } = useContactUtils()
 
 const selectedConversation = ref<ConversationItem>()
 const showStartConversationDialog = ref(false)
@@ -83,28 +80,6 @@ const showTemplateDialog = ref(false)
 const sendingMessage = ref(false)
 const changingSolved = ref(false)
 const changingOwner = ref(false)
-const notAssigned: UserItem = {
-	id: 'not_assigned',
-	email: '',
-	name: t('conversations.not_assigned'),
-	cellphone_number: '',
-	cellphone_prefix: '',
-	cellphone: '',
-	role: {
-		id: 0,
-		name: '',
-		is_internal: false
-	},
-	wabas: [],
-	permission_names: [],
-	is_deleted: false,
-	status: 'SIGNED_UP'
-}
-
-const users = computed(() => [
-	notAssigned,
-	...userStore.users
-])
 
 const disableReply = computed(() => 
 	selectedConversation.value?.is_solved || 
@@ -121,11 +96,10 @@ const startConversation = (conversation: ConversationItem) => {
 const tabChanged = (tab: ConversationStatus) => {
 	conversationTab.value = tab
 	fetchConversations(1, conversationsPerPage.value)
+	fetchStats(conversationTab.value)
 }
 
-const changeOwner = async ({ value }: { value: string }) => {
-	const newOwner = users.value.find(u => u.id === value)
-
+const changeOwner = async (newOwner?: UserItem) => {
 	if(!selectedConversation.value || !newOwner) return
 
 	changingOwner.value = true
@@ -140,7 +114,7 @@ const changeOwner = async ({ value }: { value: string }) => {
 		}
 
 		fetchConversations(1, conversationsPerPage.value)
-		fetchStats()
+		fetchStats(conversationTab.value)
 	} catch(error) {
 		handleError(error)
 	} finally {
@@ -160,7 +134,7 @@ const changeSolved = async (solved: boolean) => {
 		}
 
 		fetchConversations(1, conversationsPerPage.value)
-		fetchStats()
+		fetchStats(conversationTab.value)
 	} finally {
 		changingSolved.value = false
 	}
@@ -171,7 +145,7 @@ const sendTextMessage = async ({ message, type }: { message: string, type: 'REPL
 
 	const newMessage: CreateMessage = {
 		conversation_id: selectedConversation.value.id,
-		type: 'text',
+		type: type === 'REPLY' ? 'text' : 'note',
 		to_phone: '',
 		content: message
 	}
@@ -263,7 +237,7 @@ watch(selectedConversation, () => {
 })
 watch(() => selectedConversation.value?.assigned_user, () => {
 	if(selectedConversation.value && !selectedConversation.value?.assigned_user) {
-		selectedConversation.value.assigned_user = notAssigned
+		selectedConversation.value.assigned_user = { ...userStore.notAssigned }
 	}
 })
 
@@ -271,7 +245,7 @@ watch(searchTerm, () => debouncedFetch())
 watch(searchType, () => debouncedFetch())
 
 userStore.fetchUsers()
-fetchStats()
+fetchStats(conversationTab.value)
 fetchConversations(1, conversationsPerPage.value)
 </script>
 
@@ -303,104 +277,38 @@ fetchConversations(1, conversationsPerPage.value)
 			</div>
 		</div>
 
-		<div v-if="selectedConversation" class="col-span-3 flex flex-col max-h-[100vh]">
-			<div class="flex justify-between p-4 bg-white shadow">
-				<div class="flex flex-col gap-2">
-					<div class="flex gap-2">
-						<h2 class="text-base">
-							{{ getContactName(selectedConversation.contact) }}
-						</h2>
-						<div v-tooltip.bottom="{
-							value: getContactPhone(selectedConversation.contact),
-							class: 'max-w-[250px]!'
-						}">
-							<IconInfoCircle class="text-gray-400 hover:cursor-pointer" size="16" />
-						</div>
-					</div>
+		<div v-if="selectedConversation" class="col-span-4 flex flex-col max-h-[100vh]">
+			<ChatHeader
+				:conversation="selectedConversation"
+				:changingSolved="changingSolved"
+				:changingOwner="changingOwner"
+				@onSolved="changeSolved($event)"
+				@onChangeOwner="changeOwner($event)"
+			/>
+			
+			<div class="grid grid-cols-4 h-full">
+				<Chat
+					v-if="selectedConversation"
+					class="col-span-3"
+					:messages="messages.data"
+					:assignedUser="selectedConversation.assigned_user"
+					:loading="sendingMessage"
+					:disableReply="disableReply"
+					:disableReplyButton="selectedConversation.is_solved || selectedConversation.is_expired"
+					:customEvent="!selectedConversation.is_initiated ? $t('new_broadcast.select_template') : undefined"
+					:templates="templates"
+					:users="userStore.users"
+					@onSendMessage="sendTextMessage"
+					@onCustomEvent="showTemplateDialog = true"
+				/>
 
-					<div
-						v-tooltip.top="{
-							value: selectedConversation.phone_number.display_phone_number,
-							class: 'text-base max-w-[300px]!'
-						}"
-					>
-						{{ selectedConversation.phone_number.verified_name }}
-					</div>
-				</div>
-
-				<div v-if="selectedConversation.is_initiated" class="flex items-center gap-2">
-					<div v-if="!selectedConversation.is_solved && !selectedConversation.is_expired">
-						<Button
-							severity="secondary"
-							:disabled="changingSolved"
-							@click="changeSolved(true)"
-						>
-							<IconLoader2 v-if="changingSolved" class="animate-spin w-6 h-6" />
-							<div v-else class="flex items-center gap-2">
-								<IconCircleMinus size="16" />
-								<div>{{ $t('conversations.close') }}</div>
-							</div>
-						</Button>
-					</div>
-					<div v-if="selectedConversation.is_solved && !selectedConversation.is_expired">
-						<Button
-							severity="secondary"
-							:disabled="changingSolved"
-							@click="changeSolved(false)"
-						>
-							<IconLoader2 v-if="changingSolved" class="animate-spin w-6 h-6" />
-							<div v-else class="flex items-center gap-2">
-								<IconReload size="16" />
-								<div>{{ $t('conversations.reopen') }}</div>
-							</div>
-						</Button>
-					</div>
-
-					<div>
-						<Select
-							:modelValue="selectedConversation.assigned_user?.id"
-							@change="changeOwner"
-							:options="users"
-							optionValue="id"
-							optionLabel="name"
-							:placeholder="$t('conversations.assign_to')"
-							:disabled="selectedConversation.is_solved || changingOwner"
-							:loading="changingOwner"
-							class="w-full min-w-[200px]" 
-						/>
-					</div>
-
-					<Button
-						severity="secondary"
-						variant="text"
-						class="min-w-[32px]! h-[32px]!"
-						@click="() => {}"
-					>
-						<div>
-							<IconSearch size="18" />
-						</div>
-					</Button>
+				<div class="bg-white border-l-2 border-slate-100">
+					<ContactPanel
+						:contact="selectedConversation.contact"
+						@onContactUpdated="updateContact"
+					/>
 				</div>
 			</div>
-			<Chat 
-				v-if="selectedConversation"
-				:messages="messages.data"
-				:assignedUser="selectedConversation.assigned_user"
-				:loading="sendingMessage"
-				:disableReply="disableReply"
-				:disableReplyButton="selectedConversation.is_solved || selectedConversation.is_expired"
-				:customEvent="!selectedConversation.is_initiated ? $t('new_broadcast.select_template') : undefined"
-				:templates="templates"
-				@onSendMessage="sendTextMessage"
-				@onCustomEvent="showTemplateDialog = true"
-			/>
-		</div>
-
-		<div v-if="selectedConversation" class="bg-white border-l-2 border-slate-100">
-			<ContactPanel
-				:contact="selectedConversation.contact"
-				@onContactUpdated="updateContact"
-			/>
 		</div>
 
 		<StartConversationDialog

@@ -695,7 +695,7 @@ Grab them today!`,
     status: {
       unassigned: 'Unassigned',
       mine: 'Mine',
-      pinned: 'Pinned',
+      mentioned: 'Pinned',
       opened: 'Opened',
       resolved: 'Resolved'
     },
