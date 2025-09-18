@@ -239,7 +239,7 @@ watch(rowsPerPage,
     () => fetchDataPage(1, rowsPerPage.value)
 )
 
-watch(selectedNumber, () => refreshData())
+watch(selectedNumber, () => refreshData(true))
 watch(overviewDays, fetchOverview)
 watch(selectedFilter, () => fetchDataPage(1, rowsPerPage.value))
 
