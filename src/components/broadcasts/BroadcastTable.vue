@@ -85,7 +85,7 @@ const broadcastActions = (item: BroadcastItem) => {
         }
     }
 
-	let actions = [ [ downloadReport ] ]
+	let actions = [ [ downloadReport, repeatBroadcast ] ]
 
     if (item.status !== 'completed' && item.status !== 'cancelled' && item.status !== 'failed') {
         actions = [
@@ -93,13 +93,6 @@ const broadcastActions = (item: BroadcastItem) => {
 			[ cancel ]
 		]
     }
-
-	if (item.status === 'completed') {
-		actions[0] = [
-			...actions[0],
-			repeatBroadcast
-		]
-	}
 
 	return actions
 }
