@@ -16,6 +16,8 @@ const emit = defineEmits<{
 const { getContactName } = useContactUtils()
 
 const progress = computed(() => {
+	if(props.conversation.is_solved) return 0
+
 	const start = props.conversation.last_message_at
 	const end = props.conversation.expires_at
 	if (!start || !end) return 1

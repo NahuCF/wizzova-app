@@ -714,8 +714,7 @@ Grab them today!`,
     no_conversations_found: 'No conversations found',
     exists: 'Conversation exists',
     navigate_to_conversation: 'Do you want to navigate to the conversation with this contact?',
-    reply: 'Reply',
-    notes: 'Notes',
+    note: 'Note',
     conversation_assigned_to: 'There is a conversation in progress already assigned to user {user}',
     write_your_message: 'Write your message...',
     add_private_notes: 'Add your private notes'
@@ -736,5 +735,14 @@ Grab them today!`,
     read: 'Read',
     failed: 'Failed',
     deleted: 'Deleted'
+  },
+  chat: {
+    assigned_from_user_to_user: '{old_user_name} has assigned the chat to {new_user_name} at {time}',
+    assigned_to_user: '{new_user_name} has assigned the chat to themselves at {time}',
+    unassigned: '{old_user_name} has unassigned the chat at {time}',
+    resolved: '{user_name} has marked the chat as resolved at {time}',
+    reopened: '{user_name} has reopened this chat at {time}',
+    conversation_started: '{user_name} has started the conversation at {time}',
+    conversation_expired: 'The conversation has expired at {time}'
   }
 }

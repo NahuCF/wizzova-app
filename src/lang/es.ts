@@ -714,8 +714,7 @@ export default {
     exists: 'Conversación existente',
     navigate_to_conversation: '¿Deseas navegar a la conversación con este contacto?',
     conversation_assigned_to: 'Ya hay una conversación en curso asignada al usuario {user}',
-    reply: 'Responde',
-    notes: 'Notas',
+    note: 'Nota',
     write_your_message: 'Escribe tu mensaje...',
     add_private_notes: 'Agrega tus notas privadas'
   },
@@ -735,5 +734,14 @@ export default {
     read: 'Leído',
     failed: 'Fallído',
     deleted: 'Eliminado'
+  },
+  chat: {
+    assigned_from_user_to_user: '{old_user_name} há asignado el chat a {new_user_name} contacto a las {time}',
+    assigned_to_user: '{new_user_name} se há asignado el chat a las {time}',
+    unassigned: '{old_user_name} há desasignado el chat a las {time}',
+    resolved: '{user_name} há marcado el chat como resuelto a las {time}',
+    reopened: '{user_name} há re abierto este chat a las {time}',
+    conversation_started: '{user_name} há iniciado la conversación a las {time}',
+    conversation_expired: 'La conversación ha expirado a las {time}'
   }
 }

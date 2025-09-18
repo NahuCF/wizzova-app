@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { IconInfoCircle, IconLoader2, IconCircleMinus, IconReload, IconSearch } from '@tabler/icons-vue'
-import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useContactUtils } from '~/composables/useContactUtils'
 import { useUserStore } from '~/stores'
 import type { ConversationItem, UserItem } from '~/types'
@@ -18,7 +16,6 @@ const emit = defineEmits<{
 	(e: 'onChangeOwner', value?: UserItem): void
 }>()
 
-const { t } = useI18n()
 const userStore = useUserStore()
 const { getContactName, getContactPhone } = useContactUtils()
 
@@ -94,7 +91,7 @@ const onChangeOwner = (value: string) =>  {
 					optionValue="id"
 					optionLabel="name"
 					:placeholder="$t('conversations.assign_to')"
-					:disabled="conversation.is_solved || changingOwner"
+					:disabled="conversation.is_solved || conversation.is_expired || changingOwner"
 					:loading="changingOwner"
 					class="w-full min-w-[200px]" 
 				/>

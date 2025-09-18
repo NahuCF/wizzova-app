@@ -9,7 +9,8 @@ import { useConversationStore } from '~/stores/conversations'
 import type { 
 	TemplateItem,  ConversationItem, ConversationStatus, 
 	CreateMessage, MessageItem, UserItem,
-	ContactItem
+	ContactItem,
+	ConversationActivity
 } from '~/types'
 
 const sessionStore = useSessionStore()
@@ -72,7 +73,7 @@ const {
 const userStore = useUserStore()
 const { fetchStats } = useConversationStore()
 const handleError = useErrorHandler()
-const { getContactPhone } = useContactUtils()
+const { getContactName, getContactPhone } = useContactUtils()
 
 const selectedConversation = ref<ConversationItem>()
 const showStartConversationDialog = ref(false)
@@ -80,6 +81,7 @@ const showTemplateDialog = ref(false)
 const sendingMessage = ref(false)
 const changingSolved = ref(false)
 const changingOwner = ref(false)
+const activities = ref<ConversationActivity[]>([])
 
 const disableReply = computed(() => 
 	selectedConversation.value?.is_solved || 
@@ -140,14 +142,24 @@ const changeSolved = async (solved: boolean) => {
 	}
 }
 
-const sendTextMessage = async ({ message, type }: { message: string, type: 'REPLY' | 'NOTES'}) => {
+const sendTextMessage = async ({ message, type, mentions, replyId }: {
+	message: string,
+	type: 'REPLY' | 'NOTES',
+	mentions: Record<string, string>[],
+	replyId?: string
+}) => {
 	if(!selectedConversation.value) return
 
 	const newMessage: CreateMessage = {
 		conversation_id: selectedConversation.value.id,
 		type: type === 'REPLY' ? 'text' : 'note',
 		to_phone: '',
-		content: message
+		content: message,
+		mentions: mentions.length > 0 ? mentions : undefined,
+	}
+
+	if(replyId) {
+		newMessage.reply_to_message_id = replyId
 	}
 	
 	sendMessage(newMessage)
@@ -166,6 +178,14 @@ const sendMessage = async (newMessage: CreateMessage) => {
 
 		if(response.data.template_id && !hasTemplate(response.data.template_id)) {
 			addTemplate(response.data.template_id)
+		}
+
+		if(selectedConversation.value && !selectedConversation.value.is_initiated) {
+			selectedConversation.value = {
+				...selectedConversation.value,
+				is_initiated: true
+			}
+			fetchActivities()
 		}
 	} catch(error) {
 		handleError(error)
@@ -228,9 +248,21 @@ const updateContact = (contact: ContactItem) => {
 	}
 }
 
+const fetchActivities = async () => {
+	if(!selectedConversation.value) return
+
+	try {
+		const { data: response } = await API.conversation.activities(selectedConversation.value.id)
+		activities.value = response.data
+	} catch(error) {
+		handleError(error)
+	}
+}
+
 watch(selectedConversation, () => {
 	if (selectedConversation.value) {
 		fetchMessages(1, messagesPerPage.value)
+		fetchActivities()
 	} else {
 		messages.value.data = []
 	}
@@ -286,15 +318,16 @@ fetchConversations(1, conversationsPerPage.value)
 				@onChangeOwner="changeOwner($event)"
 			/>
 			
-			<div class="grid grid-cols-4 h-full">
+			<div class="grid grid-cols-4 h-full overflow-hidden">
 				<Chat
 					v-if="selectedConversation"
 					class="col-span-3"
+					:contactName="getContactName(selectedConversation.contact) || ''"
 					:messages="messages.data"
+					:activities="activities"
 					:assignedUser="selectedConversation.assigned_user"
 					:loading="sendingMessage"
 					:disableReply="disableReply"
-					:disableReplyButton="selectedConversation.is_solved || selectedConversation.is_expired"
 					:customEvent="!selectedConversation.is_initiated ? $t('new_broadcast.select_template') : undefined"
 					:templates="templates"
 					:users="userStore.users"

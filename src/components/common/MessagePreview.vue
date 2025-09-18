@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { defineProps, computed, type Component } from 'vue'
-import { IconExternalLink, IconPhone, IconArrowBackUp, IconList, IconCheck, IconClock, IconChecks, IconX, IconTrash } from '@tabler/icons-vue'
+import { defineProps, computed, type Component, ref } from 'vue'
+import { IconExternalLink, IconPhone, IconArrowBackUp, IconList, IconCheck, IconClock, IconChecks, IconX, IconTrash, IconChevronDown } from '@tabler/icons-vue'
 import type { MessageStatus, TemplateBtn, TemplateBtnType, TemplateCallBtn, TemplateUrlBtn } from '~/types'
 
 const bubbleColors = {
@@ -52,15 +52,30 @@ const props = withDefaults(
 		side?: 'left' | 'right',
 		bubbleColor?: BubbleColor,
 		showTail?: boolean,
-		status?: MessageStatus
+		showOptions?: boolean,
+		status?: MessageStatus,
+		reply?: { name: string, header?: string; body: string; footer?: string },
+		mentions?: Record<string, string>[]
 	}>(),
 	{
 		footer: '',
 		side: 'left',
 		bubbleColor: 'white',
-		showTail: true
+		showTail: true,
+		mentions: () => []
 	}
 )
+
+const emit = defineEmits<{
+	(e: 'onMentionClick', value: { id: string, name: string }): void,
+	(e: 'onReply'): void
+}>()
+
+const bubbleMenu = ref()
+const bubbleMenuOptions = ref([
+	{ label: 'Reply', action: () => emit('onReply') },
+])
+const isHovered = ref(false)
 
 const selectedColor = computed(() => {
 	return bubbleColors[props.bubbleColor || 'white']
@@ -77,25 +92,28 @@ const formattedBodyText = computed(() => {
 		return ''
 	}
 
-	// Hightlight variables
-	let formatedText = props.body.replace(/{{\s*(\w+)\s*}}/g, (_match, variableName) => {
-		return `<mark class='px-1 bg-slate-100 text-green-700 font-semibold'>${variableName}</mark>`
-	})
+	let formatedText = props.body
+		// variables
+		.replace(/{{\s*(\w+)\s*}}/g, (_m, v) =>
+			`<mark class='px-1 bg-slate-100 text-green-700 font-semibold'>${v}</mark>`
+		)
+		// bold/italic/strike/new line
+		.replace(/\*(.*?)\*/g, (_m, v) => `<b>${v}</b>`)
+		.replace(/_(.*?)_/g, (_m, v) => `<em>${v}</em>`)
+		.replace(/~(.*?)~/g, (_m, v) => `<s>${v}</s>`)
+		.replace(/\n/g, '<br>')
 
-	formatedText = formatedText.replace(/\*(.*?)\*/g, (_match, value) => {
-		return `<b>${value}</b>`
-	})
-
-	formatedText = formatedText.replace(/_(.*?)_/g, (_match, value) => {
-		return `<em>${value}</em>`
-	})
-
-	formatedText = formatedText.replace(/\~(.*?)\~/g, (_match, value) => {
-		return `<s>${value}</s>`
-	})
-
-	// Add html tags for new line characters
-	formatedText = formatedText.replace(/\n/g, '<br>')
+	if (props.mentions?.length) {
+		props.mentions.forEach(m => {
+			const [username, id] = Object.entries(m)[0]
+			const safe = username.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+			const regex = new RegExp(`@${safe}\\b`, 'g')
+			formatedText = formatedText.replace(
+				regex,
+				`<a href="#" class="text-sky-600 font-semibold" data-user-id="${id}" data-username="${username}">@${username}</a>`
+			)
+		})
+	}
 
 	return formatedText
 })
@@ -116,6 +134,21 @@ const filteredButtons = computed(() => {
 
 	return [...firstTwo, showMoreButton]
 })
+
+const toggleBubbleMenu = (event: Event) => {
+  	bubbleMenu.value?.toggle(event)
+}
+
+const onMentionClick = (e: MouseEvent) => {
+	const link = (e.target as HTMLElement).closest('a[data-user-id]') as HTMLElement | null
+	if (!link) return
+
+	e.preventDefault()
+
+	const id = link.dataset.userId!
+	const name = link.dataset.username!
+	emit('onMentionClick', { id, name })
+}
 
 const iconComponents: Record<TemplateBtnType, Component> = {
 	STATIC_URL: IconExternalLink,
@@ -139,14 +172,55 @@ const iconComponents: Record<TemplateBtnType, Component> = {
 			]">
 			</div>
 
-			<div class="flex flex-col gap-1 px-3 pt-2 pb-1 message rounded-lg self-start break-all shadow"
-				:class="[minWidth ?? 'min-w-[18rem]', maxWidth ?? 'max-w-[100%]', selectedColor.bg]">
-				<div class="flex flex-col gap-2.5">
-					<div v-if="header && header.length > 0" class="font-semibold text-lg">
-						{{ header }}
+			<div
+				class="flex flex-col gap-1 px-3 pt-2 pb-1 message rounded-lg self-start break-all shadow"
+				:class="[
+					minWidth ?? 'min-w-[18rem]',
+					maxWidth ?? 'max-w-[100%]',
+					selectedColor.bg
+				]"
+				@mouseenter="isHovered = true"
+  				@mouseleave="isHovered = false"
+			>
+
+				<div v-if="reply" class="mb-1">
+					<ReplyPreview
+						:name="reply.name"
+						:header="reply.header"
+						:body="reply.body"
+						:footer="reply.footer"
+					/>
+				</div>
+
+				<div class="relative flex flex-col gap-2.5">
+					<div v-if="showOptions && isHovered" class="absolute top-0 right-0">
+						<Button
+							class="p-1! rounded"
+							severity="secondary"
+							variant="text"
+							@click="toggleBubbleMenu"
+						>
+							<IconChevronDown class="text-gray-500" size="14"/>
+						</Button>
 					</div>
 
-					<span class="font-regular text-lg" v-if="body.length > 0" v-html="formattedBodyText"></span>
+					<Menu ref="bubbleMenu" :model="bubbleMenuOptions" :popup="true">
+						<template #item="{ item, props }">
+							<div v-ripple v-bind="props.action" @click="item.action">
+								<span>{{ item.label }}</span>
+							</div>
+						</template>
+					</Menu>
+
+					<div v-if="header && header.length > 0" class="font-semibold text-lg">{{ header }}</div>
+
+					<span
+						v-if="body.length > 0"
+						class="font-regular text-lg"
+						v-html="formattedBodyText"
+						@click="onMentionClick"
+					>
+					</span>
 
 					<div class="text-slate-400 italic" v-if="body.length > 0 && footer.length > 0">
 						{{ footer }}

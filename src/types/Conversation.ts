@@ -47,7 +47,7 @@ export interface MessageItem {
 	meta_id: string,
 	conversation_id: string,
 	template_id: string,
-	reply_to_message_id?: string,
+	reply_to_message?: MessageItem,
 	type: MessageType,
 	direction: MessageDirection,
 	status: MessageStatus,
@@ -65,7 +65,8 @@ export interface MessageItem {
 	read_at?: string,
 	failed_at?: string,
 	created_at: string,
-	updated_at: string
+	updated_at: string,
+	mentions?: Record<string, string>[]
 }
 
 export interface CreateMessage {
@@ -76,8 +77,11 @@ export interface CreateMessage {
 	type: MessageType,
 	content?: string,
 	media?: string,
-	to_phone: string
+	to_phone: string,
+	mentions?: Record<string, string>[]
 }
+
+export type MentionItem = { id: string, label: string }
 
 export interface ConversationStats {
 	unassigned: number,
@@ -91,3 +95,45 @@ export interface ConversationFilters {
 	unread?: boolean
 	assignedUser?: UserItem
 }
+
+export type ConversationActivityType =
+	| 'assigned'
+	| 'unassigned'
+	| 'resolved'
+	| 'reopened'
+	| 'conversation_started'
+	| 'conversation_expired'
+
+export interface BaseConversationActivity {
+	id: string
+	conversation_id: string
+  	event_at: string
+}
+
+interface ConversationActivityDataMap {
+	assigned: {
+		old_user_name: string | null
+		new_user_name: string
+	}
+	unassigned: {
+		old_user_name: string
+		new_user_name: null
+	}
+	resolved: {
+		user_name: string
+	}
+	reopened: {
+		user_name: string
+	}
+	conversation_started: {
+		user_name: string
+	}
+	conversation_expired: {}
+}
+
+export type ConversationActivity = {
+	[K in keyof ConversationActivityDataMap]: BaseConversationActivity & {
+		type: K
+		data: ConversationActivityDataMap[K]
+	}
+}[keyof ConversationActivityDataMap]

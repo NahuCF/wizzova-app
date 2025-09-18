@@ -1,18 +1,21 @@
 <script setup lang="ts">
-import EmojiPicker, { type EmojiExt } from 'vue3-emoji-picker'
 import 'vue3-emoji-picker/css'
-import { IconMoodSmile, IconLoader2, IconNote } from '@tabler/icons-vue'
+import { IconNote } from '@tabler/icons-vue'
 import moment from 'moment'
 import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n';
-import type { MessageItem, TemplateItem, UserItem } from '~/types'
-import { useMentions } from '~/composables/useMentions'
+import { useI18n } from 'vue-i18n'
+import type { ConversationActivity, MessageItem, TemplateItem, UserItem } from '~/types'
+
+type TimelineItem =
+	| ({ kind: 'message' } & MessageItem)
+	| ({ kind: 'activity' } & ConversationActivity)
 
 const props = defineProps<{
+	contactName: string,
 	messages: MessageItem[],
+	activities: ConversationActivity[],
 	assignedUser?: UserItem,
 	disableReply?: boolean,
-	disableReplyButton?: boolean,
 	customEvent?: string,
 	templates?: TemplateItem[]
 	loading?: boolean,
@@ -20,43 +23,55 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(e: 'onSendMessage', { message, type }: { message: string, type: 'REPLY' | 'NOTES' }): void
+	(e: 'onSendMessage', { message, type, mentions }: {
+		message: string, 
+		type: 'REPLY' | 'NOTES',
+		mentions: Record<string, string>[],
+		replyId?: string
+	}): void
 	(e: 'onCustomEvent'): void
 }>()
 
 const { t } = useI18n()
-const {
-	showSelect, 
-	filteredUsers, 
-	updateMention, 
-	selectUser 
-} = useMentions(props.users || [])
 
-const inputTab = ref<'REPLY' | 'NOTES'>('REPLY')
-const newMessage = ref('')
-const emojiPopover = ref()
+const replyMessage = ref<MessageItem>()
 
-const groupedMessages = computed(() => {
-    const groups: Record<string, MessageItem[]> = {}
-    for (const msg of props.messages) {
-        const dateKey = moment(msg.created_at).format('YYYY-MM-DD')
-        if (!groups[dateKey]) groups[dateKey] = []
-        groups[dateKey].push(msg)
-    }
+const reply = computed(() => {
+	if(replyMessage.value) {
+		return {
+			name: props.contactName,
+			message: replyMessage.value
+		}
+	}
 
-    return Object.entries(groups)
-        .sort(([a], [b]) => (a > b ? 1 : -1))
-        .map(([date, messages]) => ({ date, messages }))
+	return undefined
 })
 
-const sendDisabled = computed(() => {
-	const replyDisabled = props.disableReplyButton && inputTab.value === 'REPLY'
-	const emptyMessage = newMessage.value.length === 0
-	const isCustomEvent = props.customEvent && inputTab.value === 'REPLY'
+const timeline = computed<TimelineItem[]>(() => {
+	const messageItems = props.messages.map(m => ({ ...m, kind: 'message' as const }))
+	const activityItems = props.activities.map(a => ({ ...a, kind: 'activity' as const }))
 
-	const shouldDisable = props.loading || (emptyMessage && !isCustomEvent) || replyDisabled
+	return [...activityItems, ...messageItems].sort((a, b) => {
+		const aTime = a.kind === 'message' ? a.created_at : a.event_at
+		const bTime = b.kind === 'message' ? b.created_at : b.event_at
+		return new Date(aTime).getTime() - new Date(bTime).getTime()
+	})
+})
 
-	return shouldDisable
+const groupedTimeline = computed(() => {
+  const groups: Record<string, TimelineItem[]> = {}
+  for (const item of timeline.value) {
+    const dateKey = moment(
+      item.kind === 'message' ? item.created_at : item.event_at
+    ).format('YYYY-MM-DD')
+
+    if (!groups[dateKey]) groups[dateKey] = []
+    groups[dateKey].push(item)
+  }
+
+  return Object.entries(groups)
+    .sort(([a], [b]) => (a > b ? 1 : -1))
+    .map(([date, items]) => ({ date, items }))
 })
 
 const dateLabel = (date: string) => {
@@ -67,22 +82,11 @@ const dateLabel = (date: string) => {
     return m.format('MMM D, YYYY')
 }
 
-const shouldShowTail = (index: number, messages: MessageItem[]) => {
-	if (index === 0) return true
-	return messages[index].direction !== messages[index - 1].direction
-}
+const shouldShowTail = (item: MessageItem, allItems: TimelineItem[]) => {
+	const msgs: MessageItem[] = allItems.filter(i => i.kind === 'message')
+	const idx = msgs.indexOf(item)
 
-const onSelectEmoji = (emoji: EmojiExt) => {
-	newMessage.value += emoji.i
-	emojiPopover.value?.hide()
-}
-
-const sendMessage = () => {
-	emit('onSendMessage', {
-		message: newMessage.value,
-		type: inputTab.value
-	})
-	newMessage.value = ''
+	return idx === 0 || item.direction !== msgs[idx - 1].direction
 }
 
 const getTemplate = (templateId: string) => {
@@ -109,150 +113,134 @@ const templateHeader = (templateId: string) => {
 	return ''
 }
 
-const onInput = (e: Event) => {
-	newMessage.value = (e.target as HTMLTextAreaElement).value
-	updateMention(newMessage.value)
+const activityMessage = (act: ConversationActivity)  => {
+	const time = moment(act.event_at).format('HH:mm')
+	switch (act.type) {
+		case 'assigned': {
+			const { old_user_name, new_user_name } = act.data
+			return old_user_name
+				? t('chat.assigned_from_user_to_user', { old_user_name, new_user_name, time })
+				: t('chat.assigned_to_user', { new_user_name, time })
+		}
+		case 'unassigned':
+			return t('chat.unassigned', { old_user_name: act.data.old_user_name, time })
+		case 'resolved':
+			return t('chat.resolved', { user_name: act.data.user_name, time })
+		case 'reopened':
+			return t('chat.reopened', { user_name: act.data.user_name, time })
+		case 'conversation_started':
+			return t('chat.conversation_started', { user_name: act.data.user_name, time })
+		case 'conversation_expired':
+			return t('chat.conversation_expired', { time })
+	}
 }
 
-const onSelectMention = (user: UserItem) => {
-  	newMessage.value = selectUser(newMessage.value, user)
+const getReply = (item: MessageItem) => {
+	if(item.reply_to_message) {
+		return {
+			name: item.direction === 'inbound' ? props.contactName : props.assignedUser?.name || 'Unknown',
+			body: item.reply_to_message?.content || ''
+		}
+	}
+	
+	return undefined
 }
 </script>
 
 <template>
 	<div class="flex flex-col flex-1 h-full chat-background overflow-hidden">
 		<div class="flex flex-col px-4 py-12 gap-8 overflow-y-auto">
-			<div class="flex flex-col gap-3" v-for="group in groupedMessages" :key="group.date">
-				<Divider align="center" type="solid">
+			<div class="flex flex-col gap-3" v-for="group in groupedTimeline" :key="group.date">
+				<Divider class="my-20!" align="center" type="solid">
 					<span class="bg-gray-200 text-gray-600 text-lg px-8 py-2 rounded-full">
 						{{ dateLabel(group.date) }}
 					</span>
 				</Divider>
 
-				<div 
-					v-for="(message, index) in group.messages" :key="message.id"
-					class="flex px-4 z-2"
-					:class="message.direction === 'inbound' ? 'justify-start' : 'justify-end'"
-				>
-					<MessagePreview
-						v-if="message.type === 'template' && message.template_id"
-						:header="templateHeader(message.template_id)" 
-						:body="templateBody(message.template_id)"
-						:footer="getTemplate(message.template_id)?.components.footer"
-						:buttons="getTemplate(message.template_id)?.components.buttons || []"
-						:date="moment(message.created_at).format('h:mm A')"
-						:status="message.status"
-						:side="message.direction === 'inbound' ? 'left' : 'right'"
-						:bubbleColor="message.direction === 'inbound' ? 'white' : 'sky'"
-						:showTail="shouldShowTail(index, group.messages)"
-					/>
-
-					<MessagePreview
-						v-else-if="message.type === 'text'"
-						:body="message.content ?? ''"
-						:buttons="[]"
-						:date="moment(message.created_at).format('h:mm A')"
-						:status="message.status"
-						:side="message.direction === 'inbound' ? 'left' : 'right'"
-						:bubbleColor="message.direction === 'inbound' ? 'white' : 'sky'"
-						:showTail="shouldShowTail(index, group.messages)"
-					/>
-
-					<MessagePreview
-						v-else-if="message.type === 'note'"
-						:body="message.content ?? ''"
-						:buttons="[]"
-						:date="moment(message.created_at).format('h:mm A')"
-						:side="message.direction === 'inbound' ? 'left' : 'right'"
-						bubbleColor="yellow"
-						:showTail="shouldShowTail(index, group.messages)"
+				<template v-for="(item) in group.items" :key="item.id">
+					<div
+						v-if="item.kind === 'activity'"
+						class="text-center my-8"
 					>
-						<template #status>
-							<IconNote class="text-yellow-600" size="16" />
-						</template>
-					</MessagePreview>
-					
-					<div 
-						v-if="message.direction === 'outbound' && assignedUser" 
-						class="pl-4 flex"
-					>
-						<Avatar
-							v-if="shouldShowTail(index, group.messages)"
-							:label="assignedUser.name.charAt(0).toLocaleUpperCase()"
-							shape="circle"
-						/>
-						<div v-else class="pl-[24px]"></div>
+						<span class="text-lg bg-gray-200 text-gray-700 px-4 py-2 rounded-full">
+							{{ activityMessage(item) }}
+						</span>
 					</div>
-				</div>
+
+					<div
+						v-else
+						class="flex px-4 z-2"
+						:class="item.direction === 'inbound' ? 'justify-start' : 'justify-end'"
+					>
+						<MessagePreview
+							v-if="item.type === 'template' && item.template_id"
+							:header="templateHeader(item.template_id)" 
+							:body="templateBody(item.template_id)"
+							:footer="getTemplate(item.template_id)?.components.footer"
+							:buttons="getTemplate(item.template_id)?.components.buttons || []"
+							:date="moment(item.created_at).format('h:mm A')"
+							:status="item.status"
+							:side="item.direction === 'inbound' ? 'left' : 'right'"
+							:bubbleColor="item.direction === 'inbound' ? 'white' : 'sky'"
+							:showTail="shouldShowTail(item, group.items)"
+						/>
+
+						<MessagePreview
+							v-else-if="item.type === 'text'"
+							:body="item.content ?? ''"
+							:buttons="[]"
+							:date="moment(item.created_at).format('h:mm A')"
+							:status="item.status"
+							:side="item.direction === 'inbound' ? 'left' : 'right'"
+							:bubbleColor="item.direction === 'inbound' ? 'white' : 'sky'"
+							:showTail="shouldShowTail(item, group.items)"
+							:showOptions="item.direction === 'inbound'"
+							:reply="getReply(item)"
+							@onReply="replyMessage = item"
+						/>
+
+						<MessagePreview
+							v-else-if="item.type === 'note'"
+							:body="item.content ?? ''"
+							:buttons="[]"
+							:date="moment(item.created_at).format('h:mm A')"
+							:side="item.direction === 'inbound' ? 'left' : 'right'"
+							bubbleColor="yellow"
+							:showTail="shouldShowTail(item, group.items)"
+							:mentions="item.mentions"
+						>
+							<template #status>
+								<IconNote class="text-yellow-600" size="16" />
+							</template>
+						</MessagePreview>
+						
+						<div 
+							v-if="item.direction === 'outbound' && assignedUser" 
+							class="pl-4 flex"
+						>
+							<Avatar
+								v-if="shouldShowTail(item, group.items)"
+								:label="assignedUser.name.charAt(0).toLocaleUpperCase()"
+								shape="circle"
+							/>
+							<div v-else class="pl-[24px]"></div>
+						</div>
+					</div>
+				</template>
 			</div>
 		</div>
 
-		<div 
-			class="flex flex-col gap-3 p-4 mx-6 mb-8 shadow rounded-lg mt-auto"
-			:class="[inputTab === 'REPLY' ? 'bg-white' : 'bg-yellow-50']"
-		>
-			<Tabs v-model:value="inputTab" lazy>
-				<TabList class="text-lg px-[3px]">
-					<Tab value="REPLY">
-						<div 
-							class="flex justify-center items-center text-inherit"
-						>
-							{{ $t('conversations.reply') }}
-						</div>
-					</Tab>
-					<Tab value="NOTES">
-						<div 
-							class="flex justify-center items-center text-inherit"
-						>
-							{{ $t('conversations.notes') }}
-						</div>
-					</Tab>
-				</TabList>
-			</Tabs>
-
-			<div class="relative w-full">
-				<MentionsSelect
-					:options="filteredUsers"
-					:show="showSelect"
-					@select="onSelectMention"
-				/>
-			
-				<Textarea
-					v-model="newMessage"
-					fluid 
-					class="text-lg!"
-					:class="[inputTab === 'REPLY' || disableReply ? 'bg-white' : 'bg-yellow-50!']"
-					:maxlength="1024"
-					:placeholder="inputTab === 'REPLY' ? $t('conversations.write_your_message') : $t('conversations.add_private_notes')"
-					variant="outlined"
-					size="large"
-					:disabled="disableReply"
-					@input="onInput"
-				/>
-			</div>
-
-			<div class="flex justify-between items-center">
-				<Button variant="text" @click="emojiPopover?.toggle($event)">
-					<IconMoodSmile size="18" />
-				</Button>
-
-				<Popover ref="emojiPopover" :dismissable="true" unstyled class="">
-					<EmojiPicker :native="true" @select="onSelectEmoji" />
-				</Popover>
-					
-				<Button
-					:disabled="sendDisabled"
-					@click="() => customEvent && inputTab === 'REPLY' ? emit('onCustomEvent') : sendMessage()"
-				>
-					<IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
-					<span v-else-if="customEvent && inputTab === 'REPLY'">
-						{{ customEvent }}
-					</span>
-					<span v-else>
-						{{ $t('send') }}
-					</span>
-				</Button>
-			</div>
+		<div class="flex flex-col gap-3 mx-6 mb-8 shadow rounded-lg mt-auto">
+			<ChatEditor
+				:users="users"
+				:loading="loading"
+				:disable="disableReply"
+				:customEvent="customEvent"
+				:replyMessage="reply"
+				@send="emit('onSendMessage', $event)"
+				@customEvent="emit('onCustomEvent')"
+				@onClearReply="replyMessage = undefined"
+			/>
 		</div>
 	</div>
 </template>
