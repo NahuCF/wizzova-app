@@ -2,8 +2,12 @@ import { ref, onUnmounted } from 'vue'
 import Pusher, { Channel } from 'pusher-js'
 
 type ChannelsMap = Record<string, Channel>
+interface Session {
+    token: string
+    tenantId: string
+}
 
-export const usePusher = () => {
+export const usePusher = (session: Session) => {
     const pusher = ref<Pusher | null>(null)
     const channels = ref<ChannelsMap>({})
 
@@ -17,6 +21,13 @@ export const usePusher = () => {
                 enabledTransports: ['ws', 'wss'],
                 disableStats: true,
                 cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+                auth: {
+                    headers: {
+                        Authorization: `Bearer ${session.token}`,
+                        'X-Tenant': session.tenantId,
+                    },
+                },
+                authEndpoint: `${import.meta.env.VITE_API_URL}/broadcasting/auth`,
             })
         }
     }
@@ -37,14 +48,10 @@ export const usePusher = () => {
     }
 
     onUnmounted(() => {
-        if (pusher.value) {
-            Object.keys(channels.value).forEach(channelName => {
-                pusher.value!.unsubscribe(channelName)
-            })
-            pusher.value.disconnect()
-            pusher.value = null
-        }
+        Object.keys(channels.value).forEach(name => pusher.value?.unsubscribe(name))
+        pusher.value?.disconnect()
+        pusher.value = null
     })
 
-    return { subscribe, unsubscribe, pusher }
+    return { subscribe, unsubscribe }
 }

@@ -3,25 +3,12 @@ import { IconPlus, IconSearch, IconFilter, IconX, IconStack,
 	IconUserPlus, IconPin, IconMessageDots, IconMessageCheck, IconLoader2 } from '@tabler/icons-vue'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'primevue'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useConversationStore } from '~/stores/conversations'
-import type { ConversationExists, ConversationFilters, ConversationItem, ConversationStatus } from '~/types'
-
-const props = defineProps<{
-	initialTab?: ConversationStatus,
-	conversations: ConversationItem[],
-	selectedConversation?: ConversationItem,
-	search: string,
-	searchType: 'contact' | 'message',
-	loading?: boolean
-}>()
+import type { ConversationExists, ConversationFilters, ConversationItem } from '~/types'
 
 const emit = defineEmits<{
-	(e: 'onTabChanged', value: ConversationStatus): void,
-	(e: 'update:selectedConversation', value?: ConversationItem): void,
-	(e: 'update:search', value?: string): void,
-	(e: 'update:searchType', value?: 'contact' | 'message'): void,
 	(e: 'onStartConversation', conversation: ConversationItem): void,
 	(e: 'navigateToConversation', conversationId: string): void
 }>()
@@ -29,11 +16,15 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const toast = useToast()
 const conversationStore = useConversationStore()
+const { 
+	selectedConversation,
+	searchType,
+	conversationTab
+} = storeToRefs(conversationStore)
 const { stats } = storeToRefs(conversationStore)
 
 const searchWrapper = ref()
 const focusSearch = ref(false)
-const currentTab = ref<ConversationStatus>(props.initialTab ?? 'unassigned')
 const filtersPopover = ref()
 const filters = ref<ConversationFilters>()
 const showStartConversationDialog = ref(false)
@@ -51,6 +42,9 @@ const searchTypes = ref([
 const selectOpen = ref(false)
 const conversationId = ref('')
 const assignedUser = ref()
+
+const conversations = computed(() => conversationStore.pagination.dataPage.data)
+const loading = computed(() => conversationStore.pagination.loading)
 
 const tabs = computed(() => [
 	{
@@ -94,7 +88,7 @@ const handleDocumentClick = (e: MouseEvent) => {
 
 
 const selectConversation = (conversation: ConversationItem) => {
-	emit('update:selectedConversation', conversation)
+	selectedConversation.value = conversation
 
 	if(conversation.unread_count > 0) {
 		// TODO: Mark messages as read in backend
@@ -140,10 +134,6 @@ const onApplyFilters = (newFilters: ConversationFilters) => {
 	}
 }
 
-watch(currentTab, (newTab) => {
-	emit('onTabChanged', newTab)
-})
-
 onMounted(() => document.addEventListener('click', handleDocumentClick))
 onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick))
 </script>
@@ -158,7 +148,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 				<Select
 					v-if="focusSearch"
 					:modelValue="searchType"
-					@update:modelValue="emit('update:searchType', $event)"
+					@update:modelValue="searchType = $event"
 					class="flex-1"
 					:options="searchTypes" 
 					:placeholder="$t('Select user')"
@@ -173,8 +163,8 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 						class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
 					/>
 					<InputText
-						:modelValue="props.search"
-						@update:modelValue="emit('update:search', $event)"
+						:modelValue="conversationStore.pagination.searchTerm"
+						@update:modelValue="conversationStore.pagination.searchTerm = $event || ''"
 						class="pl-8! pr-8! shadow-none!"
 						name="search"
 						id="search"
@@ -184,10 +174,10 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 						@focus="focusSearch = true"
 					/>
 					<IconX 
-						v-if="props.search.length > 0"
+						v-if="conversationStore.pagination.searchTerm.length > 0"
 						class="mr-2 absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 cursor-pointer"
 						size="14"
-						@click.stop="emit('update:search', '')"
+						@click.stop="conversationStore.pagination.searchTerm = ''"
 					/>
 				</div>
 			</div>
@@ -246,7 +236,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 		</div>
 
 		<div v-if="!focusSearch && !filters?.status">
-			<Tabs v-model:value="currentTab" lazy>
+			<Tabs v-model:value="conversationTab" lazy>
 				<TabList class="text-lg px-[3px]">
 					<Tab v-for="tab in tabs" :value="tab.value" class="flex-1">
 						<div 
@@ -271,7 +261,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 			</Tabs>
 		</div>
 
-		<div v-if="!loading && conversations.length > 0" @click="emit('update:selectedConversation')" class="flex-1">
+		<div v-if="!loading && conversations.length > 0" @click="selectedConversation = undefined" class="flex-1">
 			<ConversationItem
 				v-for="conversation in conversations"
 				:key="conversation.id"

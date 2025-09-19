@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
+import { useConversationChannels } from '~/composables/pusher/useConversationChannels'
 import { useContactUtils } from '~/composables/useContactUtils'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import { usePaginatedData } from '~/composables/usePaginatedData'
@@ -7,48 +9,24 @@ import { API } from '~/services'
 import { useSessionStore, useUserStore } from '~/stores'
 import { useConversationStore } from '~/stores/conversations'
 import type { 
-	TemplateItem,  ConversationItem, ConversationStatus, 
-	CreateMessage, MessageItem, UserItem,
-	ContactItem,
-	ConversationActivity
+	TemplateItem,  ConversationItem, CreateMessage, 
+	MessageItem, ContactItem, ConversationActivity
 } from '~/types'
 
 const sessionStore = useSessionStore()
-const conversationTab = ref<ConversationStatus>('mine')
-const searchType = ref<'contact' | 'message'>('contact')
+const conversationStore = useConversationStore()
+const {
+	selectedConversation,
+	changingSolved,
+	changingOwner
+} = storeToRefs(conversationStore)
 const templates = ref<TemplateItem[]>([])
 
-const {
-    dataPage: conversations,
-    loading: loadingConversations,
-    rowsPerPage: conversationsPerPage,
-	searchTerm,
-    fetchDataPage: fetchConversations,
-	debouncedFetch
-} = usePaginatedData<ConversationItem>(
-    (page, rows_per_page, search) => {
-		const statusFilter = {
-			unassigned: { only_unassigned: true },
-			mine: sessionStore.user && { user_id: sessionStore.user?.id },
-			mentioned: sessionStore.user && { user_id: sessionStore.user?.id, only_pinned: true },
-			opened: { only_opened: true },
-			resolved: { only_solved: true }
-		}
-
-		return API.conversation.index({
-			page,
-			rows_per_page,
-			search,
-			search_type: search ? searchType.value : undefined,
-			...statusFilter[conversationTab.value]
-		}).then(res => res.data)
-	},
-    15
-)
 const {
     dataPage: messages,
     rowsPerPage: messagesPerPage,
     fetchDataPage: fetchMessages,
+	loadNextPage: loadMoreMessages
 } = usePaginatedData<MessageItem>(
     async (page, rows_per_page) => {
 		if(!selectedConversation.value) return new Promise(resolve => resolve([]))
@@ -70,18 +48,55 @@ const {
 	},
     15
 )
+
+if(sessionStore.tenant && sessionStore.defaultWaba) {
+	useConversationChannels(
+		{ 
+			token: sessionStore.token, 
+			tenantId: sessionStore.tenant.id, 
+			wabaId: sessionStore.defaultWaba.id
+		},
+		{
+			onNewConversation: ({ conversation }) => {
+				console.log('new conversation: ', conversation)
+				if(!conversations.value.find(c => c.id === conversation.id)) {
+					conversations.value.unshift(conversation)
+				}
+			},
+			onOwnerChanged: (payload) => {
+				console.log('owner changed: ', payload)
+				// update owner in conversations list
+			},
+			onNewMessage: ({ message }) => {
+				console.log('new message: ', message)
+
+				if (selectedConversation.value?.id === message.conversation_id &&
+					!messages.value.data.find(m => m.id === message.id)
+				) {
+					messages.value.data.push(message)
+				}
+			},
+			onMessageDelivered: ({ message }) => {
+				console.log('message delivered: ', message)
+				// mark delivered in messages list
+			}
+		}
+	)
+}
+
 const userStore = useUserStore()
-const { fetchStats } = useConversationStore()
 const handleError = useErrorHandler()
 const { getContactName, getContactPhone } = useContactUtils()
 
-const selectedConversation = ref<ConversationItem>()
 const showStartConversationDialog = ref(false)
 const showTemplateDialog = ref(false)
 const sendingMessage = ref(false)
-const changingSolved = ref(false)
-const changingOwner = ref(false)
 const activities = ref<ConversationActivity[]>([])
+
+const conversations = computed({
+	get: () => conversationStore.pagination.dataPage.data,
+  	set: (val) => (conversationStore.pagination.dataPage.data = val)
+})
 
 const disableReply = computed(() => 
 	selectedConversation.value?.is_solved || 
@@ -92,54 +107,7 @@ const disableReply = computed(() =>
 const startConversation = (conversation: ConversationItem) => {
 	showStartConversationDialog.value = false
 	selectedConversation.value = conversation
-	fetchConversations(1, conversationsPerPage.value)
-}
-
-const tabChanged = (tab: ConversationStatus) => {
-	conversationTab.value = tab
-	fetchConversations(1, conversationsPerPage.value)
-	fetchStats(conversationTab.value)
-}
-
-const changeOwner = async (newOwner?: UserItem) => {
-	if(!selectedConversation.value || !newOwner) return
-
-	changingOwner.value = true
-	try {
-		const ownerId = newOwner.id !== 'not_assigned' ? newOwner.id : undefined
-
-		const { data: response } = await API.conversation.changeOwner(selectedConversation.value.id, ownerId)
-
-		selectedConversation.value = {
-			...selectedConversation.value,
-			...response.data
-		}
-
-		fetchConversations(1, conversationsPerPage.value)
-		fetchStats(conversationTab.value)
-	} catch(error) {
-		handleError(error)
-	} finally {
-		changingOwner.value = false
-	}
-}
-
-const changeSolved = async (solved: boolean) => {
-	if(!selectedConversation.value) return
-
-	changingSolved.value = true
-	try {
-		const { data: response } = await API.conversation.changeSolved(selectedConversation.value?.id, solved)
-		selectedConversation.value = {
-			...selectedConversation.value,
-			...response.data
-		}
-
-		fetchConversations(1, conversationsPerPage.value)
-		fetchStats(conversationTab.value)
-	} finally {
-		changingSolved.value = false
-	}
+	conversationStore.pagination.fetchDataPage()
 }
 
 const sendTextMessage = async ({ message, type, mentions, replyId }: {
@@ -192,8 +160,6 @@ const sendMessage = async (newMessage: CreateMessage) => {
 	} finally {
 		sendingMessage.value = false
 	}
-
-	// TODO: Update new messages and messages states through socket updates
 }
 
 const hasTemplate = (templateId: string) => {
@@ -214,20 +180,20 @@ const addTemplate = async (templateId: string) => {
 }
 
 const navigateToConversation = async (conversationId: string) => {
-	const index = conversations.value.data.findIndex(c => c.id === conversationId)
+	const index = conversations.value.findIndex(c => c.id === conversationId)
 	if (index >= 0) {
-		const first = conversations.value.data[0]
-		conversations.value.data[0] = conversations.value.data[index]
-		conversations.value.data[index] = first
+		const first = conversations.value[0]
+		conversations.value[0] = conversations.value[index]
+		conversations.value[index] = first
 
-		selectedConversation.value = conversations.value.data[0]
+		selectedConversation.value = conversations.value[0]
 		return
 	}
 
 	try {
 		const { data: response } = await API.conversation.get(conversationId)
-		conversations.value.data.unshift(response.data)
-		selectedConversation.value = conversations.value.data[0]
+		conversations.value.unshift(response.data)
+		selectedConversation.value = conversations.value[0]
 	} catch(error) {
 		handleError(error)
 	}
@@ -240,7 +206,7 @@ const updateContact = (contact: ContactItem) => {
 			contact
 		}
 		
-		conversations.value.data = conversations.value.data.map(conv =>
+		conversations.value = conversations.value.map(conv =>
 			conv.id === selectedConversation.value?.id
 				? { ...conv, contact }
 				: conv
@@ -267,31 +233,16 @@ watch(selectedConversation, () => {
 		messages.value.data = []
 	}
 })
-watch(() => selectedConversation.value?.assigned_user, () => {
-	if(selectedConversation.value && !selectedConversation.value?.assigned_user) {
-		selectedConversation.value.assigned_user = { ...userStore.notAssigned }
-	}
-})
-
-watch(searchTerm, () => debouncedFetch())
-watch(searchType, () => debouncedFetch())
 
 userStore.fetchUsers()
-fetchStats(conversationTab.value)
-fetchConversations(1, conversationsPerPage.value)
+conversationStore.fetchStats()
+conversationStore.pagination.fetchDataPage()
 </script>
 
 <template>
 	<div class="grid grid-cols-5 h-full">
 		<ConversationsPanel
-			v-model:selectedConversation="selectedConversation"
-			v-model:searchType="searchType"
-			v-model:search="searchTerm"
-			:conversations="conversations.data"
-			:loading="loadingConversations"
-			:initialTab="conversationTab"
 			@onStartConversation="startConversation"
-			@onTabChanged="tabChanged"
 			@navigateToConversation="navigateToConversation"
 		/>
 
@@ -314,8 +265,8 @@ fetchConversations(1, conversationsPerPage.value)
 				:conversation="selectedConversation"
 				:changingSolved="changingSolved"
 				:changingOwner="changingOwner"
-				@onSolved="changeSolved($event)"
-				@onChangeOwner="changeOwner($event)"
+				@onSolved="conversationStore.changeSolved($event)"
+				@onChangeOwner="conversationStore.changeOwner($event)"
 			/>
 			
 			<div class="grid grid-cols-4 h-full overflow-hidden">
@@ -333,6 +284,7 @@ fetchConversations(1, conversationsPerPage.value)
 					:users="userStore.users"
 					@onSendMessage="sendTextMessage"
 					@onCustomEvent="showTemplateDialog = true"
+					@scrollBottomReached="loadMoreMessages"
 				/>
 
 				<div class="bg-white border-l-2 border-slate-100">

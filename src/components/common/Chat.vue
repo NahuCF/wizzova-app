@@ -2,7 +2,7 @@
 import 'vue3-emoji-picker/css'
 import { IconNote } from '@tabler/icons-vue'
 import moment from 'moment'
-import { computed, ref } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ConversationActivity, MessageItem, TemplateItem, UserItem } from '~/types'
 
@@ -29,12 +29,16 @@ const emit = defineEmits<{
 		mentions: Record<string, string>[],
 		replyId?: string
 	}): void
-	(e: 'onCustomEvent'): void
+	(e: 'onCustomEvent'): void,
+	(e: 'scrollTopReached'): void,
+	(e: 'scrollBottomReached'): void
 }>()
 
 const { t } = useI18n()
 
 const replyMessage = ref<MessageItem>()
+const chatScroll = ref<HTMLDivElement>()
+const isAtBottom = ref(true)
 
 const reply = computed(() => {
 	if(replyMessage.value) {
@@ -145,11 +149,57 @@ const getReply = (item: MessageItem) => {
 	
 	return undefined
 }
+
+// const scrollToBottom = (smooth = false) => {
+// 	const el = chatScroll.value
+// 	if (!el) return
+
+// 	el.scrollTo({
+// 		top: el.scrollHeight,
+// 		behavior: smooth ? 'smooth' : 'auto'
+// 	})
+// }
+
+const onScroll = () => {
+	const el = chatScroll.value
+	if (!el) return
+
+	const threshold = 10
+	isAtBottom.value = el.scrollTop + el.clientHeight >= el.scrollHeight - threshold
+	if (el.scrollTop === 0) {
+		emit('scrollTopReached')
+	}
+	if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+		emit('scrollBottomReached')
+	}
+}
+
+// watch(
+// 	() => [props.messages.length, props.activities.length],
+// 	async ([msgLen, actLen], [oldMsgLen, oldActLen]) => {
+// 		await nextTick()
+// 		if (!chatScroll.value) return
+
+// 		if (oldMsgLen === 0 && msgLen > 0) {
+// 			scrollToBottom()
+// 			return
+// 		}
+// 		if (oldActLen === 0 && actLen > 0) {
+// 			scrollToBottom()
+// 			return
+// 		}
+// 		if (isAtBottom.value) scrollToBottom(true)
+// 	}
+// )
 </script>
 
 <template>
 	<div class="flex flex-col flex-1 h-full chat-background overflow-hidden">
-		<div class="flex flex-col px-4 py-12 gap-8 overflow-y-auto">
+		<div
+			ref="chatScroll"
+			class="flex flex-col px-4 py-12 gap-8 overflow-y-auto"
+			@scrollend="onScroll"
+		>
 			<div class="flex flex-col gap-3" v-for="group in groupedTimeline" :key="group.date">
 				<Divider class="my-20!" align="center" type="solid">
 					<span class="bg-gray-200 text-gray-600 text-lg px-8 py-2 rounded-full">
