@@ -81,6 +81,12 @@ export interface CreateMessage {
 	mentions?: Record<string, string>[]
 }
 
+export interface MessageDelivered {
+	message_id: string,
+	conversation_id: string,
+	status: MessageStatus
+}
+
 export type MentionItem = { id: string, label: string }
 
 export interface ConversationStats {

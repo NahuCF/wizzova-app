@@ -6,21 +6,19 @@ import { useContactUtils } from '~/composables/useContactUtils'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
-import { useSessionStore, useUserStore } from '~/stores'
+import { useUserStore } from '~/stores'
 import { useConversationStore } from '~/stores/conversations'
 import type { 
 	TemplateItem,  ConversationItem, CreateMessage, 
 	MessageItem, ContactItem, ConversationActivity
 } from '~/types'
 
-const sessionStore = useSessionStore()
 const conversationStore = useConversationStore()
 const {
 	selectedConversation,
 	changingSolved,
-	changingOwner
+	changingOwner,
 } = storeToRefs(conversationStore)
-const templates = ref<TemplateItem[]>([])
 
 const {
     dataPage: messages,
@@ -49,49 +47,16 @@ const {
     15
 )
 
-if(sessionStore.tenant && sessionStore.defaultWaba) {
-	useConversationChannels(
-		{ 
-			token: sessionStore.token, 
-			tenantId: sessionStore.tenant.id, 
-			wabaId: sessionStore.defaultWaba.id
-		},
-		{
-			onNewConversation: ({ conversation }) => {
-				console.log('new conversation: ', conversation)
-				if(!conversations.value.find(c => c.id === conversation.id)) {
-					conversations.value.unshift(conversation)
-				}
-			},
-			onOwnerChanged: (payload) => {
-				console.log('owner changed: ', payload)
-				// update owner in conversations list
-			},
-			onNewMessage: ({ message }) => {
-				console.log('new message: ', message)
-
-				if (selectedConversation.value?.id === message.conversation_id &&
-					!messages.value.data.find(m => m.id === message.id)
-				) {
-					messages.value.data.push(message)
-				}
-			},
-			onMessageDelivered: ({ message }) => {
-				console.log('message delivered: ', message)
-				// mark delivered in messages list
-			}
-		}
-	)
-}
-
 const userStore = useUserStore()
 const handleError = useErrorHandler()
 const { getContactName, getContactPhone } = useContactUtils()
+useConversationChannels(messages)
 
 const showStartConversationDialog = ref(false)
 const showTemplateDialog = ref(false)
 const sendingMessage = ref(false)
 const activities = ref<ConversationActivity[]>([])
+const templates = ref<TemplateItem[]>([])
 
 const conversations = computed({
 	get: () => conversationStore.pagination.dataPage.data,

@@ -30,6 +30,7 @@ export const useConversationStore = defineStore('conversation', () => {
 		rowsPerPage,
 		searchTerm,
 		fetchDataPage,
+		loadNextPage,
 		debouncedFetch
 	} = usePaginatedData<ConversationItem>(
 		(page, rows_per_page, search) => {
@@ -140,6 +141,7 @@ export const useConversationStore = defineStore('conversation', () => {
 			rowsPerPage,
 			searchTerm,
 			fetchDataPage,
+			loadNextPage,
 			debouncedFetch
 		},
 		conversationTab,

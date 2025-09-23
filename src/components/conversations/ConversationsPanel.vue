@@ -42,6 +42,7 @@ const searchTypes = ref([
 const selectOpen = ref(false)
 const conversationId = ref('')
 const assignedUser = ref()
+const conversationScroll = ref()
 
 const conversations = computed(() => conversationStore.pagination.dataPage.data)
 const loading = computed(() => conversationStore.pagination.loading)
@@ -134,12 +135,23 @@ const onApplyFilters = (newFilters: ConversationFilters) => {
 	}
 }
 
+const onScroll = () => {
+	const el = conversationScroll.value
+	if (!el) return
+
+	const reachedBottom = el.scrollTop + el.clientHeight >= el.scrollHeight
+
+	if (reachedBottom && !loading.value) {
+		conversationStore.pagination.loadNextPage()
+	}
+}
+
 onMounted(() => document.addEventListener('click', handleDocumentClick))
 onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick))
 </script>
 
 <template>
-	<div class="flex flex-col bg-white h-full">
+	<div class="flex flex-col bg-white h-full overflow-hidden">
 		<div class="flex gap-3 p-6">
 			<div
 				ref="searchWrapper"
@@ -261,7 +273,13 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 			</Tabs>
 		</div>
 
-		<div v-if="!loading && conversations.length > 0" @click="selectedConversation = undefined" class="flex-1">
+		<div
+			v-if="conversations.length > 0"
+			ref="conversationScroll"
+			class="overflow-y-auto max-h-full"
+			@click="selectedConversation = undefined"
+			@scrollend="onScroll"
+		>
 			<ConversationItem
 				v-for="conversation in conversations"
 				:key="conversation.id"
@@ -273,7 +291,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 		<div v-else-if="!loading" class="flex justify-center p-8">
 			<div class="text-center text-gray-400">{{ $t('conversations.no_conversations_found') }}</div>
 		</div>
-		<div v-else class="flex justify-center p-8">
+		<div v-if="loading" class="flex justify-center p-8">
 			<IconLoader2 class="animate-spin text-emerald-500" size="24" />
 		</div>
 

@@ -1,13 +1,12 @@
 import { ref, onUnmounted } from 'vue'
 import Pusher, { Channel } from 'pusher-js'
+import { useSessionStore } from '~/stores'
 
 type ChannelsMap = Record<string, Channel>
-interface Session {
-    token: string
-    tenantId: string
-}
 
-export const usePusher = (session: Session) => {
+export const usePusher = () => {
+    const sessionStore = useSessionStore()
+    
     const pusher = ref<Pusher | null>(null)
     const channels = ref<ChannelsMap>({})
 
@@ -23,8 +22,8 @@ export const usePusher = (session: Session) => {
                 cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
                 auth: {
                     headers: {
-                        Authorization: `Bearer ${session.token}`,
-                        'X-Tenant': session.tenantId,
+                        Authorization: `Bearer ${sessionStore.token}`,
+                        'X-Tenant': sessionStore.tenant?.id,
                     },
                 },
                 authEndpoint: `${import.meta.env.VITE_API_URL}/broadcasting/auth`,
