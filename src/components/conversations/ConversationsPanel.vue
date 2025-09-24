@@ -163,7 +163,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 					@update:modelValue="searchType = $event"
 					class="flex-1"
 					:options="searchTypes" 
-					:placeholder="$t('Select user')"
+					:placeholder="$t('conversations.filters.select_user')"
 					optionLabel="name"
 					optionValue="id"
 					@show="selectOpen = true"

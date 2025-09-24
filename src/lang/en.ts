@@ -717,7 +717,9 @@ Grab them today!`,
     note: 'Note',
     conversation_assigned_to: 'There is a conversation in progress already assigned to user {user}',
     write_your_message: 'Write your message...',
-    add_private_notes: 'Add your private notes'
+    add_private_notes: 'Add your private notes',
+    search_messages: 'Search Messages',
+    no_messages_found: 'No messages found'
   },
   next: 'Next',
   back: 'Back',

@@ -716,7 +716,9 @@ export default {
     conversation_assigned_to: 'Ya hay una conversación en curso asignada al usuario {user}',
     note: 'Nota',
     write_your_message: 'Escribe tu mensaje...',
-    add_private_notes: 'Agrega tus notas privadas'
+    add_private_notes: 'Agrega tus notas privadas',
+    search_messages: 'Buscar Mensajes',
+    no_messages_found: 'No se encontraron mensajes'
   },
   next: 'Siguiente',
   back: 'Volver',

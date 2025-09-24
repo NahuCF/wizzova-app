@@ -2,7 +2,7 @@
 import 'vue3-emoji-picker/css'
 import { IconNote } from '@tabler/icons-vue'
 import moment from 'moment'
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ConversationActivity, MessageItem, TemplateItem, UserItem } from '~/types'
 

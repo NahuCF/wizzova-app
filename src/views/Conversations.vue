@@ -57,6 +57,7 @@ const showTemplateDialog = ref(false)
 const sendingMessage = ref(false)
 const activities = ref<ConversationActivity[]>([])
 const templates = ref<TemplateItem[]>([])
+const searchingContact = ref(false)
 
 const conversations = computed({
 	get: () => conversationStore.pagination.dataPage.data,
@@ -232,6 +233,7 @@ conversationStore.pagination.fetchDataPage()
 				:changingOwner="changingOwner"
 				@onSolved="conversationStore.changeSolved($event)"
 				@onChangeOwner="conversationStore.changeOwner($event)"
+				@onSearch="searchingContact = true"
 			/>
 			
 			<div class="grid grid-cols-4 h-full overflow-hidden">
@@ -252,9 +254,11 @@ conversationStore.pagination.fetchDataPage()
 					@scrollBottomReached="loadMoreMessages"
 				/>
 
-				<div class="bg-white border-l-2 border-slate-100">
+				<div class="bg-white border-l-2 border-slate-100 h-full overflow-hidden">
 					<ContactPanel
+						v-model:isSearching="searchingContact"
 						:contact="selectedConversation.contact"
+						:conversationId="selectedConversation.id"
 						@onContactUpdated="updateContact"
 					/>
 				</div>

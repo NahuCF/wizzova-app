@@ -13,7 +13,8 @@ defineProps<{
 
 const emit = defineEmits<{
 	(e: 'onSolved', value: boolean): void,
-	(e: 'onChangeOwner', value?: UserItem): void
+	(e: 'onChangeOwner', value?: UserItem): void,
+	(e: 'onSearch'): void
 }>()
 
 const userStore = useUserStore()
@@ -101,7 +102,7 @@ const onChangeOwner = (value: string) =>  {
 				severity="secondary"
 				variant="text"
 				class="min-w-[32px]! h-[32px]!"
-				@click="() => {}"
+				@click="emit('onSearch')"
 			>
 				<div>
 					<IconSearch size="18" />
