@@ -65,3 +65,12 @@ export interface Column {
 }
 
 export type LayoutMode = 'LIST' | 'GRID'
+
+export interface MenuItem {
+  name: string
+  path?: string
+  icon: any
+  collapse?: boolean
+  permission?: string
+  children?: MenuItem[]
+}

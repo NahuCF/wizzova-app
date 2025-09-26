@@ -51,41 +51,6 @@ const routes = [
         ]
       },
       {
-        path: '/templates',
-        children: [
-          {
-            path: '',
-            name: 'templates',
-            meta: { titleKey: 'templates.title' },
-            component: Templates,
-          },
-          {
-            path: 'new',
-            name: 'new-template',
-            meta: { titleKey: 'new_template.title' },
-            component: NewTemplate,
-          },
-          {
-            path: ':id/edit',
-            name: 'edit-template',
-            meta: { titleKey: 'edit_template.title' },
-            component: NewTemplate,
-            props: { isEdit: true }
-          }
-        ],
-      },
-      {
-        path: '/contact-fields',
-        children: [
-          {
-            path: '',
-            name: 'contact-fields',
-            meta: { titleKey: 'contact_fields.title' },
-            component: ContactFields
-          }
-        ]
-      },
-      {
         path: '/contacts',
         children: [
           {
@@ -113,7 +78,42 @@ const routes = [
               permissions: ['settings.manage_user_roles_and_teams', 'settings.view_user_roles_and_teams']
             },
             component: UsersTeamsRoles
-          }
+          },
+          {
+            path: 'contact-fields',
+            children: [
+              {
+                path: '',
+                name: 'contact-fields',
+                meta: { titleKey: 'contact_fields.title' },
+                component: ContactFields
+              }
+            ]
+          },
+          {
+            path: 'templates',
+            children: [
+              {
+                path: '',
+                name: 'templates',
+                meta: { titleKey: 'templates.title' },
+                component: Templates,
+              },
+              {
+                path: 'new',
+                name: 'new-template',
+                meta: { titleKey: 'new_template.title' },
+                component: NewTemplate,
+              },
+              {
+                path: ':id/edit',
+                name: 'edit-template',
+                meta: { titleKey: 'edit_template.title' },
+                component: NewTemplate,
+                props: { isEdit: true }
+              }
+            ],
+          },
         ]
       }
     ],

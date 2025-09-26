@@ -23,7 +23,7 @@ const endSession = () => {
 
 <template>
 	<div class="flex h-screen bg-slate-100">
-		<TheSidebar />
+		<AppSidebar />
 		<RouterView v-slot="{ Component, route }">
 			<transition name="fade" mode="out-in">
 				<main class="w-full overflow-y-auto">

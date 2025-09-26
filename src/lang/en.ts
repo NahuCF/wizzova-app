@@ -746,5 +746,19 @@ Grab them today!`,
     reopened: '{user_name} has reopened this chat at {time}',
     conversation_started: '{user_name} has started the conversation at {time}',
     conversation_expired: 'The conversation has expired at {time}'
+  },
+  app_sidebar: {
+    routes: {
+      broadcasts: 'Broadcasts',
+      conversations: 'Conversations',
+      contacts: 'Contacts',
+      settings: 'Settings',
+      templates: 'Templates',
+      contact_fields: 'Contact Fields',
+      users_teams_roles: 'Users, Teams & Roles',
+      profile: 'Profile',
+      subscription: 'Subscription'
+    },
+    logout: 'Logout'
   }
 }

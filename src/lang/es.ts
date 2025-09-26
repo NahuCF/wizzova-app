@@ -249,7 +249,7 @@ export default {
   required: '{field} es requerido!',
   contact_fields: {
     title: 'Campos de contacto',
-    field_collection: 'Colección de campos',
+    field_collection: 'Campos de contacto',
     add: 'Agregar',
     not_found: 'No se encontraron campos de contacto',
     no_more_to_load: 'No hay más para cargar',
@@ -745,5 +745,19 @@ export default {
     reopened: '{user_name} há re abierto este chat a las {time}',
     conversation_started: '{user_name} há iniciado la conversación a las {time}',
     conversation_expired: 'La conversación ha expirado a las {time}'
+  },
+  app_sidebar: {
+    routes: {
+      broadcasts: 'Campañas',
+      conversations: 'Conversaciones',
+      contacts: 'Contactos',
+      settings: 'Configuración',
+      templates: 'Plantillas',
+      contact_fields: 'Campos de contacto',
+      users_teams_roles: 'Usuarios, Equipos y Roles',
+      profile: 'Perfil',
+      subscription: 'Subscripción'
+    },
+    logout: 'Salir'
   }
 }
