@@ -9,6 +9,7 @@ import NewTemplate from '~/views/NewTemplate.vue'
 import UsersTeamsRoles from '~/views/settings/UsersTeamsRoles.vue'
 import Templates from '~/views/Templates.vue'
 import BroadcastDetails from '~/views/BroadcastDetails.vue'
+import Bots from '~/views/Bots.vue'
 
 const routes = [
   {
@@ -64,6 +65,17 @@ const routes = [
             name: 'contacts-import',
             meta: { titleKey: 'contacts.title' },
             component: ContactImports
+          }
+        ]
+      },
+      {
+        path: '/bots',
+        children: [
+          {
+            path: '',
+            name: 'bots',
+            meta: { titleKey: 'bots.title' },
+            component: Bots
           }
         ]
       },

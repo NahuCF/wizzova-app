@@ -105,7 +105,8 @@ export default {
     'A role with this name already exists': 'Ya existe un rol con este nombre',
     'This role is internal and cannot be updated': 'Este rol es interno y no puede actualizarce',
     'A team with this name already exists': 'Ya existe un equipo con este nombre',
-    'contact_has_active_broadcasts': 'No se puede modificar un contacto cuando tiene campañas activas'
+    'contact_has_active_broadcasts': 'No se puede modificar un contacto cuando tiene campañas activas',
+    'bot_already_exists': 'El bot ya existe'
   },
   submit_for_review: 'Enviar para revision',
   template_name: 'Nombre del template',
@@ -413,6 +414,10 @@ export default {
   yesterday: 'Ayer',
   imported_by: 'Importado por: {author}',
   imported_at: 'Importado en: {date}',
+  created_by: 'Creado por: {author}',
+  created_at: 'Creado en: {date}',
+  updated_by: 'Actualizado por: {author}',
+  updated_at: 'Actualizado en: {date}',
   contact_imports: {
     title: 'Importar contacto',
     empty: 'No se encontraron contactos importados',
@@ -751,6 +756,7 @@ export default {
       broadcasts: 'Campañas',
       conversations: 'Conversaciones',
       contacts: 'Contactos',
+      bots: 'Bots',
       settings: 'Configuración',
       templates: 'Plantillas',
       contact_fields: 'Campos de contacto',
@@ -759,5 +765,33 @@ export default {
       subscription: 'Subscripción'
     },
     logout: 'Salir'
+  },
+  bots: {
+    title: 'Bots',
+    add_bot: 'Agregar bot',
+    empty: 'No se encontraron bots',
+    headers: {
+      name: 'Nombre',
+      triggers: 'Disparadores',
+      sessions: 'Sesiones',
+      completed: 'Terminados',
+      abandoned: 'Abandonados',
+      status: 'Estado'
+    },
+    sessions_tooltip: 'Cantidad de veces que este bot se ha disparado.',
+    completed_tooltip: 'Veces que se llegó al final del bot.',
+    abandoned_tooltip: 'Veces que el usuario abandonó el chat.',
+    status: {
+      draft: 'Borrador',
+      active: 'Activo',
+      archived: 'Archivado'
+    },
+    last_updated: 'Ultima actualización {date}',
+    any_message: 'Cualquier mensaje',
+    actions: {
+      publish: 'Publicar',
+      edit: 'Editar',
+      clone: 'Clonar'
+    }
   }
 }

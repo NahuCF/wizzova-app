@@ -20,6 +20,7 @@ import RoleService from './RoleService'
 import WabaService from './WabaService'
 import ConversationService from './ConversationService'
 import MessageService from './MessageService'
+import BotService from './BotService.mock'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -27,6 +28,7 @@ export { default as TemplateHeaderService } from './TemplateHeaderService'
 
 export const API = {
     auth: AuthService,
+    bot: BotService,
     broadcast: BroadcastService,
     contact: ContactService,
     contactField: ContactFieldService,

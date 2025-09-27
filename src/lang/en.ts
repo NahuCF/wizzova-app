@@ -105,7 +105,8 @@ export default {
     'A role with this name already exists': 'A role with this name already exists',
     'This role is internal and cannot be updated': 'This role is internal and cannot be updated',
     'A team with this name already exists': 'A team with this name already exists',
-    'contact_has_active_broadcasts': 'Cannot modify contact while it has active broadcasts'
+    'contact_has_active_broadcasts': 'Cannot modify contact while it has active broadcasts',
+    'bot_already_exists': 'Bot already exists'
   },
   submit_for_review: 'Submit for review',
   template_name: 'Template name',
@@ -471,6 +472,10 @@ Grab them today!`,
   yesterday: 'Yesterday',
   imported_by: 'Imported by: {author}',
   imported_at: 'Imported at: {date}',
+  created_by: 'Created by: {author}',
+  created_at: 'Created at: {date}',
+  updated_by: 'Updated by: {author}',
+  updated_at: 'Updated at: {date}',
   continue: 'Continue',
   leave: 'Leave',
   unsaved_changes: 'Unsaved changes',
@@ -752,6 +757,7 @@ Grab them today!`,
       broadcasts: 'Broadcasts',
       conversations: 'Conversations',
       contacts: 'Contacts',
+      bots: 'Bots',
       settings: 'Settings',
       templates: 'Templates',
       contact_fields: 'Contact Fields',
@@ -760,5 +766,33 @@ Grab them today!`,
       subscription: 'Subscription'
     },
     logout: 'Logout'
+  },
+  bots: {
+    title: 'Bots',
+    add_bot: 'Add bot',
+    empty: 'No bots found',
+    headers: {
+      name: 'Name',
+      triggers: 'Triggers',
+      sessions: 'Sessions',
+      completed: 'Completed',
+      abandoned: 'Abandoned',
+      status: 'Status'
+    },
+    sessions_tooltip: 'Number of times this bot has been triggered.',
+    completed_tooltip: 'Number of times the bot reached its end.',
+    abandoned_tooltip: 'Number of times the user left the chat.',
+    status: {
+      draft: 'Draft',
+      active: 'Active',
+      archived: 'Archived'
+    },
+    last_updated: 'Last updated {date}',
+    any_message: 'Any message',
+    actions: {
+      publish: 'Publish',
+      edit: 'Edit',
+      clone: 'Clone'
+    }
   }
 }

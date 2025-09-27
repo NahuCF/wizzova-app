@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T">
 import type { DataTablePageEvent } from 'primevue'
-import { IconDotsVertical } from '@tabler/icons-vue'
+import { IconDotsVertical, IconInfoCircle } from '@tabler/icons-vue'
 import { computed, ref } from 'vue'
 import type { ActionGenerator, Column } from '~/types'
 
@@ -120,8 +120,20 @@ const openActionMenu = (event: MouseEvent, actions: ActionGenerator<T>, item: T)
 				:bodyStyle="column.bodyStyle"
 			>
 				<template #header>
-					<div class="uppercase font-semibold text-base">
+					<div v-if="!column.tooltip" class="uppercase font-semibold text-base">
 						{{ column.header }}
+					</div>
+
+					<div v-else class="flex gap-1 items-center uppercase font-semibold text-base">
+						{{ column.header }}
+						<div
+							v-tooltip.bottom="{
+								value: column.tooltip,
+								class: 'max-w-[250px]!'
+							}"
+						>
+							<IconInfoCircle class="hover:cursor-pointer" size="14" />
+						</div>
 					</div>
 				</template>
 

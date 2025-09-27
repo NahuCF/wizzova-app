@@ -61,7 +61,8 @@ export interface Column {
   header: string,
   type?: ColumnType,
   key: string,
-  bodyStyle?: Record<string, string>
+  bodyStyle?: Record<string, string>,
+  tooltip?: string
 }
 
 export type LayoutMode = 'LIST' | 'GRID'

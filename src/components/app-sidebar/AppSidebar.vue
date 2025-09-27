@@ -4,7 +4,8 @@ import { IconSpeakerphone, IconLayout, IconUsers, IconAddressBook,
 	IconLogout, IconLoader2, IconForms, IconMessage, 
 	IconSettings2,
 	IconUser,
-	IconCrown} from '@tabler/icons-vue'
+	IconCrown,
+	IconRobot} from '@tabler/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import { API } from '~/services'
 import { defineStore, getActivePinia, storeToRefs } from 'pinia'
@@ -43,6 +44,12 @@ const sidebarMenu: MenuItem[] = [
 		name: t('app_sidebar.routes.contacts'),
 		path: '/contacts',
 		icon: IconAddressBook,
+		permission: 'contact.view_and_manage_contact'
+	},
+	{
+		name: t('app_sidebar.routes.bots'),
+		path: '/bots',
+		icon: IconRobot,
 		permission: 'contact.view_and_manage_contact'
 	},
 	{
