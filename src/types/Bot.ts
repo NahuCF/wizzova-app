@@ -8,8 +8,10 @@ export interface BotItem {
 	id: string
 	name: string
 	trigger_type: BotTriggerType
-	keywords?: string[]
-	keyword_match_type?: BotMatchType
+	keywords?: {
+		value: string,
+		case_match: boolean
+	}[]
 	sessions: number
 	completed_percentage: number
 	abandoned_percentage: number
@@ -20,11 +22,14 @@ export interface BotItem {
 	updated_at: string
 }
 
-export interface CreateBot {
+export interface BotCreate {
+	id: string,
 	name: string
 	trigger_type: BotTriggerType
-	keywords?: string[]
-	keyword_match_type?: BotMatchType
+	keywords?: {
+		value: string,
+		case_match: boolean
+	}[]
 }
 
 export interface BotTriggerTag {

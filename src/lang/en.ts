@@ -735,6 +735,8 @@ Grab them today!`,
   actions: 'Actions',
   new: 'New',
   send: 'Send',
+  publish: 'Publish',
+  clone: 'Clone',
   message_status: {
     pending: 'Pending',
     sent: 'Sent',
@@ -793,6 +795,29 @@ Grab them today!`,
       publish: 'Publish',
       edit: 'Edit',
       clone: 'Clone'
-    }
+    },
+    create_bot: 'Create bot',
+    edit_bot: 'Edit bot',
+    create_form: {
+      name: 'Bot name',
+      name_placeholder: 'Enter the bot name',
+      name_required: 'Name is required',
+      when_to_trigger: 'When to trigger this flow?',
+      for_any_message: 'For any message',
+      for_specific_keywords: 'For specific keyword(s)',
+      keyword: 'Keyword',
+      keyword_placeholder: 'Enter the keyword',
+      keyword_tooltip: 'You can type a word or a regular expression (REGEX) to use as a trigger by clicking on the advanced regex option.',
+      case_match: 'Case match',
+      case_match_tooltip: 'Bot matches intent keywords exactly, including capitalization.\n\nWhen Case Match is enabled:\n\nKeyword is "Book Flight"\n\nMessage input is "Book Flight" - will match and flow triggers\n\nMessage input is "book flight" or "BOOK FLIGHT" - will not match and flow will not trigger',
+      add_keyword: 'Add keyword'
+    },
+    bot_created: 'Bot created successfully!',
+    publish_title: 'Publish bot',
+    publish_warning: 'Are you sure you want to publish this bot?',
+    clone_title: 'Clone bot',
+    clone_warning: 'Are you sure you want to clone this bot?',
+    bot_published: 'Bot published successfully!',
+    bot_cloned: 'Bot cloned successfully!'
   }
 }

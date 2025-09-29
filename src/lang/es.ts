@@ -734,6 +734,8 @@ export default {
   actions: 'Acciones',
   new: 'Nuevo',
   send: 'Enviar',
+  publish: 'Publicar',
+  clone: 'Clonar',
   message_status: {
     pending: 'Pendiente',
     sent: 'Enviado',
@@ -792,6 +794,29 @@ export default {
       publish: 'Publicar',
       edit: 'Editar',
       clone: 'Clonar'
-    }
+    },
+    create_bot: 'Crear bot',
+    edit_bot: 'Editar bot',
+    create_form: {
+      name: 'Nombre del bot',
+      name_placeholder: 'Ingresa el nombre del bot',
+      name_required: 'El nombre es obligatorio',
+      when_to_trigger: '¿Cuándo activar este flujo?',
+      for_any_message: 'Para cualquier mensaje',
+      for_specific_keywords: 'Para palabra(s) clave específica(s)',
+      keyword: 'Palabra clave',
+      keyword_placeholder: 'Ingresa la palabra clave',
+      keyword_tooltip: 'Puedes escribir una palabra o una expresión regular (REGEX) para usar como disparador haciendo clic en la opción avanzada de regex.',
+      case_match: 'Coincidencia de mayúsculas y minúsculas',
+      case_match_tooltip: 'El bot compara las palabras clave de intención exactamente, incluyendo las mayúsculas y minúsculas.\n\nCuando la coincidencia de mayúsculas está activada:\n\nPalabra clave: "Reservar Vuelo"\n\nEntrada del mensaje: "Reservar Vuelo" - coincide y el flujo se activa\n\nEntrada del mensaje: "reservar vuelo" o "RESERVAR VUELO" - no coincide y el flujo no se activa',
+      add_keyword: 'Agregar palabra clave'
+    },
+    bot_created: '¡Bot creado con éxito!',
+    publish_title: 'Publicar bot',
+    publish_warning: '¿Estás seguro de que deseas publicar este bot?',
+    clone_title: 'Clonar bot',
+    clone_warning: '¿Estás seguro de que deseas clonar este bot?',
+    bot_published: '¡Bot publicado con éxito!',
+    bot_cloned: '¡Bot clonado con éxito!'
   }
 }

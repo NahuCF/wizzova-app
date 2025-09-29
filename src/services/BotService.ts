@@ -1,6 +1,6 @@
 import Http from "~/config/http"
 import type { Page } from "~/types"
-import type { BotItem, CreateBot } from "~/types/Bot"
+import type { BotItem, BotCreate } from "~/types/Bot"
 
 type BotFilters = {
 	page?: number
@@ -17,7 +17,7 @@ export default {
 		}
 		return Http.get<Page<BotItem>>('/bots', { params })
 	},
-	async create(payload: CreateBot) {
+	async create(payload: BotCreate) {
 		return Http.post<{ data: BotItem }>('/bots', payload)
 	},
 	async activate(id: string) {

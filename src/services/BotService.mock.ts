@@ -1,5 +1,6 @@
+import { AxiosHeaders, type AxiosResponse } from 'axios'
 import type { Page, PaginationLinks, PaginationMeta, PaginationMetaLink } from "~/types"
-import type { BotItem, BotMatchType, BotStatus, BotTriggerType, CreateBot } from "~/types/Bot"
+import type { BotItem, BotMatchType, BotStatus, BotTriggerType, BotCreate } from "~/types/Bot"
 
 
 /* ---------- Helpers ---------- */
@@ -25,6 +26,7 @@ let bots: BotItem[] = Array.from({ length: 25 }).map((_, i) => {
 	const keywords =
 		trigger_type === 'keyword'
 			? ['hola', 'demo', 'quiero saber más', 'info', 'test', 'porque'].slice(0, Math.floor(Math.random() * 5) + 1)
+				.map(val => ({ value: val, case_match: false }))
 			: undefined
 	return {
 		id: randomId(),
@@ -117,13 +119,12 @@ export default {
 		}
 	},
 
-	async create(payload: CreateBot) {
+	async create(payload: BotCreate) {
 		const newBot: BotItem = {
 			id: randomId(),
 			name: payload.name,
 			trigger_type: payload.trigger_type,
 			keywords: payload.trigger_type === 'keyword' ? payload.keywords ?? [] : undefined,
-			keyword_match_type: payload.keyword_match_type,
 			sessions: 0,
 			completed_percentage: 0,
 			abandoned_percentage: 0,
@@ -134,7 +135,19 @@ export default {
 			updated_at: new Date().toISOString(),
 		}
 		bots.unshift(newBot)
-		return { data: newBot }
+
+		const headers = new AxiosHeaders({ "content-type": "application/json" });
+
+		const response = {
+			data: newBot,
+			status: 200,
+			statusText: "OK",
+			headers,
+			config: {},
+			request: {},
+		} as AxiosResponse
+
+		return response
 	},
 
 	async activate(id: string) {

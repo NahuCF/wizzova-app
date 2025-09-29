@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { IconCopy, IconEdit, IconSend,IconSearch, IconPlus } from '@tabler/icons-vue'
-import type { DataTablePageEvent } from 'primevue'
+import { useToast, type DataTablePageEvent } from 'primevue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useCrudActions } from '~/composables/useCrudActions'
+import { useErrorHandler } from '~/composables/useErrorHandler'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { useRelativeDateLabel } from '~/composables/useRelativeDateLabel'
 import { useSeverityMapper } from '~/composables/useSeverityMapper'
 import router from '~/router'
 import { API } from '~/services'
 import type { Column } from '~/types'
-import type { BotItem, BotTriggerTag } from '~/types/Bot'
+import type { BotCreate, BotItem, BotTriggerTag } from '~/types/Bot'
 
 const {
     dataPage,
@@ -23,11 +25,31 @@ const {
     (page, rows_per_page, search) => API.bot.index({ page, rows_per_page, search }).then(res => res.data),
     10
 )
+
+const {
+    loading: loadingDrawer,
+    createOrUpdate
+} = useCrudActions<BotCreate>({
+    api: {
+        create: API.bot.create
+    },
+    fetchData: () => {
+        fetchDataPage(1, rowsPerPage.value)
+    },
+    i18nKeys: {
+        created: 'bots.bot_created'
+    }
+})
+
 const { t } = useI18n()
+const toast = useToast()
 const { botSeverity } = useSeverityMapper()
 const formatDate = useRelativeDateLabel()
+const handleError = useErrorHandler()
 
 const showCreateDrawer = ref(false)
+const showPublishWarning = ref(false)
+const showCloneWarning = ref(false)
 const columns = ref<Column[]>([
 	{ header: t('bots.headers.name'), key: 'nameField', type: 'CUSTOM' },
 	{ header: t('bots.headers.triggers'), key: 'triggers', type: 'CUSTOM' },
@@ -37,6 +59,7 @@ const columns = ref<Column[]>([
 	{ header: t('bots.headers.status'), key: 'statusTag', type: 'TAG' },
 	{ header: '', key: 'actions', type: 'ACTIONS' }
 ])
+const selectedBotId = ref('')
 
 const transformedData = computed(() =>
 	dataPage.value.data.map(bot => {
@@ -72,11 +95,11 @@ const buildTriggerTags = (bot: BotItem): BotTriggerTag[] => {
 	if (!bot.keywords) return []
 
 	const max = 3
-	const tags: BotTriggerTag[] = bot.keywords.slice(0, max).map(k => ({ label: k }))
+	const tags: BotTriggerTag[] = bot.keywords.slice(0, max).map(k => ({ label: k.value }))
 	if (bot.keywords.length > max) {
 		tags.push({
 			label: `+${bot.keywords.length - max}`,
-			tooltip: bot.keywords.slice(max).join('\n')
+			tooltip: bot.keywords.slice(max).map(k => k.value).join('\n')
 		})
 	}
 	return tags
@@ -89,19 +112,28 @@ const botActions = (bot: BotItem) => {
 		actions.push({
 			label: t('bots.actions.publish'),
 			icon: IconSend,
-			action: () => API.bot.activate(bot.id)
+			action: () => {
+				selectedBotId.value = bot.id
+				showPublishWarning.value = true
+			}
 		})
 	}
 	actions.push(
 		{
 			label: t('bots.actions.edit'),
 			icon: IconEdit,
-			action: () => console.log('Edit', bot.id)
+			action: () => router.push({ 
+				name: 'bot-details',
+				params: { id: bot.id }
+			})
 		},
 		{
 			label: t('bots.actions.clone'),
 			icon: IconCopy,
-			action: () => API.bot.clone(bot.id)
+			action: () => {
+				selectedBotId.value = bot.id
+				showCloneWarning.value = true
+			}
 		}
 	)
 	return [actions]
@@ -115,9 +147,49 @@ const onPage = (event: DataTablePageEvent) => {
 
 const onRowSelect = ({ data }: { data: BotItem }) => {
     router.push({ 
-		name: 'bots', 
+		name: 'bot-details', 
 		params: { id: data.id }
 	})
+}
+
+const onSave = (newBot: BotCreate) => {
+    createOrUpdate(newBot, {
+        onSuccess: () => showCreateDrawer.value = false
+    })
+}
+
+const onPublish = async () => {
+	try {
+		await API.bot.activate(selectedBotId.value)
+
+		toast.add({
+			severity: 'success',
+			summary: 'Success',
+			detail: t('bots.bot_published'),
+			life: 3000,
+		})
+	} catch(error) {
+		handleError(error)
+	}
+
+	showPublishWarning.value = false
+}
+
+const onClone = async () => {
+	try {
+		await API.bot.clone(selectedBotId.value)
+
+		toast.add({
+			severity: 'success',
+			summary: 'Success',
+			detail: t('bots.bot_cloned'),
+			life: 3000,
+		})
+	} catch(error) {
+		handleError(error)
+	}
+
+	showCloneWarning.value = false
 }
 
 watch(rowsPerPage, () => fetchDataPage(), { immediate: true })
@@ -217,5 +289,28 @@ watch(rowsPerPage, () => fetchDataPage(), { immediate: true })
 				</div>
 			</template>
 		</Table>
+
+		<CreateBotDrawer
+			v-model:visible="showCreateDrawer"
+			:title="$t('bots.create_bot')"
+			:loading="loadingDrawer"
+			@onSave="onSave"
+		/>
+
+		<WarningDialog
+			v-model:visible="showPublishWarning" 
+			:title="$t('bots.publish_title')"
+			:message="$t('bots.publish_warning')"
+            :confirmMessage="$t('publish')"
+			@onConfirm="onPublish" 
+		/>
+
+		<WarningDialog
+			v-model:visible="showCloneWarning" 
+			:title="$t('bots.clone_title')"
+			:message="$t('bots.clone_warning')"
+            :confirmMessage="$t('clone')"
+			@onConfirm="onClone" 
+		/>
 	</div>
 </template>
