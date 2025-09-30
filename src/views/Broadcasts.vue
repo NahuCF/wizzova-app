@@ -8,6 +8,7 @@ import type { MenuItem } from 'primevue/menuitem'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import type { Step } from '~/components/common/SpotlightTour.vue'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
 import { useSessionStore } from '~/stores'
@@ -127,6 +128,17 @@ const filterOptions = ref<{
         iconClass: 'text-red-600',
         iconEl: IconCancel
     }
+])
+const tourVisible = ref(false)
+const broadcastTitle = ref<HTMLElement>()
+const newBroadcastBtn = ref()
+const overviewSection = ref<HTMLElement>()
+const tourSteps = computed((): Step[] => [
+    { target: broadcastTitle.value, text: 'This is the broadcasts page.', position: 'right', highlight: true },
+    { target: newBroadcastBtn.value?.$el, text: 'Create a new broadcast here.', position: 'left' },
+    { target: overviewSection.value, text: 'Your broadcast statistics live here.', highlight: true },
+    { target: overviewSection.value, text: 'testing another.', highlight: true },
+    { text: 'Last step in the cycle.' }
 ])
 
 const overviewCards = computed(() => [
@@ -259,10 +271,15 @@ fetchBroadcastNumbers()
     <div class="flex flex-col gap-6 h-full p-6">
         <div class="flex justify-between items-center">
             <div class="flex items-center">
-                <h1 class="font-semibold text-2xl">{{ $t('broadcasts.title') }}</h1>
+                <h1 ref="broadcastTitle" class="font-semibold text-2xl">{{ $t('broadcasts.title') }}</h1>
             </div>
             <div class="flex justify-between gap-2">
-                <Button 
+                <Button @click="tourVisible = true">
+                    <span>
+                        Start tour
+                    </span>
+                </Button>
+                <Button
                     class="bg-white! border-slate-200! hover:bg-slate-100!"
                     severity="secondary"
                     :disabled="!canRefresh || loading || loadingNumbers || loadingOverview"
@@ -287,7 +304,7 @@ fetchBroadcastNumbers()
                     :disabled="loadingNumbers"
                 />
 
-                <Button @click="router.push({ name: 'new-broadcast' })">
+                <Button ref="newBroadcastBtn" @click="router.push({ name: 'new-broadcast' })">
                     <IconPlus size="16" class="mr-1" />
                     <span>
                         {{ $t('broadcasts.new_broadcast') }}
@@ -296,7 +313,7 @@ fetchBroadcastNumbers()
             </div>
         </div>
 
-        <div class="flex flex-col gap-5 p-6 bg-slate-200 rounded-lg border border-gray-300">
+        <div ref="overviewSection" class="flex flex-col gap-5 p-6 bg-slate-200 rounded-lg border border-gray-300">
             <div class="flex justify-between">
                 <div class="text-xl font-medium text-gray-500">{{ $t('broadcasts.overview') }}</div>
                 <Select 
@@ -400,6 +417,13 @@ fetchBroadcastNumbers()
             @update:rowsPerPage="(val: number) => rowsPerPage = val"
             :fetchData="() => fetchDataPage(1, rowsPerPage)"
             :onPage="onPage"
+        />
+
+        <SpotlightTour
+            :visible="tourVisible"
+            :steps="tourSteps"
+            @close="tourVisible = false"
+            @finish="tourVisible = false"
         />
     </div>
 </template>
