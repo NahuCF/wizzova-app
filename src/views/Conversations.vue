@@ -23,6 +23,8 @@ const {
 const {
     dataPage: messages,
     rowsPerPage: messagesPerPage,
+	loading: loadingMessages,
+	isLastPage: allMessagesLoaded,
     fetchDataPage: fetchMessages,
 	loadNextPage: loadMoreMessages
 } = usePaginatedData<MessageItem>(
@@ -108,7 +110,10 @@ const sendMessage = async (newMessage: CreateMessage) => {
 	try {
 		const { data: response } = await API.message.create(newMessage)
 
-		messages.value.data.push(response.data)
+		messages.value.data = [
+			response.data,
+			...messages.value.data
+		]
 
 		if(response.data.template_id && !hasTemplate(response.data.template_id)) {
 			addTemplate(response.data.template_id)
@@ -240,18 +245,21 @@ conversationStore.pagination.fetchDataPage()
 				<Chat
 					v-if="selectedConversation"
 					class="col-span-3"
+					:key="selectedConversation.id"
 					:contactName="getContactName(selectedConversation.contact) || ''"
 					:messages="messages.data"
 					:activities="activities"
 					:assignedUser="selectedConversation.assigned_user"
-					:loading="sendingMessage"
+					:loadingTop="loadingMessages"
+					:loadingBottom="sendingMessage"
 					:disableReply="disableReply"
 					:customEvent="!selectedConversation.is_initiated ? $t('new_broadcast.select_template') : undefined"
 					:templates="templates"
 					:users="userStore.users"
+					:allMessagesLoaded="!loadingMessages && allMessagesLoaded"
 					@onSendMessage="sendTextMessage"
 					@onCustomEvent="showTemplateDialog = true"
-					@scrollBottomReached="loadMoreMessages"
+					@scrollTopReached="loadMoreMessages"
 				/>
 
 				<div class="bg-white border-l-2 border-slate-100 h-full overflow-hidden">

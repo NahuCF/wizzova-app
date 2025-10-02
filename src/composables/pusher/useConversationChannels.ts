@@ -41,18 +41,9 @@ export const useConversationChannels = (messages: Ref<{ data: MessageItem[] }>) 
 		return null
 	}
 
-	const handleNewConversation = ({ conversation }: { conversation: ConversationItem }) => {
-		playMessageSound()
-
-		if (!conversations.value.find(c => c.id === conversation.id)) {
-			conversations.value.unshift(conversation)
-			conversationStore.fetchStats()
-		}
-	}
-
-	const handleOwnerChanged = ({ conversation }: { conversation: ConversationItem }) => {
-		conversationStore.fetchStats()
+	const handleConversation = (conversation: ConversationItem) => {
 		const existing = conversations.value.find(c => c.id === conversation.id)
+		const conversationTab = getConversationTab(conversation)
 
 		if (existing) {
 			conversations.value = conversations.value.map(c =>
@@ -60,12 +51,25 @@ export const useConversationChannels = (messages: Ref<{ data: MessageItem[] }>) 
 					? { ...c, assigned_user: conversation.assigned_user }
 					: c
 			)
-		} else if (getConversationTab(conversation) === conversationStore.conversationTab) {
+		} 
+		else if (conversationTab === conversationStore.conversationTab) {
 			conversations.value = [
 				conversation,
 				...conversations.value
 			]
 		}
+	}
+
+	const handleNewConversation = ({ conversation }: { conversation: ConversationItem }) => {
+		if(!conversation.is_initiated) {
+			playMessageSound()
+		}
+
+		handleConversation(conversation)
+	}
+
+	const handleOwnerChanged = ({ conversation }: { conversation: ConversationItem }) => {
+		handleConversation(conversation)
 	}
 
 	const handleNewMessage = ({ message }: { message: MessageItem }) => {

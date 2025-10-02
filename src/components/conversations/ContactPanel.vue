@@ -80,6 +80,14 @@ const formatValue = (value: string | boolean | string[]) => {
 	return value
 }
 
+const highlightSearchTerm = (text?: string) => {
+	if (!searchTerm.value || !text) return text
+
+	const escapedTerm = searchTerm.value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')
+	const regex = new RegExp(`(${escapedTerm})`, 'gi')
+	return text.replace(regex, `<span class="bg-yellow-200 font-semibold">$1</span>`)
+}
+
 const onConfirm = async () => {
     const formValues = contactForm.value?.validate()
     if (!formValues || !props.contact) return
@@ -251,7 +259,7 @@ userStore.fetchUsers()
 					class="flex flex-col gap-3 p-3 hover:bg-slate-100 cursor-pointer"
 				>
 					<div class="text-sm text-gray-400">{{ moment(message.created_at).format('h:mm A') }}</div>
-					<div class="text-slate-700">{{ message.content }}</div>
+					<div class="text-slate-700" v-html="highlightSearchTerm(message.content)"></div>
 				</div>
 
 				<div v-if="!loadingMessages && messages.data.length === 0" class="flex justify-center p-8">

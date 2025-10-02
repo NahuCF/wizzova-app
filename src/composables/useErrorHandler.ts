@@ -22,7 +22,7 @@ export const useErrorHandler = () => {
 					severity: 'error',
 					summary: 'Error',
 					detail: message,
-					life: 1000000,
+					life: 3000,
 				})
 				return
 			}
@@ -34,7 +34,7 @@ export const useErrorHandler = () => {
 					severity: 'error',
 					summary: title ?? 'Error',
 					detail: message ?? t('an_error_occurred'),
-					life: 1000000,
+					life: 3000,
 				})
 				return
 			}

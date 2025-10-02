@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import 'vue3-emoji-picker/css'
-import { IconNote } from '@tabler/icons-vue'
+import { IconNote, IconLoader2 } from '@tabler/icons-vue'
 import moment from 'moment'
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ConversationActivity, MessageItem, TemplateItem, UserItem } from '~/types'
 
@@ -18,8 +18,10 @@ const props = defineProps<{
 	disableReply?: boolean,
 	customEvent?: string,
 	templates?: TemplateItem[]
-	loading?: boolean,
-	users?: UserItem[]
+	loadingTop?: boolean,
+	loadingBottom?: boolean,
+	users?: UserItem[],
+	allMessagesLoaded?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -39,6 +41,7 @@ const { t } = useI18n()
 const replyMessage = ref<MessageItem>()
 const chatScroll = ref<HTMLDivElement>()
 const isAtBottom = ref(true)
+const hasScrolledOnce = ref(false)
 
 const reply = computed(() => {
 	if(replyMessage.value) {
@@ -55,7 +58,16 @@ const timeline = computed<TimelineItem[]>(() => {
 	const messageItems = props.messages.map(m => ({ ...m, kind: 'message' as const }))
 	const activityItems = props.activities.map(a => ({ ...a, kind: 'activity' as const }))
 
-	return [...activityItems, ...messageItems].sort((a, b) => {
+	const oldestMessageTime = messageItems.length
+		? new Date(messageItems[messageItems.length - 1].created_at).getTime()
+		: 0
+
+	const filteredActivities = activityItems.filter(a => {
+		const activityTime = new Date(a.event_at).getTime()
+		return activityTime >= oldestMessageTime || props.allMessagesLoaded
+	})
+
+	return [...filteredActivities, ...messageItems].sort((a, b) => {
 		const aTime = a.kind === 'message' ? a.created_at : a.event_at
 		const bTime = b.kind === 'message' ? b.created_at : b.event_at
 		return new Date(aTime).getTime() - new Date(bTime).getTime()
@@ -150,15 +162,15 @@ const getReply = (item: MessageItem) => {
 	return undefined
 }
 
-// const scrollToBottom = (smooth = false) => {
-// 	const el = chatScroll.value
-// 	if (!el) return
+const scrollToBottom = (smooth = true) => {
+	const el = chatScroll.value
+	if (!el) return
 
-// 	el.scrollTo({
-// 		top: el.scrollHeight,
-// 		behavior: smooth ? 'smooth' : 'auto'
-// 	})
-// }
+	el.scrollTo({
+		top: el.scrollHeight,
+		behavior: smooth ? 'smooth' : 'auto'
+	})
+}
 
 const onScroll = () => {
 	const el = chatScroll.value
@@ -174,23 +186,55 @@ const onScroll = () => {
 	}
 }
 
-// watch(
-// 	() => [props.messages.length, props.activities.length],
-// 	async ([msgLen, actLen], [oldMsgLen, oldActLen]) => {
-// 		await nextTick()
-// 		if (!chatScroll.value) return
 
-// 		if (oldMsgLen === 0 && msgLen > 0) {
-// 			scrollToBottom()
-// 			return
-// 		}
-// 		if (oldActLen === 0 && actLen > 0) {
-// 			scrollToBottom()
-// 			return
-// 		}
-// 		if (isAtBottom.value) scrollToBottom(true)
-// 	}
-// )
+const maintainScrollForTopLoad = async () => {
+	if (!chatScroll.value) return
+	const el = chatScroll.value
+
+	const previousScrollHeight = el.scrollHeight
+
+	await nextTick()
+
+	const newScrollHeight = el.scrollHeight
+	el.scrollTop += newScrollHeight - previousScrollHeight
+}
+
+const handleScrollOnNewMessage = async (oldMessages: MessageItem[], newMessages: MessageItem[], oldActLen: number, newActLen: number) => {
+	const firstMessageLoad = !oldMessages.length && newMessages.length
+	const firstActivityLoad = oldActLen === 0 && newActLen > 0
+
+	await nextTick()
+	if (firstMessageLoad || firstActivityLoad) {
+		scrollToBottom(hasScrolledOnce.value)
+		setTimeout(() => (hasScrolledOnce.value = true), 100)
+	}
+}
+
+watch(
+	() => [props.messages, props.activities.length] as const,
+	async ([newMessages, newActLen], [oldMessages, oldActLen]) => {
+		if (!chatScroll.value) return
+
+		const loadingOlderMessages = !!oldMessages.length && newMessages.length > oldMessages.length
+		const newMessageReceived =
+			oldMessages.length &&
+			newMessages.length &&
+			oldMessages[0].id !== newMessages[0].id
+		const newActivity = oldActLen !== 0 && newActLen > oldActLen
+
+		if(newMessageReceived || newActivity) {
+			await nextTick()
+			scrollToBottom()
+		}
+		else if (loadingOlderMessages) {
+			maintainScrollForTopLoad()
+		}
+		else {
+			handleScrollOnNewMessage(oldMessages, newMessages, oldActLen, newActLen)
+		}
+	},
+	{ deep: true }
+)
 </script>
 
 <template>
@@ -198,8 +242,13 @@ const onScroll = () => {
 		<div
 			ref="chatScroll"
 			class="flex flex-col px-4 py-12 gap-8 overflow-y-auto"
-			@scrollend="onScroll"
+			:class="{ 'invisible': !hasScrolledOnce }"
+			@scroll="onScroll"
 		>
+			<div v-if="loadingTop" class="flex justify-center p-8">
+				<IconLoader2 class="animate-spin text-emerald-500" size="36" />
+			</div>
+
 			<div class="flex flex-col gap-3" v-for="group in groupedTimeline" :key="group.date">
 				<Divider class="my-20!" align="center" type="solid">
 					<span class="bg-gray-200 text-gray-600 text-lg px-8 py-2 rounded-full">
@@ -278,12 +327,16 @@ const onScroll = () => {
 					</div>
 				</template>
 			</div>
+
+			<div v-if="loadingBottom" class="flex justify-center p-8">
+				<IconLoader2 class="animate-spin text-emerald-500" size="36" />
+			</div>
 		</div>
 
 		<div class="flex flex-col gap-3 mx-6 mb-8 shadow rounded-lg mt-auto">
 			<ChatEditor
 				:users="users"
-				:loading="loading"
+				:loading="loadingBottom"
 				:disable="disableReply"
 				:customEvent="customEvent"
 				:replyMessage="reply"

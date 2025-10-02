@@ -36,13 +36,19 @@ export function usePaginatedData<T, PageType extends Page<T> = Page<T>>(
 	const searchTerm = ref('')
 	const rowsPerPage = ref(perPageDefault)
 
+	const isLastPage = computed(() => 
+		dataPage.value.meta.current_page === dataPage.value.meta.last_page)
+
 	const fetchDataPage = async (page = 1, perPage = rowsPerPage.value, append = false) => {
 		loading.value = true
 		try {
 			if (!append) dataPage.value.data = []
 			const response = await fetchFn(page, perPage, searchTerm.value)
 			if (append) {
-				dataPage.value.data.push(...response.data)
+				dataPage.value.data = [
+					...dataPage.value.data,
+					...response.data
+				]
 				dataPage.value.meta = response.meta
 				dataPage.value.links = response.links
 			} else {
@@ -89,6 +95,7 @@ export function usePaginatedData<T, PageType extends Page<T> = Page<T>>(
 		searchTerm,
 		rowsPerPage,
 		currentPageReport,
+		isLastPage,
 		fetchDataPage,
 		loadNextPage,
 		debouncedFetch,

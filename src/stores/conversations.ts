@@ -68,15 +68,22 @@ export const useConversationStore = defineStore('conversation', () => {
 		changingOwner.value = true
 		try {
 			const ownerId = newOwner.id !== 'not_assigned' ? newOwner.id : undefined
+			const isOwner = sessionStore.user?.id === ownerId
 
 			const { data: response } = await API.conversation.changeOwner(selectedConversation.value.id, ownerId)
-			selectedConversation.value = {
-				...selectedConversation.value,
-				...response.data
-			}
 
-			fetchDataPage()
-			fetchStats()
+			const appentToTab = (conversationTab.value === 'mine' && isOwner) || conversationTab.value === 'opened'
+			
+			if (appentToTab){
+				selectedConversation.value = {
+					...selectedConversation.value,
+					...response.data
+				}
+			}
+			else {
+				dataPage.value.data = dataPage.value.data.filter(conv => conv.id !== response.data.id)
+				selectedConversation.value = undefined
+			}
 		} catch(error) {
 			handleError(error)
 		} finally {

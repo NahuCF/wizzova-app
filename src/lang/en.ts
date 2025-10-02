@@ -713,7 +713,7 @@ Grab them today!`,
       select_user: 'Select user'
     },
     reopen: 'Reopen',
-    close: 'Close',
+    solve: 'Solve',
     assign_to: 'Assign to',
     not_assigned: 'Not assigned',
     no_conversations_found: 'No conversations found',

@@ -156,6 +156,8 @@ watch(
 	() => props.disable,
 	(shouldDisable) => {
 		editor.setEditable(!shouldDisable)
+		editor.commands.clearContent()
+		isNote.value = false
 	},
 	{ immediate: true }
 )
@@ -169,7 +171,13 @@ onBeforeUnmount(() => editor.destroy())
 </script>
 
 <template>
-	<div class="flex flex-col gap-3 p-4 shadow rounded-lg bg-white">
+	<div
+		class="flex flex-col gap-3 p-4 shadow rounded-lg bg-white"
+		:class="{
+			'bg-white': !isNote,
+			'bg-yellow-100': isNote
+		}"
+	>
 		<ReplyPreview 
 			v-if="replyMessage && replyMessage.message.content"
 			:name="replyMessage.name"
@@ -188,7 +196,11 @@ onBeforeUnmount(() => editor.destroy())
 		/>
 
 		<div class="flex justify-between items-center gap-4">
-			<Button variant="text" @click="emojiPopover?.toggle($event)">
+			<Button
+				variant="text"
+				:disabled="disable"
+				@click="emojiPopover?.toggle($event)"
+			>
 				<IconMoodSmile size="18" />
 			</Button>
 			<Popover ref="emojiPopover" :dismissable="true" unstyled>
@@ -197,7 +209,7 @@ onBeforeUnmount(() => editor.destroy())
 
 			<div class="flex gap-6">
 				<div class="flex items-center gap-2">
-					<ToggleSwitch v-model="isNote" />
+					<ToggleSwitch v-model="isNote" :disabled="disable" />
 					<span class="text-gray-700">{{ $t('conversations.note') }}</span>
 				</div>
 

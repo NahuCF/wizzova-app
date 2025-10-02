@@ -75,6 +75,11 @@ const tabs = computed(() => [
 	}
 ])
 
+const searchTerm = computed({
+    get: () => conversationStore.pagination.searchTerm,
+    set: (value: string) => conversationStore.pagination.searchTerm = value
+})
+
 const handleDocumentClick = (e: MouseEvent) => {
 	const clickTarget = e.target as Node
 
@@ -86,7 +91,6 @@ const handleDocumentClick = (e: MouseEvent) => {
 		focusSearch.value = false
 	}
 }
-
 
 const selectConversation = (conversation: ConversationItem) => {
 	selectedConversation.value = conversation
@@ -117,7 +121,7 @@ const onConversationExists = (conversationExists: ConversationExists) => {
 			severity: 'info',
 			summary: t('conversations.exists'),
 			detail: t('conversations.conversation_assigned_to', { user:  assignedUser.value }),
-			life: 1000000,
+			life: 3000,
 		})
 	}
 }
@@ -175,8 +179,8 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 						class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
 					/>
 					<InputText
-						:modelValue="conversationStore.pagination.searchTerm"
-						@update:modelValue="conversationStore.pagination.searchTerm = $event || ''"
+						:modelValue="searchTerm"
+						@update:modelValue="searchTerm = $event || ''"
 						class="pl-8! pr-8! shadow-none!"
 						name="search"
 						id="search"
@@ -186,10 +190,10 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 						@focus="focusSearch = true"
 					/>
 					<IconX 
-						v-if="conversationStore.pagination.searchTerm.length > 0"
+						v-if="searchTerm.length > 0"
 						class="mr-2 absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 cursor-pointer"
 						size="14"
-						@click.stop="conversationStore.pagination.searchTerm = ''"
+						@click.stop="searchTerm = ''"
 					/>
 				</div>
 			</div>

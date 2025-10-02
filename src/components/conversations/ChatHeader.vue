@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IconInfoCircle, IconLoader2, IconCircleMinus, IconReload, IconSearch } from '@tabler/icons-vue'
+import { IconInfoCircle, IconLoader2, IconReload, IconSearch, IconCheck } from '@tabler/icons-vue'
 import { computed } from 'vue'
 import { useContactUtils } from '~/composables/useContactUtils'
 import { useUserStore } from '~/stores'
@@ -65,8 +65,8 @@ const onChangeOwner = (value: string) =>  {
 				>
 					<IconLoader2 v-if="changingSolved" class="animate-spin w-6 h-6" />
 					<div v-else class="flex items-center gap-2">
-						<IconCircleMinus size="16" />
-						<div>{{ $t('conversations.close') }}</div>
+						<IconCheck size="16" />
+						<div>{{ $t('conversations.solve') }}</div>
 					</div>
 				</Button>
 			</div>

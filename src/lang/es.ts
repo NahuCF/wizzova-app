@@ -712,7 +712,7 @@ export default {
       select_user: 'Seleccionar usuario'
     },
     reopen: 'Reabrir',
-    close: 'Cerrar',
+    solve: 'Resolver',
     assign_to: 'Asignar a',
     not_assigned: 'Sin asignar',
     no_conversations_found: 'No se encontraron conversaciones',
