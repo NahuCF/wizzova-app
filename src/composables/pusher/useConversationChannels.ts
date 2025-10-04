@@ -1,96 +1,94 @@
-import { computed, onMounted, onBeforeUnmount, type Ref } from 'vue'
+import { computed, onMounted, onBeforeUnmount } from 'vue'
 import { usePusher } from './usePusher'
-import { useConversationStore } from '~/stores/conversations'
+import { useConversationsStore } from '~/stores/conversations'
 import { useSessionStore } from '~/stores'
-import type { ConversationItem, MessageDelivered, MessageItem } from '~/types'
+import { useMessagesStore } from '~/stores/messages'
+import type { ConversationItem, MessageDelivered, MessageItem, MessageStatus } from '~/types'
 import type { Channel } from 'pusher-js'
 
-export const useConversationChannels = (messages: Ref<{ data: MessageItem[] }>) => {
+export const useConversationChannels = () => {
 	const sessionStore = useSessionStore()
-	const conversationStore = useConversationStore()
-	
+	const conversationStore = useConversationsStore()
+	const messagesStore = useMessagesStore()
 	const { subscribe, unsubscribe } = usePusher()
 	let channel: Channel
 
-	const conversations = computed({
-		get: () => conversationStore.pagination.dataPage.data,
-		set: (val) => (conversationStore.pagination.dataPage.data = val)
-	})
-
-	const selectedConversation = computed(() => conversationStore.selectedConversation)
+	const currentTab = computed(() => conversationStore.currentTab)
+	const conversationsByTab = computed(() => conversationStore.conversationsByTab)
 
 	const playMessageSound = () => new Audio('/public/sounds/message.wav').play()
 
 	const getConversationTab = (conversation: ConversationItem) => {
-		if(!conversation.assigned_user) {
-			return 'unassigned'
-		}
-
-		if(conversation.assigned_user.id === sessionStore.user?.id) {
-			return 'mine'
-		}
-
-		if(!conversation.is_solved) {
-			return 'opened'
-		}
-
-		if(!conversation.is_solved) {
-			return 'resolved'
-		}
-
-		return null
+		if (!conversation.assigned_user) return 'unassigned'
+		if (conversation.assigned_user.id === sessionStore.user?.id) return 'mine'
+		if (!conversation.is_solved) return 'opened'
+		return 'resolved'
 	}
 
-	const handleConversation = (conversation: ConversationItem) => {
-		const existing = conversations.value.find(c => c.id === conversation.id)
-		const conversationTab = getConversationTab(conversation)
+	const upsertConversationInTab = (conversation: ConversationItem) => {
+		const tab = getConversationTab(conversation)
+		const conversations = conversationsByTab.value[tab] || []
 
-		if (existing) {
-			conversations.value = conversations.value.map(c =>
-				c.id === existing.id 
-					? { ...c, assigned_user: conversation.assigned_user }
-					: c
-			)
-		} 
-		else if (conversationTab === conversationStore.conversationTab) {
-			conversations.value = [
-				conversation,
-				...conversations.value
-			]
+		const index = conversations.findIndex(c => c.id === conversation.id)
+		if (index >= 0) {
+			conversations[index] = { ...conversations[index], ...conversation }
+		} else if (tab === currentTab.value) {
+			conversationsByTab.value[tab] = [conversation, ...conversations]
+		}
+	}
+
+	const upsertMessage = (convId: string, message: MessageItem) => {
+		const pag = messagesStore.initConversationPagination(convId)
+		const firstPageKey = Number(Object.keys(pag.pages)[0] ?? 1)
+
+		if (!pag.pages[firstPageKey]) pag.pages[firstPageKey] = []
+		const page = pag.pages[firstPageKey]
+
+		const index = page.findIndex(m => m.id === message.id)
+		if (index >= 0) {
+			page[index] = { ...page[index], ...message }
+		} else {
+			page.unshift(message)
+		}
+	}
+
+	const updateMessageStatus = (convId: string, messageId: string, status: MessageStatus) => {
+		const pag = messagesStore.initConversationPagination(convId)
+
+		for (const messages of Object.values(pag.pages)) {
+			const index = messages.findIndex(m => m.id === messageId)
+			if (index >= 0) {
+				messages[index] = { ...messages[index], status }
+				break
+			}
 		}
 	}
 
 	const handleNewConversation = ({ conversation }: { conversation: ConversationItem }) => {
-		if(!conversation.is_initiated) {
-			playMessageSound()
-		}
-
-		handleConversation(conversation)
+		if (!conversation.is_initiated) playMessageSound()
+		upsertConversationInTab(conversation)
 	}
 
 	const handleOwnerChanged = ({ conversation }: { conversation: ConversationItem }) => {
-		handleConversation(conversation)
+		upsertConversationInTab(conversation)
 	}
 
 	const handleNewMessage = ({ message }: { message: MessageItem }) => {
-		if (selectedConversation.value?.id === message.conversation_id &&
-			!messages.value.data.find(m => m.id === message.id)) {
+		if(message.direction === 'inbound') {
 			playMessageSound()
-			messages.value.data.push(message)
 		}
+		upsertMessage(message.conversation_id, message)
+	}
+
+	const handleMessageSent = ({ message }: { message: MessageItem }) => {
+		upsertMessage(message.conversation_id, message)
 	}
 
 	const handleMessageDelivered = (delivered: MessageDelivered) => {
-		conversationStore.fetchStats()
-		if (delivered.conversation_id !== selectedConversation.value?.id) return
-
-		messages.value.data = messages.value.data.map(message =>
-			message.id === delivered.message_id
-				? { ...message, status: delivered.status }
-				: message
-		)
+		updateMessageStatus(delivered.conversation_id, delivered.message_id, delivered.status)
 	}
 
+	// --- Pusher lifecycle ---
 	onMounted(() => {
 		if (!sessionStore.tenant || !sessionStore.defaultWaba) return
 
@@ -100,14 +98,11 @@ export const useConversationChannels = (messages: Ref<{ data: MessageItem[] }>) 
 		channel.bind('conversation.new', handleNewConversation)
 		channel.bind('conversation.owner.changed', handleOwnerChanged)
 		channel.bind('message.new', handleNewMessage)
+		channel.bind('message.sent', handleMessageSent)
 		channel.bind('message.delivered', handleMessageDelivered)
 	})
 
 	onBeforeUnmount(() => {
 		if (channel) unsubscribe(channel.name)
 	})
-
-	return {
-		messages
-	}
 }

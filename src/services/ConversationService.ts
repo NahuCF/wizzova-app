@@ -1,7 +1,7 @@
 import Http from '~/config/http'
 import type { ConversationActivity, ConversationExists, ConversationItem, ConversationStats, ConversationStatus, CreateConversation, Page } from '~/types'
 
-type ConversationFilters = {
+export type ConversationFilters = {
 	page?: number
 	rows_per_page?: number
 	search?: string

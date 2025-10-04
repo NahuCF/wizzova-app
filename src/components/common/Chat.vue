@@ -11,13 +11,14 @@ type TimelineItem =
 	| ({ kind: 'activity' } & ConversationActivity)
 
 const props = defineProps<{
+	conversationId?: string,
 	contactName: string,
 	messages: MessageItem[],
 	activities: ConversationActivity[],
 	assignedUser?: UserItem,
 	disableReply?: boolean,
 	customEvent?: string,
-	templates?: TemplateItem[]
+	templates?: Record<string, TemplateItem>
 	loadingTop?: boolean,
 	loadingBottom?: boolean,
 	users?: UserItem[],
@@ -40,8 +41,7 @@ const { t } = useI18n()
 
 const replyMessage = ref<MessageItem>()
 const chatScroll = ref<HTMLDivElement>()
-const isAtBottom = ref(true)
-const hasScrolledOnce = ref(false)
+const lastConversationId = ref(props.conversationId)
 
 const reply = computed(() => {
 	if(replyMessage.value) {
@@ -88,6 +88,7 @@ const groupedTimeline = computed(() => {
   return Object.entries(groups)
     .sort(([a], [b]) => (a > b ? 1 : -1))
     .map(([date, items]) => ({ date, items }))
+	.reverse()
 })
 
 const dateLabel = (date: string) => {
@@ -106,7 +107,7 @@ const shouldShowTail = (item: MessageItem, allItems: TimelineItem[]) => {
 }
 
 const getTemplate = (templateId: string) => {
-	return props.templates?.find(templ => templ.id === templateId)
+	return props.templates?.[templateId]
 }
 
 const templateBody = (templateId: string) => {
@@ -177,11 +178,15 @@ const onScroll = () => {
 	if (!el) return
 
 	const threshold = 10
-	isAtBottom.value = el.scrollTop + el.clientHeight >= el.scrollHeight - threshold
-	if (el.scrollTop === 0) {
+	// Inverted because of flex-col-reverse
+	const isAtBottom = Math.abs(el.scrollTop) <= threshold
+  	const isAtTop = Math.abs(el.scrollTop) + el.clientHeight >= el.scrollHeight - threshold
+
+	if (isAtTop) {
 		emit('scrollTopReached')
 	}
-	if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+
+	if (isAtBottom) {
 		emit('scrollBottomReached')
 	}
 }
@@ -189,48 +194,37 @@ const onScroll = () => {
 
 const maintainScrollForTopLoad = async () => {
 	if (!chatScroll.value) return
-	const el = chatScroll.value
 
-	const previousScrollHeight = el.scrollHeight
-
+	const previousScrollHeight = chatScroll.value.scrollTop
 	await nextTick()
-
-	const newScrollHeight = el.scrollHeight
-	el.scrollTop += newScrollHeight - previousScrollHeight
-}
-
-const handleScrollOnNewMessage = async (oldMessages: MessageItem[], newMessages: MessageItem[], oldActLen: number, newActLen: number) => {
-	const firstMessageLoad = !oldMessages.length && newMessages.length
-	const firstActivityLoad = oldActLen === 0 && newActLen > 0
-
-	await nextTick()
-	if (firstMessageLoad || firstActivityLoad) {
-		scrollToBottom(hasScrolledOnce.value)
-		setTimeout(() => (hasScrolledOnce.value = true), 100)
-	}
+	chatScroll.value.scrollTop = previousScrollHeight
 }
 
 watch(
-	() => [props.messages, props.activities.length] as const,
-	async ([newMessages, newActLen], [oldMessages, oldActLen]) => {
+	() => props.messages,
+	async (newMessages, oldMessages) => {
 		if (!chatScroll.value) return
+
+		const conversationChanged = props.conversationId !== lastConversationId.value
 
 		const loadingOlderMessages = !!oldMessages.length && newMessages.length > oldMessages.length
 		const newMessageReceived =
 			oldMessages.length &&
 			newMessages.length &&
 			oldMessages[0].id !== newMessages[0].id
-		const newActivity = oldActLen !== 0 && newActLen > oldActLen
 
-		if(newMessageReceived || newActivity) {
+		if(newMessageReceived && !conversationChanged) {
 			await nextTick()
 			scrollToBottom()
 		}
 		else if (loadingOlderMessages) {
 			maintainScrollForTopLoad()
 		}
-		else {
-			handleScrollOnNewMessage(oldMessages, newMessages, oldActLen, newActLen)
+
+		if(conversationChanged) {
+			await nextTick()
+			scrollToBottom(false)
+			lastConversationId.value = props.conversationId
 		}
 	},
 	{ deep: true }
@@ -241,15 +235,19 @@ watch(
 	<div class="flex flex-col flex-1 h-full chat-background overflow-hidden">
 		<div
 			ref="chatScroll"
-			class="flex flex-col px-4 py-12 gap-8 overflow-y-auto"
-			:class="{ 'invisible': !hasScrolledOnce }"
+			class="flex flex-col-reverse px-4 py-12 gap-8 overflow-y-auto"
 			@scroll="onScroll"
 		>
-			<div v-if="loadingTop" class="flex justify-center p-8">
+			<div v-if="loadingBottom" class="flex justify-center p-8">
 				<IconLoader2 class="animate-spin text-emerald-500" size="36" />
 			</div>
 
-			<div class="flex flex-col gap-3" v-for="group in groupedTimeline" :key="group.date">
+			<div
+				v-if="messages.length > 0 || allMessagesLoaded"
+				v-for="group in groupedTimeline"
+				:key="group.date"
+				class="flex flex-col gap-3"
+			>
 				<Divider class="my-20!" align="center" type="solid">
 					<span class="bg-gray-200 text-gray-600 text-lg px-8 py-2 rounded-full">
 						{{ dateLabel(group.date) }}
@@ -328,7 +326,7 @@ watch(
 				</template>
 			</div>
 
-			<div v-if="loadingBottom" class="flex justify-center p-8">
+			<div v-if="loadingTop" class="flex justify-center p-8">
 				<IconLoader2 class="animate-spin text-emerald-500" size="36" />
 			</div>
 		</div>

@@ -66,7 +66,11 @@ export interface MessageItem {
 	failed_at?: string,
 	created_at: string,
 	updated_at: string,
-	mentions?: Record<string, string>[]
+	mentions?: Record<string, string>[],
+	search_match?: {
+		page: number,
+		position_from_end: number
+	}
 }
 
 export interface CreateMessage {
@@ -93,7 +97,8 @@ export interface ConversationStats {
 	unassigned: number,
 	mine: number,
 	opened: number,
-	resolved: number
+	resolved: number,
+	mentioned: number
 }
 
 export interface ConversationFilters {

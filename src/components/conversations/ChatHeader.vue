@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { IconInfoCircle, IconLoader2, IconReload, IconSearch, IconCheck } from '@tabler/icons-vue'
+import { 
+	IconInfoCircle, IconLoader2, IconReload, 
+	IconSearch, IconCircleCheckFilled
+} from '@tabler/icons-vue'
 import { computed } from 'vue'
 import { useContactUtils } from '~/composables/useContactUtils'
 import { useUserStore } from '~/stores'
 import type { ConversationItem, UserItem } from '~/types'
 
-defineProps<{
+const props = defineProps<{
 	conversation: ConversationItem,
 	changingSolved?: boolean,
 	changingOwner?: boolean
@@ -24,6 +27,10 @@ const users = computed(() => [
 	userStore.notAssigned,
 	...userStore.users
 ])
+
+const assignedUserId = computed(() => 
+	props.conversation.assigned_user?.id || userStore.notAssigned.id
+)
 
 const onChangeOwner = (value: string) =>  {
 	const owner = users.value.find(u => u.id === value)
@@ -59,13 +66,13 @@ const onChangeOwner = (value: string) =>  {
 		<div v-if="conversation.is_initiated" class="flex items-center gap-2">
 			<div v-if="!conversation.is_solved && !conversation.is_expired">
 				<Button
-					severity="secondary"
+					severity="success"
 					:disabled="changingSolved"
 					@click="emit('onSolved', true)"
 				>
 					<IconLoader2 v-if="changingSolved" class="animate-spin w-6 h-6" />
 					<div v-else class="flex items-center gap-2">
-						<IconCheck size="16" />
+						<IconCircleCheckFilled size="18" />
 						<div>{{ $t('conversations.solve') }}</div>
 					</div>
 				</Button>
@@ -86,7 +93,7 @@ const onChangeOwner = (value: string) =>  {
 
 			<div>
 				<Select
-					:modelValue="conversation.assigned_user?.id"
+					:modelValue="assignedUserId"
 					@change="onChangeOwner($event.value)"
 					:options="users"
 					optionValue="id"
