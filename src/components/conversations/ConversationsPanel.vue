@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 import { useToast } from 'primevue'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useErrorHandler } from '~/composables/useErrorHandler'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
 import type { ConversationFilters as ConversationServiceFilters } from '~/services/ConversationService'
@@ -17,6 +18,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const handleError = useErrorHandler()
 const toast = useToast()
 const conversationStore = useConversationsStore()
 const { 
@@ -66,7 +68,7 @@ const searchTypes = ref([
 ])
 const selectOpen = ref(false)
 const conversationId = ref('')
-const assignedUser = ref()
+const assignedUser = ref<string>()
 const conversationScroll = ref()
 
 const conversations = computed(() => conversationStore.conversationsByTab[currentTab.value] || [])
@@ -110,16 +112,21 @@ const onConversationExists = (conversationExists: ConversationExists) => {
 	conversationId.value = conversationExists.data.conversation_id
 	assignedUser.value = conversationExists.data.assigned_user_name
 
-	if (!assignedUser.value) {
+	console.log('assignedUser.value', assignedUser.value)
+	if (conversationExists.message_code === 'exist_draft_conversation') {
 		showStartConversationDialog.value = false
 		showNavigateToConversation.value = true
-	} else {
+	} 
+	else if(conversationExists.message_code === 'exist_active_conversation') {
 		toast.add({
 			severity: 'info',
 			summary: t('conversations.exists'),
 			detail: t('conversations.conversation_assigned_to', { user: assignedUser.value }),
 			life: 3000,
 		})
+	}
+	else {
+		handleError(conversationExists)
 	}
 }
 
