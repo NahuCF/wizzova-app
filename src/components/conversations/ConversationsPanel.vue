@@ -3,7 +3,7 @@ import { IconPlus, IconSearch, IconFilter, IconX, IconStack,
 	IconUserPlus, IconPin, IconMessageDots, IconMessageCheck, IconLoader2 } from '@tabler/icons-vue'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'primevue'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
@@ -30,7 +30,8 @@ const {
 	searchTerm: filteredSearchTerm,
 	loading: loadingFiltered,
 	loadNextPage: loadNextFilteredPage,
-	fetchDataPage: fetchFilteredPage
+	fetchDataPage: fetchFilteredPage,
+	debouncedFetch: debounceFiltered
 } = usePaginatedData<ConversationItem>(
 	async (page, rows_per_page, search) => {
 		const transformedFilters: ConversationServiceFilters = {}
@@ -38,6 +39,7 @@ const {
 		if (filters.value?.status === 'opened') transformedFilters.only_opened = true
 		if (filters.value?.status === 'resolved') transformedFilters.only_solved = true
 		if (filters.value?.assignedUser) transformedFilters.user_id = filters.value.assignedUser.id
+		if (search) transformedFilters.search_type = searchType.value
 
 		const { data: response } = await API.conversation.index({
 			page,
@@ -79,7 +81,7 @@ const tabs = computed(() => [
 ])
 
 const noItems = computed(() => {
-	if(filters.value || filteredSearchTerm.value) {
+	if(filters.value || filteredSearchTerm.value || focusSearch.value) {
 		return !loadingFiltered.value && filteredConversations.value.data.length === 0
 	}
 	else {
@@ -164,6 +166,18 @@ const handleTabChange = (value: string | number) => {
 		conversationStore.setTab(tab as ConversationStatus)
 	}
 }
+
+watch(searchType, () => {
+	debounceFiltered()
+})
+
+watch(filteredSearchTerm, () => {
+	debounceFiltered()
+})
+
+watch(focusSearch, () => {
+	filteredConversations.value.data = []
+})
 
 onMounted(() => document.addEventListener('click', handleDocumentClick))
 onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick))
@@ -262,7 +276,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 	</div>
 
 	<div
-		v-if="filters || filteredSearchTerm"
+		v-if="filters || filteredSearchTerm || focusSearch"
 		ref="conversationScroll"
 		class="overflow-y-auto max-h-full"
 		@scrollend="onScroll"
@@ -295,7 +309,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 	<div v-if="noItems" class="flex justify-center p-8">
 		<div class="text-center text-gray-400">{{ $t('conversations.no_conversations_found') }}</div>
 	</div>
-	<div v-if="loading" class="flex justify-center p-8">
+	<div v-if="loading || loadingFiltered" class="flex justify-center p-8">
 		<IconLoader2 class="animate-spin text-emerald-500" size="24" />
 	</div>
 
