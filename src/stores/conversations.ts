@@ -140,6 +140,8 @@ export const useConversationsStore = defineStore('conversations', () => {
 				conversationsByTab.value.opened.unshift(updatedConversation)
 			}
 
+			updateConversationInTabs(updatedConversation, ['pinned'])
+
 			if (selectedConversation.value?.id === updatedConversation.id) {
 				selectedConversation.value = updatedConversation
 			}
@@ -182,6 +184,8 @@ export const useConversationsStore = defineStore('conversations', () => {
 			else {
 				conversationsByTab.value.opened.unshift(updatedConversation)
 			}
+
+			updateConversationInTabs(updatedConversation, ['pinned'])
 
 			selectedConversation.value = null
 
