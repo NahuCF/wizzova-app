@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { API } from '~/services'
-import type { MessageItem, Page, TemplateItem } from '~/types'
+import type { MessageDeleted, MessageItem, Page, TemplateItem } from '~/types'
 
 type MessagePagination = {
 	pages: Record<number, MessageItem[]>
@@ -13,6 +13,7 @@ type MessagePagination = {
 export const useMessagesStore = defineStore('messages', () => {
 	const messagesPaginationByConversation = ref<Record<string, MessagePagination>>({})
 	const templates = ref<Record<string, TemplateItem>>({})
+	const lastDeletedMessage = ref<MessageDeleted | null>(null)
 
 	const initConversationPagination = (conversationId: string) => {
 		if (!messagesPaginationByConversation.value[conversationId]) {
@@ -131,6 +132,7 @@ export const useMessagesStore = defineStore('messages', () => {
 	return {
 		messagesPaginationByConversation,
 		templates,
+		lastDeletedMessage,
 		ensurePage,
 		loadInitialPage,
 		loadOlderMessages,

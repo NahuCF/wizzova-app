@@ -153,6 +153,8 @@ watch(selectedConversation, (conv) => {
 	}
 })
 
+
+selectedConversation.value = null
 userStore.fetchUsers()
 conversationStore.fetchStats()
 conversationStore.fetchConversations()

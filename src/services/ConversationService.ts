@@ -52,5 +52,11 @@ export default {
     },
 	async changeOwner(id: string, user_id?: string) {
         return Http.put<{ data: ConversationItem }>(`/conversations/${id}/change-owner`, { user_id })
-    }
+    },
+	async pin(id: string) {
+        return Http.post<{ data: ConversationItem }>(`/conversations/${id}/pin`)
+    },
+	async unpin(id: string) {
+        return Http.delete<{ data: ConversationItem }>(`/conversations/${id}/pin`)
+    },
 }

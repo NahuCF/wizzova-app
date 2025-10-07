@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { defineProps, computed, type Component, ref } from 'vue'
-import { IconExternalLink, IconPhone, IconArrowBackUp, IconList, IconCheck, IconClock, IconChecks, IconX, IconTrash, IconChevronDown } from '@tabler/icons-vue'
+import { 
+	IconExternalLink, IconPhone, IconArrowBackUp, IconList, 
+	IconCheck, IconClock, IconChecks, IconX, IconChevronDown
+} from '@tabler/icons-vue'
 import type { MessageStatus, TemplateBtn, TemplateBtnType, TemplateCallBtn, TemplateUrlBtn } from '~/types'
 
 const bubbleColors = {
@@ -13,7 +16,7 @@ const bubbleColors = {
 	slate: { bg: 'bg-slate-100', border: 'border-t-slate-100' }
 }
 type BubbleColor = keyof typeof bubbleColors
-const statusIcons: Record<MessageStatus, { icon: Component, color: string }> = {
+const statusIcons: Record<MessageStatus, { icon?: Component, color: string }> = {
 	pending: {
 		icon: IconClock,
 		color: 'text-slate-400'
@@ -35,13 +38,13 @@ const statusIcons: Record<MessageStatus, { icon: Component, color: string }> = {
 		color: 'text-slate-400'
 	},
 	deleted: {
-		icon: IconTrash,
 		color: 'text-slate-400'
 	}
 }
 
 const props = withDefaults(
 	defineProps<{
+		visible?: boolean,
 		header?: string,
 		body: string,
 		footer?: string,
@@ -84,7 +87,8 @@ const selectedColor = computed(() => {
 const isVisible = computed(() => {
 	return props.body.length ||
 		(props.body.length > 0 && props.footer.length) ||
-		(props.header && props.header.length && props.header.length > 0)
+		(props.header && props.header.length && props.header.length > 0) ||
+		props.visible
 })
 
 const formattedBodyText = computed(() => {
@@ -221,6 +225,7 @@ const iconComponents: Record<TemplateBtnType, Component> = {
 						@click="onMentionClick"
 					>
 					</span>
+					<slot name="body"></slot>
 
 					<div class="text-slate-400 italic" v-if="body.length > 0 && footer.length > 0">
 						{{ footer }}

@@ -8,15 +8,17 @@ import type {
 } from '~/types'
 import type { ConversationFilters } from '~/services/ConversationService'
 import { useErrorHandler } from '~/composables/useErrorHandler'
+import { useOptimisticUpdate } from '~/composables/useOptimisticUpdate'
 
 export const useConversationsStore = defineStore('conversations', () => {
 	const sessionStore = useSessionStore()
 	const handleError = useErrorHandler()
+	const { optimisticUpdate } = useOptimisticUpdate()
 
 	const conversationsByTab = ref<Record<ConversationStatus, ConversationItem[]>>({
 		unassigned: [],
 		mine: [],
-		mentioned: [],
+		pinned: [],
 		opened: [],
 		resolved: [],
 	})
@@ -24,7 +26,7 @@ export const useConversationsStore = defineStore('conversations', () => {
 	const paginationByTab = ref<Record<ConversationStatus, Page<ConversationItem> | null>>({
 		unassigned: null,
 		mine: null,
-		mentioned: null,
+		pinned: null,
 		opened: null,
 		resolved: null,
 	})
@@ -39,14 +41,14 @@ export const useConversationsStore = defineStore('conversations', () => {
 		mine: 0,
 		opened: 0,
 		resolved: 0,
-		mentioned: 0
+		pinned: 0
 	})
 
 	const tabToFilters = (tab: ConversationStatus) => {
 		switch (tab) {
 			case 'unassigned': return { only_unassigned: true }
 			case 'mine': return sessionStore.user ? { user_id: sessionStore.user.id } : {}
-			case 'mentioned': return sessionStore.user ? { user_id: sessionStore.user.id, only_pinned: true } : {}
+			case 'pinned': return { only_pinned: true }
 			case 'opened': return { only_opened: true }
 			case 'resolved': return { only_solved: true }
 		}
@@ -160,6 +162,9 @@ export const useConversationsStore = defineStore('conversations', () => {
 				...response.data
 			}
 
+			conversationsByTab.value.mine = conversationsByTab.value.mine.filter(
+				(c) => c.id !== updatedConversation.id
+			)
 			conversationsByTab.value.opened = conversationsByTab.value.opened.filter(
 				(c) => c.id !== updatedConversation.id
 			)
@@ -169,13 +174,13 @@ export const useConversationsStore = defineStore('conversations', () => {
 
 			if (updatedConversation.is_solved) {
 				conversationsByTab.value.resolved.unshift(updatedConversation)
-			} else {
+			} 
+			else if(updatedConversation.assigned_user?.id === sessionStore.user?.id) {
+				conversationsByTab.value.mine.unshift(updatedConversation)
 				conversationsByTab.value.opened.unshift(updatedConversation)
 			}
-
-			const mineIndex = conversationsByTab.value.mine.findIndex(c => c.id === updatedConversation.id)
-			if (mineIndex >= 0) {
-				conversationsByTab.value.mine[mineIndex] = updatedConversation
+			else {
+				conversationsByTab.value.opened.unshift(updatedConversation)
 			}
 
 			selectedConversation.value = null
@@ -186,6 +191,66 @@ export const useConversationsStore = defineStore('conversations', () => {
 		} finally {
 			changingSolved.value = false
 		}
+	}
+
+	const updateConversationInTabs = (conversation: ConversationItem, tabs: ConversationStatus[]) => {
+		for (const tab of tabs) {
+			const index = conversationsByTab.value[tab].findIndex(c => c.id === conversation.id)
+			if (index >= 0) {
+				conversationsByTab.value[tab][index] = {
+					...conversationsByTab.value[tab][index],
+					...conversation
+				}
+			}
+		}
+	}
+
+	const pin = async (conversation: ConversationItem) => {
+		optimisticUpdate({
+			key: conversation.id,
+			type: 'pin',
+			applyOptimistic: () => {
+				const updated = { ...conversation, is_pinned: true }
+				conversationsByTab.value.pinned.unshift(updated)
+				updateConversationInTabs(updated, ['mine', 'opened', 'resolved', 'unassigned'])
+				return updated
+			},
+			rollback: () => {
+				conversationsByTab.value.pinned = conversationsByTab.value.pinned.filter(c => c.id !== conversation.id)
+				return conversation
+			},
+			apiCall: async () => {
+				const { data: response } =  await API.conversation.pin(conversation.id)
+				return {
+					...conversation,
+					...response.data
+				}
+			}
+		})
+	}
+
+	const unpin = async (conversation: ConversationItem) => {
+		optimisticUpdate({
+			key: conversation.id,
+			type: 'unpin',
+			applyOptimistic: () => {
+				conversationsByTab.value.pinned = conversationsByTab.value.pinned.filter(c => c.id !== conversation.id)
+				const updated = { ...conversation, is_pinned: false }
+				updateConversationInTabs(updated, ['mine', 'opened', 'resolved', 'unassigned'])
+				return updated
+			},
+			rollback: () => {
+				conversationsByTab.value.pinned.unshift(conversation)
+				return conversation
+			},
+			apiCall: async () => {
+				const { data: response } =  await API.conversation.unpin(conversation.id)
+				return {
+					...conversation,
+					...response.data
+				}
+			}
+		})
 	}
 
 	return {
@@ -203,6 +268,8 @@ export const useConversationsStore = defineStore('conversations', () => {
 		selectConversation,
 		changeOwner,
 		changeSolved,
+		pin,
+		unpin,
 		fetchStats,
 	}
 })

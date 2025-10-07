@@ -3,7 +3,7 @@ import { usePusher } from './usePusher'
 import { useConversationsStore } from '~/stores/conversations'
 import { useSessionStore } from '~/stores'
 import { useMessagesStore } from '~/stores/messages'
-import type { ConversationItem, MessageDelivered, MessageItem, MessageStatus } from '~/types'
+import type { ConversationItem, MessageDeleted, MessageDelivered, MessageItem, MessageStatus } from '~/types'
 import type { Channel } from 'pusher-js'
 
 export const useConversationChannels = () => {
@@ -88,6 +88,11 @@ export const useConversationChannels = () => {
 		updateMessageStatus(delivered.conversation_id, delivered.message_id, delivered.status)
 	}
 
+	const handleMessageDeleted = (deleted: MessageDeleted) => {
+		updateMessageStatus(deleted.conversation_id, deleted.message_id, 'deleted')
+		messagesStore.lastDeletedMessage = deleted
+	}
+
 	// --- Pusher lifecycle ---
 	onMounted(() => {
 		if (!sessionStore.tenant || !sessionStore.defaultWaba) return
@@ -100,6 +105,7 @@ export const useConversationChannels = () => {
 		channel.bind('message.new', handleNewMessage)
 		channel.bind('message.sent', handleMessageSent)
 		channel.bind('message.delivered', handleMessageDelivered)
+		channel.bind('message.deleted', handleMessageDeleted)
 	})
 
 	onBeforeUnmount(() => {

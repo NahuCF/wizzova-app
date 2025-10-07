@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import 'vue3-emoji-picker/css'
-import { IconNote, IconLoader2 } from '@tabler/icons-vue'
+import { IconNote, IconLoader2, IconCancel } from '@tabler/icons-vue'
 import moment from 'moment'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ConversationActivity, MessageItem, TemplateItem, UserItem } from '~/types'
+import { useMessagesStore } from '~/stores/messages'
 
 type TimelineItem =
 	| ({ kind: 'message' } & MessageItem)
@@ -38,6 +39,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const messagesStore = useMessagesStore()
 
 const replyMessage = ref<MessageItem>()
 const chatScroll = ref<HTMLDivElement>()
@@ -229,6 +231,12 @@ watch(
 	},
 	{ deep: true }
 )
+
+watch(() => messagesStore.lastDeletedMessage, (deleted) => {
+	if(deleted?.message_id === replyMessage.value?.id) {
+		replyMessage.value = undefined
+	}
+})
 </script>
 
 <template>
@@ -284,17 +292,25 @@ watch(
 
 						<MessagePreview
 							v-else-if="item.type === 'text'"
-							:body="item.content ?? ''"
+							:visible="item.status === 'deleted'"
+							:body="item.status === 'deleted' ? '' : item.content ?? ''"
 							:buttons="[]"
 							:date="moment(item.created_at).format('h:mm A')"
-							:status="item.status"
+							:status="item.direction === 'outbound' ? item.status : undefined"
 							:side="item.direction === 'inbound' ? 'left' : 'right'"
 							:bubbleColor="item.direction === 'inbound' ? 'white' : 'sky'"
 							:showTail="shouldShowTail(item, group.items)"
-							:showOptions="item.direction === 'inbound'"
+							:showOptions="item.direction === 'inbound' && item.status !== 'deleted'"
 							:reply="getReply(item)"
 							@onReply="replyMessage = item"
-						/>
+						>
+							<template v-if="item.status === 'deleted'" #body>
+								<div class="flex items-center gap-1 text-lg text-gray-400 font-light italic">
+									<IconCancel size="15" />
+									{{ $t('chat.message_deleted') }}
+								</div>
+							</template>
+						</MessagePreview>
 
 						<MessagePreview
 							v-else-if="item.type === 'note'"

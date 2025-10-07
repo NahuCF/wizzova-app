@@ -699,7 +699,7 @@ export default {
     status: {
       unassigned: 'No asignado',
       mine: 'Mio',
-      mentioned: 'Fijado',
+      pinned: 'Fijado',
       opened: 'Abierto',
       resolved: 'Resuelto'
     },
@@ -751,7 +751,8 @@ export default {
     resolved: '{user_name} há marcado el chat como resuelto a las {time}',
     reopened: '{user_name} há re abierto este chat a las {time}',
     conversation_started: '{user_name} há iniciado la conversación a las {time}',
-    conversation_expired: 'La conversación ha expirado a las {time}'
+    conversation_expired: 'La conversación ha expirado a las {time}',
+    message_deleted: 'Este mensaje há sido borrado'
   },
   app_sidebar: {
     routes: {

@@ -77,7 +77,7 @@ const loading = computed(() => conversationStore.loading)
 const tabs = computed(() => [
 	{ value: 'unassigned', stats: conversationStats.value.unassigned, icon: IconStack },
 	{ value: 'mine', stats: conversationStats.value.mine, icon: IconUserPlus },
-	{ value: 'mentioned', stats: conversationStats.value.mentioned, icon: IconPin },
+	{ value: 'pinned', stats: conversationStats.value.pinned, icon: IconPin },
 	{ value: 'opened', stats: conversationStats.value.opened, icon: IconMessageDots },
 	{ value: 'resolved', stats: conversationStats.value.resolved, icon: IconMessageCheck }
 ])
@@ -101,6 +101,21 @@ const handleDocumentClick = (e: MouseEvent) => {
 const selectConversation = (conversation: ConversationItem) => {
 	conversationStore.selectConversation(conversation)
 	focusSearch.value = false
+}
+
+const togglePin = ({
+	conversation,
+	pin
+}: {
+	conversation: ConversationItem,
+	pin: boolean
+}) => {
+	if(pin) {
+		conversationStore.pin(conversation)
+	}
+	else {
+		conversationStore.unpin(conversation)
+	}
 }
 
 const startConversation = (conversation: ConversationItem) => {
@@ -169,7 +184,7 @@ const onScroll = () => {
 
 const handleTabChange = (value: string | number) => {
 	const tab = value.toString()
-	if (['unassigned', 'mine', 'mentioned', 'opened', 'resolved'].includes(tab)) {
+	if (['unassigned', 'mine', 'pinned', 'opened', 'resolved'].includes(tab)) {
 		conversationStore.setTab(tab as ConversationStatus)
 	}
 }
@@ -294,6 +309,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 			:conversation="conversation"
 			:highlight="selectedConversation?.id === conversation.id"
 			@onClick="selectConversation"
+			@onPin="togglePin"
 		/>
 	</div>
 
@@ -310,6 +326,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 			:conversation="conversation"
 			:highlight="selectedConversation?.id === conversation.id"
 			@onClick="selectConversation"
+			@onPin="togglePin"
 		/>
 	</div>
 

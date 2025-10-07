@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import moment from 'moment'
-import { computed } from 'vue'
+import { IconPin, IconPinFilled } from '@tabler/icons-vue'
+import { computed, ref } from 'vue'
 import { useContactUtils } from '~/composables/useContactUtils'
 import type { ConversationItem } from '~/types'
+import { API } from '~/services'
 
 const props = defineProps<{
 	conversation: ConversationItem,
@@ -10,10 +12,14 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(e: 'onClick', value: ConversationItem): void
+	(e: 'onClick', value: ConversationItem): void,
+	(e: 'onPin', value: { conversation: ConversationItem, pin: boolean}): void
 }>()
 
 const { getContactName } = useContactUtils()
+
+const isHovered = ref(false)
+const isPinHovered = ref(false)
 
 const progress = computed(() => {
 	if(props.conversation.is_solved) return 0
@@ -44,6 +50,8 @@ const borderStyle = computed(() => {
 		background: `conic-gradient(var(--p-primary-color) 0deg ${angle}deg, transparent ${angle}deg 360deg)`
 	}
 })
+
+const pinned = computed(() => props.conversation.is_pinned)
 </script>
 
 <template>
@@ -54,6 +62,8 @@ const borderStyle = computed(() => {
 			'border-emerald-500': highlight,
 			'border-transparent': !highlight
 		}"
+		@mouseenter="isHovered = true"
+		@mouseleave="isHovered = false"
 		@click.stop="() => emit('onClick', conversation)"
 	>
 		<div class="flex items-center gap-3 flex-1 overflow-hidden">
@@ -84,6 +94,15 @@ const borderStyle = computed(() => {
 				:value="conversation.unread_count"
 				size="small"
 			/>
+			<div
+				v-if="pinned || isHovered"
+				@mouseenter="isPinHovered = true"
+				@mouseleave="isPinHovered = false"
+				@click.stop="emit('onPin', { conversation, pin: !conversation.is_pinned })"
+			>
+				<IconPinFilled v-if="pinned || isPinHovered" class="text-slate-400" size="16" />
+				<IconPin v-else class="text-slate-400" size="16" />
+			</div>
 		</div>
 	</div>
 </template>

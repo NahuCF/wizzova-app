@@ -4,7 +4,7 @@ import type { ContactItem } from "./Contact"
 import type { VariableMapping } from "./Template"
 import type { UserItem } from "./User"
 
-export type ConversationStatus = 'unassigned' | 'mine' | 'mentioned' | 'opened' | 'resolved'
+export type ConversationStatus = 'unassigned' | 'mine' | 'pinned' | 'opened' | 'resolved'
 export type MessageStatus = 'pending' | 'sent' | 'delivered' | 'read' | 'failed' | 'deleted'
 export type MessageDirection = 'inbound' | 'outbound'
 export type MessageType = 'text' | 'image' | 'video' | 'audio' | 'document' | 'location' | 
@@ -23,7 +23,8 @@ export interface ConversationItem {
 	phone_number: WABANumber,
 	last_message?: MessageItem,
 	last_message_at: string,
-	expires_at: string
+	expires_at: string,
+	is_pinned?: boolean
 }
 
 export interface ConversationExists {
@@ -64,6 +65,7 @@ export interface MessageItem {
 	delivered_at?: string,
 	read_at?: string,
 	failed_at?: string,
+	deleted_at?: string,
 	created_at: string,
 	updated_at: string,
 	mentions?: Record<string, string>[],
@@ -91,6 +93,16 @@ export interface MessageDelivered {
 	status: MessageStatus
 }
 
+export interface MessageDeleted {
+	message_id: string,
+	conversation_id: string,
+	deleted_at: string,
+	delete_by?: {
+		type: string,
+		phone: string | null
+	}
+}
+
 export type MentionItem = { id: string, label: string }
 
 export interface ConversationStats {
@@ -98,7 +110,7 @@ export interface ConversationStats {
 	mine: number,
 	opened: number,
 	resolved: number,
-	mentioned: number
+	pinned: number
 }
 
 export interface ConversationFilters {

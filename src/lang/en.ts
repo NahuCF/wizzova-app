@@ -700,7 +700,7 @@ Grab them today!`,
     status: {
       unassigned: 'Unassigned',
       mine: 'Mine',
-      mentioned: 'Pinned',
+      pinned: 'Pinned',
       opened: 'Opened',
       resolved: 'Resolved'
     },
@@ -752,7 +752,8 @@ Grab them today!`,
     resolved: '{user_name} has marked the chat as resolved at {time}',
     reopened: '{user_name} has reopened this chat at {time}',
     conversation_started: '{user_name} has started the conversation at {time}',
-    conversation_expired: 'The conversation has expired at {time}'
+    conversation_expired: 'The conversation has expired at {time}',
+    message_deleted: 'This message was deleted'
   },
   app_sidebar: {
     routes: {
