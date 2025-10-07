@@ -293,7 +293,7 @@ watch(() => messagesStore.lastDeletedMessage, (deleted) => {
 						<MessagePreview
 							v-else-if="item.type === 'text'"
 							:visible="item.status === 'deleted'"
-							:body="item.status === 'deleted' ? '' : item.content ?? ''"
+							:body="item.content ?? ''"
 							:buttons="[]"
 							:date="moment(item.created_at).format('h:mm A')"
 							:status="item.direction === 'outbound' ? item.status : undefined"
@@ -305,8 +305,8 @@ watch(() => messagesStore.lastDeletedMessage, (deleted) => {
 							@onReply="replyMessage = item"
 						>
 							<template v-if="item.status === 'deleted'" #body>
-								<div class="flex items-center gap-1 text-lg text-gray-400 font-light italic">
-									<IconCancel size="15" />
+								<div class="flex items-center gap-1 text-sm text-gray-400 font-light italic">
+									<IconCancel size="12" />
 									{{ $t('chat.message_deleted') }}
 								</div>
 							</template>

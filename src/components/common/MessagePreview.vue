@@ -218,6 +218,8 @@ const iconComponents: Record<TemplateBtnType, Component> = {
 
 					<div v-if="header && header.length > 0" class="font-semibold text-lg">{{ header }}</div>
 
+					<slot name="body"></slot>
+
 					<span
 						v-if="body.length > 0"
 						class="font-regular text-lg"
@@ -225,7 +227,6 @@ const iconComponents: Record<TemplateBtnType, Component> = {
 						@click="onMentionClick"
 					>
 					</span>
-					<slot name="body"></slot>
 
 					<div class="text-slate-400 italic" v-if="body.length > 0 && footer.length > 0">
 						{{ footer }}
