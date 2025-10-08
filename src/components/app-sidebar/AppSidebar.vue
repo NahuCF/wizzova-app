@@ -112,23 +112,25 @@ const logout = async () => {
 
 <template>
 	<aside
-		class="flex flex-col w-full bg-white shadow h-screen border-r border-slate-200 transition-all duration-300 ease-in-out"
+		class="flex flex-col w-full bg-white shadow h-screen outline-r outline-slate-200 transition-all duration-500 ease-in-out overflow-hidden z-1"
 		:class="collapsed ? 'max-w-[60px]' : 'max-w-[220px]'"
 	>
 		<div
-			class="flex items-center justify-between p-6 border-b border-slate-200 cursor-pointer"
+			class="flex items-center justify-between p-5 border-b border-slate-200 cursor-pointer"
 			@click="prefs.toggleSidebar()"
 		>
-			<div v-if="!collapsed" class="flex items-center space-x-3">
-				<img src="/favicon.ico" class="w-8 h-8 shrink-0" />
-				<span class="font-semibold text-xl">Wabox</span>
-			</div>
-			<div v-else>
-				<img src="/favicon.ico" class="w-8 h-8 shrink-0o" />
+			<div class="flex items-center space-x-4">
+				<img src="/favicon.ico" class="w-10 h-10 shrink-0" />
+				<span
+					class="font-semibold text-xl truncate transition-opacity duration-300 ease-in-out"
+					:class="collapsed ? 'opacity-0' : 'opacity-100'"
+				>	
+					Wabox
+				</span>
 			</div>
 		</div>
 
-		<ul class="flex-1 overflow-y-auto px-2 py-4 space-y-2">
+		<ul class="flex-1 overflow-y-auto overflow-x-hidden px-2 py-4 space-y-2">
 			<template v-for="item in sidebarMenu" :key="item.name">
 				<SidebarGroup
 					v-if="item.children && hasPermission(item)"
@@ -146,9 +148,9 @@ const logout = async () => {
 			</template>
 		</ul>
 
-		<div class="border-t border-slate-200 p-3">
+		<div class="border-t border-slate-200 p-2">
 			<div
-				class="flex items-center gap-3 px-4 py-3 rounded-md cursor-pointer hover:bg-slate-100 transition"
+				class="flex items-center gap-3 px-2 py-2 rounded-md cursor-pointer hover:bg-slate-100 transition"
 				@click="popover.toggle"
 			>
 				<div>
@@ -158,9 +160,16 @@ const logout = async () => {
 						shape="circle"
 					/>
 				</div>
-				<div v-if="!collapsed" class="flex flex-col justify-between">
-					<span class="text truncate">{{ session.user?.name }}</span>
-					<span class="text-sm text-slate-500 truncate">{{ session.user?.email }}</span>
+				<div
+					class="flex flex-col justify-between transition-opacity duration-300 ease-in-out"
+					:class="collapsed ? 'opacity-0' : 'opacity-100'"
+				>
+					<span class="text truncate">
+						{{ session.user?.name }}
+					</span>
+					<span class="text-sm text-slate-500 truncate">
+						{{ session.user?.email }}
+					</span>
 				</div>
 			</div>
 		</div>

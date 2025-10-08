@@ -37,10 +37,25 @@ const toggle = (event: Event) => {
 			class="flex items-center px-4 py-3 cursor-pointer rounded-md hover:bg-slate-100 transition"
 			@click="toggle"
 		>
-			<component :is="item.icon" class="shrink-0" size="20" />
-			<span v-if="!collapsed" class="flex-1 ml-5 truncate">{{ item.name }}</span>
-			<IconChevronDown v-if="!collapsed && open" size="12" />
-			<IconChevronUp v-else-if="!collapsed" size="12" />
+			<component :is="item.icon" class="shrink-0" size="24" />
+			<span
+				class="flex-1 ml-5 truncate transition-opacity duration-300 ease-in-out"
+				:class="collapsed ? 'opacity-0' : 'opacity-100'"
+			>
+				{{ item.name }}
+			</span>
+			<IconChevronDown
+				v-if="!open"
+				class="transition-opacity duration-300 ease-in-out"
+				:class="collapsed ? 'opacity-0' : 'opacity-100'"
+				size="12"
+			/>
+			<IconChevronUp
+				v-if="open"
+				class="transition-opacity duration-300 ease-in-out"
+				:class="collapsed ? 'opacity-0' : 'opacity-100'"
+				size="12"
+			/>
 		</div>
 
 		<transition name="fade">
