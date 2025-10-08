@@ -10,6 +10,7 @@ import { API } from '~/services'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import { storeToRefs } from 'pinia'
 import { usePaginatedData } from '~/composables/usePaginatedData'
+import { useMessagesStore } from '~/stores/messages'
 
 const props = defineProps<{
 	contact?: ContactItem,
@@ -20,6 +21,11 @@ const props = defineProps<{
 const emit = defineEmits<{
 	(e: 'onContactUpdated', value: ContactItem): void
 	(e: 'update:isSearching', value: boolean): void
+	(e: 'scrollToMessage', value: { 
+		messageId: string,
+		page: number,
+		positionFromEnd: number
+	}): void
 }>()
 
 const {
@@ -49,6 +55,7 @@ const contactFieldStore = useContactFieldStore()
 const { contactFields } = storeToRefs(contactFieldStore)
 const { fetchContactFields } = contactFieldStore
 const userStore = useUserStore()
+const messagesStore = useMessagesStore()
 const { getContactName } = useContactUtils()
 
 const isEditing = ref(false)
@@ -108,6 +115,19 @@ const onConfirm = async () => {
 	} finally {
 		loading.value = false
 	}
+}
+
+const jumpToMessageInChat = async (message: MessageItem) => {
+	if (!props.conversationId) return
+
+	const result = await messagesStore.jumpToMessage(props.conversationId, message)
+	if (!result) return
+
+	emit('scrollToMessage', {
+		messageId: message.id,
+		page: result.page,
+		positionFromEnd: result.positionFromEnd
+	})
 }
 
 watch(() => props.contact, () => {
@@ -257,6 +277,7 @@ userStore.fetchUsers()
 					v-for="message in messages.data"
 					:key="message.id"
 					class="flex flex-col gap-3 p-3 hover:bg-slate-100 cursor-pointer"
+					@click="jumpToMessageInChat(message)"
 				>
 					<div class="text-sm text-gray-400">{{ moment(message.created_at).format('h:mm A') }}</div>
 					<div class="text-slate-700" v-html="highlightSearchTerm(message.content)"></div>
@@ -272,7 +293,7 @@ userStore.fetchUsers()
 			<IconLoader2 class="animate-spin text-emerald-500" size="24" />
 		</div>
 
-		<div  v-if="isEditing" class="flex flex-col gap-6 p-6">
+		<div v-if="isEditing" class="flex flex-col gap-6 p-6">
 			<div class="flex justify-between items-center">
 				<div class="flex items-center gap-1">
 					<div>

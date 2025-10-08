@@ -6,6 +6,7 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ConversationActivity, MessageItem, TemplateItem, UserItem } from '~/types'
 import { useMessagesStore } from '~/stores/messages'
+import { useChatScroll, type ChatEmit } from '~/composables/useChatScroll'
 
 type TimelineItem =
 	| ({ kind: 'message' } & MessageItem)
@@ -26,17 +27,7 @@ const props = defineProps<{
 	allMessagesLoaded?: boolean
 }>()
 
-const emit = defineEmits<{
-	(e: 'onSendMessage', { message, type, mentions }: {
-		message: string, 
-		type: 'REPLY' | 'NOTES',
-		mentions: Record<string, string>[],
-		replyId?: string
-	}): void
-	(e: 'onCustomEvent'): void,
-	(e: 'scrollTopReached'): void,
-	(e: 'scrollBottomReached'): void
-}>()
+const emit = defineEmits<ChatEmit>()
 
 const { t } = useI18n()
 const messagesStore = useMessagesStore()
@@ -44,6 +35,7 @@ const messagesStore = useMessagesStore()
 const replyMessage = ref<MessageItem>()
 const chatScroll = ref<HTMLDivElement>()
 const lastConversationId = ref(props.conversationId)
+const isJumpingToMessage = ref(false)
 
 const reply = computed(() => {
 	if(replyMessage.value) {
@@ -77,20 +69,28 @@ const timeline = computed<TimelineItem[]>(() => {
 })
 
 const groupedTimeline = computed(() => {
-  const groups: Record<string, TimelineItem[]> = {}
-  for (const item of timeline.value) {
-    const dateKey = moment(
-      item.kind === 'message' ? item.created_at : item.event_at
-    ).format('YYYY-MM-DD')
+	const groups: Record<string, TimelineItem[]> = {}
+	for (const item of timeline.value) {
+		const dateKey = moment(
+		item.kind === 'message' ? item.created_at : item.event_at
+		).format('YYYY-MM-DD')
 
-    if (!groups[dateKey]) groups[dateKey] = []
-    groups[dateKey].push(item)
-  }
+		if (!groups[dateKey]) groups[dateKey] = []
+		groups[dateKey].push(item)
+	}
 
-  return Object.entries(groups)
-    .sort(([a], [b]) => (a > b ? 1 : -1))
-    .map(([date, items]) => ({ date, items }))
-	.reverse()
+	return Object.entries(groups)
+		.sort(([a], [b]) => (a > b ? 1 : -1))
+		.map(([date, items]) => ({ date, items }))
+		.reverse()
+})
+
+const messagePagination = computed(() => {
+	if(props.conversationId) {
+		return messagesStore.messagesPaginationByConversation[props.conversationId]
+	}
+
+	return null
 })
 
 const dateLabel = (date: string) => {
@@ -165,43 +165,6 @@ const getReply = (item: MessageItem) => {
 	return undefined
 }
 
-const scrollToBottom = (smooth = true) => {
-	const el = chatScroll.value
-	if (!el) return
-
-	el.scrollTo({
-		top: el.scrollHeight,
-		behavior: smooth ? 'smooth' : 'auto'
-	})
-}
-
-const onScroll = () => {
-	const el = chatScroll.value
-	if (!el) return
-
-	const threshold = 10
-	// Inverted because of flex-col-reverse
-	const isAtBottom = Math.abs(el.scrollTop) <= threshold
-  	const isAtTop = Math.abs(el.scrollTop) + el.clientHeight >= el.scrollHeight - threshold
-
-	if (isAtTop) {
-		emit('scrollTopReached')
-	}
-
-	if (isAtBottom) {
-		emit('scrollBottomReached')
-	}
-}
-
-
-const maintainScrollForTopLoad = async () => {
-	if (!chatScroll.value) return
-
-	const previousScrollHeight = chatScroll.value.scrollTop
-	await nextTick()
-	chatScroll.value.scrollTop = previousScrollHeight
-}
-
 watch(
 	() => props.messages,
 	async (newMessages, oldMessages) => {
@@ -209,7 +172,9 @@ watch(
 
 		const conversationChanged = props.conversationId !== lastConversationId.value
 
-		const loadingOlderMessages = !!oldMessages.length && newMessages.length > oldMessages.length
+		const loadingOlderMessages = !!oldMessages.length && newMessages.length > oldMessages.length &&
+			newMessages[newMessages.length - 1].id !== oldMessages[oldMessages.length - 1].id
+
 		const newMessageReceived =
 			oldMessages.length &&
 			newMessages.length &&
@@ -237,6 +202,16 @@ watch(() => messagesStore.lastDeletedMessage, (deleted) => {
 		replyMessage.value = undefined
 	}
 })
+
+const {
+	scrollToBottom,
+	onScroll,
+	placeholderForMissingPage,
+	maintainScrollForTopLoad,
+	scrollToMessage
+} = useChatScroll(chatScroll, props, messagesStore, isJumpingToMessage, messagePagination)
+
+defineExpose({ scrollToMessage })
 </script>
 
 <template>
@@ -244,7 +219,7 @@ watch(() => messagesStore.lastDeletedMessage, (deleted) => {
 		<div
 			ref="chatScroll"
 			class="flex flex-col-reverse px-4 py-12 gap-8 overflow-y-auto"
-			@scroll="onScroll"
+			@scroll="onScroll(emit)"
 		>
 			<div v-if="loadingBottom" class="flex justify-center p-8">
 				<IconLoader2 class="animate-spin text-emerald-500" size="36" />
@@ -264,7 +239,15 @@ watch(() => messagesStore.lastDeletedMessage, (deleted) => {
 
 				<template v-for="(item) in group.items" :key="item.id">
 					<div
-						v-if="item.kind === 'activity'"
+						v-if="placeholderForMissingPage(item.id)"
+						class="flex justify-center p-8"
+						:data-missing-page="placeholderForMissingPage(item.id)"
+					>
+						<IconLoader2 class="animate-spin text-emerald-500" size="36" />
+					</div>
+
+					<div
+						v-else-if="item.kind === 'activity'"
 						class="text-center my-8"
 					>
 						<span class="text-lg bg-gray-200 text-gray-700 px-4 py-2 rounded-full">
@@ -276,6 +259,7 @@ watch(() => messagesStore.lastDeletedMessage, (deleted) => {
 						v-else
 						class="flex px-4 z-2"
 						:class="item.direction === 'inbound' ? 'justify-start' : 'justify-end'"
+						:data-message-id="item.kind === 'message' ? item.id : null"
 					>
 						<MessagePreview
 							v-if="item.type === 'template' && item.template_id"

@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { API } from '~/services'
 import type { MessageDeleted, MessageItem, Page, TemplateItem } from '~/types'
 
-type MessagePagination = {
+export type MessagePagination = {
 	pages: Record<number, MessageItem[]>
 	meta: Page<MessageItem>['meta']
 	loadedPages: Set<number>
@@ -12,6 +12,7 @@ type MessagePagination = {
 
 export const useMessagesStore = defineStore('messages', () => {
 	const messagesPaginationByConversation = ref<Record<string, MessagePagination>>({})
+	const perPage = ref(15)
 	const templates = ref<Record<string, TemplateItem>>({})
 	const lastDeletedMessage = ref<MessageDeleted | null>(null)
 
@@ -72,6 +73,7 @@ export const useMessagesStore = defineStore('messages', () => {
 			const { data: response } = await API.message.index({
 				conversation_id: conversationId,
 				page,
+				rows_per_page: perPage.value
 			})
 			pag.pages[page] = response.data
 			pag.meta = response.meta

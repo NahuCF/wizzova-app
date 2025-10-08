@@ -12,6 +12,7 @@ import type {
 	ConversationItem, CreateMessage,
 	ContactItem, ConversationActivity
 } from '~/types'
+import Chat from '~/components/common/Chat.vue'
 
 const conversationStore = useConversationsStore()
 const messagesStore = useMessagesStore()
@@ -33,6 +34,7 @@ const showTemplateDialog = ref(false)
 const sendingMessage = ref(false)
 const activities = ref<ConversationActivity[]>([])
 const searchingContact = ref(false)
+const chatRef = ref<InstanceType<typeof Chat> | null>(null)
 
 const messages = computed(() => {
 	if (!selectedConversation.value) return []
@@ -146,6 +148,10 @@ const loadMoreMessages = async () => {
 	await messagesStore.loadOlderMessages(selectedConversation.value.id)
 }
 
+const handleScrollToMessage = ({ messageId, page, positionFromEnd }: { messageId: string, page: number, positionFromEnd: number }) => {
+  	chatRef.value?.scrollToMessage(messageId)
+}
+
 watch(selectedConversation, (conv) => {
 	if (conv) {
 		messagesStore.loadInitialPage(conv.id)
@@ -189,6 +195,7 @@ useConversationChannels()
 
 			<div class="grid grid-cols-4 h-full overflow-hidden">
 				<Chat
+					ref="chatRef"
 					class="col-span-3"
 					:conversationId="selectedConversation.id"
 					:contactName="getContactName(selectedConversation.contact) || ''"
@@ -215,6 +222,7 @@ useConversationChannels()
 						:contact="selectedConversation.contact"
 						:conversationId="selectedConversation.id"
 						@onContactUpdated="updateContact"
+						@scrollToMessage="handleScrollToMessage"
 					/>
 				</div>
 			</div>
