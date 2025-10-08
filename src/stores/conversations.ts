@@ -104,7 +104,9 @@ export const useConversationsStore = defineStore('conversations', () => {
 			await fetchConversations(tab, 1)
 		}
 
-		await fetchStats()
+		if(tab !== 'pinned') {
+			await fetchStats()
+		}
 	}
 
 	const selectConversation = (conv: ConversationItem | null) => {

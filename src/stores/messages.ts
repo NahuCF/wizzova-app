@@ -99,10 +99,7 @@ export const useMessagesStore = defineStore('messages', () => {
 		}
 	}
 
-	const jumpToMessage = async (conversationId: string, message: MessageItem) => {
-		if (!message.search_match?.page) return
-
-		const targetPage = message.search_match.page
+	const jumpToMessage = async (conversationId: string, targetPage: number, positionFromEnd: number) => {
 		await ensurePage(conversationId, targetPage)
 
 		if (targetPage > 1) {
@@ -116,7 +113,7 @@ export const useMessagesStore = defineStore('messages', () => {
 
 		return {
 			page: targetPage,
-			positionFromEnd: message.search_match.position_from_end,
+			positionFromEnd: positionFromEnd,
 		}
 	}
 

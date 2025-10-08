@@ -32,7 +32,9 @@ const {
     dataPage: messages,
 	searchTerm,
 	loading: loadingMessages,
-	debouncedFetch
+	isLastPage,
+	debouncedFetch,
+	loadNextPage
 } = usePaginatedData<MessageItem>(
     async (page, rows_per_page) => {
 		if(!props.conversationId || !props.isSearching) return new Promise(resolve => resolve([]))
@@ -118,9 +120,15 @@ const onConfirm = async () => {
 }
 
 const jumpToMessageInChat = async (message: MessageItem) => {
-	if (!props.conversationId) return
-
-	const result = await messagesStore.jumpToMessage(props.conversationId, message)
+	if (!props.conversationId || !message.search_match) return
+	
+	const page = message.search_match.page
+	const positionFromEnd = message.search_match.position_from_end
+	const result = await messagesStore.jumpToMessage(
+		props.conversationId,
+		page,
+		positionFromEnd
+	)
 	if (!result) return
 
 	emit('scrollToMessage', {
@@ -285,6 +293,12 @@ userStore.fetchUsers()
 
 				<div v-if="!loadingMessages && messages.data.length === 0" class="flex justify-center p-8">
 					<div class="text-center text-gray-400">{{ $t('conversations.no_messages_found') }}</div>
+				</div>
+
+				<div v-if="messages.data.length > 0 && !isLastPage && !loadingMessages" class="flex justify-center p-4">
+					<Button @click="loadNextPage">
+						{{ $t('load_more') }}
+					</Button>
 				</div>
 			</div>
 		</div>

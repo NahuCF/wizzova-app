@@ -24,7 +24,13 @@ export interface ConversationItem {
 	last_message?: MessageItem,
 	last_message_at: string,
 	expires_at: string,
-	is_pinned?: boolean
+	is_pinned?: boolean,
+	matching_message?: {
+		message_content: string,
+		message_id: string,
+		page: number,
+		position_from_end: number
+	}
 }
 
 export interface ConversationExists {

@@ -736,6 +736,7 @@ export default {
   send: 'Enviar',
   publish: 'Publicar',
   clone: 'Clonar',
+  load_more: 'Cargar más',
   message_status: {
     pending: 'Pendiente',
     sent: 'Enviado',

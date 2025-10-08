@@ -737,6 +737,7 @@ Grab them today!`,
   send: 'Send',
   publish: 'Publish',
   clone: 'Clone',
+  load_more: 'Load more',
   message_status: {
     pending: 'Pending',
     sent: 'Sent',

@@ -10,10 +10,15 @@ import { useConversationsStore } from '~/stores/conversations'
 import { useMessagesStore } from '~/stores/messages'
 import type {
 	ConversationItem, CreateMessage,
-	ContactItem, ConversationActivity
+	ContactItem, ConversationActivity,
+	ConversationExists
 } from '~/types'
 import Chat from '~/components/common/Chat.vue'
+import { useToast } from 'primevue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
+const toast = useToast()
 const conversationStore = useConversationsStore()
 const messagesStore = useMessagesStore()
 const userStore = useUserStore()
@@ -26,7 +31,8 @@ const {
 	changingOwner,
 	currentTab,
 	conversationsByTab,
-	stats
+	stats,
+	loading: loadingConversations
 } = storeToRefs(conversationStore)
 
 const showStartConversationDialog = ref(false)
@@ -35,6 +41,8 @@ const sendingMessage = ref(false)
 const activities = ref<ConversationActivity[]>([])
 const searchingContact = ref(false)
 const chatRef = ref<InstanceType<typeof Chat> | null>(null)
+const showNavigateToConversation = ref(false)
+const conversationExistsId = ref('')
 
 const messages = computed(() => {
 	if (!selectedConversation.value) return []
@@ -55,6 +63,8 @@ const startConversation = (conversation: ConversationItem) => {
 }
 
 const navigateToConversation = async (conversationId: string) => {
+	showNavigateToConversation.value = false
+
 	const tabConvs = conversationsByTab.value[currentTab.value] || []
 	const index = tabConvs.findIndex(c => c.id === conversationId)
 	if (index >= 0) {
@@ -148,8 +158,29 @@ const loadMoreMessages = async () => {
 	await messagesStore.loadOlderMessages(selectedConversation.value.id)
 }
 
-const handleScrollToMessage = ({ messageId, page, positionFromEnd }: { messageId: string, page: number, positionFromEnd: number }) => {
+const handleScrollToMessage = ({ messageId }: { messageId: string }) => {
   	chatRef.value?.scrollToMessage(messageId)
+}
+
+const onConversationExists = (conversationExists: ConversationExists) => {
+	conversationExistsId.value = conversationExists.data.conversation_id
+	const assignedUser = conversationExists.data.assigned_user_name
+
+	if (conversationExists.message_code === 'exist_draft_conversation') {
+		showStartConversationDialog.value = false
+		showNavigateToConversation.value = true
+	} 
+	else if(conversationExists.message_code === 'exist_active_conversation') {
+		toast.add({
+			severity: 'info',
+			summary: t('conversations.exists'),
+			detail: t('conversations.conversation_assigned_to', { user: assignedUser }),
+			life: 3000,
+		})
+	}
+	else {
+		handleError(conversationExists)
+	}
 }
 
 watch(selectedConversation, (conv) => {
@@ -170,8 +201,8 @@ useConversationChannels()
 <template>
 	<div class="grid grid-cols-5 h-full">
 		<ConversationsPanel
-			@onStartConversation="startConversation"
-			@navigateToConversation="navigateToConversation"
+			@onStartConversation="showStartConversationDialog = true"
+			@scrollToMessage="handleScrollToMessage"
 		/>
 
 		<div v-if="!selectedConversation" class="col-span-4 flex flex-col justify-center items-center h-full gap-4">
@@ -231,6 +262,7 @@ useConversationChannels()
 		<StartConversationDialog
 			v-model:visible="showStartConversationDialog"
 			@onStartConversation="startConversation"
+			@onConversationExists="onConversationExists"
 		/>
 
 		<SelectTemplateDialog
@@ -238,6 +270,17 @@ useConversationChannels()
 			v-model:visible="showTemplateDialog"
 			:conversationId="selectedConversation.id"
 			@onConfirm="(message) => { showTemplateDialog = false; sendMessage(message) }"
+		/>
+
+		<WarningDialog 
+			v-model:visible="showNavigateToConversation"
+			:title="$t('conversations.exists')"
+			:message="$t('conversations.navigate_to_conversation')"
+			:cancelMessage="$t('no')"
+			:confirm-message="$t('yes')"
+			:loading="loadingConversations"
+			@onCancel="showStartConversationDialog = true"
+			@onConfirm="navigateToConversation(conversationExistsId)"
 		/>
 	</div>
 </template>

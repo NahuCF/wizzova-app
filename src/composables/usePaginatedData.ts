@@ -37,7 +37,7 @@ export function usePaginatedData<T, PageType extends Page<T> = Page<T>>(
 	const rowsPerPage = ref(perPageDefault)
 
 	const isLastPage = computed(() => 
-		dataPage.value.meta.current_page === dataPage.value.meta.last_page)
+		dataPage.value.meta && dataPage.value.meta.current_page === dataPage.value.meta.last_page)
 
 	const fetchDataPage = async (page = 1, perPage = rowsPerPage.value, append = false) => {
 		loading.value = true
