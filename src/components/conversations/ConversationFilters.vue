@@ -6,6 +6,7 @@ import type { ConversationFilters } from '~/types'
 
 const emit = defineEmits<{
 	(e: 'onApply', filter: ConversationFilters): void
+	(e: 'onReset'): void
 }>()
 
 const userStore = useUserStore()
@@ -17,7 +18,6 @@ const filters = ref<ConversationFilters>({
 })
 
 const resetFilters = () => {
-	emit('onApply', {})
 	popover.value?.hide()
 	filters.value = {
 		status: 'opened',
@@ -44,7 +44,7 @@ userStore.fetchUsers()
 			<span class="text-lg font-semibold">{{ $t('conversations.filters.title') }}</span>
 			<Button 
 				variant="text"
-				@click="resetFilters" 
+				@click="emit('onReset')" 
 			>
 				{{ $t('reset') }}
 			</Button>

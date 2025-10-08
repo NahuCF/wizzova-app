@@ -136,7 +136,6 @@ const resetFilters = () => {
 	filters.value = undefined
 	filteredSearchTerm.value = ''
 	filteredConversations.value.data = []
-
 }
 
 const onScroll = () => {
@@ -329,6 +328,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
 		<ConversationFilters
 			ref="filtersPopover"
 			@onApply="onApplyFilters"
+			@onReset="resetFilters"
 		/>
 	</div>
 </template>
