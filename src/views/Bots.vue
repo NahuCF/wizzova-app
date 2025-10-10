@@ -63,26 +63,34 @@ const selectedBotId = ref('')
 
 const transformedData = computed(() =>
 	dataPage.value.data.map(bot => {
+		const completedPercentage = bot.completed_sessions > 0
+			? Math.round((bot.completed_sessions / bot.total_sessions) * 100)
+			: 0
+		const abandonedPercentage = bot.abandoned_sessions > 0
+			? Math.round((bot.abandoned_sessions / bot.total_sessions) * 100)
+			: 0
+
 		return {
 			...bot,
 			nameField: {
 				name: bot.name,
-				created: formatDate(bot.created_at, bot.created_by.name),
+				created: formatDate(bot.created_at, bot.created_by?.name),
 				updated: formatDate(bot.updated_at, bot.updated_by?.name)
 			},
 			triggers: buildTriggerTags(bot),
+			sessions: bot.total_sessions,
 			completed: { 
-				count: bot.completed_percentage, 
-				percentage: Math.round((bot.completed_percentage / bot.sessions) * 100), 
+				count: bot.completed_sessions, 
+				percentage: completedPercentage, 
 				color: 'stroke-emerald-500'
 			},
 			abandoned: { 
-				count: bot.abandoned_percentage, 
-				percentage: Math.round((bot.abandoned_percentage / bot.sessions) * 100), 
+				count: bot.abandoned_sessions, 
+				percentage: abandonedPercentage, 
 				color: 'stroke-red-600'
 			},
 			statusTag: {
-				label: t(`bots.status.${bot.status}`),
+				label: bot.status ? t(`bots.status.${bot.status}`) : t('bots.status.draft'),
 				severity: botSeverity(bot.status)
 			},
 			actions: botActions
@@ -95,11 +103,11 @@ const buildTriggerTags = (bot: BotItem): BotTriggerTag[] => {
 	if (!bot.keywords) return []
 
 	const max = 3
-	const tags: BotTriggerTag[] = bot.keywords.slice(0, max).map(k => ({ label: k.value }))
+	const tags: BotTriggerTag[] = bot.keywords.slice(0, max).map(k => ({ label: k.keyword }))
 	if (bot.keywords.length > max) {
 		tags.push({
 			label: `+${bot.keywords.length - max}`,
-			tooltip: bot.keywords.slice(max).map(k => k.value).join('\n')
+			tooltip: bot.keywords.slice(max).map(k => k.keyword).join('\n')
 		})
 	}
 	return tags
@@ -161,6 +169,7 @@ const onSave = (newBot: BotCreate) => {
 const onPublish = async () => {
 	try {
 		await API.bot.activate(selectedBotId.value)
+		fetchDataPage(1, rowsPerPage.value)
 
 		toast.add({
 			severity: 'success',
@@ -175,9 +184,10 @@ const onPublish = async () => {
 	showPublishWarning.value = false
 }
 
-const onClone = async () => {
+const onClone = async (name: string) => {
 	try {
-		await API.bot.clone(selectedBotId.value)
+		await API.bot.clone(selectedBotId.value, name)
+		fetchDataPage(1, rowsPerPage.value)
 
 		toast.add({
 			severity: 'success',
@@ -215,7 +225,7 @@ watch(rowsPerPage, () => fetchDataPage(), { immediate: true })
             <Button @click="showCreateDrawer = true">
                 <IconPlus size="16" class="mr-1" />
                 <span>
-                    {{ $t('bots.add_bot') }}
+                    {{ $t('bots.create_bot') }}
                 </span>
             </Button>
         </div>
@@ -305,12 +315,9 @@ watch(rowsPerPage, () => fetchDataPage(), { immediate: true })
 			@onConfirm="onPublish" 
 		/>
 
-		<WarningDialog
-			v-model:visible="showCloneWarning" 
-			:title="$t('bots.clone_title')"
-			:message="$t('bots.clone_warning')"
-            :confirmMessage="$t('clone')"
-			@onConfirm="onClone" 
+		<CloneBotDialog
+			v-model:visible="showCloneWarning"
+			@onConfirm="onClone"
 		/>
 	</div>
 </template>

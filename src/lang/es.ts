@@ -106,7 +106,9 @@ export default {
     'This role is internal and cannot be updated': 'Este rol es interno y no puede actualizarce',
     'A team with this name already exists': 'Ya existe un equipo con este nombre',
     'contact_has_active_broadcasts': 'No se puede modificar un contacto cuando tiene campañas activas',
-    'bot_already_exists': 'El bot ya existe'
+    'bot_already_exists': 'El bot ya existe',
+    'bot_not_found': 'Bot no encontrado',
+    'bot_has_no_nodes': 'El Bot debe tener por lo menos un nodo para ser activado'
   },
   submit_for_review: 'Enviar para revision',
   template_name: 'Nombre del template',
@@ -246,6 +248,7 @@ export default {
   filter: 'Filtrar',
   import: 'Importar',
   submit: 'Enviar',
+  create: 'Crear',
   copy: 'Copiar',
   required: '{field} es requerido!',
   contact_fields: {
@@ -753,7 +756,9 @@ export default {
     reopened: '{user_name} há re abierto este chat a las {time}',
     conversation_started: '{user_name} há iniciado la conversación a las {time}',
     conversation_expired: 'La conversación ha expirado a las {time}',
-    message_deleted: 'Este mensaje há sido borrado'
+    message_deleted: 'Este mensaje há sido borrado',
+    expires_in: 'Expira en {time}',
+    chat_expired: 'El chat expiro'
   },
   app_sidebar: {
     routes: {
@@ -772,7 +777,6 @@ export default {
   },
   bots: {
     title: 'Bots',
-    add_bot: 'Agregar bot',
     empty: 'No se encontraron bots',
     headers: {
       name: 'Nombre',
@@ -809,15 +813,21 @@ export default {
       keyword: 'Palabra clave',
       keyword_placeholder: 'Ingresa la palabra clave',
       keyword_tooltip: 'Puedes escribir una palabra o una expresión regular (REGEX) para usar como disparador haciendo clic en la opción avanzada de regex.',
-      case_match: 'Coincidencia de mayúsculas y minúsculas',
+      exact_match: 'Coincidencia exacta',
+      contains: 'Contiene',
+      advanced_options: 'Opciones avanzadas',
+      case_match: 'Respetar mayúsculas',
       case_match_tooltip: 'El bot compara las palabras clave de intención exactamente, incluyendo las mayúsculas y minúsculas.\n\nCuando la coincidencia de mayúsculas está activada:\n\nPalabra clave: "Reservar Vuelo"\n\nEntrada del mensaje: "Reservar Vuelo" - coincide y el flujo se activa\n\nEntrada del mensaje: "reservar vuelo" o "RESERVAR VUELO" - no coincide y el flujo no se activa',
-      add_keyword: 'Agregar palabra clave'
+      regex_match: 'Usar Regex',
+      add_keyword: 'Agregar palabra clave',
+      keyword_required: "Palabra clave requerida",
+	    invalid_regex: "Expresión regular invalida",
     },
     bot_created: '¡Bot creado con éxito!',
     publish_title: 'Publicar bot',
     publish_warning: '¿Estás seguro de que deseas publicar este bot?',
     clone_title: 'Clonar bot',
-    clone_warning: '¿Estás seguro de que deseas clonar este bot?',
+    clone_message: 'Ingresa el nombre de tu nuevo bot',
     bot_published: '¡Bot publicado con éxito!',
     bot_cloned: '¡Bot clonado con éxito!'
   }

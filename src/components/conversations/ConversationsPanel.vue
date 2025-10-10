@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { IconPlus, IconSearch, IconFilter, IconX, IconStack, 
 	IconUserPlus, IconPin, IconMessageDots, IconMessageCheck, IconLoader2 } from '@tabler/icons-vue'
+import moment from 'moment'
 import { storeToRefs } from 'pinia'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -69,7 +70,11 @@ const searchTypes = ref([
 const selectOpen = ref(false)
 const conversationScroll = ref()
 
-const conversations = computed(() => conversationStore.conversationsByTab[currentTab.value] || [])
+const conversations = computed<ConversationItem[]>(() => {
+	return conversationStore.conversationsByTab[currentTab.value]
+		.sort((a, b) => moment(a.last_message_at).unix() - moment(b.last_message_at).unix()) || []
+		
+})
 const loading = computed(() => conversationStore.loading)
 
 const tabs = computed(() => [

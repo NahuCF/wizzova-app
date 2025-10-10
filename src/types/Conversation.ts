@@ -23,6 +23,7 @@ export interface ConversationItem {
 	phone_number: WABANumber,
 	last_message?: MessageItem,
 	last_message_at: string,
+	started_at?: string,
 	expires_at: string,
 	is_pinned?: boolean,
 	matching_message?: {

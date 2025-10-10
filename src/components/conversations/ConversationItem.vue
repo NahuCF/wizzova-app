@@ -24,7 +24,7 @@ const isPinHovered = ref(false)
 const progress = computed(() => {
 	if(props.conversation.is_solved) return 0
 
-	const start = props.conversation.last_message_at
+	const start = props.conversation.started_at
 	const end = props.conversation.expires_at
 	if (!start || !end) return 1
 
@@ -33,8 +33,6 @@ const progress = computed(() => {
 	const now = moment()
 
 	if (!startMoment.isValid() || !endMoment.isValid()) return 0
-	if (endMoment.isSameOrBefore(startMoment) || now.isSameOrAfter(endMoment)) return 0
-	if (now.isSameOrBefore(startMoment)) return 1
 
 	const total = endMoment.diff(startMoment)
 	const remaining = endMoment.diff(now)

@@ -10,11 +10,15 @@ type BotFilters = {
 
 export default {
 	async index({ page, rows_per_page, search }: BotFilters) {
-		const params = {
+		const params: BotFilters = {
 			page,
-			rows_per_page,
-			search
+			rows_per_page
 		}
+
+		if(search) {
+			params.search = search
+		}
+		
 		return Http.get<Page<BotItem>>('/bots', { params })
 	},
 	async create(payload: BotCreate) {
@@ -23,8 +27,8 @@ export default {
 	async activate(id: string) {
 		return Http.put<{ data: BotItem }>(`/bots/${id}/activate`)
 	},
-	async clone(id: string) {
-		return Http.post<{ data: BotItem }>(`/bots/${id}/clone`)
+	async clone(id: string, name: string) {
+		return Http.post<{ data: BotItem }>(`/bots/${id}/clone`, { name })
 	},
 	async get(id: string) {
 		return Http.get<{ data: BotItem }>(`/bots/${id}`)

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { IconAsterisk, IconLoader2, IconInfoCircle, IconPlus, IconTrash } from '@tabler/icons-vue'
+import { IconAsterisk, IconLoader2, IconInfoCircle, IconPlus, IconTrash, IconChevronDown, IconChevronUp } from '@tabler/icons-vue'
 import type { BotCreate } from '~/types/Bot'
+import { z } from 'zod';
 
 const props = defineProps<{
 	title: string,
@@ -17,7 +18,34 @@ const emit = defineEmits<{
 const bot = ref<BotCreate>({
     id: '',
     name: '',
-	trigger_type: 'any_message'
+	trigger_type: 'any_message',
+	keywords: []
+})
+const keywordErrors = ref<
+	Array<{
+		keyword?: string[]
+	}>
+>([])
+
+const keywordSchema = z.object({
+	keyword: z.string().min(1, { message: 'bots.create_form.keyword_required' }),
+	match_type: z.enum(['exact', 'contains', 'regex'])
+}).superRefine((data, ctx) => {
+	if (data.match_type === 'regex') {
+		try {
+			new RegExp(data.keyword)
+		} catch {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				path: ['keyword'],
+				message: 'bots.create_form.invalid_regex'
+			})
+		}
+	}
+})
+
+const formSchema = z.object({
+	keywords: z.array(keywordSchema)
 })
 
 const addKeyword = () => {
@@ -25,8 +53,10 @@ const addKeyword = () => {
 		bot.value.keywords = [
 			...bot.value.keywords,
 			{
-				value: '',
-				case_match: false
+				keyword: '',
+				match_type: 'exact',
+				case_sensitive: false,
+				showAdvanced: false
 			}
 		]
 	}
@@ -42,7 +72,36 @@ const canSubmit = () => {
 	return bot.value.name.length > 0
 }
 
+const validateForm = () => {
+	keywordErrors.value = []
+
+	const result = formSchema.safeParse({ keywords: bot.value.keywords })
+
+	if (!result.success) {
+		const zErr = result.error
+		const length = bot.value.keywords?.length ?? 0
+		const errorsArr = Array.from({ length }, () => ({ keyword: [] as string[] }))
+
+		for (const issue of zErr.issues) {
+			if (!issue.path || issue.path[0] !== 'keywords') continue
+			
+			const idx = issue.path[1]
+			if (typeof idx === 'number') {
+				if (!errorsArr[idx]) errorsArr[idx] = { keyword: [] }
+				errorsArr[idx].keyword.push(issue.message)
+			}			
+		}
+
+		keywordErrors.value = errorsArr
+		return false
+	}
+
+	keywordErrors.value = []
+	return true
+}
+
 const onConfirm = () => {
+	if (!validateForm()) return
     emit('onSave', bot.value)
 }
 
@@ -57,8 +116,9 @@ watch(() => props.visible, () => {
     else {
         bot.value = {
             id: '',
-            name: '',
-            trigger_type: 'any_message'
+			name: '',
+			trigger_type: 'any_message',
+			keywords: []
         }
     }
 })
@@ -67,13 +127,15 @@ watch(() => bot.value.trigger_type, () => {
 	if(bot.value.trigger_type === 'keyword') {
 		bot.value.keywords = [
 			{
-				value: '',
-				case_match: false
+				keyword: '',
+				match_type: 'exact',
+				case_sensitive: false,
+				showAdvanced: false
 			}
 		]
 	}
 	else {
-		delete bot.value.keywords
+		bot.value.keywords = []
 	}
 })
 </script>
@@ -151,34 +213,104 @@ watch(() => bot.value.trigger_type, () => {
 								<IconTrash class="text-red-400" size="16" />
 							</Button>
 						</div>
+
 						<InputText 
-							v-model="keyword.value" 
+							v-model="keyword.keyword" 
 							:placeholder="$t('bots.create_form.keyword_placeholder')" 
 							fluid
 							id="keyword"
 							name="keyword"
 						/>
+
+						<Message
+							v-if="keywordErrors[index]?.keyword?.length"
+							severity="error"
+							variant="simple"
+						>
+							{{ $t(keywordErrors[index].keyword[0]) }}
+						</Message>
+
+						<div v-if="keyword.match_type !== 'regex'" class="flex gap-5 pt-3">
+							<div class="flex items-center gap-2 flex-nowrap">
+								<label :for="`exact_match${index}`" class="text-lg font-normal cursor-pointer text-nowrap"> 
+									{{ $t('bots.create_form.exact_match') }} 
+								</label>
+								<RadioButton
+									v-model="keyword.match_type"
+									:inputId="`exact_match${index}`"
+									name="exactMatch"
+									value="exact"
+								/>
+							</div>
+
+							<div class="flex items-center gap-2 flex-nowrap">
+								<label :for="`contains${index}`" class="text-lg font-normal cursor-pointer text-nowrap"> 
+									{{ $t('bots.create_form.contains') }} 
+								</label>
+								<RadioButton
+									v-model="keyword.match_type"
+									:inputId="`contains${index}`"
+									name="contains"
+									value="contains"
+								/>
+							</div>
+						</div>
 					</div>
 
-					<div class="flex items-center gap-2">
-						<label :for="`caseMatch${index}`" class="text-lg font-normal cursor-pointer"> 
-							{{ $t('bots.create_form.case_match') }} 
-						</label>
-						<div v-tooltip.bottom="{
-							value: $t('bots.create_form.case_match_tooltip'),
-							class: 'max-w-[300px]!'
-						}">
-							<IconInfoCircle class="text-gray-400 hover:cursor-pointer" size="16" />
+					<div>
+						<Button
+							v-if="bot.trigger_type === 'keyword'"
+							class="text-primary"
+							severity="primary"
+							variant="text"
+							@click="keyword.showAdvanced = !keyword.showAdvanced"
+						>
+							<span>{{ $t('bots.create_form.advanced_options') }}</span>
+							<IconChevronDown v-if="!keyword.showAdvanced" size="16" />
+							<IconChevronUp v-else size="16" />
+						</Button>
+					</div>
+
+					<div v-if="keyword.showAdvanced" class="flex justify-between">
+						<div class="flex items-center gap-2">
+							<label :for="`case_match${index}`" class="text-lg font-normal cursor-pointer"> 
+								{{ $t('bots.create_form.case_match') }} 
+							</label>
+							<div v-tooltip.bottom="{
+								value: $t('bots.create_form.case_match_tooltip'),
+								class: 'max-w-[300px]!'
+							}">
+								<IconInfoCircle class="text-gray-400 hover:cursor-pointer" size="16" />
+							</div>
+							<Checkbox
+								v-model="keyword.case_sensitive"
+								:disabled="keyword.match_type === 'regex'"
+								:inputId="`case_match${index}`"
+								name="caseMatch"
+								binary
+							/>
 						</div>
-						<Checkbox v-model="keyword.case_match" :inputId="`caseMatch${index}`" name="caseMatch" binary />
+
+						<div class="flex items-center gap-2">
+							<label :for="`regex_match${index}`" class="text-lg font-normal cursor-pointer"> 
+								{{ $t('bots.create_form.regex_match') }} 
+							</label>
+							<Checkbox
+								:modelValue="keyword.match_type === 'regex'"
+								@update:modelValue="keyword.match_type = $event ? 'regex' : 'exact'"
+								:inputId="`regex_match${index}`"
+								name="regexMatch"
+								binary
+							/>
+						</div>
 					</div>
 				</div>
 
 				<Button
 					v-if="bot.trigger_type === 'keyword'"
-					class="text-primary underline"
-					severity="secondary"
-					variant="link"
+					class="text-primary"
+					severity="primary"
+					variant="outlined"
 					@click="addKeyword"
 				>
 					<IconPlus size="16" />
@@ -199,10 +331,10 @@ watch(() => bot.value.trigger_type, () => {
 						value: $t('teams.create_team_tooltip'),
 						class: 'max-w-[300px]!'
 					}"
-                    @click="onConfirm" 
+                    @click="onConfirm"
                 >
                     <IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
-                    <span v-else>{{ $t('submit') }}</span>
+                    <span v-else>{{ $t('create') }}</span>
                 </Button>
             </div>
         </template>

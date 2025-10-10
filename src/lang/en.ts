@@ -106,7 +106,9 @@ export default {
     'This role is internal and cannot be updated': 'This role is internal and cannot be updated',
     'A team with this name already exists': 'A team with this name already exists',
     'contact_has_active_broadcasts': 'Cannot modify contact while it has active broadcasts',
-    'bot_already_exists': 'Bot already exists'
+    'bot_already_exists': 'Bot already exists',
+    'bot_not_found': 'Bot not found',
+    'bot_has_no_nodes': 'Bot must have at least one node to be activated'
   },
   submit_for_review: 'Submit for review',
   template_name: 'Template name',
@@ -248,6 +250,7 @@ Grab them today!`,
   filter: 'Filter',
   import: 'Import',
   submit: 'Submit',
+  create: 'Create',
   copy: 'Copy',
   required: '{field} is required!',
   contact_fields: {
@@ -754,7 +757,9 @@ Grab them today!`,
     reopened: '{user_name} has reopened this chat at {time}',
     conversation_started: '{user_name} has started the conversation at {time}',
     conversation_expired: 'The conversation has expired at {time}',
-    message_deleted: 'This message was deleted'
+    message_deleted: 'This message was deleted',
+    expires_in: 'Expires in {time}',
+    chat_expired: 'Chat expired'
   },
   app_sidebar: {
     routes: {
@@ -773,7 +778,6 @@ Grab them today!`,
   },
   bots: {
     title: 'Bots',
-    add_bot: 'Add bot',
     empty: 'No bots found',
     headers: {
       name: 'Name',
@@ -810,15 +814,21 @@ Grab them today!`,
       keyword: 'Keyword',
       keyword_placeholder: 'Enter the keyword',
       keyword_tooltip: 'You can type a word or a regular expression (REGEX) to use as a trigger by clicking on the advanced regex option.',
+      exact_match: 'Exact match',
+      contains: 'Contains',
+      advanced_options: 'Advanced options',
       case_match: 'Case match',
       case_match_tooltip: 'Bot matches intent keywords exactly, including capitalization.\n\nWhen Case Match is enabled:\n\nKeyword is "Book Flight"\n\nMessage input is "Book Flight" - will match and flow triggers\n\nMessage input is "book flight" or "BOOK FLIGHT" - will not match and flow will not trigger',
-      add_keyword: 'Add keyword'
+      regex_match: 'Regex match',
+      add_keyword: 'Add keyword',
+      keyword_required: "Keyword is required",
+	    invalid_regex: "Invalid regular expression",
     },
     bot_created: 'Bot created successfully!',
     publish_title: 'Publish bot',
     publish_warning: 'Are you sure you want to publish this bot?',
     clone_title: 'Clone bot',
-    clone_warning: 'Are you sure you want to clone this bot?',
+    clone_message: 'Enter the new name of your new bot',
     bot_published: 'Bot published successfully!',
     bot_cloned: 'Bot cloned successfully!'
   }

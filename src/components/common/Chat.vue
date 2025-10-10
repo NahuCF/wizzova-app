@@ -24,7 +24,9 @@ const props = defineProps<{
 	loadingTop?: boolean,
 	loadingBottom?: boolean,
 	users?: UserItem[],
-	allMessagesLoaded?: boolean
+	allMessagesLoaded?: boolean,
+	initiated: boolean,
+	expiresAt?: string
 }>()
 
 const emit = defineEmits<ChatEmit>()
@@ -91,6 +93,18 @@ const messagePagination = computed(() => {
 	}
 
 	return null
+})
+
+const expires = computed(() => {
+	const start = moment.now()
+	const end = moment(props.expiresAt)
+
+	const duration = moment.duration(end.diff(start))
+
+	return {
+		hours: Math.floor(duration.asHours()),
+		minutes: duration.minutes()
+	}
 })
 
 const dateLabel = (date: string) => {
@@ -331,17 +345,29 @@ defineExpose({ scrollToMessage })
 			</div>
 		</div>
 
-		<div class="flex flex-col gap-3 mx-6 mb-8 shadow rounded-lg mt-auto">
-			<ChatEditor
-				:users="users"
-				:loading="loadingBottom"
-				:disable="disableReply"
-				:customEvent="customEvent"
-				:replyMessage="reply"
-				@send="emit('onSendMessage', $event)"
-				@customEvent="emit('onCustomEvent')"
-				@onClearReply="replyMessage = undefined"
-			/>
+
+		
+		<div class="flex flex-col gap-2">
+			<div class="text-center font-medium">
+				{{ 
+					expires
+						? $t('chat.expires_in', { time: `${expires.hours}h ${expires.minutes}m`}) 
+						: (initiated ? $t('chat.chat_expired') : '')
+				}}
+			</div>
+
+			<div class="flex flex-col gap-3 mx-6 mb-8 shadow rounded-lg mt-auto">
+				<ChatEditor
+					:users="users"
+					:loading="loadingBottom"
+					:disable="disableReply"
+					:customEvent="customEvent"
+					:replyMessage="reply"
+					@send="emit('onSendMessage', $event)"
+					@customEvent="emit('onCustomEvent')"
+					@onClearReply="replyMessage = undefined"
+				/>
+			</div>
 		</div>
 	</div>
 </template>

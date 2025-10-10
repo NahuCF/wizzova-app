@@ -242,6 +242,8 @@ useConversationChannels()
 					:allMessagesLoaded="!messagesStore.messagesPaginationByConversation[selectedConversation.id]?.loading &&
 						messagesStore.messagesPaginationByConversation[selectedConversation.id]?.meta.current_page ===
 						messagesStore.messagesPaginationByConversation[selectedConversation.id]?.meta.last_page"
+					:initiated="selectedConversation.is_initiated"
+					:expiresAt="selectedConversation.expires_at"
 					@onSendMessage="sendTextMessage"
 					@onCustomEvent="showTemplateDialog = true"
 					@scrollTopReached="loadMoreMessages"

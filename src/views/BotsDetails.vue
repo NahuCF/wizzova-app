@@ -1,3 +1,5 @@
 <template>
-	<div>todo</div>
+	<div>
+		<BotWorkflow />
+	</div>
 </template>
