@@ -218,6 +218,12 @@ watch(() => messagesStore.lastDeletedMessage, (deleted) => {
 	}
 })
 
+watch(isJumpingToMessage, () => {
+	if(!isJumpingToMessage.value) {
+		onScroll(emit)
+	}
+})
+
 const {
 	scrollToBottom,
 	onScroll,

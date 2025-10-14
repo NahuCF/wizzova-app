@@ -102,15 +102,6 @@ export const useMessagesStore = defineStore('messages', () => {
 	const jumpToMessage = async (conversationId: string, targetPage: number, positionFromEnd: number) => {
 		await ensurePage(conversationId, targetPage)
 
-		if (targetPage > 1) {
-			await ensurePage(conversationId, targetPage - 1)
-		}
-
-		const pag = messagesPaginationByConversation.value[conversationId]
-		if (pag?.meta && targetPage < pag.meta.last_page) {
-			await ensurePage(conversationId, targetPage + 1)
-		}
-
 		return {
 			page: targetPage,
 			positionFromEnd: positionFromEnd,
