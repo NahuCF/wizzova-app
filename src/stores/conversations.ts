@@ -259,6 +259,13 @@ export const useConversationsStore = defineStore('conversations', () => {
 		})
 	}
 
+	const getConversationTab = (conversation: ConversationItem) => {
+		if (!conversation.assigned_user) return 'unassigned'
+		if (conversation.assigned_user.id === sessionStore.user?.id) return 'mine'
+		if (!conversation.is_solved) return 'opened'
+		return 'resolved'
+	}
+
 	const $reset = () => {
 		conversationsByTab.value = {
 			unassigned: [],
@@ -309,6 +316,7 @@ export const useConversationsStore = defineStore('conversations', () => {
 		pin,
 		unpin,
 		fetchStats,
-		updateConversationInTabs
+		updateConversationInTabs,
+		getConversationTab
 	}
 })

@@ -18,15 +18,8 @@ export const useConversationChannels = () => {
 
 	const playMessageSound = () => new Audio('/public/sounds/message.wav').play()
 
-	const getConversationTab = (conversation: ConversationItem) => {
-		if (!conversation.assigned_user) return 'unassigned'
-		if (conversation.assigned_user.id === sessionStore.user?.id) return 'mine'
-		if (!conversation.is_solved) return 'opened'
-		return 'resolved'
-	}
-
 	const upsertConversationInTab = (conversation: ConversationItem) => {
-		const tab = getConversationTab(conversation)
+		const tab = conversationStore.getConversationTab(conversation)
 		const conversations = conversationsByTab.value[tab] || []
 
 		const index = conversations.findIndex(c => c.id === conversation.id)
@@ -34,6 +27,7 @@ export const useConversationChannels = () => {
 			conversations[index] = { ...conversations[index], ...conversation }
 		} else if (tab === currentTab.value) {
 			conversationsByTab.value[tab] = [conversation, ...conversations]
+			playMessageSound()
 		}
 	}
 
@@ -65,7 +59,6 @@ export const useConversationChannels = () => {
 	}
 
 	const handleNewConversation = ({ conversation }: { conversation: ConversationItem }) => {
-		if (!conversation.is_initiated) playMessageSound()
 		upsertConversationInTab(conversation)
 	}
 

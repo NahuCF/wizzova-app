@@ -64,6 +64,11 @@ const selectedConversationIndex = computed(() => {
 
 const startConversation = (conversation: ConversationItem) => {
 	showStartConversationDialog.value = false
+
+	const tab = conversationStore.getConversationTab(conversation)
+	const conversations = conversationsByTab.value[tab] || []
+	conversationsByTab.value[tab] = [conversation, ...conversations]
+
 	conversationStore.selectConversation(conversation)
 	messagesStore.loadInitialPage(conversation.id)
 }
