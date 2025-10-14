@@ -4,6 +4,7 @@ import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 import { ref } from 'vue'
 import { useFlowDragAndDrop } from '~/composables/workflow/useFlowDragAndDrop'
+import type { BotItem } from '~/types'
 
 const { onConnect, addEdges } = useVueFlow()
 const { isDragOver, onDragOver, onDrop, onDragLeave } = useFlowDragAndDrop()
@@ -14,7 +15,7 @@ onConnect(addEdges)
 </script>
 
 <template>
-	<div class="w-full h-[100vh] flex" @drop="onDrop">
+	<div class="w-full h-full flex" @drop="onDrop">
 		<VueFlow :nodes="nodes" @dragover="onDragOver" @dragleave="onDragLeave">
 			<DropzoneBackground
 				class="transition-colors 0.2s ease"

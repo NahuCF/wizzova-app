@@ -10,7 +10,8 @@ import UsersTeamsRoles from '~/views/settings/UsersTeamsRoles.vue'
 import Templates from '~/views/Templates.vue'
 import BroadcastDetails from '~/views/BroadcastDetails.vue'
 import Bots from '~/views/Bots.vue'
-import BotsDetails from '~/views/BotsDetails.vue'
+import NewBotFlow from '~/views/NewBotVersion.vue'
+import BotDetails from '~/views/BotDetails.vue'
 
 const routes = [
   {
@@ -82,7 +83,13 @@ const routes = [
             path: ':id/detail',
             name: 'bot-details',
             meta: { titleKey: 'bot_details.title' },
-            component: BotsDetails
+            component: BotDetails
+          },
+          {
+            path: ':id/new',
+            name: 'new-botflow',
+            meta: { titleKey: 'new_botflow.title' },
+            component: NewBotFlow
           }
         ]
       },

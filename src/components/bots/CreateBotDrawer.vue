@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { IconAsterisk, IconLoader2, IconInfoCircle, IconPlus, IconTrash, IconChevronDown, IconChevronUp } from '@tabler/icons-vue'
-import type { BotCreate } from '~/types/Bot'
+import type { BotCreate } from '~/types'
 import { z } from 'zod';
 
 const props = defineProps<{

@@ -39,3 +39,51 @@ export interface BotTriggerTag {
 	tooltip?: string
 	color?: PrimeVueSeverity
 }
+
+export type BotAnalyticsFilters = {
+	start_date: string,
+	end_date: string,
+	granularity: 'hour' | 'day' | 'week' | 'month'
+}
+
+export type BotAnalytics = {
+	overview: {
+		active_sessions: number,
+		total_sessions: number,
+		completed_sessions: number,
+		abandoned_sessions: number,
+		avg_duration_seconds: number
+	},
+	time_series: {
+		period: string,
+		opened_sessions: number,
+		unique_users: number,
+		completed_sessions: number,
+		abandoned_sessions: number,
+		avg_duration_seconds: number
+	}[]
+}
+
+export type BotAction = 'no_action' | 'unassign' | 'assign_user' | 'assign_bot' | 'message'
+
+export type BotConfiguration = {
+	name: string,
+	wait_time_minutes: number,
+	timeout_action: BotAction,
+	timeout_assign_bot_id?: string,
+	timeout_assign_user_id?: string,
+	timeout_message?: string,
+	no_match_action: BotAction,
+	no_match_assign_bot_id?: string,
+	no_match_assign_user_id?: string,
+	no_match_message?: string,
+	end_conversation_action: BotAction,
+	end_conversation_message?: string,
+	end_conversation_assign_bot_id?: string,
+	end_conversation_assign_user_id?: string,
+	about_to_end_time_minutes?: number,
+	about_to_end_action: BotAction,
+	about_to_end_message?: string,
+	about_to_end_assign_bot_id?: string,
+	about_to_end_assign_user_id?: string
+}

@@ -128,10 +128,18 @@ export const useMessagesStore = defineStore('messages', () => {
 			.flat()
 	}
 
+	const $reset = () => {
+		messagesPaginationByConversation.value = {}
+		perPage.value = 15
+		templates.value = {}
+		lastDeletedMessage.value = null
+	}
+
 	return {
 		messagesPaginationByConversation,
 		templates,
 		lastDeletedMessage,
+		$reset,
 		ensurePage,
 		loadInitialPage,
 		loadOlderMessages,

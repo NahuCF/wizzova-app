@@ -100,6 +100,7 @@ const expires = computed(() => {
 	const end = moment(props.expiresAt)
 
 	const duration = moment.duration(end.diff(start))
+	console.log('props.expiresAt: ', props.expiresAt)
 
 	return {
 		hours: Math.floor(duration.asHours()),
@@ -232,7 +233,7 @@ defineExpose({ scrollToMessage })
 	<div class="flex flex-col flex-1 h-full chat-background overflow-hidden">
 		<div
 			ref="chatScroll"
-			class="flex flex-col-reverse px-4 py-12 gap-8 overflow-y-auto"
+			class="flex flex-col-reverse px-4 py-12 gap-8 overflow-y-auto h-full"
 			@scroll="onScroll(emit)"
 		>
 			<div v-if="loadingBottom" class="flex justify-center p-8">
@@ -350,9 +351,9 @@ defineExpose({ scrollToMessage })
 		<div class="flex flex-col gap-2">
 			<div class="text-center font-medium">
 				{{ 
-					expires
+					expires.hours > 0 || expires.minutes > 0
 						? $t('chat.expires_in', { time: `${expires.hours}h ${expires.minutes}m`}) 
-						: (initiated ? $t('chat.chat_expired') : '')
+						: ''
 				}}
 			</div>
 

@@ -1,6 +1,6 @@
 import Http from "~/config/http"
-import type { Page } from "~/types"
-import type { BotItem, BotCreate } from "~/types/Bot"
+import type { BotAnalytics, BotAnalyticsFilters, BotConfiguration, Page } from "~/types"
+import type { BotItem, BotCreate } from "~/types"
 
 type BotFilters = {
 	page?: number
@@ -24,13 +24,18 @@ export default {
 	async create(payload: BotCreate) {
 		return Http.post<{ data: BotItem }>('/bots', payload)
 	},
-	async activate(id: string) {
-		return Http.put<{ data: BotItem }>(`/bots/${id}/activate`)
-	},
 	async clone(id: string, name: string) {
 		return Http.post<{ data: BotItem }>(`/bots/${id}/clone`, { name })
 	},
 	async get(id: string) {
 		return Http.get<{ data: BotItem }>(`/bots/${id}`)
+	},
+	async analytics(id: string, filters: BotAnalyticsFilters) {
+		return Http.get<{ data: BotAnalytics }>(`/bots/${id}`, {
+			params: filters
+		})
+	},
+	async configuration(id: string, configuration: BotConfiguration) {
+		return Http.put<{ data: BotConfiguration }>(`/bots/${id}/configuration`, configuration)
 	},
 }

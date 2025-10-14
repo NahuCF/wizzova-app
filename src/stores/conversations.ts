@@ -259,6 +259,37 @@ export const useConversationsStore = defineStore('conversations', () => {
 		})
 	}
 
+	const $reset = () => {
+		conversationsByTab.value = {
+			unassigned: [],
+			mine: [],
+			pinned: [],
+			opened: [],
+			resolved: [],
+		}
+
+		paginationByTab.value = {
+			unassigned: null,
+			mine: null,
+			pinned: null,
+			opened: null,
+			resolved: null,
+		}
+
+		currentTab.value = 'mine'
+		loading.value = false
+		selectedConversation.value = null
+		changingSolved.value = false
+		changingOwner.value = false
+		stats.value = {
+			unassigned: 0,
+			mine: 0,
+			opened: 0,
+			resolved: 0,
+			pinned: 0
+		}
+	}
+
 	return {
 		conversationsByTab,
 		paginationByTab,
@@ -268,6 +299,7 @@ export const useConversationsStore = defineStore('conversations', () => {
 		changingSolved,
 		changingOwner,
 		stats,
+		$reset,
 		setTab,
 		fetchConversations,
 		loadNextPage,
@@ -277,5 +309,6 @@ export const useConversationsStore = defineStore('conversations', () => {
 		pin,
 		unpin,
 		fetchStats,
+		updateConversationInTabs
 	}
 })

@@ -1,5 +1,5 @@
 import type { BroadcastStatus, PrimeVueSeverity } from "~/types"
-import type { BotStatus } from "~/types/Bot"
+import type { BotStatus } from "~/types"
 
 export const useSeverityMapper = () => {
 	const broadcastSeverity = (status: BroadcastStatus): PrimeVueSeverity => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IconCopy, IconEdit, IconSend,IconSearch, IconPlus, IconGraph, IconVersions } from '@tabler/icons-vue'
+import { IconCopy, IconEdit, IconSend,IconSearch, IconPlus } from '@tabler/icons-vue'
 import { useToast, type DataTablePageEvent } from 'primevue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -11,35 +11,34 @@ import { useSeverityMapper } from '~/composables/useSeverityMapper'
 import router from '~/router'
 import { API } from '~/services'
 import type { Column } from '~/types'
-import type { BotCreate, BotItem, BotTriggerTag } from '~/types'
+import type { BotVersionItem, PageWithBotVersion } from '~/types'
+
+const props = defineProps<{
+	botId?: string
+}>()
 
 const {
     dataPage,
     loading,
     searchTerm,
     rowsPerPage,
-    currentPageReport,
     fetchDataPage,
     debouncedFetch,
-} = usePaginatedData<BotItem>(
-    (page, rows_per_page, search) => API.bot.index({ page, rows_per_page, search }).then(res => res.data),
-    10
-)
+} = usePaginatedData<BotVersionItem, PageWithBotVersion<BotVersionItem>>(
+    async (page, rows_per_page, search) => {
+		if (props.botId) {
+			const { data: response } = await API.botVersion.index(
+				props.botId,
+				{ page, rows_per_page, search }
+			)
 
-const {
-    loading: loadingDrawer,
-    createOrUpdate
-} = useCrudActions<BotCreate>({
-    api: {
-        create: API.bot.create
-    },
-    fetchData: () => {
-        fetchDataPage(1, rowsPerPage.value)
-    },
-    i18nKeys: {
-        created: 'bots.bot_created'
-    }
-})
+			return response
+		}
+
+		return {}
+	},
+    15
+)
 
 const { t } = useI18n()
 const toast = useToast()
@@ -47,22 +46,18 @@ const { botSeverity } = useSeverityMapper()
 const formatDate = useRelativeDateLabel()
 const handleError = useErrorHandler()
 
-const showCreateDrawer = ref(false)
-const showPublishWarning = ref(false)
-const showCloneWarning = ref(false)
 const columns = ref<Column[]>([
 	{ header: t('bots.headers.name'), key: 'nameField', type: 'CUSTOM' },
-	{ header: t('bots.headers.triggers'), key: 'triggers', type: 'CUSTOM' },
 	{ header: t('bots.headers.sessions'), key: 'sessions', tooltip: t('bots.sessions_tooltip') },
 	{ header: t('bots.headers.completed'), key: 'completed', type: 'PROGRESS', tooltip: t('bots.completed_tooltip') },
 	{ header: t('bots.headers.abandoned'), key: 'abandoned', type: 'PROGRESS', tooltip: t('bots.abandoned_tooltip') },
 	{ header: t('bots.headers.status'), key: 'statusTag', type: 'TAG' },
 	{ header: '', key: 'actions', type: 'ACTIONS' }
 ])
-const selectedBotId = ref('')
+const selectedVersionId = ref('')
 
 const transformedData = computed(() =>
-	dataPage.value.data.map(bot => {
+	dataPage.value.data?.map(bot => {
 		const completedPercentage = bot.completed_sessions > 0
 			? Math.round((bot.completed_sessions / bot.total_sessions) * 100)
 			: 0
@@ -77,7 +72,6 @@ const transformedData = computed(() =>
 				created: formatDate(bot.created_at, bot.created_by?.name),
 				updated: formatDate(bot.updated_at, bot.updated_by?.name)
 			},
-			triggers: buildTriggerTags(bot),
 			sessions: bot.total_sessions,
 			completed: { 
 				count: bot.completed_sessions, 
@@ -93,69 +87,37 @@ const transformedData = computed(() =>
 				label: bot.status ? t(`bots.status.${bot.status}`) : t('bots.status.draft'),
 				severity: botSeverity(bot.status)
 			},
-			actions: botActions
+			actions: versionActions
 		}
-	})
+	}) || []
 )
 
-const buildTriggerTags = (bot: BotItem): BotTriggerTag[] => {
-	if (bot.trigger_type === 'any_message') return [{ label: t('bots.any_message'), color: 'info' }]
-	if (!bot.keywords) return []
-
-	const max = 3
-	const tags: BotTriggerTag[] = bot.keywords.slice(0, max).map(k => ({ label: k.keyword }))
-	if (bot.keywords.length > max) {
-		tags.push({
-			label: `+${bot.keywords.length - max}`,
-			tooltip: bot.keywords.slice(max).map(k => k.keyword).join('\n')
-		})
-	}
-	return tags
-}
-
-const botActions = (bot: BotItem) => {
+const versionActions = (version: BotVersionItem) => {
 	const actions = []
 	
+	if (version.status === 'draft') {
+		actions.push({
+			label: t('bots.actions.publish'),
+			icon: IconSend,
+			action: () => {
+				selectedVersionId.value = version.id
+			}
+		})
+	}
 	actions.push(
 		{
 			label: t('bots.actions.edit'),
 			icon: IconEdit,
 			action: () => router.push({ 
 				name: 'bot-details',
-				params: { id: bot.id },
-				query: {
-					tab: 'settings'
-				}
-			})
-		},
-		{
-			label: t('bots.actions.stats'),
-			icon: IconGraph,
-			action: () => router.push({ 
-				name: 'bot-details',
-				params: { id: bot.id },
-				query: {
-					tab: 'stats'
-				}
-			})
-		},
-		{
-			label: t('bots.actions.versions'),
-			icon: IconVersions,
-			action: () => router.push({ 
-				name: 'bot-details',
-				params: { id: bot.id },
-				query: {
-					tab: 'versions'
-				}
+				params: { id: version.id }
 			})
 		},
 		{
 			label: t('bots.actions.clone'),
 			icon: IconCopy,
 			action: () => {
-				selectedBotId.value = bot.id
-				showCloneWarning.value = true
+				selectedVersionId.value = version.id
 			}
 		}
 	)
@@ -168,45 +130,19 @@ const onPage = (event: DataTablePageEvent) => {
 	fetchDataPage(page, rowsPerPage.value)
 }
 
-const onRowSelect = ({ data }: { data: BotItem }) => {
+const onRowSelect = ({ data }: { data: BotVersionItem }) => {
     router.push({ 
-		name: 'bot-details', 
+		name: 'new-botflow', 
 		params: { id: data.id }
 	})
-}
-
-const onSave = (newBot: BotCreate) => {
-    createOrUpdate(newBot, {
-        onSuccess: () => showCreateDrawer.value = false
-    })
-}
-
-const onClone = async (name: string) => {
-	try {
-		await API.bot.clone(selectedBotId.value, name)
-		fetchDataPage(1, rowsPerPage.value)
-
-		toast.add({
-			severity: 'success',
-			summary: 'Success',
-			detail: t('bots.bot_cloned'),
-			life: 3000,
-		})
-	} catch(error) {
-		handleError(error)
-	}
-
-	showCloneWarning.value = false
 }
 
 watch(rowsPerPage, () => fetchDataPage(), { immediate: true })
 </script>
 
 <template>
-	<div class="flex flex-col gap-8 p-6">
-		<h1 class="font-semibold text-2xl">{{ $t('bots.title') }}</h1>
-
-		<div class="flex justify-between">
+	<div class="flex flex-col gap-8 px-6 pb-6">
+		<div class="flex gap-3">
             <div class="relative">
                 <IconSearch size="14" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                 <InputText
@@ -219,24 +155,21 @@ watch(rowsPerPage, () => fetchDataPage(), { immediate: true })
                     @input="debouncedFetch()"
                 />
             </div>
-            <Button @click="showCreateDrawer = true">
-                <IconPlus size="16" class="mr-1" />
-                <span>
-                    {{ $t('bots.create_bot') }}
-                </span>
-            </Button>
+			<Message 
+				v-if="!dataPage.meta?.has_active_version"
+				severity="warn"
+			>
+				{{ $t('bot_details.no_active_version') }}
+			</Message>
         </div>
 
 		<Table 
             :data="transformedData"
             :columns="columns"
             :hoverable="true"
-            emptyMessage="bots.empty"
+            emptyMessage="bot_details.empty_versions"
             :loading="loading"
-            withPagination
-            :totalRecords="dataPage.meta.total"
             v-model:rowsPerPage="rowsPerPage"
-            :currentPageReport="currentPageReport"
 			@onRowClick="onRowSelect"
             @onPage="onPage"
         >
@@ -270,43 +203,6 @@ watch(rowsPerPage, () => fetchDataPage(), { immediate: true })
 					</div>
                 </div>
             </template>
-			
-			<template #triggers="{ data: { triggers } }: { data: { triggers: BotTriggerTag[] }}">
-				<div class="flex items-center gap-3">
-					<template v-for="trigger in triggers">
-						<div
-							v-if="trigger.tooltip"
-							v-tooltip.bottom="trigger.tooltip"
-						>
-							<Badge
-								severity="danger"
-							>
-								{{ trigger.label }}
-							</Badge>
-						</div>
-
-						<div v-else>
-							<Tag
-								:value="trigger.label"
-								:severity="trigger.color || 'secondary'"
-								class="text-base! text-nowrap!"
-							/>
-						</div>
-					</template>
-				</div>
-			</template>
 		</Table>
-
-		<CreateBotDrawer
-			v-model:visible="showCreateDrawer"
-			:title="$t('bots.create_bot')"
-			:loading="loadingDrawer"
-			@onSave="onSave"
-		/>
-
-		<CloneBotDialog
-			v-model:visible="showCloneWarning"
-			@onConfirm="onClone"
-		/>
 	</div>
 </template>

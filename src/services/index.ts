@@ -21,6 +21,7 @@ import WabaService from './WabaService'
 import ConversationService from './ConversationService'
 import MessageService from './MessageService'
 import BotService from './BotService'
+import BotVersionService from './BotVersionService'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -29,6 +30,7 @@ export { default as TemplateHeaderService } from './TemplateHeaderService'
 export const API = {
     auth: AuthService,
     bot: BotService,
+    botVersion: BotVersionService,
     broadcast: BroadcastService,
     contact: ContactService,
     contactField: ContactFieldService,

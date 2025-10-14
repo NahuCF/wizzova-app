@@ -16,6 +16,7 @@ import type {
 import Chat from '~/components/common/Chat.vue'
 import { useToast } from 'primevue'
 import { useI18n } from 'vue-i18n'
+import moment from 'moment'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -55,6 +56,10 @@ const disableReply = computed(() =>
 	selectedConversation.value.is_expired ||
 	!selectedConversation.value.is_initiated
 )
+
+const selectedConversationIndex = computed(() => {
+	return conversationsByTab.value[currentTab.value].findIndex((c) => selectedConversation.value?.id === c.id)
+})
 
 const startConversation = (conversation: ConversationItem) => {
 	showStartConversationDialog.value = false
@@ -134,6 +139,15 @@ const sendMessage = async (newMessage: CreateMessage) => {
 
 		if (!selectedConversation.value.is_initiated) {
 			selectedConversation.value.is_initiated = true
+			selectedConversation.value.expires_at = moment().add(1, 'day').toISOString()
+
+			console.log('selectedConversationIndex.value: ', selectedConversationIndex.value)
+			if(selectedConversationIndex.value >= 0) {
+				conversationStore.updateConversationInTabs(
+					selectedConversation.value,
+					['unassigned', 'mine', 'pinned', 'opened', 'resolved']
+				)
+			}
 			fetchActivities()
 		}
 	} catch (error) {

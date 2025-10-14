@@ -16,12 +16,14 @@ const categories: BotNodeCategory[] = ['send_message', 'question', 'general']
 				<div
 					v-for="nodeType in nodeTypes.filter(n => n.category === category)"
 					:key="nodeType.name"
-					class="relative flex flex-col gap-2 items-center justify-between border-2 rounded-lg py-4 cursor-grab"
+					class="relative flex flex-col gap-2 items-center justify-between border-2 rounded-lg py-4"
 					:class="{
 						'border-slate-100': !nodeType.isPremium,
-						'border-amber-300': nodeType.isPremium
+						'border-amber-300': nodeType.isPremium,
+						'cursor-grab': !nodeType.isPremium,
+						'cursor-pointer': nodeType.isPremium
 					}"
-					:draggable="true"
+					:draggable="!nodeType.isPremium"
 					@dragstart="onDragStart($event, nodeType.name)"
 				>
 					<component class="text-emerald-500" :is="nodeType.icon" size="32" />

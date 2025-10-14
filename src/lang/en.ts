@@ -798,8 +798,9 @@ Grab them today!`,
     last_updated: 'Last updated {date}',
     any_message: 'Any message',
     actions: {
-      publish: 'Publish',
       edit: 'Edit',
+      stats: 'Statistics',
+      versions: 'Versions',
       clone: 'Clone'
     },
     create_bot: 'Create bot',
@@ -831,5 +832,21 @@ Grab them today!`,
     clone_message: 'Enter the new name of your new bot',
     bot_published: 'Bot published successfully!',
     bot_cloned: 'Bot cloned successfully!'
+  },
+  bot_details: {
+    title: 'Bot Details',
+    tabs: {
+      stats: 'Statistics',
+      versions: 'Versions',
+      settings: 'Settings'
+    },
+    add_a_version: 'Add a version',
+    empty_versions: 'No versions found',
+    no_active_version: 'No active version',
+    if_client_doesnt_answer: "What should happen if the client doesn't respond to the bot?",
+    if_session_is_ending: 'What should happen when a session is about to end?',
+    if_session_ends: 'What should happen when a conversation ends?',
+    if_no_match: "What should happen if the customer's response does not match any of the options?",
+    if_no_more_nodes: 'What should happen when the bot has no more nodes to run?'
   }
 }
