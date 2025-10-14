@@ -108,7 +108,8 @@ export default {
     'contact_has_active_broadcasts': 'No se puede modificar un contacto cuando tiene campañas activas',
     'bot_already_exists': 'El bot ya existe',
     'bot_not_found': 'Bot no encontrado',
-    'bot_has_no_nodes': 'El Bot debe tener por lo menos un nodo para ser activado'
+    'bot_has_no_nodes': 'El Bot debe tener por lo menos un nodo para ser activado',
+    'conversation_is_expired': 'La conversacion expiró'
   },
   submit_for_review: 'Enviar para revision',
   template_name: 'Nombre del template',

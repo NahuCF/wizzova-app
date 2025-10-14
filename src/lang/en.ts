@@ -108,7 +108,8 @@ export default {
     'contact_has_active_broadcasts': 'Cannot modify contact while it has active broadcasts',
     'bot_already_exists': 'Bot already exists',
     'bot_not_found': 'Bot not found',
-    'bot_has_no_nodes': 'Bot must have at least one node to be activated'
+    'bot_has_no_nodes': 'Bot must have at least one node to be activated',
+    'conversation_is_expired': 'Conversation is expired'
   },
   submit_for_review: 'Submit for review',
   template_name: 'Template name',

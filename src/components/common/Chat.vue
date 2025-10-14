@@ -100,12 +100,21 @@ const expires = computed(() => {
 	const end = moment(props.expiresAt)
 
 	const duration = moment.duration(end.diff(start))
-	console.log('props.expiresAt: ', props.expiresAt)
 
-	return {
+	const values = {
 		hours: Math.floor(duration.asHours()),
 		minutes: duration.minutes()
 	}
+
+	if(values.hours > 0 && values.minutes > 0) {
+		return t('chat.expires_in', { time: `${values.hours}h ${values.minutes}m`})
+	}
+
+	if(values.minutes > 0) {
+		return t('chat.expires_in', { time: `${values.minutes}m`})
+	}
+
+	return ''
 })
 
 const dateLabel = (date: string) => {
@@ -356,11 +365,7 @@ defineExpose({ scrollToMessage })
 		
 		<div class="flex flex-col gap-2">
 			<div class="text-center font-medium">
-				{{ 
-					expires.hours > 0 || expires.minutes > 0
-						? $t('chat.expires_in', { time: `${expires.hours}h ${expires.minutes}m`}) 
-						: ''
-				}}
+				{{ expires }}
 			</div>
 
 			<div class="flex flex-col gap-3 mx-6 mb-8 shadow rounded-lg mt-auto">

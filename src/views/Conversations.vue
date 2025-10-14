@@ -17,6 +17,7 @@ import Chat from '~/components/common/Chat.vue'
 import { useToast } from 'primevue'
 import { useI18n } from 'vue-i18n'
 import moment from 'moment'
+import axios from 'axios'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -126,9 +127,9 @@ const sendMessage = async (newMessage: CreateMessage) => {
 
 	newMessage.to_phone = contactPhone
 	sendingMessage.value = true
+	const convId = selectedConversation.value.id
 	try {
 		const { data: response } = await API.message.create(newMessage)
-		const convId = selectedConversation.value.id
 
 		messagesStore.ensurePage(convId, 1) // insert at first page
 		messagesStore.messagesPaginationByConversation[convId].pages[1].unshift(response.data)
@@ -141,7 +142,6 @@ const sendMessage = async (newMessage: CreateMessage) => {
 			selectedConversation.value.is_initiated = true
 			selectedConversation.value.expires_at = moment().add(1, 'day').toISOString()
 
-			console.log('selectedConversationIndex.value: ', selectedConversationIndex.value)
 			if(selectedConversationIndex.value >= 0) {
 				conversationStore.updateConversationInTabs(
 					selectedConversation.value,
@@ -152,6 +152,20 @@ const sendMessage = async (newMessage: CreateMessage) => {
 		}
 	} catch (error) {
 		handleError(error)
+
+		if(axios.isAxiosError(error) && error.response?.data.message_code === 'conversation_is_expired') {
+			const updatedConv = {
+				...selectedConversation.value,
+				is_expired: true
+			}
+
+			selectedConversation.value = updatedConv
+
+			conversationStore.updateConversationInTabs(
+				updatedConv,
+				['unassigned', 'mine', 'pinned', 'opened', 'resolved']
+			)
+		}
 	} finally {
 		sendingMessage.value = false
 	}
