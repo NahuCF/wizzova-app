@@ -5,112 +5,125 @@ import {
 } from '@tabler/icons-vue'
 import { useVueFlow } from '@vue-flow/core'
 import { ref, watch, type Component } from 'vue'
+import type { BotNodeType } from '~/types'
 
 export type BotNodeCategory = 'send_message' | 'question' | 'general'
-export type BotNodeType = {
-	name: string,
+export type BotNodeItem = {
+	name: BotNodeType,
 	icon: Component,
 	isPremium: boolean,
-	category: BotNodeCategory
+	category: BotNodeCategory,
+	default: any
 }
 
-export const nodeTypes: BotNodeType[] = [
+export const nodeItems: BotNodeItem[] = [
 	{
-		name: 'send_message',
+		name: 'message',
 		icon: IconMessage,
 		isPremium: false,
-		category: 'send_message'
+		category: 'send_message',
+		default: {
+			content: 'Hi'
+		}
 	},
 	{
-		name: 'send_template',
+		name: 'template',
 		icon: IconTemplate,
 		isPremium: true,
-		category: 'send_message'
+		category: 'send_message',
+		default: {}
 	},
 	{
-		name: 'send_image',
+		name: 'image',
 		icon: IconPhoto,
 		isPremium: false,
-		category: 'send_message'
+		category: 'send_message',
+		default: {}
 	},
 	{
-		name: 'send_video',
+		name: 'video',
 		icon: IconVideo,
 		isPremium: true,
-		category: 'send_message'
+		category: 'send_message',
+		default: {}
 	},
 	{
-		name: 'send_audio',
+		name: 'audio',
 		icon: IconVolume,
 		isPremium: true,
-		category: 'send_message'
+		category: 'send_message',
+		default: {}
 	},
 	{
-		name: 'send_document',
+		name: 'document',
 		icon: IconFile,
 		isPremium: false,
-		category: 'send_message'
+		category: 'send_message',
+		default: {}
 	},
 	{
 		name: 'question_button',
 		icon: IconQuestionMark,
 		isPremium: false,
-		category: 'question'
+		category: 'question',
+		default: {}
 	},
 	{
 		name: 'condition',
 		icon: IconMathLower,
 		isPremium: false,
-		category: 'general'
+		category: 'general',
+		default: {}
 	},
 	{
 		name: 'mark_as_solved',
 		icon: IconCheck,
 		isPremium: false,
-		category: 'general'
+		category: 'general',
+		default: {}
 	},
 	{
 		name: 'assign_chat',
 		icon: IconUser,
 		isPremium: false,
-		category: 'general'
+		category: 'general',
+		default: {}
 	},
 	{
 		name: 'location',
 		icon: IconLocation,
 		isPremium: true,
-		category: 'general'
+		category: 'general',
+		default: {}
 	},
 	{
 		name: 'working_hours',
 		icon: IconClock,
 		isPremium: true,
-		category: 'general'
+		category: 'general',
+		default: {}
 	}
 ]
 
 export const useFlowDragAndDrop = () => {
-	const id = ref(0)
 	const draggedType = ref<string | null>(null)
+	const draggedData = ref<Record<string, any>>({})
 	const isDragOver = ref(false)
 	const isDragging = ref(false)
 
 	const { addNodes, screenToFlowCoordinate, onNodesInitialized, updateNode } = useVueFlow()
 
-	const getId = () => {
-		return `dndnode_${id.value++}`
-	}
-
-	const onDragStart = (event: DragEvent, type: string | null) => {
+	const onDragStart = ({ event, nodeItem }: { event: DragEvent, nodeItem: BotNodeItem }) => {
 		if (event.dataTransfer) {
-			event.dataTransfer.setData('application/vueflow', type || '')
+			event.dataTransfer.setData('application/vueflow', nodeItem.name)
 			event.dataTransfer.effectAllowed = 'move'
 		}
 
-		draggedType.value = type
+		draggedType.value = nodeItem.name
+		draggedData.value = nodeItem.default
 		isDragging.value = true
 
-		document.addEventListener('drop', onDragEnd)
+		document.addEventListener('dragend', onDragEnd)
 	}
 
 	const onDragOver = (event: DragEvent) => {
@@ -125,30 +138,30 @@ export const useFlowDragAndDrop = () => {
 		}
 	}
 
-	function onDragLeave() {
+	const onDragLeave = () => {
 		isDragOver.value = false
 	}
 
-	function onDragEnd() {
+	const onDragEnd = () => {
 		isDragging.value = false
 		isDragOver.value = false
 		draggedType.value = null
-		document.removeEventListener('drop', onDragEnd)
+		document.removeEventListener('dragend', onDragEnd)
 	}
 
-	function onDrop(event: DragEvent) {
+	const onDrop = (event: DragEvent) => {
 		const position = screenToFlowCoordinate({
 			x: event.clientX,
 			y: event.clientY,
 		})
 
-		const nodeId = getId()
+		const nodeId = crypto.randomUUID()
 
 		const newNode = {
 			id: nodeId,
 			type: draggedType.value ?? undefined,
 			position,
-			data: { label: nodeId },
+			data: draggedData.value ?? {},
 		}
 
 		/**
@@ -172,7 +185,6 @@ export const useFlowDragAndDrop = () => {
 	})
 
 	return {
-		draggedType,
 		isDragOver,
 		isDragging,
 		onDragStart,

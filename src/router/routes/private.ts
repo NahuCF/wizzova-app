@@ -90,6 +90,12 @@ const routes = [
             name: 'new-botflow',
             meta: { titleKey: 'new_botflow.title' },
             component: NewBotFlow
+          },
+          {
+            path: ':id/versions/:versionId',
+            name: 'edit-botflow',
+            meta: { titleKey: 'new_botflow.title_edit' },
+            component: NewBotFlow
           }
         ]
       },

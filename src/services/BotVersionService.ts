@@ -37,6 +37,6 @@ export default {
 		return Http.get<{ data: BotVersionItem }>(`/bots/${id}/flows`)
 	},
 	async getData(id: string, versionId: string) {
-		return Http.get<{ data: BotVersionData }>(`/bots/${id}/flows/${versionId}/data`)
+		return Http.get<BotVersionData>(`/bots/${id}/flows/${versionId}/data`)
 	},
 }

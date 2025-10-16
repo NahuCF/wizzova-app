@@ -5,7 +5,7 @@ export type BotStatus = 'draft' | 'active' | 'archived'
 export type BotTriggerType = 'any_message' | 'keyword'
 export type BotMatchType = 'exact' | 'contains' | 'regex'
 
-export interface BotItem {
+export type BotItem = BotConfiguration & {
 	id: string
 	name: string
 	trigger_type: BotTriggerType
@@ -18,6 +18,12 @@ export interface BotItem {
 	updated_by?: UserItem
 	created_at: string
 	updated_at: string
+}
+
+export type BotActiveSessions = {
+	total_active_sessions: number,
+	has_active_sessions: boolean,
+	waba_names: string[]
 }
 
 export type BotKeyword = {
@@ -42,8 +48,7 @@ export interface BotTriggerTag {
 
 export type BotAnalyticsFilters = {
 	start_date: string,
-	end_date: string,
-	granularity: 'hour' | 'day' | 'week' | 'month'
+	end_date: string
 }
 
 export type BotAnalytics = {

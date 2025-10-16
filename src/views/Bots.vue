@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IconCopy, IconEdit, IconSend,IconSearch, IconPlus, IconGraph, IconVersions } from '@tabler/icons-vue'
+import { IconCopy, IconEdit, IconSearch, IconPlus, IconGraph, IconVersions, IconTrash, IconLoader2 } from '@tabler/icons-vue'
 import { useToast, type DataTablePageEvent } from 'primevue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -10,7 +10,7 @@ import { useRelativeDateLabel } from '~/composables/useRelativeDateLabel'
 import { useSeverityMapper } from '~/composables/useSeverityMapper'
 import router from '~/router'
 import { API } from '~/services'
-import type { Column } from '~/types'
+import type { BotActiveSessions, Column } from '~/types'
 import type { BotCreate, BotItem, BotTriggerTag } from '~/types'
 
 const {
@@ -28,16 +28,19 @@ const {
 
 const {
     loading: loadingDrawer,
-    createOrUpdate
+    createOrUpdate,
+	remove
 } = useCrudActions<BotCreate>({
     api: {
-        create: API.bot.create
+        create: API.bot.create,
+		delete: API.bot.delete
     },
     fetchData: () => {
         fetchDataPage(1, rowsPerPage.value)
     },
     i18nKeys: {
-        created: 'bots.bot_created'
+        created: 'bots.bot_created',
+		deleted: 'bots.bot_deleted'
     }
 })
 
@@ -48,8 +51,15 @@ const formatDate = useRelativeDateLabel()
 const handleError = useErrorHandler()
 
 const showCreateDrawer = ref(false)
-const showPublishWarning = ref(false)
 const showCloneWarning = ref(false)
+const showDeleteWarning = ref(false)
+const showActiveSessionsWarning = ref(false)
+const loadingSessions = ref(false)
+const activeSessions = ref<BotActiveSessions>({
+	total_active_sessions: 0,
+	has_active_sessions: false,
+	waba_names: []
+})
 const columns = ref<Column[]>([
 	{ header: t('bots.headers.name'), key: 'nameField', type: 'CUSTOM' },
 	{ header: t('bots.headers.triggers'), key: 'triggers', type: 'CUSTOM' },
@@ -157,6 +167,32 @@ const botActions = (bot: BotItem) => {
 				selectedBotId.value = bot.id
 				showCloneWarning.value = true
 			}
+		},
+		{
+			label: t('delete'),
+			class: 'text-red-600',
+			icon: loadingSessions.value ? IconLoader2 : IconTrash,
+			iconClass: loadingSessions.value ? 'animate-spin' : '',
+			disabled: loadingSessions.value,
+			action: async () => {
+				loadingSessions.value = true
+				try {
+					const { data: response } = await API.bot.activeSessions(bot.id)
+					
+					if(response.waba_names.length === 0) {
+						selectedBotId.value = bot.id
+						showDeleteWarning.value = true
+					}
+					else {
+						activeSessions.value = response
+						showActiveSessionsWarning.value = true
+					}
+				} catch(error) {
+					console.log(error)
+				} finally {
+					loadingSessions.value = false
+				}
+			}
 		}
 	)
 	return [actions]
@@ -179,6 +215,14 @@ const onSave = (newBot: BotCreate) => {
     createOrUpdate(newBot, {
         onSuccess: () => showCreateDrawer.value = false
     })
+}
+
+const onDelete = () => {
+    if (selectedBotId.value) {
+        remove(selectedBotId.value, {
+            onSuccess: () => showDeleteWarning.value = false
+        })
+    }
 }
 
 const onClone = async (name: string) => {
@@ -308,5 +352,43 @@ watch(rowsPerPage, () => fetchDataPage(), { immediate: true })
 			v-model:visible="showCloneWarning"
 			@onConfirm="onClone"
 		/>
+
+		<WarningDialog
+			v-model:visible="showDeleteWarning"
+			:title="$t('bots.delete_bot')"
+			:message="$t('bots.delete_message')"
+			@onConfirm="onDelete" 
+		/>
+
+		<WarningDialog 
+			v-model:visible="showActiveSessionsWarning" 
+			:title="$t('bots.active_sessions')"
+			:message="$t('bots.active sessions_list')"
+			hideButtons
+		>
+			<template #note>
+				<div class="flex flex-col gap-1 pb-4 px-6">
+					<div 
+						v-for="name in activeSessions.waba_names" 
+						:key="name"
+						class="text-surface-500 dark:text-surface-400 text-gray-600"
+					>
+						{{ name }}
+					</div>
+				</div>
+
+				<div>
+					{{ $t('bots.active sessions_warning') }}
+				</div>
+
+				<div class="flex justify-center pt-8">
+					<Button variant="text" @click="router.push({ name: 'conversations' })">
+						<span>
+							{{ $t('bots.go_to_chats') }}
+						</span>
+					</Button>
+				</div>
+			</template>
+		</WarningDialog>
 	</div>
 </template>

@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import { IconCrown } from '@tabler/icons-vue';
-import { nodeTypes, useFlowDragAndDrop, type BotNodeCategory } from '~/composables/workflow/useFlowDragAndDrop'
+import { IconCrown } from '@tabler/icons-vue'
+import { nodeItems, type BotNodeCategory, type BotNodeItem } from '~/composables/workflow/useFlowDragAndDrop'
 
-const { onDragStart } = useFlowDragAndDrop()
+const emit = defineEmits<{
+	(e: 'dragStart', { event, nodeItem }: { 
+		event: DragEvent, 
+		nodeItem: BotNodeItem 
+	}): any
+}>()
 
 const categories: BotNodeCategory[] = ['send_message', 'question', 'general']
 </script>
@@ -14,21 +19,21 @@ const categories: BotNodeCategory[] = ['send_message', 'question', 'general']
 
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 				<div
-					v-for="nodeType in nodeTypes.filter(n => n.category === category)"
-					:key="nodeType.name"
+					v-for="nodeItem in nodeItems.filter(n => n.category === category)"
+					:key="nodeItem.name"
 					class="relative flex flex-col gap-2 items-center justify-between border-2 rounded-lg py-4"
 					:class="{
-						'border-slate-100': !nodeType.isPremium,
-						'border-amber-300': nodeType.isPremium,
-						'cursor-grab': !nodeType.isPremium,
-						'cursor-pointer': nodeType.isPremium
+						'border-slate-100': !nodeItem.isPremium,
+						'border-amber-300': nodeItem.isPremium,
+						'cursor-grab': !nodeItem.isPremium,
+						'cursor-pointer': nodeItem.isPremium
 					}"
-					:draggable="!nodeType.isPremium"
-					@dragstart="onDragStart($event, nodeType.name)"
+					:draggable="!nodeItem.isPremium"
+					@dragstart="emit('dragStart', { event: $event, nodeItem })"
 				>
-					<component class="text-emerald-500" :is="nodeType.icon" size="32" />
-					<IconCrown v-if="nodeType.isPremium" class="absolute top-0 right-1 text-amber-300" size="18" />
-					<div class="text-slate-500">{{ nodeType.name }}</div>
+					<component class="text-emerald-500" :is="nodeItem.icon" size="32" />
+					<IconCrown v-if="nodeItem.isPremium" class="absolute top-0 right-1 text-amber-300" size="18" />
+					<div class="text-slate-500">{{ nodeItem.name }}</div>
 				</div>
 			</div>
 		</div>

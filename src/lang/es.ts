@@ -830,6 +830,19 @@ export default {
     clone_title: 'Clonar bot',
     clone_message: 'Ingresa el nombre de tu nuevo bot',
     bot_published: '¡Bot publicado con éxito!',
-    bot_cloned: '¡Bot clonado con éxito!'
+    bot_cloned: '¡Bot clonado con éxito!',
+    stats: {
+      select_date_range: 'Selecciona rango de fechas',
+      today: 'Hoy',
+      reset: 'Reset',
+      active_sessions: 'Sesiones activas',
+      total_sessions: 'Total de sesiones',
+      completed_sessions: 'Sesiones completadas',
+      abandoned_sessions: 'Sesiones abandonadas',
+      avg_duration: 'Duración promedio (min)',
+      sessions: 'Sesiones',
+      unique_users: 'Usuarios únicos',
+      avg_duration_chart: 'Duración promedio (min)'
+    }
   }
 }

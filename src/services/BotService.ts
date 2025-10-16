@@ -1,5 +1,5 @@
 import Http from "~/config/http"
-import type { BotAnalytics, BotAnalyticsFilters, BotConfiguration, Page } from "~/types"
+import type { BotActiveSessions, BotAnalytics, BotAnalyticsFilters, BotConfiguration, Page } from "~/types"
 import type { BotItem, BotCreate } from "~/types"
 
 type BotFilters = {
@@ -30,12 +30,18 @@ export default {
 	async get(id: string) {
 		return Http.get<{ data: BotItem }>(`/bots/${id}`)
 	},
+	async activeSessions(id: string) {
+		return Http.get<BotActiveSessions>(`/bots/${id}/active-sessions`)
+	},
+	async delete(id: string) {
+		return Http.delete<{ data: BotItem }>(`/bots/${id}`)
+	},
 	async analytics(id: string, filters: BotAnalyticsFilters) {
-		return Http.get<{ data: BotAnalytics }>(`/bots/${id}`, {
+		return Http.get<{ data: BotAnalytics }>(`/bots/${id}/analytics`, {
 			params: filters
 		})
 	},
 	async configuration(id: string, configuration: BotConfiguration) {
-		return Http.put<{ data: BotConfiguration }>(`/bots/${id}/configuration`, configuration)
+		return Http.put<{ data: BotItem }>(`/bots/${id}/configuration`, configuration)
 	},
 }

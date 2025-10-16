@@ -9,6 +9,7 @@ import i18n from '~/config/i18n'
 import ToastService from 'primevue/toastservice'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import Tooltip from 'primevue/tooltip'
+import EChartsPlugin from '~/plugins/echarts'
 
 import App from './App.vue'
 import router from '../router'
@@ -32,6 +33,7 @@ app.use(PrimeVue, {
   },
   pt: passthrough
 })
+app.use(EChartsPlugin)
 app.directive('tooltip', Tooltip)
 setupInterceptors()
 

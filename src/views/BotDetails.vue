@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { IconPlus, IconArrowLeft } from '@tabler/icons-vue'
-import { ref } from 'vue'
+import { useToast } from 'primevue'
+import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import SettingsTab from '~/components/bot-details/SettingsTab.vue'
 import StatsTab from '~/components/bot-details/StatsTab.vue'
@@ -10,10 +12,26 @@ import type { BotItem } from '~/types'
 
 const route = useRoute()
 const router = useRouter()
+const toast = useToast()
+const { t } = useI18n()
 
 const tabs = ref(['stats', 'versions', 'settings'])
 const currentTab = ref('stats')
 const bot = ref<BotItem>()
+
+const updateConf = (newConf: BotItem) => {
+	bot.value = {
+		...bot.value,
+		...newConf
+	}
+
+	toast.add({ 
+		severity: 'success',
+		summary: 'Success', 
+		detail: t('bot_details.conf_updated'), 
+		life: 3000 
+	})
+}
 
 const loadBot = async () => {
 	const botId = route.params.id
@@ -28,6 +46,10 @@ const loadBot = async () => {
 	}
 }
 
+watch(currentTab, () => {
+	router.replace({ query: { tab: currentTab.value } })
+})
+
 loadBot()
 
 if(typeof route.query.tab === 'string') {
@@ -39,7 +61,7 @@ if(typeof route.query.tab === 'string') {
     <div class="flex flex-col h-full">
         <div class="flex justify-between items-center px-6 pt-6">
 			<div class="flex items-center gap-3">
-				<Button variant="text" @click="router.back()" class="p-1!" severity="secondary">
+				<Button variant="text" @click="router.push({ name: 'bots' })" class="p-1!" severity="secondary">
 					<IconArrowLeft size="20" />
 				</Button>
 				<div class="text-2xl font-semibold">{{ bot?.name }}</div>
@@ -68,8 +90,8 @@ if(typeof route.query.tab === 'string') {
 				<TabPanel value="versions">
 					<VersionTab :botId="bot?.id" />
                 </TabPanel>
-				<TabPanel value="settings">
-					<SettingsTab :botId="bot?.id" />
+				<TabPanel value="settings" class="overflow-y-auto overflow-x-hidden">
+					<SettingsTab :bot="bot" @onSave="updateConf" />
                 </TabPanel>
             </TabPanels>
         </Tabs>

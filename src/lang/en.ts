@@ -848,6 +848,19 @@ Grab them today!`,
     if_session_is_ending: 'What should happen when a session is about to end?',
     if_session_ends: 'What should happen when a conversation ends?',
     if_no_match: "What should happen if the customer's response does not match any of the options?",
-    if_no_more_nodes: 'What should happen when the bot has no more nodes to run?'
+    if_no_more_nodes: 'What should happen when the bot has no more nodes to run?',
+    stats: {
+      select_date_range: 'Select date range',
+      today: 'Today',
+      reset: 'Reset',
+      active_sessions: 'Active sessions',
+      total_sessions: 'Total sessions',
+      completed_sessions: 'Completed sessions',
+      abandoned_sessions: 'Abandoned sessions',
+      avg_duration: 'Average duration (min)',
+      sessions: 'Sessions',
+      unique_users: 'Unique users',
+      avg_duration_chart: 'Average duration (min)'
+    }
   }
 }

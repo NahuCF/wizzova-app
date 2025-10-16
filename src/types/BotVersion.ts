@@ -20,9 +20,22 @@ export type BotVersionItem = {
 	updated_at: string
 }
 
-export type BotNodeType = 'message' | 'template' | 'image' | 'video' | 'audio' |
-	'document' | 'question_button' | 'condition' | 'start_again' | 'mark_as_solved' |
-	'assign_chat' | 'location' | 'working_hours' | 'set_variable'
+export type BotNodeType =
+  | 'starting_node'
+  | 'message'
+  | 'template'
+  | 'image'
+  | 'video'
+  | 'audio'
+  | 'document'
+  | 'question_button'
+  | 'condition'
+  | 'start_again'
+  | 'mark_as_solved'
+  | 'assign_chat'
+  | 'location'
+  | 'working_hours'
+  | 'set_variable'
 
 export type BotNode = {
 	id: string,
@@ -87,22 +100,7 @@ export interface PageWithBotVersion<T> extends Page<T> {
 
 // Bot Node Type Definitions
 
-interface BotNodeDataMap {
-	message: MessageNodeData,
-	template: TemplateNodeData,
-	image: ImageNodeData,
-	video: VideoNodeData,
-	audio: AudioNodeData,
-	document: DocumentNodeData,
-	question_button: QuestionButtonNodeData,
-	condition: ConditionNodeData,
-	start_again: StartAgainNodeData,
-	mark_as_solved: MarkAsSolvedNodeData,
-	assign_chat: AssignChatNodeData,
-	location: LocationNodeData,
-	working_hours: WorkingHoursNodeData,
-	set_variable: SetVariableNodeData
-}
+type StartingNodeData = {}
 
 type StartAgainNodeData = {}
 
@@ -174,4 +172,22 @@ type SetVariableNodeData = {
 		variable_name: string,
 		value: string
 	}[]
+}
+
+export interface BotNodeDataMap {
+	starting_node: StartingNodeData,
+	message: MessageNodeData,
+	template: TemplateNodeData,
+	image: ImageNodeData,
+	video: VideoNodeData,
+	audio: AudioNodeData,
+	document: DocumentNodeData,
+	question_button: QuestionButtonNodeData,
+	condition: ConditionNodeData,
+	start_again: StartAgainNodeData,
+	mark_as_solved: MarkAsSolvedNodeData,
+	assign_chat: AssignChatNodeData,
+	location: LocationNodeData,
+	working_hours: WorkingHoursNodeData,
+	set_variable: SetVariableNodeData
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IconCopy, IconEdit, IconSend,IconSearch, IconPlus } from '@tabler/icons-vue'
+import { IconCopy, IconEdit, IconSend,IconSearch, IconPlus, IconTrash, IconCircleOff, IconCircleCheck } from '@tabler/icons-vue'
 import { useToast, type DataTablePageEvent } from 'primevue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -10,7 +10,7 @@ import { useRelativeDateLabel } from '~/composables/useRelativeDateLabel'
 import { useSeverityMapper } from '~/composables/useSeverityMapper'
 import router from '~/router'
 import { API } from '~/services'
-import type { Column } from '~/types'
+import type { BotStatus, Column } from '~/types'
 import type { BotVersionItem, PageWithBotVersion } from '~/types'
 
 const props = defineProps<{
@@ -55,6 +55,14 @@ const columns = ref<Column[]>([
 	{ header: '', key: 'actions', type: 'ACTIONS' }
 ])
 const selectedVersionId = ref('')
+const loadingUpdate = ref(false)
+const showActivateWarning = ref(false)
+const showDeactivateWarning = ref(false)
+const showDeleteWarning = ref(false)
+
+const selectedVersion = computed(() => {
+	return dataPage.value.data?.find(version => version.id === selectedVersionId.value)
+})
 
 const transformedData = computed(() =>
 	dataPage.value.data?.map(bot => {
@@ -93,31 +101,50 @@ const transformedData = computed(() =>
 )
 
 const versionActions = (version: BotVersionItem) => {
-	const actions = []
+	const actions = [
+		{
+			label: t('bots_details.actions.edit'),
+			icon: IconEdit,
+			action: () => {
+				router.push({ 
+					name: 'edit-botflow',
+					params: {
+						id: props.botId,
+						versionId: version.id
+					}
+				})
+			}
+		}
+	]
 	
 	if (version.status === 'draft') {
 		actions.push({
-			label: t('bots.actions.publish'),
-			icon: IconSend,
+			label: t('bots_details.actions.activate'),
+			icon: IconCircleCheck,
 			action: () => {
 				selectedVersionId.value = version.id
+				showActivateWarning.value = true
 			}
 		})
 	}
-	actions.push(
-		{
-			label: t('bots.actions.edit'),
-			icon: IconEdit,
-			action: () => router.push({ 
-				name: 'bot-details',
-				params: { id: version.id }
-			})
-		},
-		{
-			label: t('bots.actions.clone'),
-			icon: IconCopy,
+	else {
+		actions.push({
+			label: t('bots_details.actions.deactivate'),
+			icon: IconCircleOff,
 			action: () => {
 				selectedVersionId.value = version.id
+				showDeactivateWarning.value = true
+			}
+		})
+	}
+
+	actions.push(
+		{
+			label: t('bots_details.actions.delete'),
+			icon: IconTrash,
+			action: () => {
+				selectedVersionId.value = version.id
+				showDeleteWarning.value = true
 			}
 		}
 	)
@@ -132,12 +159,72 @@ const onPage = (event: DataTablePageEvent) => {
 
 const onRowSelect = ({ data }: { data: BotVersionItem }) => {
     router.push({ 
-		name: 'new-botflow', 
-		params: { id: data.id }
+		name: 'edit-botflow',
+		params: {
+			id: props.botId,
+			versionId: data.id
+		}
 	})
 }
 
-watch(rowsPerPage, () => fetchDataPage(), { immediate: true })
+const onChangeStatus = async (status: BotStatus) => {
+	if(!props.botId) return
+
+	loadingUpdate.value = true
+	try {
+		const { data: response } = await API.botVersion.changeStatus(props.botId, selectedVersionId.value, status)
+		
+		dataPage.value.data = dataPage.value.data.map(version => {
+			if(version.id === selectedVersionId.value) {
+				return {
+					...version,
+					...response.data
+				}
+			}
+
+			return version
+		})
+
+		toast.add({
+			severity: 'success',
+			summary: 'Success',
+			detail: status === 'active' ? t('bot_details.version_activated') : t('bot_details.version_deactivated'),
+			life: 3000,
+		})
+	} catch(error) {
+		handleError(error)
+	} finally {
+		showActivateWarning.value = false
+		showDeactivateWarning.value = false
+		loadingUpdate.value = false
+	}
+}
+
+const onDelete = async () => {
+	if(!props.botId) return
+
+	loadingUpdate.value = true
+	try {
+		const { data: response } = await API.botVersion.delete(props.botId, selectedVersionId.value)
+		
+		dataPage.value.data = dataPage.value.data.filter(version => version.id !== selectedVersionId.value)
+
+		toast.add({
+			severity: 'success',
+			summary: 'Success',
+			detail: t('bot_details.version_deleted'),
+			life: 3000,
+		})
+	} catch(error) {
+		handleError(error)
+	} finally {
+		showDeleteWarning.value = false
+		loadingUpdate.value = false
+	}
+}
+
+watch(rowsPerPage, () => fetchDataPage())
+watch(() => props.botId, () => fetchDataPage(), { immediate: true })
 </script>
 
 <template>
@@ -204,5 +291,33 @@ watch(rowsPerPage, () => fetchDataPage(), { immediate: true })
                 </div>
             </template>
 		</Table>
+
+		<WarningDialog
+			v-model:visible="showActivateWarning"
+			:loading="loadingUpdate"
+			:title="$t('bot_details.activate_version')"
+			:message="$t('bot_details.activate_version_message')"
+			:confirmMessage="$t('confirm')"
+			@onConfirm="onChangeStatus('active')" 
+		/>
+
+		<WarningDialog
+			v-model:visible="showDeactivateWarning"
+			:loading="loadingUpdate"
+			:title="$t('bot_details.deactivate_version')"
+			:message="$t('bot_details.deactivate_version_message')"
+			:confirmMessage="$t('confirm')"
+			@onConfirm="onChangeStatus('draft')" 
+		/>
+
+		<WarningDialog
+			v-model:visible="showDeleteWarning"
+			:loading="loadingUpdate"
+			:title="$t('bot_details.delete_version')"
+			:message="selectedVersion?.status === 'active' 
+				? $t('bot_details.delete_active_version_message') 
+				: $t('bot_details.delete_version_message')"
+			@onConfirm="onDelete" 
+		/>
 	</div>
 </template>
