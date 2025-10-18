@@ -72,7 +72,11 @@ const conversationScroll = ref()
 
 const conversations = computed<ConversationItem[]>(() => {
 	return conversationStore.conversationsByTab[currentTab.value]
-		.sort((a, b) => moment(a.last_message_at).unix() - moment(b.last_message_at).unix()) || []
+		.sort((a, b) => {
+			const adate = moment(a.last_message_at).unix() || 0
+			const bdate = moment(b.last_message_at).unix() || 0
+			return bdate - adate
+		}) || []
 		
 })
 const loading = computed(() => conversationStore.loading)

@@ -86,20 +86,23 @@ const pinned = computed(() => props.conversation.is_pinned)
 			<div class="text-sm text-gray-400">
 				{{ conversation.last_message_at && moment(conversation.last_message_at).format('h:mm A') }}
 			</div>
-			<Badge
-				v-if="conversation.unread_count > 0"
-				rounded
-				:value="conversation.unread_count"
-				size="small"
-			/>
-			<div
-				v-if="pinned || isHovered"
-				@mouseenter="isPinHovered = true"
-				@mouseleave="isPinHovered = false"
-				@click.stop="emit('onPin', { conversation, pin: !conversation.is_pinned })"
-			>
-				<IconPinFilled v-if="pinned || isPinHovered" class="text-slate-400" size="16" />
-				<IconPin v-else class="text-slate-400" size="16" />
+			
+			<div class="flex gap-1">
+				<Badge
+					v-if="conversation.unread_count > 0"
+					rounded
+					:value="conversation.unread_count"
+					size="small"
+				/>
+				<div
+					v-if="pinned || isHovered"
+					@mouseenter="isPinHovered = true"
+					@mouseleave="isPinHovered = false"
+					@click.stop="emit('onPin', { conversation, pin: !conversation.is_pinned })"
+				>
+					<IconPinFilled v-if="pinned || isPinHovered" class="text-slate-400" size="16" />
+					<IconPin v-else class="text-slate-400" size="16" />
+				</div>
 			</div>
 		</div>
 	</div>

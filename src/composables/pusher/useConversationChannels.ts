@@ -13,23 +13,7 @@ export const useConversationChannels = () => {
 	const { subscribe, unsubscribe } = usePusher()
 	let channel: Channel
 
-	const currentTab = computed(() => conversationStore.currentTab)
-	const conversationsByTab = computed(() => conversationStore.conversationsByTab)
-
 	const playMessageSound = () => new Audio('/public/sounds/message.wav').play()
-
-	const upsertConversationInTab = (conversation: ConversationItem) => {
-		const tab = conversationStore.getConversationTab(conversation)
-		const conversations = conversationsByTab.value[tab] || []
-
-		const index = conversations.findIndex(c => c.id === conversation.id)
-		if (index >= 0) {
-			conversations[index] = { ...conversations[index], ...conversation }
-		} else if (tab === currentTab.value) {
-			conversationsByTab.value[tab] = [conversation, ...conversations]
-			playMessageSound()
-		}
-	}
 
 	const upsertMessage = (convId: string, message: MessageItem) => {
 		const pag = messagesStore.initConversationPagination(convId)
@@ -42,7 +26,9 @@ export const useConversationChannels = () => {
 		if (index >= 0) {
 			page[index] = { ...page[index], ...message }
 		} else {
+			playMessageSound()
 			page.unshift(message)
+			conversationStore.updateConversationWithMessage(message)
 		}
 	}
 
@@ -59,11 +45,21 @@ export const useConversationChannels = () => {
 	}
 
 	const handleNewConversation = ({ conversation }: { conversation: ConversationItem }) => {
-		upsertConversationInTab(conversation)
+		if(!conversationStore.findConversationById(conversation.id)) {
+			playMessageSound()
+		}
+
+		conversationStore.incrementStatsForConversation(conversation)
+		conversationStore.insertConversationIntoTabs(conversation)
 	}
 
 	const handleOwnerChanged = ({ conversation }: { conversation: ConversationItem }) => {
-		upsertConversationInTab(conversation)
+		const oldConv = conversationStore.findConversationById(conversation.id)
+		const prevOwnerId = oldConv?.assigned_user?.id
+		const newOwnerId = conversation.assigned_user?.id
+
+		conversationStore.updateStatsForOwnerChange(prevOwnerId, newOwnerId)
+		conversationStore.insertConversationIntoTabs(conversation)
 	}
 
 	const handleNewMessage = ({ message }: { message: MessageItem }) => {

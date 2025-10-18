@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useSessionStore } from './session'
 import { API } from '~/services'
 import type { 
 	ConversationItem, Page, UserItem, 
-	ConversationStatus, ConversationStats 
+	ConversationStatus, ConversationStats, 
+	MessageItem
 } from '~/types'
 import type { ConversationFilters } from '~/services/ConversationService'
 import { useErrorHandler } from '~/composables/useErrorHandler'
@@ -42,6 +43,25 @@ export const useConversationsStore = defineStore('conversations', () => {
 		opened: 0,
 		resolved: 0,
 		pinned: 0
+	})
+	const statsLoaded = ref(false)
+
+	const totalUnreadCount = computed(() => {
+		const allConversations = Object.values(conversationsByTab.value).flat()
+		const uniqueConversations = new Map<string, number>()
+
+		for (const conv of allConversations) {
+			if (!uniqueConversations.has(conv.id)) {
+			uniqueConversations.set(conv.id, conv.unread_count || 0)
+			}
+		}
+
+		let total = 0
+		for (const count of uniqueConversations.values()) {
+			total += count
+		}
+
+		return total
 	})
 
 	const tabToFilters = (tab: ConversationStatus) => {
@@ -82,10 +102,13 @@ export const useConversationsStore = defineStore('conversations', () => {
 		}
 	}
 
-	const fetchStats = async () => {
+	const fetchStats = async (force = false) => {
+		if (statsLoaded.value && !force) return
+
 		try {
 			const { data: response } = await API.conversation.stats(currentTab.value)
 			stats.value = response.data
+			statsLoaded.value = true
 		} catch (error) {
 			console.error(error)
 		}
@@ -105,97 +128,57 @@ export const useConversationsStore = defineStore('conversations', () => {
 		}
 
 		if(tab !== 'pinned') {
-			await fetchStats()
+			await fetchStats(stats.value[currentTab.value] > 0)
 		}
 	}
 
 	const selectConversation = (conv: ConversationItem | null) => {
 		selectedConversation.value = conv
-	}
 
-	const changeOwner = async (conversation: ConversationItem, newOwner?: UserItem) => {
-		if (!conversation || !newOwner) return
-		changingOwner.value = true
-		try {
-			const ownerId = newOwner && newOwner.id !== 'not_assigned' ? newOwner.id : undefined
-			const isUnassigned = !ownerId
-			const isAssignedToCurrentUser = ownerId && sessionStore.user?.id === ownerId
-
-			const { data: response } = await API.conversation.changeOwner(conversation.id, ownerId)
-			const updatedConversation = response.data
-
-			for (const tab of Object.keys(conversationsByTab.value) as ConversationStatus[]) {
-				conversationsByTab.value[tab] = conversationsByTab.value[tab].filter(
-					c => c.id !== conversation.id
-				)
+		if(conv) {
+			conv = {
+				...conv,
+				unread_count: 0
 			}
-
-			if (isUnassigned) {
-				conversationsByTab.value.unassigned.unshift(updatedConversation)
-				selectedConversation.value = null
-			} else if (isAssignedToCurrentUser) {
-				conversationsByTab.value.mine.unshift(updatedConversation)
-				if (!updatedConversation.is_solved) {
-					conversationsByTab.value.opened.unshift(updatedConversation)
-				}
-			} else if (!updatedConversation.is_solved) {
-				conversationsByTab.value.opened.unshift(updatedConversation)
-			}
-
-			updateConversationInTabs(updatedConversation, ['pinned'])
-
-			if (selectedConversation.value?.id === updatedConversation.id) {
-				selectedConversation.value = updatedConversation
-			}
-
-			await fetchStats()
-		} catch(error) {
-			handleError(error)
-		} finally {
-			changingOwner.value = false
+			insertConversationIntoTabs(conv)
 		}
 	}
 
-	const changeSolved = async (conversation: ConversationItem, solved: boolean) => {
-		if (!conversation) return
-		changingSolved.value = true
-		try {
-			const { data: response } = await API.conversation.changeSolved(conversation.id, solved)
-			const updatedConversation = {
-				...conversation,
-				...response.data
-			}
+	const getConversationTabs = (conversation: ConversationItem): ConversationStatus[]  => {
+		let tabs: ConversationStatus[] = []
 
-			conversationsByTab.value.mine = conversationsByTab.value.mine.filter(
-				(c) => c.id !== updatedConversation.id
+		if (!conversation.assigned_user && !conversation.is_solved) {
+			tabs = [ ...tabs, 'unassigned' ]
+		}
+		if (conversation.assigned_user?.id === sessionStore.user?.id) {
+			tabs = [ ...tabs, 'mine' ]
+		}
+		if (!conversation.is_expired && !conversation.is_solved) {
+			tabs = [ ...tabs, 'opened' ]
+		}
+		if (conversation.is_expired || conversation.is_solved) {
+			tabs = [ ...tabs, 'resolved' ]
+		}
+		if (conversationsByTab.value['pinned'].find(c => c.id === conversation.id)) {
+			tabs = [ ...tabs, 'pinned' ]
+		}
+
+		return tabs
+	}
+
+	const findConversationById = (id: string): ConversationItem | undefined => {
+		for (const tab of Object.values(conversationsByTab.value)) {
+			const found = tab.find(c => c.id === id)
+			if (found) return found
+		}
+		return undefined
+	}
+
+	const removeConversationFromAllTabs = (conversationId: string) => {
+		for (const tab of Object.keys(conversationsByTab.value) as ConversationStatus[]) {
+			conversationsByTab.value[tab] = conversationsByTab.value[tab].filter(
+				c => c.id !== conversationId
 			)
-			conversationsByTab.value.opened = conversationsByTab.value.opened.filter(
-				(c) => c.id !== updatedConversation.id
-			)
-			conversationsByTab.value.resolved = conversationsByTab.value.resolved.filter(
-				(c) => c.id !== updatedConversation.id
-			)
-
-			if (updatedConversation.is_solved) {
-				conversationsByTab.value.resolved.unshift(updatedConversation)
-			} 
-			else if(updatedConversation.assigned_user?.id === sessionStore.user?.id) {
-				conversationsByTab.value.mine.unshift(updatedConversation)
-				conversationsByTab.value.opened.unshift(updatedConversation)
-			}
-			else {
-				conversationsByTab.value.opened.unshift(updatedConversation)
-			}
-
-			updateConversationInTabs(updatedConversation, ['pinned'])
-
-			selectedConversation.value = null
-
-    		await fetchStats()
-		} catch(error) {
-			handleError(error)
-		} finally {
-			changingSolved.value = false
 		}
 	}
 
@@ -208,6 +191,148 @@ export const useConversationsStore = defineStore('conversations', () => {
 					...conversation
 				}
 			}
+		}
+	}
+
+	const insertConversationIntoTabs = (conversation: ConversationItem) => {
+		const tabs = getConversationTabs(conversation)
+		if (!tabs.length) return
+
+		const oldConv = findConversationById(conversation.id)
+		const updatedConv = oldConv 
+			? {
+				...oldConv,
+				...conversation
+			}
+			: conversation
+
+		removeConversationFromAllTabs(conversation.id)
+
+		for (const tab of tabs) {
+			conversationsByTab.value[tab].unshift(updatedConv)
+		}
+		
+		if(selectedConversation.value?.id === updatedConv.id) {
+			selectedConversation.value = updatedConv
+		}
+	}
+	
+	const updateConversationWithMessage = (message: MessageItem, read?: boolean) => {
+		const conv = findConversationById(message.conversation_id)
+		if (!conv) return
+
+		const updatedConv: ConversationItem = {
+			...conv,
+			unread_count: read ? conv.unread_count : conv.unread_count + 1,
+			last_message: message,
+			last_message_at: message.created_at,
+		}
+
+		insertConversationIntoTabs(updatedConv)
+	}
+
+	const incrementStat = (key: keyof ConversationStats) => {
+		stats.value[key]++
+	}
+
+	const decrementStat = (key: keyof ConversationStats) => {
+		stats.value[key] = Math.max(0, stats.value[key] - 1)
+	}
+
+	const refreshStats = async () => {
+		statsLoaded.value = false
+		await fetchStats(true)
+	}
+
+	const incrementStatsForConversation = (conversation: ConversationItem) => {
+		const tabs = getConversationTabs(conversation)
+		if (!tabs.length) return
+
+		for (const tab of tabs) {
+			const exists = conversationsByTab.value[tab].some(c => c.id === conversation.id)
+			if (!exists && stats.value[tab] !== undefined) {
+				incrementStat(tab)
+			}
+		}
+	}
+
+	const updateStatsForOwnerChange = (
+		prevOwnerId: string | undefined,
+		newOwnerId: string | undefined
+	) => {
+		const currentUserId = sessionStore.user?.id
+
+		if (!prevOwnerId) decrementStat('unassigned')
+		else if (prevOwnerId === currentUserId) decrementStat('mine')
+
+		if (!newOwnerId) incrementStat('unassigned')
+		else if (newOwnerId === currentUserId) incrementStat('mine')
+	}
+
+	const updateStatsForSolvedChange = (
+		wasSolved: boolean,
+		isSolved: boolean,
+		assignedUserId?: string
+	) => {
+		const currentUserId = sessionStore.user?.id
+
+		if (!wasSolved && isSolved) {
+			incrementStat('resolved')
+			if (assignedUserId === currentUserId) decrementStat('mine')
+			else decrementStat('opened')
+		}
+
+		if (wasSolved && !isSolved) {
+			decrementStat('resolved')
+			if (assignedUserId === currentUserId) incrementStat('mine')
+			else incrementStat('opened')
+		}
+	}
+
+	const changeOwner = async (conversation: ConversationItem, newOwner?: UserItem) => {
+		if (!conversation || !newOwner) return
+		changingOwner.value = true
+		try {
+			const prevOwnerId = conversation.assigned_user?.id
+			const newOwnerId = newOwner.id !== 'not_assigned' ? newOwner.id : undefined
+
+			const { data: response } = await API.conversation.changeOwner(conversation.id, newOwnerId)
+			const updatedConversation = response.data
+
+			insertConversationIntoTabs(updatedConversation)
+
+			if (selectedConversation.value?.id === updatedConversation.id) {
+				selectConversation(newOwnerId ? updatedConversation : null)
+			}
+
+			updateStatsForOwnerChange(prevOwnerId, newOwnerId)
+		} catch(error) {
+			handleError(error)
+		} finally {
+			changingOwner.value = false
+		}
+	}
+
+	const changeSolved = async (conversation: ConversationItem, solved: boolean) => {
+		if (!conversation) return
+		changingSolved.value = true
+		try {
+			const wasSolved = conversation.is_solved
+			const { data: response } = await API.conversation.changeSolved(conversation.id, solved)
+			const updatedConversation = { ...conversation, ...response.data }
+
+			insertConversationIntoTabs(updatedConversation)
+			selectConversation(null)
+
+			updateStatsForSolvedChange(
+				wasSolved,
+				updatedConversation.is_solved,
+				updatedConversation.assigned_user?.id
+			)
+		} catch(error) {
+			handleError(error)
+		} finally {
+			changingSolved.value = false
 		}
 	}
 
@@ -259,13 +384,6 @@ export const useConversationsStore = defineStore('conversations', () => {
 		})
 	}
 
-	const getConversationTab = (conversation: ConversationItem) => {
-		if (!conversation.assigned_user) return 'unassigned'
-		if (conversation.assigned_user.id === sessionStore.user?.id) return 'mine'
-		if (!conversation.is_solved) return 'opened'
-		return 'resolved'
-	}
-
 	const $reset = () => {
 		conversationsByTab.value = {
 			unassigned: [],
@@ -285,7 +403,6 @@ export const useConversationsStore = defineStore('conversations', () => {
 
 		currentTab.value = 'mine'
 		loading.value = false
-		selectedConversation.value = null
 		changingSolved.value = false
 		changingOwner.value = false
 		stats.value = {
@@ -295,6 +412,8 @@ export const useConversationsStore = defineStore('conversations', () => {
 			resolved: 0,
 			pinned: 0
 		}
+
+		selectConversation(null)
 	}
 
 	return {
@@ -306,6 +425,7 @@ export const useConversationsStore = defineStore('conversations', () => {
 		changingSolved,
 		changingOwner,
 		stats,
+		totalUnreadCount,
 		$reset,
 		setTab,
 		fetchConversations,
@@ -315,8 +435,14 @@ export const useConversationsStore = defineStore('conversations', () => {
 		changeSolved,
 		pin,
 		unpin,
-		fetchStats,
+		refreshStats,
 		updateConversationInTabs,
-		getConversationTab
+		getConversationTabs,
+		findConversationById,
+		updateStatsForOwnerChange,
+		removeConversationFromAllTabs,
+		insertConversationIntoTabs,
+		incrementStatsForConversation,
+		updateConversationWithMessage
 	}
 })

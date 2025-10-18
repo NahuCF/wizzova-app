@@ -34,7 +34,8 @@ const {
 	currentTab,
 	conversationsByTab,
 	stats,
-	loading: loadingConversations
+	loading: loadingConversations,
+	totalUnreadCount
 } = storeToRefs(conversationStore)
 
 const showStartConversationDialog = ref(false)
@@ -45,6 +46,7 @@ const searchingContact = ref(false)
 const chatRef = ref<InstanceType<typeof Chat> | null>(null)
 const showNavigateToConversation = ref(false)
 const conversationExistsId = ref('')
+const defaultPageTitle = ref(document.title)
 
 const messages = computed(() => {
 	if (!selectedConversation.value) return []
@@ -65,9 +67,7 @@ const selectedConversationIndex = computed(() => {
 const startConversation = (conversation: ConversationItem) => {
 	showStartConversationDialog.value = false
 
-	const tab = conversationStore.getConversationTab(conversation)
-	const conversations = conversationsByTab.value[tab] || []
-	conversationsByTab.value[tab] = [conversation, ...conversations]
+	conversationStore.insertConversationIntoTabs(conversation)
 
 	conversationStore.selectConversation(conversation)
 	messagesStore.loadInitialPage(conversation.id)
@@ -99,11 +99,8 @@ const navigateToConversation = async (conversationId: string) => {
 
 const updateContact = (contact: ContactItem) => {
 	if (!selectedConversation.value) return
-	selectedConversation.value = { ...selectedConversation.value, contact }
-	const tabConvs = conversationsByTab.value[currentTab.value] || []
-	conversationsByTab.value[currentTab.value] = tabConvs.map(c =>
-		c.id === selectedConversation.value?.id ? { ...c, contact } : c
-	)
+	
+	conversationStore.insertConversationIntoTabs({ ...selectedConversation.value, contact })
 }
 
 const sendTextMessage = async ({ message, type, mentions, replyId }: {
@@ -138,6 +135,7 @@ const sendMessage = async (newMessage: CreateMessage) => {
 
 		messagesStore.ensurePage(convId, 1) // insert at first page
 		messagesStore.messagesPaginationByConversation[convId].pages[1].unshift(response.data)
+		conversationStore.updateConversationWithMessage(response.data, true)
 
 		if (response.data.template_id) {
 			await messagesStore.ensureTemplatesForMessages([response.data])
@@ -148,10 +146,7 @@ const sendMessage = async (newMessage: CreateMessage) => {
 			selectedConversation.value.expires_at = moment().add(1, 'day').toISOString()
 
 			if(selectedConversationIndex.value >= 0) {
-				conversationStore.updateConversationInTabs(
-					selectedConversation.value,
-					['unassigned', 'mine', 'pinned', 'opened', 'resolved']
-				)
+				conversationStore.insertConversationIntoTabs(selectedConversation.value)
 			}
 			fetchActivities()
 		}
@@ -164,12 +159,7 @@ const sendMessage = async (newMessage: CreateMessage) => {
 				is_expired: true
 			}
 
-			selectedConversation.value = updatedConv
-
-			conversationStore.updateConversationInTabs(
-				updatedConv,
-				['unassigned', 'mine', 'pinned', 'opened', 'resolved']
-			)
+			conversationStore.insertConversationIntoTabs(updatedConv)
 		}
 	} finally {
 		sendingMessage.value = false
@@ -223,10 +213,19 @@ watch(selectedConversation, (conv) => {
 	}
 })
 
+watch(totalUnreadCount, () => {
+	if(totalUnreadCount.value > 0) {
+		document.title = `${defaultPageTitle.value} (${totalUnreadCount.value})`
+	}
+	else {
+		document.title = defaultPageTitle.value
+	}
+})
 
-selectedConversation.value = null
+
+conversationStore.selectConversation(null)
 userStore.fetchUsers()
-conversationStore.fetchStats()
+conversationStore.refreshStats()
 conversationStore.fetchConversations()
 useConversationChannels()
 </script>
