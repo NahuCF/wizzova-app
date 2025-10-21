@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { IconCopy, IconEdit, IconSend,IconSearch, IconPlus, IconTrash, IconCircleOff, IconCircleCheck } from '@tabler/icons-vue'
+import { IconEdit, IconSearch, IconTrash, IconCircleOff, IconCircleCheck } from '@tabler/icons-vue'
 import { useToast, type DataTablePageEvent } from 'primevue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useCrudActions } from '~/composables/useCrudActions'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { useRelativeDateLabel } from '~/composables/useRelativeDateLabel'
@@ -103,7 +102,7 @@ const transformedData = computed(() =>
 const versionActions = (version: BotVersionItem) => {
 	const actions = [
 		{
-			label: t('bots_details.actions.edit'),
+			label: t('bot_details.actions.edit'),
 			icon: IconEdit,
 			action: () => {
 				router.push({ 
@@ -119,7 +118,7 @@ const versionActions = (version: BotVersionItem) => {
 	
 	if (version.status === 'draft') {
 		actions.push({
-			label: t('bots_details.actions.activate'),
+			label: t('bot_details.actions.activate'),
 			icon: IconCircleCheck,
 			action: () => {
 				selectedVersionId.value = version.id
@@ -129,7 +128,7 @@ const versionActions = (version: BotVersionItem) => {
 	}
 	else {
 		actions.push({
-			label: t('bots_details.actions.deactivate'),
+			label: t('bot_details.actions.deactivate'),
 			icon: IconCircleOff,
 			action: () => {
 				selectedVersionId.value = version.id
@@ -140,7 +139,7 @@ const versionActions = (version: BotVersionItem) => {
 
 	actions.push(
 		{
-			label: t('bots_details.actions.delete'),
+			label: t('bot_details.actions.delete'),
 			icon: IconTrash,
 			action: () => {
 				selectedVersionId.value = version.id
@@ -191,6 +190,13 @@ const onChangeStatus = async (status: BotStatus) => {
 			detail: status === 'active' ? t('bot_details.version_activated') : t('bot_details.version_deactivated'),
 			life: 3000,
 		})
+
+		if(status === 'active' && dataPage.value?.meta) {
+			dataPage.value.meta.has_active_version = true
+		}
+		else if(status === 'draft' && dataPage.value?.meta) {
+			dataPage.value.meta.has_active_version = false
+		}
 	} catch(error) {
 		handleError(error)
 	} finally {

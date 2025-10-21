@@ -6,6 +6,11 @@ import type { BotAnalytics, BotAnalyticsFilters } from '~/types'
 import { API } from '~/services'
 import { useI18n } from 'vue-i18n'
 
+type SeriesData = {
+	name: string
+	data: number[]
+}
+
 const props = defineProps<{ botId?: string }>()
 
 const { t } = useI18n()
@@ -27,8 +32,13 @@ const overview = ref({
 })
 
 const sessionsOptions = ref({})
+const sessionsSeries = ref<SeriesData[]>([])
+
 const usersOptions = ref({})
+const usersSeries = ref<SeriesData[]>([])
+
 const durationOptions = ref({})
+const durationSeries = ref<SeriesData[]>([])
 
 const fetchAnalytics = async () => {
 	if (!props.botId || !dateRange.value) return
@@ -52,73 +62,55 @@ const renderCharts = () => {
 	if (!analytics.value) return
 	const categories = analytics.value.time_series.map(d => d.period)
 
+	sessionsSeries.value = [
+		{ name: t('bot_details.stats.completed_sessions'), data: analytics.value.time_series.map(d => d.completed_sessions) },
+		{ name: t('bot_details.stats.abandoned_sessions'), data: analytics.value.time_series.map(d => d.abandoned_sessions) },
+		{ name: t('bot_details.stats.total_sessions'), data: analytics.value.time_series.map(d => d.opened_sessions) }
+	]
 	sessionsOptions.value = {
-		backgroundColor: 'white',
-		title: {
-			text: t('bot_details.stats.sessions'),
-			left: 'center',
-			textStyle: { fontSize: 16, fontWeight: '500' }
+		chart: {
+			type: 'line',
+			toolbar: { show: false },
+			zoom: { enabled: false },
+			background: 'transparent'
 		},
-		tooltip: { trigger: 'axis' },
-		legend: { data: ['Completadas', 'Abandonadas', 'Total'], bottom: 0 },
-		xAxis: { type: 'category', data: categories },
-		yAxis: { 
-			type: 'value', 
-			min: 0,
-			max: 5,
-			minInterval: 1,
-			splitNumber: 6 
-		},
-		series: [
-			{ name: 'Completadas', type: 'line', data: analytics.value.time_series.map(d => d.completed_sessions) },
-			{ name: 'Abandonadas', type: 'line', data: analytics.value.time_series.map(d => d.abandoned_sessions) },
-			{ name: 'Total', type: 'line', data: analytics.value.time_series.map(d => d.opened_sessions) }
-		],
-		grid: { top: 50, bottom: 30, left: 30, right: 30, containLabel: true }
+		title: { text: t('bot_details.stats.sessions'), align: 'center', style: { fontSize: '16px', fontWeight: '500' } },
+		xaxis: { categories },
+		stroke: { curve: 'smooth' },
+		legend: { position: 'bottom' },
+		tooltip: { shared: true },
 	}
 
+	usersSeries.value = [
+		{ name: t('bot_details.stats.unique_users'), data: analytics.value.time_series.map(d => d.unique_users) }
+	]
 	usersOptions.value = {
-		backgroundColor: 'white',
-		title: {
-			text: t('bot_details.stats.unique_users'),
-			left: 'center',
-			textStyle: { fontSize: 16, fontWeight: '500' }
+		chart: { 
+			type: 'line',
+			toolbar: { show: false },
+			zoom: { enabled: false },
+			background: 'transparent'
 		},
-		tooltip: { trigger: 'axis' },
-		xAxis: { type: 'category', data: categories },
-		yAxis: { 
-			type: 'value', 
-			min: 0,
-			max: 5,
-			minInterval: 1,
-			splitNumber: 6 
-		},
-		series: [
-			{ name: 'Usuarios únicos', type: 'line', data: analytics.value.time_series.map(d => d.unique_users) }
-		],
-		grid: { top: 50, bottom: 30, left: 30, right: 30, containLabel: true }
+		title: { text: t('bot_details.stats.unique_users'), align: 'center', style: { fontSize: '16px', fontWeight: '500' } },
+		xaxis: { categories },
+		stroke: { curve: 'smooth' },
+		tooltip: { shared: true },
 	}
 
+	durationSeries.value = [
+		{ name: t('bot_details.stats.avg_duration_chart'), data: analytics.value.time_series.map(d => +(d.avg_duration_seconds / 60).toFixed(2)) }
+	]
 	durationOptions.value = {
-		backgroundColor: 'white',
-		title: {
-			text: t('bot_details.stats.avg_duration_chart'),
-			left: 'center',
-			textStyle: { fontSize: 16, fontWeight: '500' }
+		chart: {
+			type: 'line',
+			toolbar: { show: false },
+			zoom: { enabled: false },
+			background: 'transparent'
 		},
-		tooltip: { trigger: 'axis' },
-		xAxis: { type: 'category', data: categories },
-		yAxis: { 
-			type: 'value', 
-			min: 0,
-			max: 5,
-			minInterval: 1,
-			splitNumber: 6 
-		},
-		series: [
-			{ name: 'Duración promedio (min)', type: 'line', data: analytics.value.time_series.map(d => +(d.avg_duration_seconds / 60).toFixed(2)) }
-		],
-		grid: { top: 50, bottom: 30, left: 30, right: 30, containLabel: true }
+		title: { text: t('bot_details.stats.avg_duration_chart'), align: 'center', style: { fontSize: '16px', fontWeight: '500' } },
+		xaxis: { categories },
+		stroke: { curve: 'smooth' },
+		tooltip: { shared: true },
 	}
 }
 
@@ -195,16 +187,31 @@ watch(() => props.botId, () => {
 
 		<div class="flex flex-col gap-4">
 			<div class="p-4 bg-white border border-slate-200 rounded-lg">
-				<VueECharts :option="sessionsOptions" class="min-h-[300px]!" autoresize />
+				<apexchart
+					type="line"
+					height="300"
+					:options="sessionsOptions"
+					:series="sessionsSeries"
+				/>
 			</div>
 			
 			<div class="flex gap-4">
 				<div class="p-4 bg-white border border-slate-200 rounded-lg w-1/2">
-					<VueECharts :option="usersOptions" class="h-[300px]!" autoresize />
+					<apexchart
+						type="line"
+						height="300"
+						:options="usersOptions"
+						:series="usersSeries"
+					/>
 				</div>
 
 				<div class="p-4 bg-white border border-slate-200 rounded-lg w-1/2">
-					<VueECharts :option="durationOptions" class="h-[300px]!" autoresize />
+					<apexchart
+						type="line"
+						height="300"
+						:options="durationOptions"
+						:series="durationSeries"
+					/>
 				</div>
 			</div>
 		</div>

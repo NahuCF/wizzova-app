@@ -58,13 +58,13 @@ defineExpose({
 
 <template>
 	<div class="w-full h-full flex" @drop="onDrop">
+		<BotFlowSidebar @dragStart="onDragStart" />
+
 		<VueFlow :node-types="nodeTypes" :nodes="loadedNodes" :edges="edges" @dragover="onDragOver" @dragleave="onDragLeave">
 			<DropzoneBackground
 				class="transition-colors 0.2s ease"
 				:class="[isDragOver ? 'bg-emerald-100' : 'bg-transparent']"
 			/>
 		</VueFlow>
-
-		<BotFlowSidebar @dragStart="onDragStart" />
 	</div>
 </template>

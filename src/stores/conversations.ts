@@ -47,19 +47,8 @@ export const useConversationsStore = defineStore('conversations', () => {
 	const statsLoaded = ref(false)
 
 	const totalUnreadCount = computed(() => {
-		const allConversations = Object.values(conversationsByTab.value).flat()
-		const uniqueConversations = new Map<string, number>()
-
-		for (const conv of allConversations) {
-			if (!uniqueConversations.has(conv.id)) {
-			uniqueConversations.set(conv.id, conv.unread_count || 0)
-			}
-		}
-
-		let total = 0
-		for (const count of uniqueConversations.values()) {
-			total += count
-		}
+		const allConversations = Object.values(stats.value).flat()
+		const total = allConversations.reduce((acc, val) => acc + val, 0)
 
 		return total
 	})
@@ -159,7 +148,7 @@ export const useConversationsStore = defineStore('conversations', () => {
 		if (conversation.is_expired || conversation.is_solved) {
 			tabs = [ ...tabs, 'resolved' ]
 		}
-		if (conversationsByTab.value['pinned'].find(c => c.id === conversation.id)) {
+		if (conversation.is_pinned) {
 			tabs = [ ...tabs, 'pinned' ]
 		}
 
@@ -217,9 +206,12 @@ export const useConversationsStore = defineStore('conversations', () => {
 		}
 	}
 	
-	const updateConversationWithMessage = (message: MessageItem, read?: boolean) => {
-		const conv = findConversationById(message.conversation_id)
-		if (!conv) return
+	const updateConversationWithMessage = async (message: MessageItem, read?: boolean) => {
+		let conv = findConversationById(message.conversation_id)
+		if (!conv) {
+			const { data: response } = await API.conversation.get(message.conversation_id)
+			conv = response.data
+		}
 
 		const updatedConv: ConversationItem = {
 			...conv,
@@ -242,6 +234,15 @@ export const useConversationsStore = defineStore('conversations', () => {
 	const refreshStats = async () => {
 		statsLoaded.value = false
 		await fetchStats(true)
+	}
+
+	const incrementStatsFromMessage = (conversation: ConversationItem) => {
+		const tabs = getConversationTabs(conversation)
+		if (!tabs.length) return
+
+		for (const tab of tabs) {
+			incrementStat(tab)
+		}
 	}
 
 	const incrementStatsForConversation = (conversation: ConversationItem) => {
@@ -443,6 +444,7 @@ export const useConversationsStore = defineStore('conversations', () => {
 		removeConversationFromAllTabs,
 		insertConversationIntoTabs,
 		incrementStatsForConversation,
+		incrementStatsFromMessage,
 		updateConversationWithMessage
 	}
 })

@@ -112,7 +112,7 @@ const logout = async () => {
 
 <template>
 	<aside
-		class="flex flex-col w-full bg-white shadow h-screen outline-r outline-slate-200 transition-all duration-500 ease-in-out overflow-hidden z-1"
+		class="flex flex-col w-full bg-white shadow h-screen outline-r outline-slate-200 transition-all duration-500 ease-in-out overflow-hidden z-2"
 		:class="collapsed ? 'max-w-[60px]' : 'max-w-[220px]'"
 	>
 		<div

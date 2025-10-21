@@ -11,11 +11,17 @@ export const useConversationChannels = () => {
 	const conversationStore = useConversationsStore()
 	const messagesStore = useMessagesStore()
 	const { subscribe, unsubscribe } = usePusher()
+	const notificationAudio = new Audio('/public/sounds/message.wav')
+	notificationAudio.autoplay = false
+	notificationAudio.preload = 'auto'
 	let channel: Channel
 
-	const playMessageSound = () => new Audio('/public/sounds/message.wav').play()
+	const playMessageSound = () => {
+		notificationAudio.currentTime = 0
+		notificationAudio.play()
+	}
 
-	const upsertMessage = (convId: string, message: MessageItem) => {
+	const upsertMessage = async (convId: string, message: MessageItem) => {
 		const pag = messagesStore.initConversationPagination(convId)
 		const firstPageKey = Number(Object.keys(pag.pages)[0] ?? 1)
 
@@ -28,7 +34,12 @@ export const useConversationChannels = () => {
 		} else {
 			playMessageSound()
 			page.unshift(message)
-			conversationStore.updateConversationWithMessage(message)
+			await conversationStore.updateConversationWithMessage(message)
+
+			const conversation = conversationStore.findConversationById(convId)
+			if (conversation) {
+				conversationStore.incrementStatsFromMessage(conversation)
+			}
 		}
 	}
 

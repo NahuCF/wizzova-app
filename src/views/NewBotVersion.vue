@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IconArrowLeft, IconPencil, IconLoader2 } from '@tabler/icons-vue'
+import { IconArrowLeft, IconPencil, IconLoader2, IconAsterisk } from '@tabler/icons-vue'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type BotWorkflow from '~/components/bots/workflow/BotWorkflow.vue'
@@ -149,8 +149,9 @@ loadBot()
 						@focusout="editName = false"
 					/>
 				</div>
-				<div v-else class="text-lg text-slate-500 pl-2">
+				<div v-else class="flex gap-1 text-lg text-slate-500 pl-2">
 					{{ name || $t('new_botflow.no_name') }}
+					<IconAsterisk v-if="name.trim().length === 0" color="red" size="8" />
 				</div>
 				<Button variant="text" @click="editName = !editName" class="p-1!" severity="secondary">
 					<IconPencil size="18" />
@@ -158,7 +159,7 @@ loadBot()
 			</div>
 
 			<div>
-				<Button @click="onSave" :disabled="saving">
+				<Button @click="onSave" :disabled="saving || name.trim().length === 0">
 					<IconLoader2 v-if="saving" class="animate-spin w-6 h-6" />
 					<span v-else>
 						{{ $t(`save`) }}

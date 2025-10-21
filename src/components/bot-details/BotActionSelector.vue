@@ -23,10 +23,15 @@ watch(
 			if (!props.conf[assignUserKey.value] && userStore.users.length > 0) {
 				props.conf[assignUserKey.value] = userStore.users[0].id
 			}
+
+			props.conf[assignBotKey.value] = undefined
+			props.conf[messageKey.value] = undefined
 		} else if (newAction === 'assign_bot') {
 			if (!props.conf[assignBotKey.value] && userStore.users.length > 0) {
 				props.conf[assignBotKey.value] = userStore.users[0].id
 			}
+			props.conf[assignUserKey.value] = undefined
+			props.conf[messageKey.value] = undefined
 		} else if (newAction === 'message') {
 			props.conf[assignUserKey.value] = undefined
 			props.conf[assignBotKey.value] = undefined

@@ -363,7 +363,7 @@ watch(rowsPerPage, () => fetchDataPage(), { immediate: true })
 		<WarningDialog 
 			v-model:visible="showActiveSessionsWarning" 
 			:title="$t('bots.active_sessions')"
-			:message="$t('bots.active sessions_list')"
+			:message="$t('bots.active_sessions_list')"
 			hideButtons
 		>
 			<template #note>
@@ -378,7 +378,7 @@ watch(rowsPerPage, () => fetchDataPage(), { immediate: true })
 				</div>
 
 				<div>
-					{{ $t('bots.active sessions_warning') }}
+					{{ $t('bots.active_sessions_warning') }}
 				</div>
 
 				<div class="flex justify-center pt-8">

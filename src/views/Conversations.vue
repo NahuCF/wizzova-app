@@ -220,7 +220,7 @@ watch(totalUnreadCount, () => {
 	else {
 		document.title = defaultPageTitle.value
 	}
-})
+}, { immediate: true})
 
 
 conversationStore.selectConversation(null)
