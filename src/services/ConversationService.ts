@@ -59,4 +59,7 @@ export default {
 	async unpin(id: string) {
         return Http.delete<{ data: ConversationItem }>(`/conversations/${id}/pin`)
     },
+	async markAsRead(id: string) {
+		return Http.post<{ data: ConversationItem }>(`/conversations/${id}/mark-as-read`)
+	}
 }

@@ -908,5 +908,32 @@ Grab them today!`,
     no_match_assign_user_id: 'On no match assign user',
     no_match_assign_bot_id: 'On no match assign bot',
     conf_updated: 'Configuration updated successfully!'
+  },
+  bot_workflow: {
+    categories: {
+      send_message: 'Send message',
+      question: 'Question',
+      general: 'General'
+    },
+    nodes: {
+      message: 'Send message',
+      template: 'Send template',
+      image: 'Send image',
+      video: 'Send video',
+      audio: 'Send audio',
+      document: 'Send document',
+      question_button: 'Question button',
+      condition: 'Condition',
+      mark_as_solved: 'Mark as solved',
+      assign_chat: 'Assign chat',
+      location: 'Location',
+      working_hours: 'Working hours',
+    },
+    no_name: 'No name',
+    premium_node_title: 'Premium Feature',
+    premium_node_message: 'This node is a premium feature. To use it, please upgrade your subscription plan.',
+    upgrade_now: 'Upgrade now',
+    active_sessions: 'Active sessions',
+    active_sessions_message: 'There are {count} active sessions with this bot. Do you wish to close them?',
   }
 }

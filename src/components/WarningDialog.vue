@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { IconLoader2 } from '@tabler/icons-vue'
+import type { PrimeVueSeverity } from '~/types';
 
 defineProps<{
     visible: boolean,
@@ -10,7 +11,8 @@ defineProps<{
     confirmMessage?: string,
     cancelMessage?: string,
     unclosable?: boolean,
-    hideButtons?: boolean
+    hideButtons?: boolean,
+    confirmColor?: PrimeVueSeverity
 }>()
 
 const emit = defineEmits<{
@@ -42,7 +44,7 @@ const onCancel = () => {
             <Button v-if="!unclosable" type="button" severity="secondary" @click="onCancel">
                 {{ cancelMessage ?? $t('cancel') }}
             </Button>
-            <Button type="button" severity="danger" @click="emit('onConfirm')">
+            <Button type="button" :severity="confirmColor || 'danger'" @click="emit('onConfirm')">
                 <IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
                 <span v-else>
                     {{ confirmMessage ?? $t('delete') }}

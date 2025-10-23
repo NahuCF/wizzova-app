@@ -5,21 +5,28 @@ import type { BotItem, BotCreate } from "~/types"
 type BotFilters = {
 	page?: number
 	rows_per_page?: number
-	search?: string
+	search?: string,
+	with_relationships?: boolean,
+	columns?: string[]
 }
 
 export default {
-	async index({ page, rows_per_page, search }: BotFilters) {
-		const params: BotFilters = {
-			page,
-			rows_per_page
+	async index(filters: BotFilters) {
+		const params = { 
+			...filters,
+			...(filters.with_relationships !== undefined ? { with_relationships: 1 } : { with_relationships: 0 })
 		}
 
-		if(search) {
-			params.search = search
-		}
-		
 		return Http.get<Page<BotItem>>('/bots', { params })
+	},
+	async indexWithoutPagination(filters: BotFilters) {
+		const params = { 
+			...filters,
+			should_paginate: 0,
+			...(filters.with_relationships !== undefined ? { with_relationships: 1 } : { with_relationships: 0 })
+		}
+
+		return Http.get<{ data: BotItem[] }>('/bots', { params })
 	},
 	async create(payload: BotCreate) {
 		return Http.post<{ data: BotItem }>('/bots', payload)

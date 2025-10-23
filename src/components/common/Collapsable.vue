@@ -15,7 +15,7 @@ const toggle = () => open.value = !open.value
 <template>
 	<div class="inline-block">
 		<div
-			class="flex items-center gap-3 cursor-pointer rounded-md hover:bg-slate-100 transition"
+			class="inline-flex items-center gap-3 cursor-pointer rounded-md hover:bg-slate-100 transition"
 			@click="toggle"
 		>
 			<span

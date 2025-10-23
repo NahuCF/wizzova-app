@@ -22,7 +22,7 @@ const {
     fetchDataPage,
     debouncedFetch,
 } = usePaginatedData<BotItem>(
-    (page, rows_per_page, search) => API.bot.index({ page, rows_per_page, search }).then(res => res.data),
+    (page, rows_per_page, search) => API.bot.index({ page, rows_per_page, search: search || undefined }).then(res => res.data),
     10
 )
 

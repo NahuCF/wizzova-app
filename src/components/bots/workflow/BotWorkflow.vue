@@ -14,7 +14,14 @@ const props = defineProps<{
 }>()
 
 const { onConnect, addEdges, toObject } = useVueFlow()
-const { isDragOver, onDragStart, onDragOver, onDrop, onDragLeave } = useFlowDragAndDrop()
+const { 
+	isDragOver,
+	onDragStart,
+	onDragOver,
+	onDrop,
+	onDragLeave,
+	addNodeInCenter
+} = useFlowDragAndDrop()
 
 const nodeTypes = ref<Record<BotNodeType, any>>({
 	starting_node: markRaw(StartingNode),
@@ -58,7 +65,7 @@ defineExpose({
 
 <template>
 	<div class="w-full h-full flex" @drop="onDrop">
-		<BotFlowSidebar @dragStart="onDragStart" />
+		<BotFlowSidebar @dragStart="onDragStart" @addNode="addNodeInCenter" />
 
 		<VueFlow :node-types="nodeTypes" :nodes="loadedNodes" :edges="edges" @dragover="onDragOver" @dragleave="onDragLeave">
 			<DropzoneBackground

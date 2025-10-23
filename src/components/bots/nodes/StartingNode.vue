@@ -13,7 +13,8 @@ defineEmits(['updateNodeInternals'])
 <template>
 	<div
 		:id="id"
-		class="bg-white p-6 rounded-md text-emerald-500 border-2 border-emerald-500"
+		class="bg-white p-6 rounded-md text-emerald-500 border-2 border-emerald-500 cursor-pointer"
+		@click="() => {}"
 	>
 		<IconPlayerPlayFilled size="64" />
 	</div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
-import { useUserStore } from '~/stores'
+import { useUserStore, useBotStore } from '~/stores'
 import type { BotAction } from '~/types'
 
 const props = defineProps<{
@@ -10,6 +10,7 @@ const props = defineProps<{
 }>()
 
 const userStore = useUserStore()
+const botStore = useBotStore()
 
 const actionKey = computed(() => `${props.prefix}_action`)
 const messageKey = computed(() => `${props.prefix}_message`)
@@ -83,10 +84,10 @@ watch(
 					<label>{{ $t(`bot_details.${assignBotKey}`) }}</label>
 				</div>
 				<Select :modelValue="conf[assignBotKey]" @change="conf[assignBotKey] = $event.value"
-					:options="userStore.users"
+					:options="botStore.bots"
 					optionValue="id"
 					optionLabel="name"
-					:loading="userStore.loading"
+					:loading="botStore.loading"
 					:placeholder="$t('bot_details.select_bot')"
 				/>
 			</div>

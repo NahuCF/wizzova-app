@@ -121,15 +121,11 @@ export const useConversationsStore = defineStore('conversations', () => {
 		}
 	}
 
-	const selectConversation = (conv: ConversationItem | null) => {
+	const selectConversation = async (conv: ConversationItem | null) => {
 		selectedConversation.value = conv
 
-		if(conv) {
-			conv = {
-				...conv,
-				unread_count: 0
-			}
-			insertConversationIntoTabs(conv)
+		if(conv && conv.unread_count > 0) {
+			markAsRead(conv)
 		}
 	}
 
@@ -227,8 +223,8 @@ export const useConversationsStore = defineStore('conversations', () => {
 		stats.value[key]++
 	}
 
-	const decrementStat = (key: keyof ConversationStats) => {
-		stats.value[key] = Math.max(0, stats.value[key] - 1)
+	const decrementStat = (key: keyof ConversationStats, amount?: number) => {
+		stats.value[key] = Math.max(0, stats.value[key] - (amount ?? 1))
 	}
 
 	const refreshStats = async () => {
@@ -383,6 +379,26 @@ export const useConversationsStore = defineStore('conversations', () => {
 				}
 			}
 		})
+	}
+
+	const markAsRead = async (conversation: ConversationItem) => {
+		try {
+			await API.conversation.markAsRead(conversation.id)
+		}
+		catch (error) {
+			console.error(error)
+		}
+
+		const unread = conversation.unread_count
+
+		const tabs = getConversationTabs(conversation)
+		tabs.forEach(tab => decrementStat(tab, unread))
+
+		const updatedConv: ConversationItem = {
+			...conversation,
+			unread_count: 0
+		}
+		insertConversationIntoTabs(updatedConv)
 	}
 
 	const $reset = () => {

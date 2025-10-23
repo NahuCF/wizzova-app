@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { IconArrowLeft, IconPencil, IconLoader2, IconAsterisk } from '@tabler/icons-vue'
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import type BotWorkflow from '~/components/bots/workflow/BotWorkflow.vue'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import { API } from '~/services'
-import type { BotEdge, BotItem, BotNode, BotNodeType, BotViewport } from '~/types'
+import type { BotActiveSessions, BotEdge, BotItem, BotNode, BotNodeType, BotViewport } from '~/types'
 
 type RawNode = {
 	id: string,
@@ -32,6 +32,39 @@ const editName = ref(false)
 const saving = ref(false)
 const nodes = ref<BotNode[]>([])
 const edges = ref<BotEdge[]>([])
+const initialState = ref<{
+	name: string,
+	nodeIds: string[],
+	edgeIds: string[]
+}>({
+	name: '',
+	nodeIds: [],
+	edgeIds: []
+})
+const success = ref(false)
+const pendingNext = ref<Function | null>(null)
+const showLeaveDialog = ref(false)
+const showActiveSessionsDialog = ref(false)
+const activeSessions = ref<BotActiveSessions>()
+
+const hasChanges = () => {
+	const flowData = workflow.value?.save()
+
+	if(!flowData) return false
+
+	const currentNodeIds = flowData.nodes.filter(n => n.id !== 'start').map(n => n.id)
+	const currentEdgeIds = flowData.edges.filter(e => e.id !== 'start_edge').map(e => e.id)
+
+	const structureChanged =
+		currentNodeIds.length !== initialState.value.nodeIds.length ||
+		currentEdgeIds.length !== initialState.value.edgeIds.length ||
+		!currentNodeIds.every(id => initialState.value.nodeIds.includes(id)) ||
+		!currentEdgeIds.every(id => initialState.value.edgeIds.includes(id))
+
+	const nameChanged = name.value !== initialState.value.name
+
+	return structureChanged || nameChanged
+}
 
 const isBotNodeType = (type: string | undefined): type is BotNodeType => {
   	return typeof type === 'string' && validNodeTypes.includes(type as BotNodeType)
@@ -56,6 +89,12 @@ const loadBot = async () => {
 			name.value = versionData.name
 			nodes.value = versionData.nodes
 			edges.value = versionData.edges
+
+			initialState.value = {
+				name: name.value,
+				nodeIds: nodes.value.map(n => n.id),
+				edgeIds: edges.value.map(e => e.id)
+			}
 
 			const startNode = nodes.value.find(node => !edges.value.find(edge => edge.target === node.id))
 			if(startNode) {
@@ -129,6 +168,43 @@ const onSave = async () => {
 	}
 }
 
+const onCheckActiveSessions = async () => {
+	if(!botId.value) return
+
+	try {
+		const { data: response } = await API.bot.activeSessions(botId.value)
+		activeSessions.value = response
+
+		if(activeSessions.value.total_active_sessions > 0) {
+			showActiveSessionsDialog.value = true
+		}
+		else {
+			onSave()
+		}
+	} catch(error) {
+		handleError(error)
+	}
+}
+
+const confirmLeave = () => {
+    showLeaveDialog.value = false
+    if (pendingNext.value) pendingNext.value()
+}
+
+const cancelLeave = () => {
+    showLeaveDialog.value = false
+    if (pendingNext.value) pendingNext.value(false)
+}
+
+onBeforeRouteLeave((_to, _from, next) => {
+    if(success.value === true || !hasChanges()) {
+        next()
+    }
+    
+    showLeaveDialog.value = true
+    pendingNext.value = next
+})
+
 loadBot()
 </script>
 
@@ -142,7 +218,7 @@ loadBot()
 				<div v-if="editName">
 					<InputText 
 						v-model="name" 
-						:placeholder="$t('new_botflow.no_name')" 
+						:placeholder="$t('bot_workflow.no_name')" 
 						fluid
 						id="name"
 						name="name"
@@ -150,7 +226,7 @@ loadBot()
 					/>
 				</div>
 				<div v-else class="flex gap-1 text-lg text-slate-500 pl-2">
-					{{ name || $t('new_botflow.no_name') }}
+					{{ name || $t('bot_workflow.no_name') }}
 					<IconAsterisk v-if="name.trim().length === 0" color="red" size="8" />
 				</div>
 				<Button variant="text" @click="editName = !editName" class="p-1!" severity="secondary">
@@ -159,7 +235,7 @@ loadBot()
 			</div>
 
 			<div>
-				<Button @click="onSave" :disabled="saving || name.trim().length === 0">
+				<Button @click="onCheckActiveSessions" :disabled="saving || name.trim().length === 0">
 					<IconLoader2 v-if="saving" class="animate-spin w-6 h-6" />
 					<span v-else>
 						{{ $t(`save`) }}
@@ -168,5 +244,22 @@ loadBot()
 			</div>
 		</div>
 		<BotWorkflow ref="workflow" :nodes="nodes" :edges="edges" />
+
+		<Dialog v-model:visible="showLeaveDialog" modal :header="$t('unsaved_changes')" :closable="false">
+            <p>{{ $t('unsaved_changes_message') }}</p>
+            <template #footer>
+                <Button :label="$t('cancel')" @click="cancelLeave" severity="secondary" />
+                <Button :label="$t('leave')" @click="confirmLeave" severity="danger" />
+            </template>
+        </Dialog>
+
+		<WarningDialog
+			v-model:visible="showActiveSessionsDialog"
+			:loading="saving"
+			:title="$t('bot_workflow.active_sessions')"
+			:message="$t('bot_workflow.active_sessions_message', { count: activeSessions?.total_active_sessions || 0})"
+			:confirmMessage="$t('confirm')"
+			@onConfirm="onSave" 
+		/>
 	</div>
 </template>

@@ -3,7 +3,7 @@ import { IconAsterisk, IconLoader2 } from '@tabler/icons-vue'
 import { ref, watch } from 'vue'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import { API } from '~/services'
-import { useUserStore } from '~/stores'
+import { useBotStore, useUserStore } from '~/stores'
 import type { BotAction, BotConfiguration, BotItem } from '~/types'
 
 const props = defineProps<{
@@ -16,6 +16,7 @@ const emit = defineEmits<{
 
 const handleError = useErrorHandler()
 const userStore = useUserStore()
+const botStore = useBotStore()
 
 const conf = ref<BotConfiguration>({
 	name: '',
@@ -58,6 +59,9 @@ watch(() => props.bot, () => {
 
 if(userStore.users.length === 0) {
 	userStore.fetchUsers()
+}
+if(botStore.bots.length === 0) {
+	botStore.fetchBots()
 }
 </script>
 

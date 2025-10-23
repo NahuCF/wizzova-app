@@ -180,6 +180,34 @@ export const useFlowDragAndDrop = () => {
 		addNodes(newNode)
 	}
 
+	const addNodeInCenter = (nodeItem: BotNodeItem) => {
+		const center = screenToFlowCoordinate({
+			x: window.innerWidth / 2,
+			y: window.innerHeight / 2,
+		})
+
+		const nodeId = crypto.randomUUID()
+
+		const newNode = {
+			id: nodeId,
+			type: nodeItem.name,
+			position: center,
+			data: nodeItem.default ?? {},
+		}
+
+		const { off } = onNodesInitialized(() => {
+			updateNode(nodeId, (node) => ({
+				position: {
+					x: node.position.x - node.dimensions.width / 2,
+					y: node.position.y - node.dimensions.height / 2,
+				},
+			}))
+			off()
+		})
+
+		addNodes(newNode)
+	}
+
 	watch(isDragging, (dragging) => {
 		document.body.style.userSelect = dragging ? 'none' : ''
 	})
@@ -191,5 +219,6 @@ export const useFlowDragAndDrop = () => {
 		onDragLeave,
 		onDragOver,
 		onDrop,
+		addNodeInCenter
 	}
 }

@@ -907,5 +907,32 @@ export default {
     no_match_assign_user_id: 'Cuando no haya coincidencia asignar a usuario',
     no_match_assign_bot_id: 'Cuando no haya coincidencia asignar a bot',
     conf_updated: '¡Configuración actualizada con éxito!'
+  },
+  bot_workflow: {
+    categories: {
+      send_message: 'Enviar mensaje',
+      question: 'Pregunta',
+      general: 'General'
+    },
+    nodes: {
+      message: 'Enviar mensaje',
+      template: 'Enviar plantilla',
+      image: 'Enviar imagen',
+      video: 'Enviar video',
+      audio: 'Enviar audio',
+      document: 'Enviar documento',
+      question_button: 'Botón de pregunta',
+      condition: 'Condición',
+      mark_as_solved: 'Marcar como resuelto',
+      assign_chat: 'Asignar chat',
+      location: 'Ubicación',
+      working_hours: 'Horas de trabajo',
+    },
+    no_name: 'Sin nombre',
+    premium_node_title: 'Función premium',
+    premium_node_message: 'Esta función es parte de nuestro plan premium. Actualiza tu suscripción para acceder a esta y otras funciones avanzadas.',
+    upgrade_now: 'Cambiar plan',
+    active_sessions: 'Sesiones activas',
+    active_sessions_message: 'Hay {count} sesiones activas con este bot. ¿Desea cerrarlas?',
   }
 }
