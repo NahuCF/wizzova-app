@@ -89,3 +89,12 @@ label {
 	padding: 0 1.5rem;
 	border-bottom: 1px solid var(--p-tabs-tab-hover-border-color) !important;
 }
+
+.vue-flow__handle {
+    height: 8px !important;
+    width: 8px !important;
+}
+
+.vue-flow__edges path {
+    stroke-width:2 !important;
+}

@@ -109,7 +109,8 @@ export default {
     'bot_already_exists': 'Bot already exists',
     'bot_not_found': 'Bot not found',
     'bot_has_no_nodes': 'Bot must have at least one node to be activated',
-    'conversation_is_expired': 'Conversation is expired'
+    'conversation_is_expired': 'Conversation is expired',
+    'bot_variable_name_already_exists': 'Bot variable name already exists'
   },
   submit_for_review: 'Submit for review',
   template_name: 'Template name',
@@ -935,5 +936,20 @@ Grab them today!`,
     upgrade_now: 'Upgrade now',
     active_sessions: 'Active sessions',
     active_sessions_message: 'There are {count} active sessions with this bot. Do you wish to close them?',
+    message_label: 'Message',
+    create_variable: 'Create variable',
+    bot_variables: 'Bot Variables',
+    contact_fields: 'Contact Fields',
+    variable_dialog_title: 'Create Bot Variable',
+    variable_name_placeholder: 'Enter variable name',
+    variable_sample_value: 'Ex: avg_response_time',
+    variable_created_successfully: 'Variable created successfully!',
+    assign_chat: {
+      assigned_to: 'Assigned to {name}',
+      unassigned: 'Chat unassigned',
+      type: 'Type',
+      user: 'User',
+      bot: 'Bot'
+    }
   }
 }

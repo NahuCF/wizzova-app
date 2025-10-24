@@ -155,7 +155,7 @@ type ConditionNodeData = {
 }
 
 type AssignChatNodeData = {
-	assign_type: string,
+	assign_type: 'user' | 'bot',
 	assign_to_user_id?: string,
 	assign_to_bot_id?: string
 }

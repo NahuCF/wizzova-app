@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { IconLoader2, IconClock } from '@tabler/icons-vue'
-import moment from 'moment'
+import { IconLoader2 } from '@tabler/icons-vue'
 import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import type { BroadcastRepeat } from '~/types'
 
 defineProps<{
     visible: boolean,
@@ -14,8 +11,6 @@ const emit = defineEmits<{
     (e: 'onConfirm', value: string): void,
     (e: 'update:visible', value: boolean): void
 }>()
-
-const { t } = useI18n()
 
 const name = ref('')
 

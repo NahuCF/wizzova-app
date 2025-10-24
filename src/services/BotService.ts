@@ -51,4 +51,10 @@ export default {
 	async configuration(id: string, configuration: BotConfiguration) {
 		return Http.put<{ data: BotItem }>(`/bots/${id}/configuration`, configuration)
 	},
+	async variables() {
+		return Http.get<{ data: { id: string, name: string }[] }>('/bot-variables')
+	},
+	async createVariable(name: string) {
+		return Http.post<{ data: { id: string, name: string } }>('/bot-variables', { name })
+	}
 }

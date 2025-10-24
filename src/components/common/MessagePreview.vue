@@ -5,6 +5,7 @@ import {
 	IconCheck, IconClock, IconChecks, IconX, IconChevronDown
 } from '@tabler/icons-vue'
 import type { MessageStatus, TemplateBtn, TemplateBtnType, TemplateCallBtn, TemplateUrlBtn } from '~/types'
+import { useTextFormatter } from '~/composables/useTextFormatter'
 
 const bubbleColors = {
 	white: { bg: 'bg-white', border: 'border-t-white' },
@@ -74,6 +75,8 @@ const emit = defineEmits<{
 	(e: 'onReply'): void
 }>()
 
+const { getPreviewText } = useTextFormatter()
+
 const bubbleMenu = ref()
 const bubbleMenuOptions = ref([
 	{ label: 'Reply', action: () => emit('onReply') },
@@ -96,16 +99,7 @@ const formattedBodyText = computed(() => {
 		return ''
 	}
 
-	let formatedText = props.body
-		// variables
-		.replace(/{{\s*(\w+)\s*}}/g, (_m, v) =>
-			`<mark class='px-1 bg-slate-100 text-green-700 font-semibold'>${v}</mark>`
-		)
-		// bold/italic/strike/new line
-		.replace(/\*(.*?)\*/g, (_m, v) => `<b>${v}</b>`)
-		.replace(/_(.*?)_/g, (_m, v) => `<em>${v}</em>`)
-		.replace(/~(.*?)~/g, (_m, v) => `<s>${v}</s>`)
-		.replace(/\n/g, '<br>')
+	let formatedText = getPreviewText(props.body)
 
 	if (props.mentions?.length) {
 		props.mentions.forEach(m => {

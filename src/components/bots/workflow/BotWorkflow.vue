@@ -7,6 +7,8 @@ import { useFlowDragAndDrop } from '~/composables/workflow/useFlowDragAndDrop'
 import type { BotEdge, BotNode, BotNodeType } from '~/types'
 import StartingNode from '../nodes/StartingNode.vue'
 import MessageNode from '../nodes/MessageNode.vue'
+import MarkAsSolvedNode from '../nodes/MarkAsSolvedNode.vue'
+import AssignChatNode from '../nodes/AssignChatNode.vue'
 
 const props = defineProps<{
 	nodes: BotNode[],
@@ -34,8 +36,8 @@ const nodeTypes = ref<Record<BotNodeType, any>>({
 	question_button: undefined,
 	condition: undefined,
 	start_again: undefined,
-	mark_as_solved: undefined,
-	assign_chat: undefined,
+	mark_as_solved: markRaw(MarkAsSolvedNode),
+	assign_chat: markRaw(AssignChatNode),
 	location: undefined,
 	working_hours: undefined,
 	set_variable: undefined

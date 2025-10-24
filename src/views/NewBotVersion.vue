@@ -5,7 +5,8 @@ import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import type BotWorkflow from '~/components/bots/workflow/BotWorkflow.vue'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import { API } from '~/services'
-import type { BotActiveSessions, BotEdge, BotItem, BotNode, BotNodeType, BotViewport } from '~/types'
+import { useBotStore, useContactFieldStore, useUserStore } from '~/stores'
+import type { BotActiveSessions, BotEdge, BotNode, BotNodeType, BotViewport } from '~/types'
 
 type RawNode = {
 	id: string,
@@ -23,6 +24,9 @@ const validNodeTypes: BotNodeType[] = [
 const route = useRoute()
 const router = useRouter()
 const handleError = useErrorHandler()
+const contactFieldStore = useContactFieldStore()
+const botStore = useBotStore()
+const userStore = useUserStore()
 
 const workflow = ref<InstanceType<typeof BotWorkflow> | null>(null)
 const botId = ref<string>()
@@ -160,6 +164,7 @@ const onSave = async () => {
 			const { data: response } = await API.botVersion.create(botId.value, payload)
 		}
 		
+		success.value = true
 		goToVersions()
 	} catch(error) {
 		handleError(error)
@@ -206,6 +211,15 @@ onBeforeRouteLeave((_to, _from, next) => {
 })
 
 loadBot()
+if(contactFieldStore.contactFields.length === 0) {
+	contactFieldStore.fetchContactFields()
+}
+if(botStore.variables.length === 0) {
+	botStore.fetchVariables()
+}
+if(userStore.users.length === 0) {
+	userStore.fetchUsers()
+}
 </script>
 
 <template>

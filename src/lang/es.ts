@@ -109,7 +109,8 @@ export default {
     'bot_already_exists': 'El bot ya existe',
     'bot_not_found': 'Bot no encontrado',
     'bot_has_no_nodes': 'El Bot debe tener por lo menos un nodo para ser activado',
-    'conversation_is_expired': 'La conversacion expiró'
+    'conversation_is_expired': 'La conversacion expiró',
+    'bot_variable_name_already_exists': 'El nombre de la variable ya existe'
   },
   submit_for_review: 'Enviar para revision',
   template_name: 'Nombre del template',
@@ -934,5 +935,20 @@ export default {
     upgrade_now: 'Cambiar plan',
     active_sessions: 'Sesiones activas',
     active_sessions_message: 'Hay {count} sesiones activas con este bot. ¿Desea cerrarlas?',
+    message_label: 'Mensaje',
+    create_variable: 'Crear variable',
+    bot_variables: 'Variables del bot',
+    contact_fields: 'Campos de contacto',
+    variable_dialog_title: 'Crear variable',
+    variable_name_placeholder: 'Ingresa el nombre de la variable',
+    variable_sample_value: 'Eg: avg_response_time',
+    variable_created_successfully: '¡Variable creada con éxito!',
+    assign_chat: {
+      assigned_to: 'Asignado a {name}',
+      unassigned: 'Chat sin asignar',
+      type: 'Tipo de asignación',
+      user: 'Usuario',
+      bot: 'Bot'
+    }
   }
 }
