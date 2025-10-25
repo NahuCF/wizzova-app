@@ -88,13 +88,13 @@ const routes = [
           {
             path: ':id/new',
             name: 'new-botflow',
-            meta: { titleKey: 'new_botflow.title' },
+            meta: { titleKey: 'bot_workflow.title' },
             component: NewBotFlow
           },
           {
             path: ':id/versions/:versionId',
             name: 'edit-botflow',
-            meta: { titleKey: 'new_botflow.title_edit' },
+            meta: { titleKey: 'bot_workflow.title_edit' },
             component: NewBotFlow
           }
         ]

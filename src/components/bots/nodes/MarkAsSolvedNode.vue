@@ -4,7 +4,6 @@ import { type NodeProps, Handle, Position } from '@vue-flow/core'
 import type { BotNodeDataMap } from '~/types'
 
 defineProps<NodeProps & {
-    id: string
     position: {
         x: number
         y: number

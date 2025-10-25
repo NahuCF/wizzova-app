@@ -37,6 +37,17 @@ export type BotNodeType =
   | 'working_hours'
   | 'set_variable'
 
+export type BotFilterOperator =
+  | 'equal'
+  | 'not_equal'
+  | 'less_than'
+  | 'less_than_or_equal'
+  | 'greater_than'
+  | 'greater_than_or_equal'
+  | 'is_empty'
+  | 'is_not_empty'
+  | 'contains'
+
 export type BotNode = {
 	id: string,
 	position: {
@@ -56,6 +67,8 @@ export type BotEdge = {
 	id: string,
 	source: string,
 	target: string,
+	sourceHandle?: string,
+	targetHandle?: string,
 	data?: {
 		option_id?: string,
 		condition_value?: string,
@@ -146,10 +159,10 @@ type QuestionButtonNodeData = {
 	fallback_node_id?: string
 }
 
-type ConditionNodeData = {
+export type ConditionNodeData = {
 	conditions: {
 		variable_id: string,
-		operator: FilterOperator,
+		operator?: BotFilterOperator,
 		value: string
 	}[]
 }

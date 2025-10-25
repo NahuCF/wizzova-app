@@ -5,11 +5,10 @@ import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTextareaSelection } from '~/composables/useTextareaSelection'
 import { useTextFormatter } from '~/composables/useTextFormatter'
-import { useBotStore, useContactFieldStore } from '~/stores'
+import { useBotStore } from '~/stores'
 import type { BotNodeDataMap } from '~/types'
 
 const props = defineProps<NodeProps & {
-    id: string
     position: {
         x: number
         y: number
@@ -22,7 +21,6 @@ defineEmits(['updateNodeInternals'])
 
 const { t } = useI18n()
 const { getPreviewText } = useTextFormatter()
-const contactFieldStore = useContactFieldStore()
 const botStore = useBotStore()
 
 const drawerVisible = ref(false)
@@ -98,10 +96,17 @@ watch(drawerVisible, (visible) => {
 		@click="drawerVisible = true"
 	>
 		<span
+			v-if="data.content"
 			:id="id"
 			class="bg-white p-6 text-gray-500"
 			v-html="getPreviewText(data.content)"
 		>
+		</span>
+		<span 
+			v-else 
+			class="bg-white p-6 text-gray-400"
+		>
+			{{ $t('bot_workflow.message_placeholder') }}
 		</span>
 	</BaseNode>
 
@@ -160,44 +165,11 @@ watch(drawerVisible, (visible) => {
 				</div>
 			</div>
 
-			<Popover ref="variablesPopover">
-				<div class="pt-4 pb-2 min-w-[15rem] max-h-[300px] overflow-y-auto overflow-x-hidden">
-					<li 
-						class="py-2 px-3 hover:bg-slate-100 cursor-pointer" 
-						@click="showVariableDialog = true"
-					>
-						{{ $t('bot_workflow.create_variable') }}
-					</li>
-
-					<div v-if="botStore.variables.length > 0" class="font-semibold px-4 my-2">
-						{{ t('bot_workflow.bot_variables') }}
-					</div>
-					<ul class="list-none p-0 m-0 flex flex-col">
-						<li 
-							v-for="variable in botStore.variables" 
-							:key="`default_${variable}`"
-							class="py-2 px-3 hover:bg-slate-100 cursor-pointer"
-							@click="insertVariable(variable.name)"
-						>
-							{{ variable.name }}
-						</li>
-					</ul>
-
-					<div v-if="contactFieldStore.contactFields.length > 0" class="font-semibold px-4 my-2">
-						{{ t('bot_workflow.contact_fields') }}
-					</div>
-					<ul class="list-none p-0 m-0 flex flex-col">
-						<li 
-							v-for="variable in contactFieldStore.contactFields" 
-							:key="`default_${variable}`"
-							class="py-2 px-3 hover:bg-slate-100 cursor-pointer"
-							@click="insertVariable(`contact.${variable.name}`)"
-						>
-							{{ variable.name }}
-						</li>
-					</ul>
-				</div>
-			</Popover>
+			<BotVariableSelect
+				ref="variablesPopover"
+				@onSelect="insertVariable"
+				@onCreate="showVariableDialog = true"
+			/>
 
 			<BotVariableDialog 
 				v-model:visible="showVariableDialog" 

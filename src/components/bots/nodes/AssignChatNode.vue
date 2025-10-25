@@ -6,7 +6,6 @@ import { useBotStore, useUserStore } from '~/stores';
 import type { BotNodeDataMap } from '~/types'
 
 const props = defineProps<NodeProps & {
-    id: string
     position: {
         x: number
         y: number

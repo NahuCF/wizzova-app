@@ -23,7 +23,7 @@ export const nodeItems: BotNodeItem[] = [
 		isPremium: false,
 		category: 'send_message',
 		default: {
-			content: 'Hi'
+			content: ''
 		}
 	},
 	{
@@ -73,7 +73,9 @@ export const nodeItems: BotNodeItem[] = [
 		icon: IconMathLower,
 		isPremium: false,
 		category: 'general',
-		default: {}
+		default: {
+			conditions: []
+		}
 	},
 	{
 		name: 'mark_as_solved',
@@ -120,7 +122,7 @@ export const useFlowDragAndDrop = () => {
 		}
 
 		draggedType.value = nodeItem.name
-		draggedData.value = nodeItem.default
+		draggedData.value = { ...nodeItem.default }
 		isDragging.value = true
 
 		document.addEventListener('dragend', onDragEnd)
@@ -161,7 +163,7 @@ export const useFlowDragAndDrop = () => {
 			id: nodeId,
 			type: draggedType.value ?? undefined,
 			position,
-			data: draggedData.value ?? {},
+			data: { ...draggedData.value },
 		}
 
 		/**
@@ -192,7 +194,7 @@ export const useFlowDragAndDrop = () => {
 			id: nodeId,
 			type: nodeItem.name,
 			position: center,
-			data: nodeItem.default ?? {},
+			data: { ...nodeItem.default },
 		}
 
 		const { off } = onNodesInitialized(() => {

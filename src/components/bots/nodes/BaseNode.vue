@@ -28,7 +28,7 @@ const onDelete = () => {
 
 <template>
 	<div
-		class="flex flex-col rounded-md border-2 border-emerald-500"
+		class="flex flex-col rounded-md border-2 border-emerald-500 max-w-[300px]"
 		@mouseenter="isHovered = true"
 		@mouseleave="isHovered = false"
 	>
@@ -51,8 +51,8 @@ const onDelete = () => {
 		<slot></slot>
 
 		<slot name="handles">
-			<Handle type="target" :position="Position.Left" :connectable="true" />
-			<Handle type="source" :position="Position.Right" :connectable="true" />
+			<Handle id="target" type="target" :position="Position.Left" :connectable="true" />
+			<Handle id="source" type="source" :position="Position.Right" :connectable="true" />
 		</slot>
 	</div>
 </template>

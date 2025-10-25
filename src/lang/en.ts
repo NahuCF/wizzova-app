@@ -911,6 +911,8 @@ Grab them today!`,
     conf_updated: 'Configuration updated successfully!'
   },
   bot_workflow: {
+    title: 'New bot version',
+    title_edit: 'Edit bot version',
     categories: {
       send_message: 'Send message',
       question: 'Question',
@@ -937,6 +939,7 @@ Grab them today!`,
     active_sessions: 'Active sessions',
     active_sessions_message: 'There are {count} active sessions with this bot. Do you wish to close them?',
     message_label: 'Message',
+    message_placeholder: 'Enter your message here...',
     create_variable: 'Create variable',
     bot_variables: 'Bot Variables',
     contact_fields: 'Contact Fields',
@@ -950,6 +953,26 @@ Grab them today!`,
       type: 'Type',
       user: 'User',
       bot: 'Bot'
+    },
+    condition: {
+      conditions: 'Conditions',
+      variable: 'Variable',
+      select_variable: 'Select variable',
+      operator: 'Operator',
+      select_operator: 'Select operator',
+      value: 'Value',
+      enter_value: 'Enter value',
+    },
+    operators: {
+      equal: 'Equal to',
+      not_equal: 'Not equal to',
+      less_than: 'Less than',
+      less_than_or_equal: 'Less than or equal to',
+      greater_than: 'Greater than',
+      greater_than_or_equal: 'Greater than or equal to',
+      is_empty: 'Is empty',
+      is_not_empty: 'Is not empty',
+      contains: 'Contains'
     }
   }
 }

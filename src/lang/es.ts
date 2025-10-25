@@ -910,6 +910,8 @@ export default {
     conf_updated: '¡Configuración actualizada con éxito!'
   },
   bot_workflow: {
+    title: 'Nueva versión de bot',
+    title_edit: 'Editar versión de bot',
     categories: {
       send_message: 'Enviar mensaje',
       question: 'Pregunta',
@@ -936,6 +938,7 @@ export default {
     active_sessions: 'Sesiones activas',
     active_sessions_message: 'Hay {count} sesiones activas con este bot. ¿Desea cerrarlas?',
     message_label: 'Mensaje',
+    message_placeholder: 'Ingresa el mensaje que deseas enviar...',
     create_variable: 'Crear variable',
     bot_variables: 'Variables del bot',
     contact_fields: 'Campos de contacto',
@@ -949,6 +952,26 @@ export default {
       type: 'Tipo de asignación',
       user: 'Usuario',
       bot: 'Bot'
+    },
+    condition: {
+      conditions: 'Condiciones',
+      variable: 'Variable',
+      select_variable: 'Seleccionar variable',
+      operator: 'Operador',
+      select_operator: 'Seleccionar operador',
+      value: 'Valor',
+      enter_value: 'Ingresa el valor',
+    },
+    operators: {
+      equal: 'Es igual a',
+      not_equal: 'No es igual a',
+      less_than: 'Es menor que',
+      less_than_or_equal: 'Menor que o igual a',
+      greater_than: 'Es mayor que',
+      greater_than_or_equal: 'Mayor que o igual a',
+      is_empty: 'Esta vacio',
+      is_not_empty: 'No esta vacio',
+      contains: 'Contiene'
     }
   }
 }
