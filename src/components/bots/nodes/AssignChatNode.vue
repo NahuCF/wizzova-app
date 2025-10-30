@@ -80,7 +80,7 @@ watch(drawerVisible, (visible) => {
 		<div class="p-6 flex flex-col gap-6">
 			<div>
 				<div class="flex gap-1 mb-2">
-					<h2 class="font-medium">{{ $t('bot_workflow.assign_chat.type') }}</h2>
+					<h2 class="font-medium text-lg">{{ $t('bot_workflow.assign_chat.type') }}</h2>
 				</div>
 
 				<div class="flex gap-2 w-full">
@@ -109,7 +109,7 @@ watch(drawerVisible, (visible) => {
 
 			<div>
 				<div class="flex gap-1 mb-2">
-					<h2 class="font-medium">
+					<h2 class="font-medium text-lg">
 						{{ 
 							assignType === 'user'
 								? $t('bot_details.select_user')

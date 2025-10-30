@@ -6,7 +6,8 @@ defineProps<{
     visible: boolean,
 	icon: Component,
     title: string,
-	loading?: boolean
+	loading?: boolean,
+	disableSave?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -41,7 +42,7 @@ const emit = defineEmits<{
 						@click="emit('update:visible', false)">
 						{{ $t('cancel') }}
 					</Button>
-					<Button @click="emit('onSave')">
+					<Button @click="emit('onSave')" :disabled="disableSave">
 						<IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
 						<span v-else>{{ $t('save') }}</span>
 					</Button>

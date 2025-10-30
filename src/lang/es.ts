@@ -743,6 +743,8 @@ export default {
   clone: 'Clonar',
   load_more: 'Cargar más',
   minutes: 'minutos',
+  upload: 'Subir',
+  link: 'Enlace',
   message_status: {
     pending: 'Pendiente',
     sent: 'Enviado',
@@ -961,6 +963,8 @@ export default {
       select_operator: 'Seleccionar operador',
       value: 'Valor',
       enter_value: 'Ingresa el valor',
+      on_success: 'Caso de éxito',
+      on_failure: 'Caso de fallo'
     },
     operators: {
       equal: 'Es igual a',
@@ -972,6 +976,36 @@ export default {
       is_empty: 'Esta vacio',
       is_not_empty: 'No esta vacio',
       contains: 'Contiene'
+    },
+    send_media: {
+      media_type: 'Tipo de archivo',
+      max_file_size: 'Tamaño máximo de archivo: {count} MB',
+      image: 'Imagen',
+      video: 'Video',
+      audio: 'Audio',
+      document: 'Documento',
+      allowed_media_type: 'Tipo de archivos permitidos',
+      link: 'Enlace',
+      link_placeholder: 'https://www.ejemplo.com',
+      caption: 'Título',
+      caption_placeholder: 'Ingresa el título'
+    },
+    question_button: {
+      header_type: 'Tipo de encabezado',
+      none: 'Ninguno',
+      text: 'Texto',
+      image: 'Imagen',
+      video: 'Video',
+      document: 'Documento',
+      text_placeholder: 'Ingresa el texto del encabezado',
+      question_text: 'Texto de la pregunta',
+      question_text_placeholder: 'Ingresa el texto de la pregunta',
+      footer: 'Pie de página',
+      footer_placeholder: 'Ingresa el texto del pie de página',
+      options: 'Opciones',
+      button_title: 'Título del botón',
+      button_title_placeholder: 'Ingresa el título',
+      add_option: 'Agregar opción'
     }
   }
 }

@@ -10,6 +10,8 @@ import MessageNode from '../nodes/MessageNode.vue'
 import MarkAsSolvedNode from '../nodes/MarkAsSolvedNode.vue'
 import AssignChatNode from '../nodes/AssignChatNode.vue'
 import ConditionNode from '../nodes/ConditionNode.vue'
+import MediaNode from '../nodes/MediaNode.vue'
+import QuestionButtonNode from '../nodes/QuestionButtonNode.vue'
 
 const props = defineProps<{
 	nodes: BotNode[],
@@ -30,11 +32,11 @@ const nodeTypes = ref<Record<BotNodeType, any>>({
 	starting_node: markRaw(StartingNode),
 	message: markRaw(MessageNode),
 	template: undefined,
-	image: undefined,
-	video: undefined,
-	audio: undefined,
-	document: undefined,
-	question_button: undefined,
+	image: markRaw(MediaNode),
+	video: markRaw(MediaNode),
+	audio: markRaw(MediaNode),
+	document: markRaw(MediaNode),
+	question_button: markRaw(QuestionButtonNode),
 	condition: markRaw(ConditionNode),
 	start_again: undefined,
 	mark_as_solved: markRaw(MarkAsSolvedNode),
@@ -60,44 +62,53 @@ const loadedNodes = computed<BotNode[]>(() => {
 })
 
 const normalizeEdges = computed(() => {
-  return props.edges.map(edge => {
-    const isSuccess = edge.data?.condition_value === "1"
-    const isFailure = edge.data?.condition_value === "0"
-	
-	let sourceHandle = undefined
-	let color = '#64748b'
-	if(isSuccess) {
-		sourceHandle = 'success'
-		color = '#10b981'
-	}
-	else if(isFailure) {
-		sourceHandle = 'failure'
-		color = '#ef4444'
-	}
-	else if(edge.source) {
-		sourceHandle = 'source'
-	}
+	const result =  props.edges.map(edge => {
+		const isSuccess = edge.data?.condition_value === '1'
+		const isFailure = edge.data?.condition_value === '0'
+		const isOption = edge.data?.option_id
+		
+		let sourceHandle = undefined
+		let color = '#64748b'
+		if(isSuccess) {
+			sourceHandle = 'success'
+			color = '#10b981'
+		}
+		else if(isFailure) {
+			sourceHandle = 'failure'
+			color = '#ef4444'
+		}
+		else if(isOption) {
+			sourceHandle = edge.data?.option_id
+			color = '#047857'
+		}
+		else if(edge.source) {
+			sourceHandle = 'source'
+		}
 
-    return {
-      ...edge,
-	  targetHandle: edge.target ? 'target' : undefined,
-	  sourceHandle: sourceHandle,
-      data: {
-        ...edge.data,
-      },
-      style: {
-        stroke: color,
-        strokeWidth: 2,
-      },
-    }
-  })
+		return {
+			...edge,
+			targetHandle: edge.target ? 'target' : undefined,
+			sourceHandle: sourceHandle,
+			data: {
+				...edge.data,
+			},
+			style: {
+				stroke: color,
+				strokeWidth: 2,
+			},
+		}
+	})
+
+	return result
 })
 
 onConnect((params) => {
 	const isSuccess = params.sourceHandle === 'success'
 	const isFailure = params.sourceHandle === 'failure'
+	const isOption = params.sourceHandle && !isSuccess && !isFailure && params.sourceHandle !== 'source'
 
 	let conditionValue = null
+	let optionId = undefined
 	let color = '#64748b'
 	if(isSuccess) {
 		conditionValue = true
@@ -107,9 +118,14 @@ onConnect((params) => {
 		conditionValue = false
 		color = '#ef4444'
 	}
+	else if(isOption) {
+		optionId = params.sourceHandle
+		color = '#047857'
+	}
 
 	const edgeData = {
 		condition_value: conditionValue,
+		option_id: optionId
 	}
 	
 	addEdges([

@@ -5,7 +5,7 @@ import {
 } from '@tabler/icons-vue'
 import { useVueFlow } from '@vue-flow/core'
 import { ref, watch, type Component } from 'vue'
-import type { BotNodeType } from '~/types'
+import type { BotNodeType, MediaNodeType } from '~/types'
 
 export type BotNodeCategory = 'send_message' | 'question' | 'general'
 export type BotNodeItem = {
@@ -106,6 +106,29 @@ export const nodeItems: BotNodeItem[] = [
 		default: {}
 	}
 ]
+
+export const defaultSupportedFormats: Record<MediaNodeType, string[]> = {
+	image: ['image/jpeg', 'image/png'],
+	video: ['video/mp4', 'video/3gpp'],
+	audio: ['audio/aac', 'audio/mp4', 'audio/mpeg', 'audio/amr', 'audio/ogg'],
+	document: [
+		'application/pdf',
+		'application/msword',
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		'application/vnd.ms-excel',
+		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		'application/vnd.ms-powerpoint',
+		'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+		'text/plain',
+	],
+}
+
+export const defaultMBLimit: Record<MediaNodeType, number> = {
+	image: 5,
+	video: 16,
+	audio: 16,
+	document: 30,
+}
 
 export const useFlowDragAndDrop = () => {
 	const draggedType = ref<string | null>(null)

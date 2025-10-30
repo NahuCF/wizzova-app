@@ -129,27 +129,47 @@ type TemplateNodeData = {
 	templateId: string
 }
 
-type MediaNodeData = {
+export type MediaNodeType = 'image' | 'video' | 'audio' | 'document'
+
+export type MediaNodeData = {
 	content: string,
 	media_url: string,
-	media_type: string
+	media_type: MediaNodeType
+}
+
+export type MediaFile = {
+	url: string,
+	path: string,
+	media_type: string,
+	size: number,
+	filename: string
 }
 
 type ImageNodeData = MediaNodeData & {
-	label: string
+	label: string,
+	media_type: 'image'
 }
 
-type VideoNodeData = MediaNodeData
+type VideoNodeData = MediaNodeData & {
+	media_type: 'video'
+}
 
-type AudioNodeData = MediaNodeData
+type AudioNodeData = MediaNodeData & {
+	media_type: 'audio'
+}
 
-type DocumentNodeData = MediaNodeData
+type DocumentNodeData = MediaNodeData & {
+	media_type: 'document'
+}
+
+export type BotNodeHeaderType = 'text' | 'image' | 'video' | 'document'
 
 type QuestionButtonNodeData = {
-	header_type: string,
-	header_media_url: string,
-	content: string,
-	footer_text: string,
+	header_type?: BotNodeHeaderType,
+	header_text?: string,
+	header_media_url?: string,
+	content?: string,
+	footer_text?: string,
 	options: {
 		id: string,
 		title: string

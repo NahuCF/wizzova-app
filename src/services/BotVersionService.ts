@@ -1,5 +1,5 @@
 import Http from "~/config/http"
-import type { Page } from "~/types"
+import type { MediaFile, MediaNodeType, Page } from "~/types"
 import type { BotVersionItem, CreateBotVersion, BotStatus, BotVersionData } from "~/types"
 
 type BotVersionFilters = {
@@ -39,4 +39,19 @@ export default {
 	async getData(id: string, versionId: string) {
 		return Http.get<BotVersionData>(`/bots/${id}/flows/${versionId}/data`)
 	},
+	async uploadMedia(id: string, file: File, media_type: MediaNodeType, node_id: string) {
+		const data = new FormData()
+        data.append('file', file)
+        data.append('media_type', media_type)
+        data.append('node_id', node_id)
+
+        return Http.post<MediaFile>(`/bots/${id}/upload-media`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+	},
+	async deleteMedia(id: string, path: string) {
+		return Http.delete<{ data: BotVersionItem }>(`/bots/${id}/delete-media`, { params: { path }})
+	}
 }

@@ -743,6 +743,8 @@ Grab them today!`,
   publish: 'Publish',
   clone: 'Clone',
   load_more: 'Load more',
+  upload: 'Upload',
+  link: 'Link',
   message_status: {
     pending: 'Pending',
     sent: 'Sent',
@@ -962,6 +964,8 @@ Grab them today!`,
       select_operator: 'Select operator',
       value: 'Value',
       enter_value: 'Enter value',
+      on_success: 'On Success',
+      on_failure: 'On Failure'
     },
     operators: {
       equal: 'Equal to',
@@ -973,6 +977,36 @@ Grab them today!`,
       is_empty: 'Is empty',
       is_not_empty: 'Is not empty',
       contains: 'Contains'
+    },
+    send_media: {
+      media_type: 'Media type',
+      max_file_size: 'Max file size: {count} MB',
+      image: 'Image',
+      video: 'Video',
+      audio: 'Audio',
+      document: 'Document',
+      allowed_media_type: 'Allowed media type',
+      link: 'Link',
+      link_placeholder: 'https://www.example.com',
+      caption: 'Caption',
+      caption_placeholder: 'Enter caption'
+    },
+    question_button: {
+      header_type: 'Header type',
+      none: 'None',
+      text: 'Text',
+      image: 'Image',
+      video: 'Video',
+      document: 'Document',
+      text_placeholder: 'Enter header text',
+      question_text: 'Question text',
+      question_text_placeholder: 'Enter the question text',
+      footer: 'Footer',
+      footer_placeholder: 'Enter footer text',
+      options: 'Options',
+      button_title: 'Button title',
+      button_title_placeholder: 'Enter button title',
+      add_option: 'Add option'
     }
   }
 }

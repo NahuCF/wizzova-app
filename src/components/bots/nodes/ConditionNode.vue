@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IconMathLower, IconPlus } from '@tabler/icons-vue'
+import { IconMathLower, IconPlus, IconTrash } from '@tabler/icons-vue'
 import { type NodeProps, Handle, Position } from '@vue-flow/core'
 import { computed, ref, toRaw, watch } from 'vue'
 import { useBotStore } from '~/stores'
@@ -52,7 +52,7 @@ const openVariablesPopover = (event: MouseEvent, conditionIndex: number) => {
 
 const addVariable = (variableName: string) => {
 	if (selectConditionIndex.value !== null) {
-		newData.value.conditions[selectConditionIndex.value].value += `{{${variableName}}`
+		newData.value.conditions[selectConditionIndex.value].value += `{{${variableName}}}`
 	}
 }
 
@@ -61,6 +61,10 @@ const addCondition = () => {
 		variable_id: '',
 		value: ''
 	})
+}
+
+const removeCondition = (index: number) => {
+	newData.value.conditions = newData.value.conditions.filter((_, i) => i !== index)
 }
 
 watch(drawerVisible, (visible) => {
@@ -85,7 +89,7 @@ watch(drawerVisible, (visible) => {
 		@onEdit="drawerVisible = true"
 		@click="drawerVisible = true"
 	>
-		<div class="bg-white p-6 flex flex-col gap-2">
+		<div class="flex-basis bg-white p-6 flex flex-col gap-2">
 			<div
 				v-for="(condition, index) in validConditions"
 				:key="index"
@@ -94,8 +98,10 @@ watch(drawerVisible, (visible) => {
 				<div class="flex-1 truncate">
 					{{ condition.variable?.name }}
 				</div>
-				<div class="flex-1 text-white bg-emerald-600 rounded-md px-3 py-1 truncate">
-					{{ $t(`bot_workflow.operators.${condition.operator}`) }}
+				<div class="flex bg-emerald-600 rounded-md truncate">
+					<div class="text-white px-3 py-1 truncate">
+						{{ $t(`bot_workflow.operators.${condition.operator}`) }}
+					</div>
 				</div>
 				<div class="flex-1 truncate">
 					{{ condition.value }}
@@ -137,14 +143,14 @@ watch(drawerVisible, (visible) => {
 		@onSave="onSave"
 	>
 		<div class="bg-white p-6 flex flex-col gap-3 overflow-y-auto overflow-x-hidden">
-			<label class="font-medium">
+			<h2 class="font-medium text-lg">
 				{{ $t('bot_workflow.condition.conditions') }}
-			</label>
+			</h2>
 
 			<div
 				v-for="(condition, index) in newData.conditions"
 				:key="index"
-				class="flex flex-col gap-4 p-4 bg-slate-100 rounded-md"
+				class="relative flex flex-col gap-4 p-4 bg-slate-100 rounded-md"
 			>
 				<div class="flex flex-col gap-2">
 					<label class="font-medium">
@@ -197,6 +203,13 @@ watch(drawerVisible, (visible) => {
 						{{ $t('new_template.body.add_variable') }}
 					</Button>
 				</div>
+
+				<IconTrash
+					v-if="newData.conditions.length > 1"
+					class="absolute top-3 right-3 cursor-pointer"
+					size="16"
+					@click="removeCondition(index)"
+				/>
 			</div>
 
 			<div>

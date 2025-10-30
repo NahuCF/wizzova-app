@@ -19,5 +19,5 @@ defineEmits(['updateNodeInternals'])
 		<IconPlayerPlayFilled size="64" />
 	</div>
 
-	<Handle type="source" :position="Position.Right" :connectable="true" />
+	<Handle id="source" type="source" :position="Position.Right" :connectable="1" />
 </template>
