@@ -933,6 +933,8 @@ export default {
       assign_chat: 'Asignar chat',
       location: 'Ubicación',
       working_hours: 'Horas de trabajo',
+      start_again: 'Empezar otra vez',
+      set_variable: 'Setear variable'
     },
     no_name: 'Sin nombre',
     premium_node_title: 'Función premium',
@@ -1020,6 +1022,13 @@ export default {
       no_template_selected: 'Plantilla no seleccionada',
       select_template: 'Seleccionar plantilla',
       body_variables: 'Variables del cuerpo'
+    },
+    location: {
+      name: 'Nombre',
+      enter_name: 'Ingresa el nombre',
+      select_location: 'Selecciona la ubicación',
+      choose_location: 'Seleccionar ubicación en el mapa',
+      address: 'Dirección'
     }
   }
 }

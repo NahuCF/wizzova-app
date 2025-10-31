@@ -15,6 +15,8 @@ import QuestionButtonNode from '../nodes/QuestionButtonNode.vue'
 import WorkingHoursNode from '../nodes/WorkingHoursNode.vue'
 import { theme } from '~/app/theme'
 import TemplateNode from '../nodes/TemplateNode.vue'
+import LocationNode from '../nodes/LocationNode.vue'
+import StartAgainNode from '../nodes/StartAgainNode.vue'
 
 const props = defineProps<{
 	nodes: BotNode[],
@@ -41,10 +43,10 @@ const nodeTypes = ref<Record<BotNodeType, any>>({
 	document: markRaw(MediaNode),
 	question_button: markRaw(QuestionButtonNode),
 	condition: markRaw(ConditionNode),
-	start_again: undefined,
+	start_again: markRaw(StartAgainNode),
 	mark_as_solved: markRaw(MarkAsSolvedNode),
 	assign_chat: markRaw(AssignChatNode),
-	location: undefined,
+	location: markRaw(LocationNode),
 	working_hours: markRaw(WorkingHoursNode),
 	set_variable: undefined
 })

@@ -1,7 +1,8 @@
 import { 
 	IconCheck, IconClock, IconFile, IconLocation, 
 	IconMathLower, IconMessage, IconPhoto, IconQuestionMark, 
-	IconTemplate, IconUser, IconVideo, IconVolume
+	IconReload, 
+	IconTemplate, IconUser, IconVariable, IconVideo, IconVolume
 } from '@tabler/icons-vue'
 import { useVueFlow } from '@vue-flow/core'
 import { ref, watch, type Component } from 'vue'
@@ -102,6 +103,20 @@ export const nodeItems: BotNodeItem[] = [
 		name: 'working_hours',
 		icon: IconClock,
 		isPremium: true,
+		category: 'general',
+		default: {}
+	},
+	{
+		name: 'start_again',
+		icon: IconReload,
+		isPremium: false,
+		category: 'general',
+		default: {}
+	},
+	{
+		name: 'set_variable',
+		icon: IconVariable,
+		isPremium: false,
 		category: 'general',
 		default: {}
 	}

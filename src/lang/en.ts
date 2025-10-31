@@ -934,6 +934,8 @@ Grab them today!`,
       assign_chat: 'Assign chat',
       location: 'Location',
       working_hours: 'Working hours',
+      start_again: 'Start again',
+      set_variable: 'Set variable'
     },
     no_name: 'No name',
     premium_node_title: 'Premium Feature',
@@ -1021,6 +1023,13 @@ Grab them today!`,
       no_template_selected: 'No template selected',
       select_template: 'Select template',
       body_variables: 'Body variables'
+    },
+    location: {
+      name: 'Name',
+      enter_name: 'Enter name',
+      select_location: 'Select location',
+      choose_location: 'Choose location on map',
+      address: 'Address'
     }
   }
 }
