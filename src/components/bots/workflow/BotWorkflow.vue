@@ -12,6 +12,9 @@ import AssignChatNode from '../nodes/AssignChatNode.vue'
 import ConditionNode from '../nodes/ConditionNode.vue'
 import MediaNode from '../nodes/MediaNode.vue'
 import QuestionButtonNode from '../nodes/QuestionButtonNode.vue'
+import WorkingHoursNode from '../nodes/WorkingHoursNode.vue'
+import { theme } from '~/app/theme'
+import TemplateNode from '../nodes/TemplateNode.vue'
 
 const props = defineProps<{
 	nodes: BotNode[],
@@ -31,7 +34,7 @@ const {
 const nodeTypes = ref<Record<BotNodeType, any>>({
 	starting_node: markRaw(StartingNode),
 	message: markRaw(MessageNode),
-	template: undefined,
+	template: markRaw(TemplateNode),
 	image: markRaw(MediaNode),
 	video: markRaw(MediaNode),
 	audio: markRaw(MediaNode),
@@ -42,7 +45,7 @@ const nodeTypes = ref<Record<BotNodeType, any>>({
 	mark_as_solved: markRaw(MarkAsSolvedNode),
 	assign_chat: markRaw(AssignChatNode),
 	location: undefined,
-	working_hours: undefined,
+	working_hours: markRaw(WorkingHoursNode),
 	set_variable: undefined
 })
 
@@ -62,77 +65,76 @@ const loadedNodes = computed<BotNode[]>(() => {
 })
 
 const normalizeEdges = computed(() => {
-	const result =  props.edges.map(edge => {
-		const isSuccess = edge.data?.condition_value === '1'
-		const isFailure = edge.data?.condition_value === '0'
-		const isOption = edge.data?.option_id
-		
-		let sourceHandle = undefined
-		let color = '#64748b'
-		if(isSuccess) {
-			sourceHandle = 'success'
-			color = '#10b981'
-		}
-		else if(isFailure) {
-			sourceHandle = 'failure'
-			color = '#ef4444'
-		}
-		else if(isOption) {
-			sourceHandle = edge.data?.option_id
-			color = '#047857'
-		}
-		else if(edge.source) {
-			sourceHandle = 'source'
+	const getEdgeStyle = (edge: BotEdge) => {
+		const { condition_value, option_id, working_hours_path } = edge.data || {}
+
+		const conditions = {
+			success: condition_value === '1',
+			failure: condition_value === '0',
+			option: !!option_id,
+			available: working_hours_path === 'Available',
+			unavailable: working_hours_path === 'Unavailable',
 		}
 
+		type ConditionKey = keyof typeof conditions
+
+		const styleMap: Partial<Record<ConditionKey, { handle: string; color: string }>> = {
+			success: { handle: 'success', color: theme.primitive.emerald['500'] },
+			failure: { handle: 'failure', color: theme.primitive.red['500'] },
+			option: { handle: option_id || 'source', color: theme.primitive.emerald['700'] },
+			available: { handle: 'Available', color: theme.primitive.emerald['500'] },
+			unavailable: { handle: 'Unavailable', color: theme.primitive.red['500'] },
+		}
+
+		const key = (Object.keys(conditions) as ConditionKey[]).find(k => conditions[k])
+		if (key && styleMap[key]) return styleMap[key]
+
+		if (edge.source)
+			return { handle: 'source', color: theme.primitive.slate['500'] }
+
+		return { handle: undefined, color: theme.primitive.slate['500'] }
+	}
+
+	return props.edges.map(edge => {
+		const { handle, color } = getEdgeStyle(edge)
 		return {
-			...edge,
-			targetHandle: edge.target ? 'target' : undefined,
-			sourceHandle: sourceHandle,
-			data: {
-				...edge.data,
-			},
-			style: {
-				stroke: color,
-				strokeWidth: 2,
-			},
+		...edge,
+		sourceHandle: handle,
+		targetHandle: edge.target ? 'target' : undefined,
+		style: { stroke: color, strokeWidth: 2 },
 		}
 	})
-
-	return result
 })
 
 onConnect((params) => {
-	const isSuccess = params.sourceHandle === 'success'
-	const isFailure = params.sourceHandle === 'failure'
-	const isOption = params.sourceHandle && !isSuccess && !isFailure && params.sourceHandle !== 'source'
+	const { sourceHandle } = params
 
-	let conditionValue = null
-	let optionId = undefined
-	let color = '#64748b'
-	if(isSuccess) {
-		conditionValue = true
-		color = '#10b981'
-	}
-	else if(isFailure) {
-		conditionValue = false
-		color = '#ef4444'
-	}
-	else if(isOption) {
-		optionId = params.sourceHandle
-		color = '#047857'
+	const conditions = {
+		success: sourceHandle === 'success',
+		failure: sourceHandle === 'failure',
+		available: sourceHandle === 'Available',
+		unavailable: sourceHandle === 'Unavailable',
+		option: sourceHandle && !['success', 'failure', 'Available', 'Unavailable', 'source'].includes(sourceHandle),
 	}
 
-	const edgeData = {
-		condition_value: conditionValue,
-		option_id: optionId
+	type ConditionKey = keyof typeof conditions
+
+	const styleMap: Record<ConditionKey, { color: string; data: Record<string, any> }> = {
+		success: { color: theme.primitive.emerald['500'], data: { condition_value: true } },
+		failure: { color: theme.primitive.red['500'], data: { condition_value: false } },
+		available: { color: theme.primitive.emerald['500'], data: { working_hours_path: 'Available' } },
+		unavailable: { color: theme.primitive.red['500'], data: { working_hours_path: 'Unavailable' } },
+		option: { color: theme.primitive.emerald['700'], data: { option_id: sourceHandle } },
 	}
+
+	const key = (Object.keys(conditions) as ConditionKey[]).find(k => conditions[k])
+	const { color, data } = key ? styleMap[key] : { color: theme.primitive.slate['500'], data: {} }
 	
 	addEdges([
 		{
 			...params,
 			type: 'smoothstep',
-			data: edgeData,
+			data: data,
 			style: { stroke: color, strokeWidth: 2 }
 		}
 	])

@@ -745,6 +745,7 @@ Grab them today!`,
   load_more: 'Load more',
   upload: 'Upload',
   link: 'Link',
+  click_here: 'Click here',
   message_status: {
     pending: 'Pending',
     sent: 'Sent',
@@ -1007,6 +1008,19 @@ Grab them today!`,
       button_title: 'Button title',
       button_title_placeholder: 'Enter button title',
       add_option: 'Add option'
+    },
+    working_hours: {
+      available: 'Available',
+      unavailable: 'Unavailable',
+      description: 'This card makes the bot operate based on your configured working hours. During these hours, we will consider you "available" and the connected card will be executed. Outside these hours, it will switch to the "unavailable" flow',
+      unset_warning: "If working hours are not set, the bot will assume you're available 24/7.",
+      configure_hours: 'To configure or manage your working hours'
+    },
+    template: {
+      template: 'Template',
+      no_template_selected: 'No template selected',
+      select_template: 'Select template',
+      body_variables: 'Body variables'
     }
   }
 }

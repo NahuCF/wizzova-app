@@ -6,6 +6,7 @@ import { useRoute } from 'vue-router'
 import { API } from '~/services'
 import type { BotNodeDataMap, MediaNodeType } from '~/types'
 import { defaultMBLimit, defaultSupportedFormats } from '~/composables/workflow/useFlowDragAndDrop'
+import { useSessionStore } from '~/stores'
 
 const props = defineProps<NodeProps & {
     position: {
@@ -19,6 +20,7 @@ const props = defineProps<NodeProps & {
 defineEmits(['updateNodeInternals'])
 
 const route = useRoute()
+const sessionStore = useSessionStore()
 
 const drawerVisible = ref(false)
 const newData = ref<{
@@ -50,6 +52,13 @@ const botId = computed(() => {
 	}
 
 	return null
+})
+const allowedTypes = computed<MediaNodeType[]>(() => {
+	const types: MediaNodeType[] = sessionStore.hasPremiumAccess 
+		? ['image', 'video', 'audio', 'document'] 
+		: ['image', 'document']
+
+	return types
 })
 
 const onSave = async () => {
@@ -123,7 +132,7 @@ watch(drawerVisible, (visible) => {
 				</div>
 
 				<div class="flex gap-2 w-full">
-					<div v-for="type in ['image', 'video', 'audio', 'document']" class="flex items-center gap-2">
+					<div v-for="type in allowedTypes" class="flex items-center gap-2">
 						<RadioButton
 							v-model="newData.mediaType"
 							:inputId="type"

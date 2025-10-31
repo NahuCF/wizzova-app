@@ -3,6 +3,7 @@ import { IconCrown, IconSearch } from '@tabler/icons-vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { nodeItems, type BotNodeCategory, type BotNodeItem } from '~/composables/workflow/useFlowDragAndDrop'
+import { useSessionStore } from '~/stores';
 
 const emit = defineEmits<{
 	(e: 'dragStart', { event, nodeItem }: { 
@@ -13,6 +14,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const sessionStore = useSessionStore()
 
 const searchTerm = ref('')
 const showGetPremiumWarning = ref(false)
@@ -38,7 +40,7 @@ const groupedItems = computed(() => {
 })
 
 const onClick = (nodeItem: BotNodeItem) => {
-	if(nodeItem.isPremium) {
+	if(nodeItem.isPremium && !sessionStore.hasPremiumAccess) {
 		showGetPremiumWarning.value = true
 	}
 	else {
@@ -73,7 +75,7 @@ const onClick = (nodeItem: BotNodeItem) => {
 						'border-slate-100': !nodeItem.isPremium,
 						'border-amber-300': nodeItem.isPremium,
 					}"
-					:draggable="!nodeItem.isPremium"
+					:draggable="!nodeItem.isPremium || sessionStore.hasPremiumAccess"
 					@dragstart="emit('dragStart', { event: $event, nodeItem })"
 					@click="onClick(nodeItem)"
 				>

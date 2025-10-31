@@ -12,6 +12,7 @@ export const useSessionStore = defineStore('session', () => {
 	const createNumber = ref(false)
 	const token = ref<string>('')
 	const showOverrideDialog = ref(false)
+	const hasPremiumAccess = ref(false)
 
 	const isAuthenticated = computed(() => {
 		return user.value && tenant.value && token.value
@@ -49,6 +50,7 @@ export const useSessionStore = defineStore('session', () => {
 		createNumber.value = false
 		token.value = ''
 		showOverrideDialog.value = false
+		hasPremiumAccess.value = false
 	}
 
 	return {
@@ -64,6 +66,7 @@ export const useSessionStore = defineStore('session', () => {
 		isAuthenticated,
 		isOwner,
 		defaultWaba,
+		hasPremiumAccess,
 		hasPermission,
 		hasAllPermissions,
 		hasAnyPermission,

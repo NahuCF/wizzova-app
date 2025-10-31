@@ -5,7 +5,8 @@ import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import type BotWorkflow from '~/components/bots/workflow/BotWorkflow.vue'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import { API } from '~/services'
-import { useBotStore, useContactFieldStore, useUserStore } from '~/stores'
+import { useBotStore, useContactFieldStore, useSessionStore, useUserStore } from '~/stores'
+import { useTemplateStore } from '~/stores/template'
 import type { BotActiveSessions, BotEdge, BotNode, BotNodeType, BotViewport } from '~/types'
 
 type RawNode = {
@@ -27,6 +28,8 @@ const handleError = useErrorHandler()
 const contactFieldStore = useContactFieldStore()
 const botStore = useBotStore()
 const userStore = useUserStore()
+const sessionStore = useSessionStore()
+const templateStore = useTemplateStore()
 
 const workflow = ref<InstanceType<typeof BotWorkflow> | null>(null)
 const botId = ref<string>()
@@ -50,6 +53,7 @@ const pendingNext = ref<Function | null>(null)
 const showLeaveDialog = ref(false)
 const showActiveSessionsDialog = ref(false)
 const activeSessions = ref<BotActiveSessions>()
+const isDev = ref(import.meta.env.VITE_APP_ENV !== 'production')
 
 const hasChanges = () => {
 	const flowData = workflow.value?.save()
@@ -146,7 +150,7 @@ const onSave = async () => {
 				}
 			})
 
-		const edges: BotEdge[] = flowData.edges.filter(edge => edge.source !== 'start')
+		const edges: BotEdge[] = flowData.edges.filter(edge => edge.source !== 'start') as BotEdge[]
 		const viewport: BotViewport = flowData.viewport
 
 		const payload = {
@@ -220,6 +224,9 @@ if(botStore.variables.length === 0) {
 if(userStore.users.length === 0) {
 	userStore.fetchUsers()
 }
+if(!templateStore.loaded) {
+	templateStore.fetchTemplates()
+}
 </script>
 
 <template>
@@ -248,13 +255,22 @@ if(userStore.users.length === 0) {
 				</Button>
 			</div>
 
-			<div>
-				<Button @click="onCheckActiveSessions" :disabled="saving || name.trim().length === 0">
-					<IconLoader2 v-if="saving" class="animate-spin w-6 h-6" />
-					<span v-else>
-						{{ $t(`save`) }}
-					</span>
-				</Button>
+			<div class="flex items-center gap-3">
+				<div v-if="isDev" class="flex items-center gap-3">
+					<ToggleSwitch
+						v-model="sessionStore.hasPremiumAccess" 
+					/>
+					<div class="text-lg">Enable premium nodes</div>
+				</div>
+
+				<div>
+					<Button @click="onCheckActiveSessions" :disabled="saving || name.trim().length === 0">
+						<IconLoader2 v-if="saving" class="animate-spin w-6 h-6" />
+						<span v-else>
+							{{ $t(`save`) }}
+						</span>
+					</Button>
+				</div>
 			</div>
 		</div>
 		<BotWorkflow ref="workflow" :nodes="nodes" :edges="edges" />

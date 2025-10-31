@@ -72,7 +72,8 @@ export type BotEdge = {
 	data?: {
 		option_id?: string,
 		condition_value?: string,
-		is_default?: boolean
+		is_default?: boolean,
+		working_hours_path?: 'Available' | 'Unavailable'
 	}
 }
 
@@ -125,8 +126,9 @@ type MessageNodeData = {
 	content: string
 }
 
-type TemplateNodeData = {
-	templateId: string
+export type TemplateNodeData = {
+	template_id: string,
+	template_parameters: Record<string, string>
 }
 
 export type MediaNodeType = 'image' | 'video' | 'audio' | 'document'

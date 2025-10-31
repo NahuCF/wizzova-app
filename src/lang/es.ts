@@ -745,6 +745,7 @@ export default {
   minutes: 'minutos',
   upload: 'Subir',
   link: 'Enlace',
+  click_here: 'Haz click aquí',
   message_status: {
     pending: 'Pendiente',
     sent: 'Enviado',
@@ -1006,6 +1007,19 @@ export default {
       button_title: 'Título del botón',
       button_title_placeholder: 'Ingresa el título',
       add_option: 'Agregar opción'
+    },
+    working_hours: {
+      available: 'Disponible',
+      unavailable: 'No disponible',
+      description: 'Esta tarjeta hace que el bot funcione según tu horario laboral configurado. Durante esas horas, se te considerará "disponible" y se ejecutará la tarjeta conectada. Fuera de ese horario, cambiará al flujo de "no disponible".',
+      unset_warning: 'Si no se establece un horario laboral, el bot asumirá que estás disponible 24/7.',
+      configure_hours: 'Para configurar o gestionar tu horario laboral',
+    },
+    template: {
+      template: 'Plantilla',
+      no_template_selected: 'Plantilla no seleccionada',
+      select_template: 'Seleccionar plantilla',
+      body_variables: 'Variables del cuerpo'
     }
   }
 }
