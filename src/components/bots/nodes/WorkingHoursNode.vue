@@ -55,6 +55,10 @@ const drawerVisible = ref(false)
 				/>
 			</div>
 		</div>
+		
+		<template #handles>
+			<Handle id="target" type="target" :position="Position.Left" :connectable="true" />
+		</template>
 	</BaseNode>
 
 	<BaseNodeDrawer

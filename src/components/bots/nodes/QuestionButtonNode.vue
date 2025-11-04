@@ -195,6 +195,10 @@ watch(drawerVisible, (visible) => {
 
 			<div v-if="data.footer_text" class="pt-1">{{ data.footer_text }}</div>
 		</div>
+		
+		<template #handles>
+			<Handle id="target" type="target" :position="Position.Left" :connectable="true" />
+		</template>
 	</BaseNode>
 
 	<BaseNodeDrawer

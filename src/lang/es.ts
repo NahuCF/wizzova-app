@@ -1010,6 +1010,15 @@ export default {
       button_title_placeholder: 'Ingresa el título',
       add_option: 'Agregar opción'
     },
+    set_variable: {
+      variables: 'Asignaciones de Variables',
+      variable: 'Variable',
+      select_variable: 'Seleccionar variable',
+      value: 'Valor',
+      enter_value: 'Ingresa el valor',
+      add_variable: 'Agregar asignación de variable',
+      no_variables_configured: 'No hay variables configuradas'
+    },
     working_hours: {
       available: 'Disponible',
       unavailable: 'No disponible',

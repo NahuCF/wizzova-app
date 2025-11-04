@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VueFlow, useVueFlow } from '@vue-flow/core'
+import { VueFlow, useVueFlow, type EdgeTypes } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 import { computed, markRaw, ref } from 'vue'
@@ -17,6 +17,8 @@ import { theme } from '~/app/theme'
 import TemplateNode from '../nodes/TemplateNode.vue'
 import LocationNode from '../nodes/LocationNode.vue'
 import StartAgainNode from '../nodes/StartAgainNode.vue'
+import SetVariableNode from '../nodes/SetVariableNode.vue'
+import CustomEdge from './CustomEdge.vue'
 
 const props = defineProps<{
 	nodes: BotNode[],
@@ -48,7 +50,12 @@ const nodeTypes = ref<Record<BotNodeType, any>>({
 	assign_chat: markRaw(AssignChatNode),
 	location: markRaw(LocationNode),
 	working_hours: markRaw(WorkingHoursNode),
-	set_variable: undefined
+	set_variable: markRaw(SetVariableNode)
+})
+
+const edgeTypes = ref<EdgeTypes>({
+	default: markRaw(CustomEdge),
+	smoothstep: markRaw(CustomEdge),
 })
 
 const loadedNodes = computed<BotNode[]>(() => {
@@ -101,6 +108,7 @@ const normalizeEdges = computed(() => {
 		const { handle, color } = getEdgeStyle(edge)
 		return {
 		...edge,
+		type: 'smoothstep',
 		sourceHandle: handle,
 		targetHandle: edge.target ? 'target' : undefined,
 		style: { stroke: color, strokeWidth: 2 },
@@ -151,7 +159,14 @@ defineExpose({
 	<div class="w-full h-full flex" @drop="onDrop">
 		<BotFlowSidebar @dragStart="onDragStart" @addNode="addNodeInCenter" />
 
-		<VueFlow :node-types="nodeTypes" :nodes="loadedNodes" :edges="normalizeEdges" @dragover="onDragOver" @dragleave="onDragLeave">
+		<VueFlow 
+			:node-types="nodeTypes" 
+			:edge-types="edgeTypes"
+			:nodes="loadedNodes" 
+			:edges="normalizeEdges" 
+			@dragover="onDragOver" 
+			@dragleave="onDragLeave"
+		>
 			<DropzoneBackground
 				class="transition-colors 0.2s ease"
 				:class="[isDragOver ? 'bg-emerald-100' : 'bg-transparent']"

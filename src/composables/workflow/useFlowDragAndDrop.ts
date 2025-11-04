@@ -118,7 +118,9 @@ export const nodeItems: BotNodeItem[] = [
 		icon: IconVariable,
 		isPremium: false,
 		category: 'general',
-		default: {}
+		default: {
+			variables: []
+		}
 	}
 ]
 
@@ -201,7 +203,10 @@ export const useFlowDragAndDrop = () => {
 			id: nodeId,
 			type: draggedType.value ?? undefined,
 			position,
-			data: { ...draggedData.value },
+			data: { 
+				...draggedData.value,
+				__isNew: true  // Flag to indicate this node was just created
+			},
 		}
 
 		/**
@@ -213,6 +218,15 @@ export const useFlowDragAndDrop = () => {
 			updateNode(nodeId, (node) => ({
 				position: { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 },
 			}))
+
+			setTimeout(() => {
+				updateNode(nodeId, (node) => {
+					if (node.data.__isNew) {
+						delete node.data.__isNew
+					}
+					return node
+				})
+			}, 500)
 
 			off()
 		})
@@ -232,7 +246,10 @@ export const useFlowDragAndDrop = () => {
 			id: nodeId,
 			type: nodeItem.name,
 			position: center,
-			data: { ...nodeItem.default },
+			data: { 
+				...nodeItem.default,
+				__isNew: true  // Flag to indicate this node was just created
+			},
 		}
 
 		const { off } = onNodesInitialized(() => {
@@ -242,6 +259,16 @@ export const useFlowDragAndDrop = () => {
 					y: node.position.y - node.dimensions.height / 2,
 				},
 			}))
+			
+			setTimeout(() => {
+				updateNode(nodeId, (node) => {
+					if (node.data.__isNew) {
+						delete node.data.__isNew
+					}
+					return node
+				})
+			}, 500)
+			
 			off()
 		})
 

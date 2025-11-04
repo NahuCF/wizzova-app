@@ -1011,6 +1011,15 @@ Grab them today!`,
       button_title_placeholder: 'Enter button title',
       add_option: 'Add option'
     },
+    set_variable: {
+      variables: 'Variable Assignments',
+      variable: 'Variable',
+      select_variable: 'Select variable',
+      value: 'Value',
+      enter_value: 'Enter value',
+      add_variable: 'Add variable assignment',
+      no_variables_configured: 'No variables configured'
+    },
     working_hours: {
       available: 'Available',
       unavailable: 'Unavailable',
