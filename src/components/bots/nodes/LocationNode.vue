@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { IconMapPin, IconMap, IconAsterisk } from '@tabler/icons-vue'
 import { type NodeProps } from '@vue-flow/core'
-import { computed, ref, toRaw, watch } from 'vue'
+import { computed, onMounted, ref, toRaw, watch } from 'vue'
 import { useBotStore } from '~/stores'
 
 interface LocationNodeData {
@@ -22,6 +22,12 @@ defineEmits(['updateNodeInternals'])
 const botStore = useBotStore()
 
 const drawerVisible = ref(false)
+
+onMounted(() => {
+	if (props.data.__isNew) {
+		drawerVisible.value = true
+	}
+})
 const mapVisible = ref(false)
 const variablesPopover = ref()
 const showVariableDialog = ref(false)
@@ -62,7 +68,6 @@ watch(drawerVisible, (visible) => {
 		:icon="IconMapPin"
 		:title="$t(`bot_workflow.nodes.${type}`)"
 		@onEdit="drawerVisible = true"
-		@click="drawerVisible = true"
 	>
 		<div class="flex flex-col gap-2 p-6 bg-white rounded-md">
 			<LocationNodeMap

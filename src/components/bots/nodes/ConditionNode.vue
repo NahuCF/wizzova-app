@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { IconMathLower, IconPlus, IconTrash } from '@tabler/icons-vue'
 import { type NodeProps, Handle, Position } from '@vue-flow/core'
-import { computed, ref, toRaw, watch } from 'vue'
+import { computed, onMounted, ref, toRaw, watch } from 'vue'
 import { useBotStore } from '~/stores'
 import type { BotFilterOperator, BotNodeDataMap, ConditionNodeData } from '~/types'
 
@@ -19,6 +19,12 @@ defineEmits(['updateNodeInternals'])
 const botStore = useBotStore()
 
 const drawerVisible = ref(false)
+
+onMounted(() => {
+	if (props.data.__isNew) {
+		drawerVisible.value = true
+	}
+})
 const variablesPopover = ref()
 const showVariableDialog = ref(false)
 const newData = ref<ConditionNodeData>({
@@ -87,7 +93,6 @@ watch(drawerVisible, (visible) => {
 		:icon="IconMathLower"
 		:title="$t(`bot_workflow.nodes.${type}`)"
 		@onEdit="drawerVisible = true"
-		@click="drawerVisible = true"
 	>
 		<div class="flex-basis bg-white p-6 flex flex-col gap-2">
 			<div

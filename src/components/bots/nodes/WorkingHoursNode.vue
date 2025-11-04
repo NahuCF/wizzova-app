@@ -27,7 +27,6 @@ const drawerVisible = ref(false)
 		:icon="IconClock"
 		:title="$t(`bot_workflow.nodes.${type}`)"
 		@onEdit="drawerVisible = true"
-		@click="drawerVisible = true"
 	>
 		<div class="flex-basis bg-white p-6 flex flex-col gap-2">
 			<div class="relative flex justify-center items-center gap-2 p-4 bg-slate-100 rounded-md">

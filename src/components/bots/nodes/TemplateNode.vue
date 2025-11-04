@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { IconAsterisk, IconTemplate } from '@tabler/icons-vue'
 import { type NodeProps } from '@vue-flow/core'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useBotStore } from '~/stores'
 import { useTemplateStore } from '~/stores/template'
 import type { BotNodeDataMap } from '~/types'
@@ -21,6 +21,12 @@ const templateStore = useTemplateStore()
 const botStore = useBotStore()
 
 const drawerVisible = ref(false)
+
+onMounted(() => {
+	if (props.data.__isNew) {
+		drawerVisible.value = true
+	}
+})
 const newData = ref<{
 	templateId: string,
 	templateParameters: Record<string, string>
@@ -84,7 +90,6 @@ watch(drawerVisible, (visible) => {
 		:icon="IconTemplate"
 		:title="$t(`bot_workflow.nodes.${type}`)"
 		@onEdit="drawerVisible = true"
-		@click="drawerVisible = true"
 	>
 		<div class="flex-basis bg-white p-6 flex flex-col gap-2">
 			<span v-if="!template" class="text-gray-400">

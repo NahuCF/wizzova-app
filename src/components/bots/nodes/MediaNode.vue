@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { IconFile, IconFileText, IconPhoto, IconVideo, IconVolume } from '@tabler/icons-vue'
 import type { NodeProps } from '@vue-flow/core'
-import { computed, ref, watch, type Component } from 'vue'
+import { computed, ref, watch, onMounted, type Component } from 'vue'
 import { useRoute } from 'vue-router'
 import { API } from '~/services'
 import type { BotNodeDataMap, MediaNodeType } from '~/types'
@@ -23,6 +23,13 @@ const route = useRoute()
 const sessionStore = useSessionStore()
 
 const drawerVisible = ref(false)
+
+onMounted(() => {
+	if (props.data.__isNew) {
+		drawerVisible.value = true
+	}
+})
+
 const newData = ref<{
 	mediaType: MediaNodeType,
 	mediaUrl: string,
@@ -104,7 +111,6 @@ watch(drawerVisible, (visible) => {
 		:title="$t(`bot_workflow.nodes.${type}`)"
 		@onEdit="drawerVisible = true"
 		@onDelete="API.botVersion.deleteMedia(botId || '', props.data.media_url)"
-		@click="drawerVisible = true"
 	>
 		<div class="bg-white p-6 flex flex-col gap-2">
 			<img v-if="props.data.media_type === 'image'" :src="props.data.media_url" />

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { IconUser } from '@tabler/icons-vue'
 import { type NodeProps } from '@vue-flow/core'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useBotStore, useUserStore } from '~/stores';
 import type { BotNodeDataMap } from '~/types'
 
@@ -20,6 +20,12 @@ const userStore = useUserStore()
 const botStore = useBotStore()
 
 const drawerVisible = ref(false)
+
+onMounted(() => {
+	if (props.data.__isNew) {
+		drawerVisible.value = true
+	}
+})
 const assignType = ref('user')
 const assigneeId = ref<string>()
 
@@ -60,7 +66,6 @@ watch(drawerVisible, (visible) => {
 		:icon="IconUser"
 		:title="$t(`bot_workflow.nodes.${type}`)"
 		@onEdit="drawerVisible = true"
-		@click="drawerVisible = true"
 	>
 		<div class="bg-white p-6 text-gray-500">
 			{{ 

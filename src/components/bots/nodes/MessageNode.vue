@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { IconMessage } from '@tabler/icons-vue'
 import { type NodeProps } from '@vue-flow/core'
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useTextFormatter } from '~/composables/useTextFormatter'
 import type { BotNodeDataMap } from '~/types'
 
@@ -21,6 +21,12 @@ const { getPreviewText } = useTextFormatter()
 const drawerVisible = ref(false)
 const message = ref('')
 
+onMounted(() => {
+	if (props.data.__isNew) {
+		drawerVisible.value = true
+	}
+})
+
 const onSave = () => {
 	props.data.content = message.value
 	drawerVisible.value = false
@@ -39,7 +45,6 @@ watch(drawerVisible, (visible) => {
 		:icon="IconMessage"
 		:title="$t(`bot_workflow.nodes.${type}`)"
 		@onEdit="drawerVisible = true"
-		@click="drawerVisible = true"
 	>
 		<span
 			v-if="data.content"

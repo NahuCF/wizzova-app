@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { IconQuestionMark, IconAsterisk, IconTrash, IconPlus, IconFileText } from '@tabler/icons-vue'
 import { type NodeProps, Position, Handle } from '@vue-flow/core'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useBotStore } from '~/stores'
 import type { BotNodeDataMap, BotNodeHeaderType } from '~/types'
 import { API } from '~/services'
@@ -24,6 +24,12 @@ const botStore = useBotStore()
 const { getPreviewText } = useTextFormatter()
 
 const drawerVisible = ref(false)
+
+onMounted(() => {
+	if (props.data.__isNew) {
+		drawerVisible.value = true
+	}
+})
 const newData = ref<{
 	headerText?: string,
 	headerType: BotNodeHeaderType | 'none',
@@ -147,7 +153,6 @@ watch(drawerVisible, (visible) => {
 		:title="$t(`bot_workflow.nodes.${type}`)"
 		@onEdit="drawerVisible = true"
 		@onDelete="API.botVersion.deleteMedia(botId || '', props.data.media_url)"
-		@click="drawerVisible = true"
 	>
 		<div class="bg-white p-6 flex flex-col gap-2">
 			<div>
