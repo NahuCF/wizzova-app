@@ -35,8 +35,9 @@ const toggle = (event: MouseEvent) => {
 	activeTab.value = 'contact'
 }
 
-const selectVariable = (variableName: string) => {
-	emit('onSelect', variableName)
+const selectVariable = (variableName: string, isBotVariable: boolean = false) => {
+	const fullVariableName = isBotVariable ? `bot.${variableName}` : variableName
+	emit('onSelect', fullVariableName)
 	variablesPopover.value?.hide()
 	searchQuery.value = ''
 }
@@ -80,10 +81,10 @@ defineExpose({
 							<li 
 								v-for="field in filteredContactFields" 
 								:key="`contact_${field.id}`"
-								class="py-2 px-4 hover:bg-slate-100 cursor-pointer flex items-center justify-between"
+								class="py-2 px-4 hover:bg-slate-100 cursor-pointer"
 								@click="selectVariable(`contact.${field.name}`)"
 							>
-								<span>{{ field.name }}</span>
+								{{ field.name }}
 							</li>
 						</ul>
 					</TabPanel>
@@ -108,7 +109,7 @@ defineExpose({
 								v-for="variable in filteredBotVariables" 
 								:key="`bot_${variable.id}`"
 								class="py-2 px-4 hover:bg-slate-100 cursor-pointer"
-								@click="selectVariable(variable.name)"
+								@click="selectVariable(variable.name, true)"
 							>
 								{{ variable.name }}
 							</li>

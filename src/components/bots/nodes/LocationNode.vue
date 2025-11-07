@@ -6,8 +6,8 @@ import { useBotStore } from '~/stores'
 
 interface LocationNodeData {
 	name: string
-	lat: number | null
-	lng: number | null
+	latitude: number | null
+	longitude: number | null
 	address: string
 }
 
@@ -34,8 +34,8 @@ const showVariableDialog = ref(false)
 
 const newData = ref<LocationNodeData>({
 	name: '',
-	lat: null,
-	lng: null,
+	latitude: null,
+	longitude: null,
 	address: ''
 })
 
@@ -47,12 +47,12 @@ const addVariable = (variableName: string) => {
 	newData.value.name += `{{${variableName}}}`
 }
 
-const canSave = computed(() => newData.value.name && newData.value.lat && newData.value.lng)
+const canSave = computed(() => newData.value.name && newData.value.latitude && newData.value.longitude)
 
 const onSave = () => {
 	props.data.name = newData.value.name
-	props.data.lat = newData.value.lat
-	props.data.lng = newData.value.lng
+	props.data.latitude = newData.value.latitude
+	props.data.longitude = newData.value.longitude
 	props.data.address = newData.value.address
 	drawerVisible.value = false
 }
@@ -71,8 +71,8 @@ watch(drawerVisible, (visible) => {
 	>
 		<div class="flex flex-col gap-2 p-6 bg-white rounded-md">
 			<LocationNodeMap
-				v-if="data.lat && data.lng"
-				:location="data.lat && data.lng ? { lat: data.lat, lng: data.lng } : null"
+				v-if="data.latitude && data.longitude"
+				:location="data.latitude && data.longitude ? { lat: data.latitude, lng: data.longitude } : null"
 			/>
 
 			<div v-if="data.name" class="flex items-center gap-2 text-gray-700">
@@ -131,7 +131,7 @@ watch(drawerVisible, (visible) => {
 				</div>
 			</div>
 
-			<div v-if="newData.lat && newData.lng" class="text-sm text-gray-600 mt-2">
+			<div v-if="newData.latitude && newData.longitude" class="text-sm text-gray-600 mt-2">
 				<p class="text-lg"><strong>{{ $t('bot_workflow.location.address') }}:</strong> {{ newData.address }}</p>
 			</div>
 		</div>
@@ -145,8 +145,8 @@ watch(drawerVisible, (visible) => {
 	>
 		<div class="w-full h-full flex flex-col items-end gap-6">
 			<LocationPicker
-				:modelValue="newData.lat && newData.lng ? { lat: newData.lat, lng: newData.lng } : null"
-				@update:modelValue="val => { newData.lat = val.lat; newData.lng = val.lng }"
+				:modelValue="newData.latitude && newData.longitude ? { lat: newData.latitude, lng: newData.longitude } : null"
+				@update:modelValue="val => { newData.latitude = val.lat; newData.longitude = val.lng }"
 				@locationSelected="val => { newData.address = val.address }"
 			/>
 

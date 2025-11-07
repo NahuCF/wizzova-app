@@ -110,7 +110,8 @@ export default {
     'bot_not_found': 'Bot no encontrado',
     'bot_has_no_nodes': 'El Bot debe tener por lo menos un nodo para ser activado',
     'conversation_is_expired': 'La conversacion expiró',
-    'bot_variable_name_already_exists': 'El nombre de la variable ya existe'
+    'bot_variable_name_already_exists': 'El nombre de la variable ya existe',
+    'flow_already_exists': 'Ya existe una versión con este nombre'
   },
   submit_for_review: 'Enviar para revision',
   template_name: 'Nombre del template',

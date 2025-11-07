@@ -198,8 +198,8 @@ type AssignChatNodeData = {
 type LocationNodeData = {
 	latitude: number,
 	longitude: number,
-	location_name: string,
-	location_address: string
+	name: string,
+	address: string
 }
 
 type SetVariableNodeData = {

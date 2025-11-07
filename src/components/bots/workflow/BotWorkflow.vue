@@ -25,7 +25,7 @@ const props = defineProps<{
 	edges: BotEdge[]
 }>()
 
-const { onConnect, addEdges, toObject } = useVueFlow()
+const { onConnect, addEdges, toObject, getEdges, removeEdges, getNode } = useVueFlow()
 const { 
 	isDragOver,
 	onDragStart,
@@ -59,18 +59,32 @@ const edgeTypes = ref<EdgeTypes>({
 })
 
 const loadedNodes = computed<BotNode[]>(() => {
-	return [
-		{
-			id: 'start',
-			position: {
-				x: 300,
-				y: 300
+	// Check if we have a start node with position from props
+	const existingStartNode = props.nodes.find(n => n.id === 'start')
+	
+	if (existingStartNode) {
+		// Use the provided start node with its saved position
+		// Filter out the start node from props.nodes to avoid duplicates
+		const otherNodes = props.nodes.filter(n => n.id !== 'start')
+		return [
+			existingStartNode,
+			...otherNodes
+		]
+	} else {
+		// Create a default start node if none exists
+		return [
+			{
+				id: 'start',
+				position: {
+					x: 300,
+					y: 300
+				},
+				type: 'starting_node',
+				data: {}
 			},
-			type: 'starting_node',
-			data: {}
-		},
-		...props.nodes
-	]
+			...props.nodes
+		]
+	}
 })
 
 const normalizeEdges = computed(() => {
@@ -117,7 +131,38 @@ const normalizeEdges = computed(() => {
 })
 
 onConnect((params) => {
-	const { sourceHandle } = params
+	const { source, target, sourceHandle, targetHandle } = params
+	const sourceNode = getNode.value(source)
+	const currentEdges = getEdges.value
+
+	const isConditionNode = sourceNode?.type === 'condition'
+	const isWorkingHoursNode = sourceNode?.type === 'working_hours'
+	
+	// For condition and working_hours nodes, prevent same target for different outputs
+	if (isConditionNode || isWorkingHoursNode) {
+		const otherEdgesFromSource = currentEdges.filter(edge => 
+			edge.source === source && edge.sourceHandle !== sourceHandle
+		)
+		
+		// Check if any of them already point to the same target
+		const hasSameTarget = otherEdgesFromSource.some(edge => edge.target === target)
+		
+		if (hasSameTarget) {
+			console.warn('Condition/WorkingHours nodes cannot have the same target for different outputs')
+			return 
+		}
+	}
+
+	// For question_button nodes: each option can only have ONE connection
+	// For other nodes: each output can only have ONE connection
+	// Remove any existing connection from the same source handle
+	const existingEdgesFromHandle = currentEdges.filter(edge => 
+		edge.source === source && edge.sourceHandle === sourceHandle
+	)
+	
+	if (existingEdgesFromHandle.length > 0) {
+		removeEdges(existingEdgesFromHandle.map(edge => edge.id))
+	}
 
 	const conditions = {
 		success: sourceHandle === 'success',
