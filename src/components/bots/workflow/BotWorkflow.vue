@@ -2,9 +2,9 @@
 import { VueFlow, useVueFlow, type EdgeTypes } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
-import { computed, markRaw, ref } from 'vue'
+import { computed, markRaw, ref, watch, onMounted, nextTick } from 'vue'
 import { useFlowDragAndDrop } from '~/composables/workflow/useFlowDragAndDrop'
-import type { BotEdge, BotNode, BotNodeType } from '~/types'
+import type { BotEdge, BotNode, BotNodeType, BotViewport } from '~/types'
 import StartingNode from '../nodes/StartingNode.vue'
 import MessageNode from '../nodes/MessageNode.vue'
 import MarkAsSolvedNode from '../nodes/MarkAsSolvedNode.vue'
@@ -22,10 +22,11 @@ import CustomEdge from './CustomEdge.vue'
 
 const props = defineProps<{
 	nodes: BotNode[],
-	edges: BotEdge[]
+	edges: BotEdge[],
+	viewport?: BotViewport
 }>()
 
-const { onConnect, addEdges, toObject, getEdges, removeEdges, getNode } = useVueFlow()
+const { onConnect, addEdges, toObject, getEdges, removeEdges, getNode, setViewport, fitView } = useVueFlow()
 const { 
 	isDragOver,
 	onDragStart,
@@ -194,6 +195,12 @@ onConnect((params) => {
 		}
 	])
 })
+
+watch(() => props.viewport, (newViewport) => {
+	if (newViewport) {
+		setViewport(newViewport)
+	}
+}, { deep: true })
 
 defineExpose({
 	save: toObject
