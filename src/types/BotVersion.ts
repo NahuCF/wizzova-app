@@ -71,7 +71,7 @@ export type BotEdge = {
 	targetHandle?: string,
 	data?: {
 		option_id?: string,
-		condition_value?: string,
+		condition_path?: string,
 		is_default?: boolean,
 		working_hours_path?: 'Available' | 'Unavailable'
 	}

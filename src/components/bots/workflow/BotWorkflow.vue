@@ -90,11 +90,11 @@ const loadedNodes = computed<BotNode[]>(() => {
 
 const normalizeEdges = computed(() => {
 	const getEdgeStyle = (edge: BotEdge) => {
-		const { condition_value, option_id, working_hours_path } = edge.data || {}
+		const { condition_path, option_id, working_hours_path } = edge.data || {}
 
 		const conditions = {
-			success: condition_value === '1',
-			failure: condition_value === '0',
+			success: condition_path === 'true',
+			failure: condition_path === 'false',
 			option: !!option_id,
 			available: working_hours_path === 'Available',
 			unavailable: working_hours_path === 'Unavailable',
@@ -122,11 +122,11 @@ const normalizeEdges = computed(() => {
 	return props.edges.map(edge => {
 		const { handle, color } = getEdgeStyle(edge)
 		return {
-		...edge,
-		type: 'smoothstep',
-		sourceHandle: handle,
-		targetHandle: edge.target ? 'target' : undefined,
-		style: { stroke: color, strokeWidth: 2 },
+		    ...edge,
+		    type: 'smoothstep',
+		    sourceHandle: handle,
+		    targetHandle: edge.target ? 'target' : undefined,
+		    style: { stroke: color, strokeWidth: 2 },
 		}
 	})
 })
@@ -176,8 +176,8 @@ onConnect((params) => {
 	type ConditionKey = keyof typeof conditions
 
 	const styleMap: Record<ConditionKey, { color: string; data: Record<string, any> }> = {
-		success: { color: theme.primitive.emerald['500'], data: { condition_value: true } },
-		failure: { color: theme.primitive.red['500'], data: { condition_value: false } },
+		success: { color: theme.primitive.emerald['500'], data: { condition_path: 'true' } },
+		failure: { color: theme.primitive.red['500'], data: { condition_path: 'false' } },
 		available: { color: theme.primitive.emerald['500'], data: { working_hours_path: 'Available' } },
 		unavailable: { color: theme.primitive.red['500'], data: { working_hours_path: 'Unavailable' } },
 		option: { color: theme.primitive.emerald['700'], data: { option_id: sourceHandle } },

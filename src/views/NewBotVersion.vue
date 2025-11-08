@@ -113,16 +113,41 @@ const loadBot = async () => {
 			// Set nodes with start node first
 			nodes.value = [startNodeForWorkflow, ...otherNodes]
 			
-			// Transform edges - replace 'starting_node' source with 'start' for the workflow
 			edges.value = versionData.edges.map(edge => {
+				let sourceHandle = undefined
+				
+				if (edge.data) {
+					// For condition nodes - backend uses condition_path
+					if (edge.data.condition_path === 'true') {
+						sourceHandle = 'success'
+					} else if (edge.data.condition_path === 'false') {
+						sourceHandle = 'failure'
+					}
+					// For working_hours nodes
+					else if (edge.data.working_hours_path === 'Available') {
+						sourceHandle = 'Available'
+					} else if (edge.data.working_hours_path === 'Unavailable') {
+						sourceHandle = 'Unavailable'
+					}
+					// For question_button nodes
+					else if (edge.data.option_id) {
+						sourceHandle = edge.data.option_id
+					}
+				}
+				
 				if (edge.source === 'starting_node') {
 					return {
 						...edge,
 						id: edge.id || 'start_edge',
-						source: 'start'
+						source: 'start',
+						sourceHandle
 					}
 				}
-				return edge
+				
+				return {
+					...edge,
+					sourceHandle
+				}
 			})
 
 			initialState.value = {
@@ -194,6 +219,29 @@ const onSave = async () => {
 
 		// Transform edges - replace 'start' source with the first node that was connected to it
 		const edges: BotEdge[] = flowData.edges.map(edge => {
+			// Prepare edge data based on sourceHandle
+			let edgeData = edge.data || {}
+			
+			// Convert sourceHandle to condition_path for condition nodes
+			const sourceNode = flowData.nodes.find(n => n.id === edge.source)
+			if (sourceNode?.type === 'condition') {
+				if (edge.sourceHandle === 'success') {
+					edgeData = { ...edgeData, condition_path: 'true' }
+				} else if (edge.sourceHandle === 'failure') {
+					edgeData = { ...edgeData, condition_path: 'false' }
+				}
+			}
+			// For working_hours nodes, preserve the path
+			else if (sourceNode?.type === 'working_hours') {
+				if (edge.sourceHandle === 'Available' || edge.sourceHandle === 'Unavailable') {
+					edgeData = { ...edgeData, working_hours_path: edge.sourceHandle }
+				}
+			}
+			// For question_button nodes, store the option_id
+			else if (sourceNode?.type === 'question_button' && edge.sourceHandle && edge.sourceHandle !== 'source') {
+				edgeData = { ...edgeData, option_id: edge.sourceHandle }
+			}
+			
 			if (edge.source === 'start') {
 				// Find the starting_node we just created
 				const startingNode = nodes.find(n => n.type === 'starting_node')
@@ -201,11 +249,16 @@ const onSave = async () => {
 					return {
 						...edge,
 						id: edge.id === 'start_edge' ? crypto.randomUUID() : edge.id,
-						source: startingNode.id
+						source: startingNode.id,
+						data: edgeData
 					} as BotEdge
 				}
 			}
-			return edge as BotEdge
+			
+			return {
+				...edge,
+				data: edgeData
+			} as BotEdge
 		}).filter(edge => edge.source && edge.target) as BotEdge[]
 		
 		const viewport: BotViewport = flowData.viewport
