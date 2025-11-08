@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { IconArrowLeft, IconPencil, IconLoader2, IconAsterisk } from '@tabler/icons-vue'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import type BotWorkflow from '~/components/bots/workflow/BotWorkflow.vue'
 import { useErrorHandler } from '~/composables/useErrorHandler'
@@ -9,17 +9,16 @@ import { useBotStore, useContactFieldStore, useSessionStore, useUserStore } from
 import { useTemplateStore } from '~/stores/template'
 import type { BotActiveSessions, BotEdge, BotNode, BotNodeType, BotViewport } from '~/types'
 
-type RawNode = {
-	id: string,
-	position: { x: number; y: number },
-	type?: string,
-	data: any
-}
-
 const validNodeTypes: BotNodeType[] = [
 	'starting_node', 'message', 'template', 'image', 'video', 'audio', 'document',
 	'question_button', 'condition', 'start_again', 'mark_as_solved', 'assign_chat',
 	'location', 'working_hours', 'set_variable'
+]
+
+const terminalNodeTypes: BotNodeType[] = [
+	'mark_as_solved', 
+	'assign_chat', 
+	'start_again'
 ]
 
 const route = useRoute()
@@ -74,6 +73,51 @@ const hasChanges = () => {
 
 	return structureChanged || nameChanged
 }
+
+const getUnconnectedNodes = computed(() => {
+	const flowData = workflow.value?.save()
+	if (!flowData) return []
+	
+	const unconnectedNodes: string[] = []
+	
+	flowData.nodes.forEach(node => {
+		if (node.id === 'start') return
+		
+		const hasIncoming = flowData.edges.some(edge => edge.target === node.id)
+		
+		if (!hasIncoming) {
+			unconnectedNodes.push(node.id)
+		}
+	})
+	
+	return unconnectedNodes
+})
+
+const hasNameError = computed(() => name.value.trim().length === 0)
+
+const hasConnectionErrors = computed(() => getUnconnectedNodes.value.length > 0)
+
+const hasNoNodes = computed(() => {
+	const flowData = workflow.value?.save()
+	if (!flowData) return false
+    
+	return flowData.nodes.filter(n => n.id !== 'start').length === 0
+})
+
+const canSave = computed(() => !hasNameError.value && !hasConnectionErrors.value && !hasNoNodes.value)
+
+const saveButtonTooltip = computed(() => {
+	if (hasNameError.value) {
+		return 'bot_workflow.name_required'
+	}
+	if (hasNoNodes.value) {
+		return 'bot_workflow.no_nodes'
+	}
+	if (hasConnectionErrors.value) {
+		return 'bot_workflow.unconnected_nodes'
+	}
+	return ''
+})
 
 const isBotNodeType = (type: string | undefined): type is BotNodeType => {
   	return typeof type === 'string' && validNodeTypes.includes(type as BotNodeType)
@@ -373,8 +417,13 @@ if(!templateStore.loaded) {
 					<div class="text-lg">Enable premium nodes</div>
 				</div>
 
-				<div>
-					<Button @click="onCheckActiveSessions" :disabled="saving || name.trim().length === 0">
+				<div
+					v-tooltip.bottom="!canSave && {
+						value: $t(saveButtonTooltip),
+						class: 'custom-tooltip text-sm'
+					}"
+				>
+					<Button @click="onCheckActiveSessions" :disabled="saving || !canSave">
 						<IconLoader2 v-if="saving" class="animate-spin w-6 h-6" />
 						<span v-else>
 							{{ $t(`save`) }}
