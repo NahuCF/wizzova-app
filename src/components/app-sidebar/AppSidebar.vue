@@ -18,6 +18,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const session = useSessionStore()
 const prefs = useUserPreferencesStore()
+const appName = import.meta.env.VITE_APP_NAME
 const { sidebarCollapsed: collapsed } = storeToRefs(prefs)
 
 const router = useRouter()
@@ -125,7 +126,7 @@ const logout = async () => {
 					class="font-semibold text-xl truncate transition-opacity duration-300 ease-in-out"
 					:class="collapsed ? 'opacity-0' : 'opacity-100'"
 				>	
-					Wabox
+					{{ appName }}
 				</span>
 			</div>
 		</div>
