@@ -17,7 +17,7 @@ type RawNode = {
 }
 
 const validNodeTypes: BotNodeType[] = [
-	'message', 'template', 'image', 'video', 'audio', 'document',
+	'starting_node', 'message', 'template', 'image', 'video', 'audio', 'document',
 	'question_button', 'condition', 'start_again', 'mark_as_solved', 'assign_chat',
 	'location', 'working_hours', 'set_variable'
 ]
@@ -39,6 +39,7 @@ const editName = ref(false)
 const saving = ref(false)
 const nodes = ref<BotNode[]>([])
 const edges = ref<BotEdge[]>([])
+const viewport = ref<BotViewport | undefined>()
 const initialState = ref<{
 	name: string,
 	nodeIds: string[],
@@ -95,25 +96,54 @@ const loadBot = async () => {
 			const { data: versionData } = await API.botVersion.getData(botId.value, versionId.value)
 
 			name.value = versionData.name
-			nodes.value = versionData.nodes
-			edges.value = versionData.edges
+			viewport.value = versionData.viewport
+			
+			// Filter out the starting_node and handle it separately
+			const startingNode = versionData.nodes.find(n => n.type === 'starting_node')
+			const otherNodes = versionData.nodes.filter(n => n.type !== 'starting_node')
+			
+			// Create the start node for the workflow with saved position or default
+			const startNodeForWorkflow = {
+				id: 'start',
+				position: startingNode ? startingNode.position : { x: 300, y: 300 },
+				type: 'starting_node',
+				data: {}
+			}
+			
+			// Set nodes with start node first
+			nodes.value = [startNodeForWorkflow, ...otherNodes]
+			
+			// Transform edges - replace 'starting_node' source with 'start' for the workflow
+			edges.value = versionData.edges.map(edge => {
+				if (edge.source === 'starting_node') {
+					return {
+						...edge,
+						id: edge.id || 'start_edge',
+						source: 'start'
+					}
+				}
+				return edge
+			})
 
 			initialState.value = {
 				name: name.value,
-				nodeIds: nodes.value.map(n => n.id),
-				edgeIds: edges.value.map(e => e.id)
+				nodeIds: otherNodes.map(n => n.id),
+				edgeIds: versionData.edges.map(e => e.id)
 			}
 
-			const startNode = nodes.value.find(node => !edges.value.find(edge => edge.target === node.id))
-			if(startNode) {
-				edges.value = [
-					{
-						id: 'start_edge',
-						source: 'start',
-						target: startNode.id
-					},
-					...edges.value
-				]
+			// If no starting node was found, try to find the first node and connect it
+			if (!startingNode) {
+				const firstNode = otherNodes.find(node => !versionData.edges.find(edge => edge.target === node.id))
+				if(firstNode) {
+					edges.value = [
+						{
+							id: 'start_edge',
+							source: 'start',
+							target: firstNode.id
+						},
+						...edges.value
+					]
+				}
 			}
 		} catch(error) {
 			console.log(error)
@@ -139,18 +169,45 @@ const onSave = async () => {
 	
 	saving.value = true
 	try {
+		// Include all nodes except 'start' which will be saved as 'starting_node'
 		const nodes: BotNode[] = flowData.nodes
-			.filter((n): n is RawNode & { type: BotNodeType } => isBotNodeType(n.type))
+			.filter(n => n.id !== 'start' && isBotNodeType(n.type))
 			.map((n): BotNode => {
 				return {
 					id: n.id,
 					position: n.position,
-					type: n.type,
+					type: n.type as BotNodeType,
 					data: n.data
 				}
 			})
 
-		const edges: BotEdge[] = flowData.edges.filter(edge => edge.source !== 'start') as BotEdge[]
+		// Add the start node as a starting_node type with a proper UUID
+		const startNode = flowData.nodes.find(n => n.id === 'start')
+		if (startNode) {
+			nodes.unshift({
+				id: crypto.randomUUID(),
+				position: startNode.position,
+				type: 'starting_node',
+				data: {}
+			})
+		}
+
+		// Transform edges - replace 'start' source with the first node that was connected to it
+		const edges: BotEdge[] = flowData.edges.map(edge => {
+			if (edge.source === 'start') {
+				// Find the starting_node we just created
+				const startingNode = nodes.find(n => n.type === 'starting_node')
+				if (startingNode) {
+					return {
+						...edge,
+						id: edge.id === 'start_edge' ? crypto.randomUUID() : edge.id,
+						source: startingNode.id
+					} as BotEdge
+				}
+			}
+			return edge as BotEdge
+		}).filter(edge => edge.source && edge.target) as BotEdge[]
+		
 		const viewport: BotViewport = flowData.viewport
 
 		const payload = {
@@ -273,7 +330,7 @@ if(!templateStore.loaded) {
 				</div>
 			</div>
 		</div>
-		<BotWorkflow ref="workflow" :nodes="nodes" :edges="edges" />
+		<BotWorkflow ref="workflow" :nodes="nodes" :edges="edges" :viewport="viewport" />
 
 		<Dialog v-model:visible="showLeaveDialog" modal :header="$t('unsaved_changes')" :closable="false">
             <p>{{ $t('unsaved_changes_message') }}</p>
