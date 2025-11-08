@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { IconQuestionMark, IconAsterisk, IconTrash, IconPlus, IconFileText } from '@tabler/icons-vue'
-import { type NodeProps, Position, Handle } from '@vue-flow/core'
+import { type NodeProps, Position, Handle, useVueFlow } from '@vue-flow/core'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useBotStore } from '~/stores'
 import type { BotNodeDataMap, BotNodeHeaderType } from '~/types'
@@ -18,6 +18,8 @@ const props = defineProps<NodeProps & {
 }>()
 
 defineEmits(['updateNodeInternals'])
+
+const { updateNodeData } = useVueFlow()
 
 const route = useRoute()
 const botStore = useBotStore()
@@ -87,24 +89,30 @@ const isMediaType = (type: BotNodeHeaderType | 'none'): type is 'image' | 'video
 const onSave = async () => {
 	if(!botId.value) return
 
+	let finalHeaderMediaUrl = newData.value.headerMediaUrl
+
 	if(newFile.value?.data && isMediaType(newData.value.headerType)) {
 		loading.value = true
 		try {
 			const { data: response } = await API.botVersion.uploadMedia(botId.value, newFile.value.data, newData.value.headerType, props.id)
-			newData.value.headerMediaUrl = response.url
+			finalHeaderMediaUrl = response.url
 		} catch(error) {
 			console.log(error)
+			return
 		} finally {
 			loading.value = false
 		}
 	}
 
-	props.data.header_type = newData.value.headerType === 'none' ? undefined : newData.value.headerType
-	props.data.header_media_url = newData.value.headerMediaUrl
-	props.data.header_text = newData.value.headerText
-	props.data.content = newData.value.content
-	props.data.footer_text = newData.value.footerText
-	props.data.options = newData.value.options
+	updateNodeData(props.id, {
+		...props.data,
+		header_type: newData.value.headerType === 'none' ? undefined : newData.value.headerType,
+		header_media_url: finalHeaderMediaUrl,
+		header_text: newData.value.headerText,
+		content: newData.value.content,
+		footer_text: newData.value.footerText,
+		options: newData.value.options
+	})
 
 	drawerVisible.value = false
 }

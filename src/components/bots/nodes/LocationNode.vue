@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { IconMapPin, IconMap, IconAsterisk } from '@tabler/icons-vue'
-import { type NodeProps } from '@vue-flow/core'
+import { type NodeProps, useVueFlow } from '@vue-flow/core'
 import { computed, onMounted, ref, toRaw, watch } from 'vue'
 import { useBotStore } from '~/stores'
 
@@ -18,6 +18,8 @@ const props = defineProps<NodeProps & {
 }>()
 
 defineEmits(['updateNodeInternals'])
+
+const { updateNodeData } = useVueFlow()
 
 const botStore = useBotStore()
 
@@ -50,10 +52,13 @@ const addVariable = (variableName: string) => {
 const canSave = computed(() => newData.value.name && newData.value.latitude && newData.value.longitude)
 
 const onSave = () => {
-	props.data.name = newData.value.name
-	props.data.latitude = newData.value.latitude
-	props.data.longitude = newData.value.longitude
-	props.data.address = newData.value.address
+	updateNodeData(props.id, { 
+		...props.data, 
+		name: newData.value.name,
+		latitude: newData.value.latitude,
+		longitude: newData.value.longitude,
+		address: newData.value.address
+	})
 	drawerVisible.value = false
 }
 

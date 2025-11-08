@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { IconAsterisk, IconTemplate } from '@tabler/icons-vue'
-import { type NodeProps } from '@vue-flow/core'
+import { type NodeProps, useVueFlow } from '@vue-flow/core'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useBotStore } from '~/stores'
 import { useTemplateStore } from '~/stores/template'
@@ -16,6 +16,8 @@ const props = defineProps<NodeProps & {
 }>()
 
 defineEmits(['updateNodeInternals'])
+
+const { updateNodeData } = useVueFlow()
 
 const templateStore = useTemplateStore()
 const botStore = useBotStore()
@@ -70,9 +72,12 @@ const addVariable = (variableName: string) => {
 }
 
 const onSave = () => {
-	props.data.template_id = newData.value.templateId,
-	props.data.template_parameters = newData.value.templateParameters
-
+	updateNodeData(props.id, { 
+		...props.data, 
+		template_id: newData.value.templateId,
+		template_parameters: newData.value.templateParameters
+	})
+	
 	drawerVisible.value = false
 }
 

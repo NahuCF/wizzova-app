@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { IconMathLower, IconPlus, IconTrash } from '@tabler/icons-vue'
-import { type NodeProps, Handle, Position } from '@vue-flow/core'
+import { type NodeProps, Handle, Position, useVueFlow } from '@vue-flow/core'
 import { computed, onMounted, ref, toRaw, watch } from 'vue'
 import { useBotStore } from '~/stores'
 import type { BotFilterOperator, BotNodeDataMap, ConditionNodeData } from '~/types'
@@ -15,6 +15,8 @@ const props = defineProps<NodeProps & {
 }>()
 
 defineEmits(['updateNodeInternals'])
+
+const { updateNodeData } = useVueFlow()
 
 const botStore = useBotStore()
 
@@ -47,7 +49,7 @@ const validConditions = computed(() => {
 })
 
 const onSave = () => {
-	props.data.conditions = newData.value.conditions
+	updateNodeData(props.id, { ...props.data, conditions: newData.value.conditions })
 	drawerVisible.value = false
 }
 

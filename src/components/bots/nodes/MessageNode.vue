@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { IconMessage } from '@tabler/icons-vue'
-import { type NodeProps } from '@vue-flow/core'
+import { type NodeProps, useVueFlow } from '@vue-flow/core'
 import { ref, watch, onMounted } from 'vue'
 import { useTextFormatter } from '~/composables/useTextFormatter'
 import type { BotNodeDataMap } from '~/types'
@@ -17,6 +17,7 @@ const props = defineProps<NodeProps & {
 defineEmits(['updateNodeInternals'])
 
 const { getPreviewText } = useTextFormatter()
+const { updateNodeData } = useVueFlow()
 
 const drawerVisible = ref(false)
 const message = ref('')
@@ -28,7 +29,10 @@ onMounted(() => {
 })
 
 const onSave = () => {
-	props.data.content = message.value
+	updateNodeData(props.id, {
+		...props.data,
+		content: message.value
+	})
 	drawerVisible.value = false
 }
 

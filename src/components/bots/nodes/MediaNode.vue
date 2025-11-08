@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { IconFile, IconFileText, IconPhoto, IconVideo, IconVolume } from '@tabler/icons-vue'
-import type { NodeProps } from '@vue-flow/core'
+import { type NodeProps, useVueFlow } from '@vue-flow/core'
 import { computed, ref, watch, onMounted, type Component } from 'vue'
 import { useRoute } from 'vue-router'
 import { API } from '~/services'
@@ -18,6 +18,8 @@ const props = defineProps<NodeProps & {
 }>()
 
 defineEmits(['updateNodeInternals'])
+
+const { updateNodeData } = useVueFlow()
 
 const route = useRoute()
 const sessionStore = useSessionStore()
@@ -71,25 +73,28 @@ const allowedTypes = computed<MediaNodeType[]>(() => {
 const onSave = async () => {
 	if(!botId.value) return
 
+	let finalMediaUrl = newData.value.mediaUrl
+
 	if(newFile.value?.data) {
 		loading.value = true
 		try {
 			const { data: response } = await API.botVersion.uploadMedia(botId.value, newFile.value.data, newData.value.mediaType, props.id)
-			newData.value.mediaUrl = response.url
+			finalMediaUrl = response.url
 		} catch(error) {
 			console.log(error)
+			return
 		} finally {
 			loading.value = false
 		}
-
-		props.data.media_type = newData.value.mediaType
-		props.data.media_url = newData.value.mediaUrl
-		props.data.content = newData.value.content
 	}
-	else if(newData.value.mediaUrl) {
-		props.data.media_type = newData.value.mediaType
-		props.data.media_url = newData.value.mediaUrl
-		props.data.content = newData.value.content
+
+	if(finalMediaUrl || newData.value.content) {
+		updateNodeData(props.id, {
+			...props.data,
+			media_type: newData.value.mediaType,
+			media_url: finalMediaUrl,
+			content: newData.value.content
+		})
 	}
 
 	drawerVisible.value = false
@@ -164,25 +169,25 @@ watch(drawerVisible, (visible) => {
 			/>
 
 			<div class="flex flex-col gap-1 mt-4">
-				<label class="text-lg flex items-center gap-1" for="phone">
-					<span class="text-neutral-800">{{ $t(`bot_workflow.send_media.caption`) }}</span>
-					<span>({{ $t('optional') }})</span>
-				</label>
-
-				<div class="relative">
-					<Textarea 
-						v-model="newData.content" 
-						rows="4" 
-						cols="30" 
-						fluid 
-						class="text-lg! min-h-[6rem]"
-						:maxlength="1024"
-						:placeholder="$t(`bot_workflow.send_media.caption_placeholder`)"
-					/>
-					<div class="absolute right-3 bottom-2 text-slate-400">
-						{{ newData.content?.length || 0 }} / 4096
-					</div>
+				<div class="flex items-center justify-between">
+					<label class="text-lg flex items-center gap-1" for="phone">
+						<span class="text-neutral-800">{{ $t(`bot_workflow.send_media.caption`) }}</span>
+						<span>({{ $t('optional') }})</span>
+					</label>
+					<span class="text-sm text-slate-400">
+						{{ newData.content?.length || 0 }} / 1024
+					</span>
 				</div>
+
+				<Textarea 
+					v-model="newData.content" 
+					rows="4" 
+					cols="30" 
+					fluid 
+					class="text-lg! min-h-[6rem]"
+					:maxlength="1024"
+					:placeholder="$t(`bot_workflow.send_media.caption_placeholder`)"
+				/>
 			</div>
 		</div>
 	</BaseNodeDrawer>
