@@ -22,6 +22,7 @@ import ConversationService from './ConversationService'
 import MessageService from './MessageService'
 import BotService from './BotService'
 import BotVersionService from './BotVersionService'
+import SubscriptionService from './SubscriptionService'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -51,5 +52,6 @@ export const API = {
     user: UserService,
     tenant: TenantService,
     meta: MetaService,
-    waba: WabaService
+    waba: WabaService,
+    subscription: SubscriptionService
 }

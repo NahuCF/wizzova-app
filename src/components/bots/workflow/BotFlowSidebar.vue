@@ -4,6 +4,7 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { nodeItems, type BotNodeCategory, type BotNodeItem } from '~/composables/workflow/useFlowDragAndDrop'
 import { useSessionStore } from '~/stores';
+import SubscriptionModal from '~/components/subscription/SubscriptionModal.vue'
 
 const emit = defineEmits<{
 	(e: 'dragStart', { event, nodeItem }: { 
@@ -17,7 +18,7 @@ const { t } = useI18n()
 const sessionStore = useSessionStore()
 
 const searchTerm = ref('')
-const showGetPremiumWarning = ref(false)
+const showSubscriptionModal = ref(false)
 
 const groupedItems = computed(() => {
 	const term = searchTerm.value.toLowerCase()
@@ -41,11 +42,19 @@ const groupedItems = computed(() => {
 
 const onClick = (nodeItem: BotNodeItem) => {
 	if(nodeItem.isPremium && !sessionStore.hasPremiumAccess) {
-		showGetPremiumWarning.value = true
+		showSubscriptionModal.value = true
 	}
 	else {
 		emit('addNode', nodeItem)
 	}
+}
+
+const onDragStart = (event: DragEvent, nodeItem: BotNodeItem) => {
+	if(nodeItem.isPremium && !sessionStore.hasPremiumAccess) {
+		event.preventDefault()
+		return
+	}
+	emit('dragStart', { event, nodeItem })
 }
 </script>
 
@@ -76,7 +85,7 @@ const onClick = (nodeItem: BotNodeItem) => {
 						'border-amber-300': nodeItem.isPremium,
 					}"
 					:draggable="!nodeItem.isPremium || sessionStore.hasPremiumAccess"
-					@dragstart="emit('dragStart', { event: $event, nodeItem })"
+					@dragstart="onDragStart($event, nodeItem)"
 					@click="onClick(nodeItem)"
 				>
 					<component class="text-emerald-500" :is="nodeItem.icon" size="32" />
@@ -89,12 +98,6 @@ const onClick = (nodeItem: BotNodeItem) => {
 		</div>
 	</aside>
 
-	<WarningDialog
-		v-model:visible="showGetPremiumWarning"
-		:title="$t('bot_workflow.premium_node_title')"
-		:message="$t('bot_workflow.premium_node_message')"
-		:confirmMessage="$t('bot_workflow.upgrade_now')"
-		confirmColor="primary"
-		@onConfirm="() => {}" 
-	/>
+	<!-- Subscription Modal -->
+	<SubscriptionModal v-model:visible="showSubscriptionModal" />
 </template>

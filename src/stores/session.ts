@@ -12,7 +12,6 @@ export const useSessionStore = defineStore('session', () => {
 	const createNumber = ref(false)
 	const token = ref<string>('')
 	const showOverrideDialog = ref(false)
-	const hasPremiumAccess = ref(false)
 
 	const isAuthenticated = computed(() => {
 		return user.value && tenant.value && token.value
@@ -24,6 +23,19 @@ export const useSessionStore = defineStore('session', () => {
 
 	const defaultWaba = computed(() => {
 		return user.value?.default_waba
+	})
+
+	const subscription = computed(() => {
+		return tenant.value?.subscription
+	})
+
+	const hasProOrScalePlan = computed(() => {
+		const plan = subscription.value?.plan_type
+		return plan === 'pro' || plan === 'scale'
+	})
+
+	const hasPremiumAccess = computed(() => {
+		return hasProOrScalePlan.value
 	})
 
 	const hasPermission = (permissionName: string) => {
@@ -50,7 +62,6 @@ export const useSessionStore = defineStore('session', () => {
 		createNumber.value = false
 		token.value = ''
 		showOverrideDialog.value = false
-		hasPremiumAccess.value = false
 	}
 
 	return {
@@ -66,6 +77,8 @@ export const useSessionStore = defineStore('session', () => {
 		isAuthenticated,
 		isOwner,
 		defaultWaba,
+		subscription,
+		hasProOrScalePlan,
 		hasPremiumAccess,
 		hasPermission,
 		hasAllPermissions,
