@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { IconMessage, IconAsterisk, IconBold, IconItalic, IconStrikethrough } from '@tabler/icons-vue'
-import { type NodeProps } from '@vue-flow/core'
-import { ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useTextareaSelection } from '~/composables/useTextareaSelection'
+import { IconMessage } from '@tabler/icons-vue'
+import { type NodeProps, useVueFlow } from '@vue-flow/core'
+import { ref, watch, onMounted } from 'vue'
 import { useTextFormatter } from '~/composables/useTextFormatter'
-import { useBotStore } from '~/stores'
 import type { BotNodeDataMap } from '~/types'
 
 const props = defineProps<NodeProps & {
@@ -19,70 +16,29 @@ const props = defineProps<NodeProps & {
 
 defineEmits(['updateNodeInternals'])
 
-const { t } = useI18n()
 const { getPreviewText } = useTextFormatter()
-const botStore = useBotStore()
+const { updateNodeData } = useVueFlow()
 
 const drawerVisible = ref(false)
-const showVariableDialog = ref(false)
-const variablesPopover = ref()
-const messageRef = ref()
 const message = ref('')
-const { wrapSelection } = useTextareaSelection(messageRef, message)
-const selectionFormatters = [
-	{
-		label: t('new_template.body.format.bold'),
-		icon: IconBold,
-		handler: () => wrapSelection('*', '*'),
-	},
-	{
-		label: t('new_template.body.format.italic'),
-		icon: IconItalic,
-		handler: () => wrapSelection('_', '_'),
-	},
-	{
-		label: t('new_template.body.format.strikethrough'),
-		icon: IconStrikethrough,
-		handler: () => wrapSelection('~', '~'),
+
+onMounted(() => {
+	if (props.data.__isNew) {
+		drawerVisible.value = true
 	}
-]
+})
 
 const onSave = () => {
-	props.data.content = message.value
-	drawerVisible.value = false
-}
-
-const onMessageInput = (event: Event) => {
-	const target = event.target as HTMLInputElement | null
-
-	if(target) {
-		formatMessage(target.value)
-	}
-}
-
-const formatMessage = (value: string) => {
-	const formattedText = value.replace(/{{(.*?)}}/g, (_match, variableName) => {
-		const name = variableName.replace(/[^a-zA-Z0-9.]/g, '_')
-		return `{{${name}}}`
+	updateNodeData(props.id, {
+		...props.data,
+		content: message.value
 	})
-
-	message.value = formattedText
-}
-
-const openVariablesPopover = (event: MouseEvent) => {
-	variablesPopover.value.toggle(event)
-}
-
-const insertVariable = (variable: string) => {
-	wrapSelection('{{' + variable + '}}')
-	formatMessage(message.value)
-
-	variablesPopover.value?.hide()
+	drawerVisible.value = false
 }
 
 watch(drawerVisible, (visible) => {
 	if (visible) {
-		message.value = props.data.content
+		message.value = props.data.content || ''
 	}
 })
 </script>
@@ -93,7 +49,6 @@ watch(drawerVisible, (visible) => {
 		:icon="IconMessage"
 		:title="$t(`bot_workflow.nodes.${type}`)"
 		@onEdit="drawerVisible = true"
-		@click="drawerVisible = true"
 	>
 		<span
 			v-if="data.content"
@@ -117,63 +72,11 @@ watch(drawerVisible, (visible) => {
 		@onSave="onSave"
 	>
 		<div class="p-6">
-			<div class="flex gap-1 mb-2">
-				<h2 class="font-medium">{{ $t('bot_workflow.message_label') }}</h2>
-				<IconAsterisk color="red" class="mt-1" size="8" />
-			</div>
-
-			<div class="flex flex-col gap-1 relative mb-2">
-				<div class="relative">
-					<Textarea 
-						ref="messageRef"
-						v-model="message" 
-						rows="4" 
-						cols="30" 
-						fluid 
-						class="text-lg! min-h-[12rem]"
-						:maxlength="4096"
-						@input="onMessageInput"
-						:placeholder="$t('bot_workflow.message_placeholder')"
-					/>
-					<div class="absolute right-3 bottom-2 text-slate-400">
-						{{ message.length }} / 4096
-					</div>
-				</div>
-			</div>
-			
-			<div class="flex gap-3">
-				<Button
-					severity="info"
-					variant="outlined"
-					class="self-start !border !border-slate-300 font-bold text-base!"
-					size="small"
-					@click="openVariablesPopover"
-				>
-					{{ t('new_template.body.add_variable') }}
-				</Button>
-
-				<div class="flex items-center gap-3">
-					<div
-						v-for="({ label, icon: Icon, handler }, idx) in selectionFormatters"
-						:key="idx"
-						class="p-1.5 cursor-pointer hover:bg-slate-100 rounded-full"
-						:title="label"
-						@click="handler"
-					>
-						<component :is="Icon" class="text-slate-700" size="13" />
-					</div>
-				</div>
-			</div>
-
-			<BotVariableSelect
-				ref="variablesPopover"
-				@onSelect="insertVariable"
-				@onCreate="showVariableDialog = true"
-			/>
-
-			<BotVariableDialog 
-				v-model:visible="showVariableDialog" 
-				@onCreated="botStore.variables.push($event)"
+			<TextAreaEditor
+				v-model="message"
+				:title="$t('bot_workflow.message_label')"
+				:placeholder="$t('bot_workflow.message_placeholder')"
+				:minHeightClass="'min-h-[12rem]'"
 			/>
 		</div>
 	</BaseNodeDrawer>

@@ -1,7 +1,7 @@
 import Aura from '@primevue/themes/aura'
 import { definePreset } from '@primevue/themes'
 
-export const preset = definePreset(Aura, {
+export const theme = {
   primitive: {
     borderRadius: {
       none: '0',
@@ -657,7 +657,7 @@ export const preset = definePreset(Aura, {
       },
     },
   },
-})
+}
 
 export const passthrough = {
   toast: {
@@ -681,3 +681,5 @@ export const passthrough = {
     }}
   }
 }
+
+export const preset = definePreset(Aura, theme)

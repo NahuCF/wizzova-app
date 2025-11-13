@@ -30,7 +30,7 @@ const {
     loading: loadingDrawer,
     createOrUpdate,
 	remove
-} = useCrudActions<BotCreate>({
+} = useCrudActions<BotCreate, { data: BotItem }>({
     api: {
         create: API.bot.create,
 		delete: API.bot.delete
@@ -213,7 +213,15 @@ const onRowSelect = ({ data }: { data: BotItem }) => {
 
 const onSave = (newBot: BotCreate) => {
     createOrUpdate(newBot, {
-        onSuccess: () => showCreateDrawer.value = false
+        onSuccess: (response) => {
+            showCreateDrawer.value = false
+            if (response?.data?.id) {
+                router.push({ 
+                    name: 'new-botflow', 
+                    params: { id: response.data.id }
+                })
+            }
+        }
     })
 }
 
@@ -317,7 +325,7 @@ watch(rowsPerPage, () => fetchDataPage(), { immediate: true })
 			
 			<template #triggers="{ data: { triggers } }: { data: { triggers: BotTriggerTag[] }}">
 				<div class="flex items-center gap-3">
-					<template v-for="trigger in triggers">
+					<template v-for="(trigger, index) in triggers" :key="`trigger-${index}`">
 						<div
 							v-if="trigger.tooltip"
 							v-tooltip.bottom="trigger.tooltip"

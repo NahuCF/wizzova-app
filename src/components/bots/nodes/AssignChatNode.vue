@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { IconUser } from '@tabler/icons-vue'
-import { type NodeProps } from '@vue-flow/core'
-import { computed, ref, watch } from 'vue'
+import { type NodeProps, useVueFlow } from '@vue-flow/core'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useBotStore, useUserStore } from '~/stores';
 import type { BotNodeDataMap } from '~/types'
 
@@ -16,10 +16,18 @@ const props = defineProps<NodeProps & {
 
 defineEmits(['updateNodeInternals'])
 
+const { updateNodeData } = useVueFlow()
+
 const userStore = useUserStore()
 const botStore = useBotStore()
 
 const drawerVisible = ref(false)
+
+onMounted(() => {
+	if (props.data.__isNew) {
+		drawerVisible.value = true
+	}
+})
 const assignType = ref('user')
 const assigneeId = ref<string>()
 
@@ -35,13 +43,19 @@ const assignee = computed(() => {
 
 const onSave = () => {
 	if(assignType.value === 'user') {
-		props.data.assign_type = 'user'
-		props.data.assign_to_user_id = assigneeId.value
-		props.data.assign_to_bot_id = undefined
+		updateNodeData(props.id, { 
+			...props.data, 
+			assign_type: 'user', 
+			assign_to_user_id: assigneeId.value, 
+			assign_to_bot_id: undefined 
+		})
 	} else if(assignType.value === 'bot') {
-		props.data.assign_type = 'bot'
-		props.data.assign_to_bot_id = assigneeId.value
-		props.data.assign_to_user_id = undefined
+		updateNodeData(props.id, { 
+			...props.data, 
+			assign_type: 'bot', 
+			assign_to_bot_id: assigneeId.value, 
+			assign_to_user_id: undefined 
+		})
 	}
 	drawerVisible.value = false
 }
@@ -60,7 +74,6 @@ watch(drawerVisible, (visible) => {
 		:icon="IconUser"
 		:title="$t(`bot_workflow.nodes.${type}`)"
 		@onEdit="drawerVisible = true"
-		@click="drawerVisible = true"
 	>
 		<div class="bg-white p-6 text-gray-500">
 			{{ 
@@ -80,7 +93,7 @@ watch(drawerVisible, (visible) => {
 		<div class="p-6 flex flex-col gap-6">
 			<div>
 				<div class="flex gap-1 mb-2">
-					<h2 class="font-medium">{{ $t('bot_workflow.assign_chat.type') }}</h2>
+					<h2 class="font-medium text-lg">{{ $t('bot_workflow.assign_chat.type') }}</h2>
 				</div>
 
 				<div class="flex gap-2 w-full">
@@ -109,7 +122,7 @@ watch(drawerVisible, (visible) => {
 
 			<div>
 				<div class="flex gap-1 mb-2">
-					<h2 class="font-medium">
+					<h2 class="font-medium text-lg">
 						{{ 
 							assignType === 'user'
 								? $t('bot_details.select_user')

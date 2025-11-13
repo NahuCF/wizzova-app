@@ -10,6 +10,7 @@ import ToastService from 'primevue/toastservice'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import Tooltip from 'primevue/tooltip'
 import VueApexCharts from "vue3-apexcharts"
+import Vue3Openlayers from 'vue3-openlayers'
 
 import App from './App.vue'
 import router from '../router'
@@ -34,6 +35,7 @@ app.use(PrimeVue, {
   pt: passthrough
 })
 app.use(VueApexCharts)
+app.use(Vue3Openlayers)
 app.directive('tooltip', Tooltip)
 setupInterceptors()
 

@@ -1,4 +1,5 @@
 import type { UserItem } from "./User"
+import type { Subscription } from "./Subscription"
 
 export interface LoginForm {
     email: string,
@@ -18,7 +19,8 @@ export interface RegisterForm {
 export interface Tenant {
     id: string,
     company_name: string,
-    is_profile_completed: boolean
+    is_profile_completed: boolean,
+    subscription?: Subscription
 }
 
 export interface LoginResponse {

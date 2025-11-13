@@ -25,6 +25,19 @@ export const useSessionStore = defineStore('session', () => {
 		return user.value?.default_waba
 	})
 
+	const subscription = computed(() => {
+		return tenant.value?.subscription
+	})
+
+	const hasProOrScalePlan = computed(() => {
+		const plan = subscription.value?.plan_type
+		return plan === 'pro' || plan === 'scale'
+	})
+
+	const hasPremiumAccess = computed(() => {
+		return hasProOrScalePlan.value
+	})
+
 	const hasPermission = (permissionName: string) => {
 		return !!user.value?.permission_names.find(permission => permission === permissionName)
 	}
@@ -64,6 +77,9 @@ export const useSessionStore = defineStore('session', () => {
 		isAuthenticated,
 		isOwner,
 		defaultWaba,
+		subscription,
+		hasProOrScalePlan,
+		hasPremiumAccess,
 		hasPermission,
 		hasAllPermissions,
 		hasAnyPermission,

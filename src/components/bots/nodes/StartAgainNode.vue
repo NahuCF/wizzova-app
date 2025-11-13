@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IconCheck } from '@tabler/icons-vue'
+import { IconReload } from '@tabler/icons-vue'
 import { type NodeProps, Handle, Position } from '@vue-flow/core'
 import type { BotNodeDataMap } from '~/types'
 
@@ -8,8 +8,8 @@ defineProps<NodeProps & {
         x: number
         y: number
     }
-    type: 'mark_as_solved'
-    data: BotNodeDataMap['mark_as_solved']
+    type: 'start_again'
+    data: BotNodeDataMap['start_again']
 }>()
 
 defineEmits(['updateNodeInternals'])
@@ -18,7 +18,7 @@ defineEmits(['updateNodeInternals'])
 <template>
 	<BaseNode
 		:id="id"
-		:icon="IconCheck"
+		:icon="IconReload"
 		:title="$t(`bot_workflow.nodes.${type}`)"
 		hideEdit
 	>

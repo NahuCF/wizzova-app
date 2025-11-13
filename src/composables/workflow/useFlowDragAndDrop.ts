@@ -1,11 +1,12 @@
 import { 
 	IconCheck, IconClock, IconFile, IconLocation, 
 	IconMathLower, IconMessage, IconPhoto, IconQuestionMark, 
-	IconTemplate, IconUser, IconVideo, IconVolume
+	IconReload, 
+	IconTemplate, IconUser, IconVariable, IconVideo, IconVolume
 } from '@tabler/icons-vue'
 import { useVueFlow } from '@vue-flow/core'
 import { ref, watch, type Component } from 'vue'
-import type { BotNodeType } from '~/types'
+import type { BotNodeType, MediaNodeType } from '~/types'
 
 export type BotNodeCategory = 'send_message' | 'question' | 'general'
 export type BotNodeItem = {
@@ -104,8 +105,47 @@ export const nodeItems: BotNodeItem[] = [
 		isPremium: true,
 		category: 'general',
 		default: {}
+	},
+	{
+		name: 'start_again',
+		icon: IconReload,
+		isPremium: false,
+		category: 'general',
+		default: {}
+	},
+	{
+		name: 'set_variable',
+		icon: IconVariable,
+		isPremium: false,
+		category: 'general',
+		default: {
+			variables: []
+		}
 	}
 ]
+
+export const defaultSupportedFormats: Record<MediaNodeType, string[]> = {
+	image: ['image/jpeg', 'image/png'],
+	video: ['video/mp4', 'video/3gpp'],
+	audio: ['audio/aac', 'audio/mp4', 'audio/mpeg', 'audio/amr', 'audio/ogg'],
+	document: [
+		'application/pdf',
+		'application/msword',
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		'application/vnd.ms-excel',
+		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		'application/vnd.ms-powerpoint',
+		'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+		'text/plain',
+	],
+}
+
+export const defaultMBLimit: Record<MediaNodeType, number> = {
+	image: 5,
+	video: 16,
+	audio: 16,
+	document: 30,
+}
 
 export const useFlowDragAndDrop = () => {
 	const draggedType = ref<string | null>(null)
@@ -163,7 +203,10 @@ export const useFlowDragAndDrop = () => {
 			id: nodeId,
 			type: draggedType.value ?? undefined,
 			position,
-			data: { ...draggedData.value },
+			data: { 
+				...draggedData.value,
+				__isNew: true  // Flag to indicate this node was just created
+			},
 		}
 
 		/**
@@ -175,6 +218,15 @@ export const useFlowDragAndDrop = () => {
 			updateNode(nodeId, (node) => ({
 				position: { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 },
 			}))
+
+			setTimeout(() => {
+				updateNode(nodeId, (node) => {
+					if (node.data.__isNew) {
+						delete node.data.__isNew
+					}
+					return node
+				})
+			}, 500)
 
 			off()
 		})
@@ -194,7 +246,10 @@ export const useFlowDragAndDrop = () => {
 			id: nodeId,
 			type: nodeItem.name,
 			position: center,
-			data: { ...nodeItem.default },
+			data: { 
+				...nodeItem.default,
+				__isNew: true  // Flag to indicate this node was just created
+			},
 		}
 
 		const { off } = onNodesInitialized(() => {
@@ -204,6 +259,16 @@ export const useFlowDragAndDrop = () => {
 					y: node.position.y - node.dimensions.height / 2,
 				},
 			}))
+			
+			setTimeout(() => {
+				updateNode(nodeId, (node) => {
+					if (node.data.__isNew) {
+						delete node.data.__isNew
+					}
+					return node
+				})
+			}, 500)
+			
 			off()
 		})
 
