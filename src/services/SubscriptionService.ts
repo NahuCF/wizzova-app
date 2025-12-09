@@ -9,11 +9,26 @@ export default {
         )
     },
 
-    getCurrent() {
+    getCurrentSubscription() {
         return Http.get<{ data: Subscription | null }>('/subscription/current')
     },
 
-    cancel() {
+    getSubscriptions(params?: { rows_per_page?: number, status?: string }) {
+        return Http.get<{ data: Subscription[] }>('/subscription', { params })
+    },
+
+    getPaymentHistory(params?: { rows_per_page?: number, status?: string }) {
+        return Http.get<{ data: any[] }>('/subscription/payment-history', { params })
+    },
+
+    createSubscriptionLink(data: CreateSubscriptionRequest) {
+        return Http.post<{ data: MercadoPagoLinkResponse }>(
+            '/subscription/mercadopago/subscription-link', 
+            data
+        )
+    },
+
+    cancelSubscription() {
         return Http.post<{ data: Subscription }>('/subscription/cancel')
     },
 

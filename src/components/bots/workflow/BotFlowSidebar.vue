@@ -4,7 +4,7 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { nodeItems, type BotNodeCategory, type BotNodeItem } from '~/composables/workflow/useFlowDragAndDrop'
 import { useSessionStore } from '~/stores';
-import SubscriptionModal from '~/components/subscription/SubscriptionModal.vue'
+import SubscriptionDialog from '~/components/subscription/SubscriptionDialog.vue'
 
 const emit = defineEmits<{
 	(e: 'dragStart', { event, nodeItem }: { 
@@ -18,7 +18,7 @@ const { t } = useI18n()
 const sessionStore = useSessionStore()
 
 const searchTerm = ref('')
-const showSubscriptionModal = ref(false)
+const showSubscriptionDialog = ref(false)
 
 const groupedItems = computed(() => {
 	const term = searchTerm.value.toLowerCase()
@@ -42,7 +42,7 @@ const groupedItems = computed(() => {
 
 const onClick = (nodeItem: BotNodeItem) => {
 	if(nodeItem.isPremium && !sessionStore.hasPremiumAccess) {
-		showSubscriptionModal.value = true
+		showSubscriptionDialog.value = true
 	}
 	else {
 		emit('addNode', nodeItem)
@@ -98,6 +98,6 @@ const onDragStart = (event: DragEvent, nodeItem: BotNodeItem) => {
 		</div>
 	</aside>
 
-	<!-- Subscription Modal -->
-	<SubscriptionModal v-model:visible="showSubscriptionModal" />
+	<!-- Subscription Dialog -->
+	<SubscriptionDialog v-model:visible="showSubscriptionDialog" />
 </template>

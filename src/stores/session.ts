@@ -31,7 +31,7 @@ export const useSessionStore = defineStore('session', () => {
 
 	const hasProOrScalePlan = computed(() => {
 		const plan = subscription.value?.plan_type
-		return plan === 'pro' || plan === 'scale'
+		return plan === 'scale' || plan === 'pro'
 	})
 
 	const hasPremiumAccess = computed(() => {

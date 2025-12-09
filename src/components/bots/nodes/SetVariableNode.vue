@@ -38,8 +38,8 @@ const validVariables = computed(() => {
 		return []
 	}
 	return props.data.variables
-		.filter(v => v.variable_name && v.value)
-		.map(v => ({
+		.filter((v: any) => v.variable_name && v.value)
+		.map((v: any) => ({
 			...v,
 			variable: botStore.variables.find(bv => bv.name === v.variable_name)
 		}))

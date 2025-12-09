@@ -106,6 +106,9 @@ export default {
     'This role is internal and cannot be updated': 'Este rol es interno y no puede actualizarce',
     'A team with this name already exists': 'Ya existe un equipo con este nombre',
     'contact_has_active_broadcasts': 'No se puede modificar un contacto cuando tiene campañas activas',
+    'subscription_contact_limit_reached': 'Ha alcanzado el límite de contactos de su plan de suscripción actual. Por favor actualice su plan para agregar más contactos.',
+    'subscription_user_limit_reached': 'Ha alcanzado el límite de usuarios de su plan de suscripción actual. Por favor actualice su plan para agregar más usuarios.',
+    'subscription_whatsapp_limit_reached': 'Ha alcanzado el límite de números de WhatsApp de su plan de suscripción actual. Por favor actualice su plan para agregar más números.',
     'bot_already_exists': 'El bot ya existe',
     'bot_not_found': 'Bot no encontrado',
     'bot_has_no_nodes': 'El Bot debe tener por lo menos un nodo para ser activado',
@@ -358,7 +361,7 @@ export default {
       duplicated_field: 'El campo de contacto "{field}" está mapeado más de una vez.',
       import_failed: 'La importación falló. Por favor, inténtalo de nuevo.',
       step3_title: 'Asignación completada exitosamente',
-      step3_hint: 'Las columnas y valores se mapearon correctamente, y los contactos fueron agregados exitosamente a tu lista. Si lo deseas, puedes acceder al historial.',
+      step3_hint: 'Las columnas y valores se mapearon correctamente, te notificaremos por medio de la campanita cuando se haya completado la importación. Si lo deseas, puedes acceder al historial.',
       go_to_history: 'Ir al historial',
       cancel: 'Cancelar',
       back: 'Volver',
@@ -733,7 +736,6 @@ export default {
     no_messages_found: 'No se encontraron mensajes'
   },
   next: 'Siguiente',
-  back: 'Volver',
   learn_more: 'Aprender más',
   last_n_days: 'Últimos {count} días',
   select_date_range: 'Rango de fechas',
@@ -1049,6 +1051,11 @@ export default {
     choose_plan: 'Elige Tu Plan',
     select_plan: 'Seleccionar Plan',
     configure_users: 'Configurar Usuarios',
+    plan: {
+      growth: 'Growth',
+      scale: 'Scale',
+      pro: 'Pro'
+    },
     monthly: 'Mensual',
     yearly: 'Anual',
     save_25: '25% DESC',

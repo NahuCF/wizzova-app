@@ -106,12 +106,12 @@ const multitextIcon = () => {
         <div v-else-if="type === 'MULTI_TEXT'">
             <TagInput 
                 v-if="field.name === 'Tags'" 
-                v-model="innerValue"
+                v-model="innerValue as string[]"
             />
 
             <MultiTextInput 
                 v-else-if="field.name === 'Phone'"
-                v-model="innerValue"
+                v-model="innerValue as string[]"
                 :fieldName="field.name"
                 v-bind="commonInputProps"
             >
@@ -126,7 +126,7 @@ const multitextIcon = () => {
 
             <MultiTextInput 
                 v-else
-                v-model="innerValue"
+                v-model="innerValue as string[]"
                 :fieldName="field.name"
                 :isGrouped="['Email'].includes(field.name)"
                 :icon="multitextIcon()"

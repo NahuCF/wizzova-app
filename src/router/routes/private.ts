@@ -12,6 +12,7 @@ import BroadcastDetails from '~/views/BroadcastDetails.vue'
 import Bots from '~/views/Bots.vue'
 import NewBotFlow from '~/views/NewBotVersion.vue'
 import BotDetails from '~/views/BotDetails.vue'
+import Subscription from '~/views/Subscription.vue'
 
 const routes = [
   {
@@ -98,6 +99,12 @@ const routes = [
             component: NewBotFlow
           }
         ]
+      },
+      {
+        path: '/subscription',
+        name: 'subscription',
+        meta: { titleKey: 'subscription.title' },
+        component: Subscription
       },
       {
         path: '/settings',
