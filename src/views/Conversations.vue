@@ -330,7 +330,7 @@ useConversationChannels()
       v-model:visible="showTemplateDialog"
       :conversationId="selectedConversation.id"
       @onConfirm="
-        (message) => {
+        (message: CreateMessage) => {
           showTemplateDialog = false
           sendMessage(message)
         }
