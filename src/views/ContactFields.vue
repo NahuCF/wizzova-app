@@ -255,7 +255,7 @@ fetchTypes()
         <template #body="{ data }: { data: ContactFieldItem }">
           <ActionButton
             v-if="!data.is_primary_field && fieldActions(data).length > 0"
-            @click="(e) => popover?.show(e, data)"
+            @click="(e: MouseEvent) => popover?.show(e, data)"
           />
         </template>
       </Column>
