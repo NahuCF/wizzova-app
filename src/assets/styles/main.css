@@ -6,7 +6,7 @@
 
 html {
     font-size: 12px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 @layer primevue {
@@ -62,8 +62,8 @@ label {
 }
 
 .p-tabs {
-	height: 100%;
-	overflow: hidden;
+    height: 100%;
+    overflow: hidden;
 }
 
 .p-tabpanel {
@@ -71,30 +71,29 @@ label {
 }
 
 .p-tabpanels {
-	background: transparent !important;
-	border: none;
+    background: transparent !important;
+    border: none;
     height: 100%;
-	overflow-y: hidden;
+    overflow-y: hidden;
 }
 
 .p-tablist-tab,
 .p-tabpanels,
 .p-tabpanel {
-	background: transparent;
-	border: none;
+    background: transparent;
+    border: none;
+}
+
+.p-tablist {
+    background: transparent !important;
 }
 
 .p-tablist-tab-list {
-	background: transparent !important;
-	padding: 0 1.5rem;
-	border-bottom: 1px solid var(--p-tabs-tab-hover-border-color) !important;
+    background: transparent !important;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid var(--p-tabs-tab-hover-border-color) !important;
 }
 
-.vue-flow__handle {
-    height: 8px !important;
-    width: 8px !important;
-}
-
-.vue-flow__edges path {
-    stroke-width:2 !important;
+.tabler-icon {
+    stroke-width: 1.5;
 }

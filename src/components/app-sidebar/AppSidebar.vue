@@ -14,6 +14,7 @@ import { useSessionStore } from '~/stores'
 import { useUserPreferencesStore } from '~/stores/userPreferences'
 import { usePopoverPosition } from '~/composables/usePopoverPosition'
 import { useI18n } from 'vue-i18n'
+import NotificationButton from '~/components/notifications/NotificationButton.vue'
 
 const { t } = useI18n()
 const session = useSessionStore()
@@ -149,6 +150,8 @@ const logout = async () => {
 			</template>
 		</ul>
 
+		<NotificationButton :collapsed="collapsed" />
+
 		<div class="border-t border-slate-200 p-2">
 			<div
 				class="flex items-center gap-3 px-2 py-2 rounded-md cursor-pointer hover:bg-slate-100 transition"
@@ -156,6 +159,13 @@ const logout = async () => {
 			>
 				<div>
 					<Avatar 
+						v-if="session.user?.profile_img_path"
+						:image="session.user.profile_img_path"
+						size="large"
+						shape="circle"
+					/>
+					<Avatar 
+						v-else
 						:label="session.user?.name.charAt(0).toLocaleUpperCase()"
 						size="large"
 						shape="circle"
@@ -185,6 +195,13 @@ const logout = async () => {
 				<div class="flex items-center gap-3 p-4 min-w-[200px]">
 					<div>
 						<Avatar 
+							v-if="session.user?.profile_img_path"
+							:image="session.user.profile_img_path"
+							size="large"
+							shape="circle"
+						/>
+						<Avatar 
+							v-else
 							:label="session.user?.name.charAt(0).toLocaleUpperCase()"
 							size="large"
 							shape="circle"

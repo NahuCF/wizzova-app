@@ -5,6 +5,7 @@ export interface User {
   id: string
   email: string
   name: string
+  profile_img_path?: string | null
 }
 
 export interface UserItem {
@@ -14,6 +15,7 @@ export interface UserItem {
   cellphone_number: string,
   cellphone_prefix: string,
   cellphone: string,
+  profile_img_path?: string | null,
   role: Role,
   teams?: TeamItem[],
   business?: BusinessItem,

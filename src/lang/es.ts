@@ -257,6 +257,7 @@ export default {
   submit: 'Enviar',
   create: 'Crear',
   copy: 'Copiar',
+  copied: 'Copiado',
   required: '{field} es requerido!',
   contact_fields: {
     title: 'Campos de contacto',
@@ -1048,9 +1049,9 @@ export default {
     }
   },
   subscription: {
-    choose_plan: 'Elige Tu Plan',
-    select_plan: 'Seleccionar Plan',
-    configure_users: 'Configurar Usuarios',
+    title: 'Elige un plan',
+    subtitle: 'Selecciona un plan',
+    current_plan: 'Configurar Usuarios',
     plan: {
       growth: 'Growth',
       scale: 'Scale',
@@ -1088,5 +1089,34 @@ export default {
     total: 'Total',
     yearly_savings_message: '¡Estás ahorrando 25% con facturación anual!',
     subscribe: 'Suscribirse'
+  },
+  profile: {
+    title: 'Perfil',
+    user_id: 'ID de Usuario',
+    profile_image: 'Imagen de Perfil',
+    upload_image: 'Subir Imagen',
+    remove_image: 'Eliminar Imagen',
+    image_requirements: 'Máx 5MB, JPG/PNG',
+    name: 'Nombre',
+    email: 'Correo electrónico',
+    phone_number: 'Número de teléfono',
+    id_copied: 'ID de usuario copiado al portapapeles',
+    copy_failed: 'Error al copiar el ID de usuario',
+    file_too_large: 'El archivo debe ser menor a 5MB',
+    invalid_file_type: 'Solo se permiten archivos JPG y PNG',
+    image_uploaded: 'Imagen de perfil subida exitosamente',
+    upload_failed: 'Error al subir la imagen de perfil',
+    image_deleted: 'Imagen de perfil eliminada exitosamente',
+    delete_failed: 'Error al eliminar la imagen de perfil',
+    updated: 'Perfil actualizado exitosamente',
+    update_failed: 'Error al actualizar el perfil',
+    error_loading: 'Error al cargar los datos del perfil'
+  },
+  notifications: {
+    title: 'Notificaciones',
+    mark_all_read: 'Marcar todas como leídas',
+    empty: 'No hay notificaciones aún',
+    import_completed: 'Importación completada',
+    import_completed_desc: 'Tu importación de contactos se ha completado'
   }
 }

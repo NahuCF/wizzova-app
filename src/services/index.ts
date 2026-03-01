@@ -22,7 +22,9 @@ import ConversationService from './ConversationService'
 import MessageService from './MessageService'
 import BotService from './BotService'
 import BotVersionService from './BotVersionService'
+import ProfileService from './ProfileService'
 import SubscriptionService from './SubscriptionService'
+import NotificationService from './NotificationService'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -42,6 +44,8 @@ export const API = {
     industry: IndustryService,
     knownPlace: KnownPLaceService,
     message: MessageService,
+    notification: NotificationService,
+    profile: ProfileService,
     role: RoleService,
     team: TeamService,
     templateCategory: TemplateCategoryService,

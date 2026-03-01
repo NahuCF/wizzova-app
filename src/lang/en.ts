@@ -259,6 +259,7 @@ Grab them today!`,
   submit: 'Submit',
   create: 'Create',
   copy: 'Copy',
+  copied: 'Copied',
   required: '{field} is required!',
   contact_fields: {
     title: 'Contact Fields',
@@ -1096,7 +1097,7 @@ Grab them today!`,
       failed: 'Failed',
       refunded: 'Refunded'
     },
-    plan: {
+    plan_tiers: {
       starter: 'Starter',
       growth: 'Growth',
       enterprise: 'Enterprise'
@@ -1152,5 +1153,34 @@ Grab them today!`,
     total: 'Total',
     yearly_savings_message: 'You are saving 25% with yearly billing!',
     subscribe: 'Subscribe'
+  },
+  profile: {
+    title: 'Profile',
+    user_id: 'User ID',
+    profile_image: 'Profile Image',
+    upload_image: 'Upload Image',
+    remove_image: 'Remove Image',
+    image_requirements: 'Max 5MB, JPG/PNG',
+    name: 'Name',
+    email: 'Email',
+    phone_number: 'Phone Number',
+    id_copied: 'User ID copied to clipboard',
+    copy_failed: 'Failed to copy User ID',
+    file_too_large: 'File size must be less than 5MB',
+    invalid_file_type: 'Only JPG and PNG files are allowed',
+    image_uploaded: 'Profile image uploaded successfully',
+    upload_failed: 'Failed to upload profile image',
+    image_deleted: 'Profile image removed successfully',
+    delete_failed: 'Failed to remove profile image',
+    updated: 'Profile updated successfully',
+    update_failed: 'Failed to update profile',
+    error_loading: 'Failed to load profile data'
+  },
+  notifications: {
+    title: 'Notifications',
+    mark_all_read: 'Mark all as read',
+    empty: 'No notifications yet',
+    import_completed: 'Import completed',
+    import_completed_desc: 'Your contact import is completed'
   }
 }

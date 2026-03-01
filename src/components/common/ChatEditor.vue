@@ -47,7 +47,7 @@ const suggestion = {
 		return (props.users || [])
 			.filter(u => u.name.toLowerCase().startsWith(query.toLowerCase()))
 			.slice(0, 5)
-			.map(u => ({ id: u.id.toString(), label: u.name }))
+			.map(u => ({ id: u.id.toString(), label: u.name, profile_img_path: u.profile_img_path }))
 	},
 	render: () => {
 		let component: VueRenderer | null = null

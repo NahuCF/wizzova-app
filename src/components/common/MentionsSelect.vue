@@ -2,8 +2,8 @@
 import { ref, watch } from 'vue'
 
 const props = defineProps<{
-	items: Array<{ id: string, label: string }>
-	command: (item: { id: string; label: string }) => void
+	items: Array<{ id: string, label: string, profile_img_path?: string | null }>
+	command: (item: { id: string; label: string; profile_img_path?: string | null }) => void
 }>()
 const selectedIndex = ref(0)
 
@@ -23,7 +23,8 @@ const selectItem = (index: number) => {
 	const item = props.items[index]
 	if (item) props.command({
 		id: item.id,
-		label: item.label
+		label: item.label,
+		profile_img_path: item.profile_img_path
 	})
 }
 
@@ -50,7 +51,7 @@ defineExpose({ onKeyDown })
 
 <template>
 	<Listbox v-show="items.length" :modelValue="items[selectedIndex]" :options="items" class="p-1">
-		<template #option="{ option }: { option: { id: string, label: string }}">
+		<template #option="{ option }: { option: { id: string, label: string, profile_img_path?: string | null }}">
 			<a
 				v-ripple
 				class="flex items-center min-w-[200px] rounded cursor-pointer"
@@ -58,7 +59,13 @@ defineExpose({ onKeyDown })
 			>
 				<div class="flex items-center gap-2">
 					<Avatar
-						v-if="option.label"
+						v-if="option.profile_img_path"
+						:image="option.profile_img_path"
+						shape="circle"
+						size="small"
+					/>
+					<Avatar
+						v-else-if="option.label"
 						:label="option.label.charAt(0).toLocaleUpperCase()"
 						shape="circle"
 						size="small"

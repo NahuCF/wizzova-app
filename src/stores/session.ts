@@ -52,6 +52,12 @@ export const useSessionStore = defineStore('session', () => {
 		return permissions.some(p => user.value?.permission_names.includes(p))
 	}
 
+	const updateUser = (updatedUser: Partial<UserItem>) => {
+		if (user.value) {
+			user.value = { ...user.value, ...updatedUser }
+		}
+	}
+
 	const $reset = () => {
 		user.value = null
 		tenant.value = null
@@ -83,6 +89,7 @@ export const useSessionStore = defineStore('session', () => {
 		hasPermission,
 		hasAllPermissions,
 		hasAnyPermission,
+		updateUser,
 		$reset
 	}
 }, {
