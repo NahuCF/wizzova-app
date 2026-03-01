@@ -94,7 +94,7 @@ defineExpose({
               <button
                 class="w-full cursor-pointer py-2 px-3 text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors flex items-center justify-center gap-2"
                 @click="
-                  emit('onCreate')
+                  emit('onCreate');
                   variablesPopover?.hide()
                 "
               >

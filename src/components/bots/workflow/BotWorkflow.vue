@@ -49,7 +49,7 @@ const nodeTypes = ref<Record<BotNodeType, any>>({
   set_variable: markRaw(SetVariableNode),
 })
 
-const edgeTypes = ref<EdgeTypes>({
+const edgeTypes = ref<Record<string, any>>({
   default: markRaw(CustomEdge),
   smoothstep: markRaw(CustomEdge),
 })

@@ -262,13 +262,16 @@ const updateProfile = async () => {
               </div>
             </div>
             <Button
-              :icon="copied ? IconCheck : IconCopy"
               :label="copied ? $t('copied') : $t('copy')"
               severity="secondary"
               size="small"
               @click="copyUserId"
               :disabled="!userId"
-            />
+            >
+              <template #icon>
+                <component :is="copied ? IconCheck : IconCopy" class="w-4 h-4" />
+              </template>
+            </Button>
           </div>
 
           <!-- Profile Image Section -->
@@ -307,24 +310,30 @@ const updateProfile = async () => {
               <!-- Action Buttons -->
               <div class="flex flex-col gap-2">
                 <Button
-                  :icon="IconUpload"
                   :label="$t('profile.upload_image')"
                   severity="primary"
                   size="small"
                   @click="openFileDialog"
                   :loading="uploadLoading"
-                />
+                >
+                  <template #icon>
+                    <IconUpload class="w-4 h-4" />
+                  </template>
+                </Button>
 
                 <Button
                   v-if="profileImgUrl"
-                  :icon="IconTrash"
                   :label="$t('profile.remove_image')"
                   severity="danger"
                   size="small"
                   outlined
                   @click="deleteProfileImage"
                   :loading="deleteLoading"
-                />
+                >
+                  <template #icon>
+                    <IconTrash class="w-4 h-4" />
+                  </template>
+                </Button>
 
                 <span class="text-xs text-gray-500">
                   {{ $t('profile.image_requirements') }}

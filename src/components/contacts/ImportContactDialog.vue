@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { API } from '~/services'
 import { IconCircleCheck, IconUsers } from '@tabler/icons-vue'
-import type { ContactImportMode, MappingContact } from '~/types'
+import type { ContactFieldType, ContactImportMode, MappingContact } from '~/types'
 import { useContactFieldStore } from '~/stores'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 
@@ -58,7 +58,7 @@ const contactFields = computed(() => {
         id: '',
         name: 'ID',
         internal_name: 'id',
-        type: 'TEXT',
+        type: 'TEXT' as ContactFieldType,
         is_mandatory: false,
         is_active: true,
         is_primary_field: true,

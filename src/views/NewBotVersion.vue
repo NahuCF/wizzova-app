@@ -160,7 +160,7 @@ const loadBot = async () => {
       const startNodeForWorkflow = {
         id: 'start',
         position: startingNode ? startingNode.position : { x: 300, y: 300 },
-        type: 'starting_node',
+        type: 'starting_node' as const,
         data: {},
       }
 
