@@ -663,23 +663,27 @@ export const passthrough = {
   toast: {
     root: {
       style: {
-        width: '29rem'
-      }
+        width: '29rem',
+      },
     },
     messageContent: { style: { padding: '0.875rem' } },
     summary: { style: { fontSize: '1.125rem' } },
     detail: { style: { fontSize: '1rem' } },
-    messageIcon: { style: { 
-      fontSize: '1.25rem',
-      height: '1.25rem',
-      width: '1.25rem'
-    }},
-    closeIcon: { style: { 
-      fontSize: '1.125rem',
-      height: '1.125rem',
-      width: '1.125rem'
-    }}
-  }
+    messageIcon: {
+      style: {
+        fontSize: '1.25rem',
+        height: '1.25rem',
+        width: '1.25rem',
+      },
+    },
+    closeIcon: {
+      style: {
+        fontSize: '1.125rem',
+        height: '1.125rem',
+        width: '1.125rem',
+      },
+    },
+  },
 }
 
 export const preset = definePreset(Aura, theme)

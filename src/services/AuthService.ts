@@ -1,5 +1,11 @@
 import Http from '~/config/http'
-import type { LoginForm, LoginResponse, RegisterForm, RegisterResponse, TenantsResponse } from '~/types/Auth'
+import type {
+  LoginForm,
+  LoginResponse,
+  RegisterForm,
+  RegisterResponse,
+  TenantsResponse,
+} from '~/types/Auth'
 
 export default {
   async login(data: LoginForm) {

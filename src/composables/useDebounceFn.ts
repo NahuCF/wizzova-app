@@ -1,4 +1,4 @@
-import { onBeforeUnmount } from "vue"
+import { onBeforeUnmount } from 'vue'
 
 export function useDebounceFn<T extends (...args: any[]) => void>(fn: T, delay = 300) {
   let timeout: ReturnType<typeof setTimeout>

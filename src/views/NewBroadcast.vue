@@ -23,151 +23,152 @@ const success = ref(false)
 const loading = ref(false)
 
 const canSubmit = () => {
-    const timeSelected = newBroadcast.value.scheduledDate && newBroadcast.value.scheduledTime
+  const timeSelected = newBroadcast.value.scheduledDate && newBroadcast.value.scheduledTime
 
-    return newBroadcast.value.name.trim() !== '' &&
-        (newBroadcast.value.sendOption === 'SEND_NOW' || timeSelected )
+  return (
+    newBroadcast.value.name.trim() !== '' &&
+    (newBroadcast.value.sendOption === 'SEND_NOW' || timeSelected)
+  )
 }
 
 const scheduleBroadcast = async () => {
-    if(!newBroadcast.value.template || !newBroadcast.value.broadcastNumber) return
+  if (!newBroadcast.value.template || !newBroadcast.value.broadcastNumber) return
 
-    loading.value = true
-    try {
-        const createBroadcast: BroadcastCreate = {
-            name: newBroadcast.value.name,
-            template_id: newBroadcast.value.template.id,
-            group_ids: newBroadcast.value.contactGroups.map(group => group.id),
-            phone_number_id: newBroadcast.value.broadcastNumber.id,
-            send_to_all_numbers: newBroadcast.value.sendToAll,
-            send_now: !scheduledAt.value,
-            ...(scheduledAt.value && { scheduled_at: scheduledAt.value }),
-            ...(newBroadcast.value.variables && { variables: newBroadcast.value.variables })
-        }
-
-        const { data: response } = await API.broadcast.create(createBroadcast)
-
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: t('new_broadcast.broadcast_created'),
-            life: 3000,
-        })
-        
-        success.value = true
-        router.push({ name: 'broadcast-details', params: { id: response.data.id } })
-        broadcastStore.$reset()
-    } catch(error) {
-        handleError(error)
-    } finally {
-        loading.value = false
+  loading.value = true
+  try {
+    const createBroadcast: BroadcastCreate = {
+      name: newBroadcast.value.name,
+      template_id: newBroadcast.value.template.id,
+      group_ids: newBroadcast.value.contactGroups.map((group) => group.id),
+      phone_number_id: newBroadcast.value.broadcastNumber.id,
+      send_to_all_numbers: newBroadcast.value.sendToAll,
+      send_now: !scheduledAt.value,
+      ...(scheduledAt.value && { scheduled_at: scheduledAt.value }),
+      ...(newBroadcast.value.variables && { variables: newBroadcast.value.variables }),
     }
+
+    const { data: response } = await API.broadcast.create(createBroadcast)
+
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: t('new_broadcast.broadcast_created'),
+      life: 3000,
+    })
+
+    success.value = true
+    router.push({ name: 'broadcast-details', params: { id: response.data.id } })
+    broadcastStore.$reset()
+  } catch (error) {
+    handleError(error)
+  } finally {
+    loading.value = false
+  }
 }
 
 const confirmLeave = () => {
-    broadcastStore.$reset()
-    showLeaveDialog.value = false
-    if (pendingNext.value) pendingNext.value()
+  broadcastStore.$reset()
+  showLeaveDialog.value = false
+  if (pendingNext.value) pendingNext.value()
 }
 
 const cancelLeave = () => {
-    showLeaveDialog.value = false
-    if (pendingNext.value) pendingNext.value(false)
+  showLeaveDialog.value = false
+  if (pendingNext.value) pendingNext.value(false)
 }
 
 const goToSchedule = () => {
-    if(newBroadcast.value.variables) {
-        showMapDialog.value = true
-    }
-    else {
-        currentStep.value++
-    }
+  if (newBroadcast.value.variables) {
+    showMapDialog.value = true
+  } else {
+    currentStep.value++
+  }
 }
 
 onBeforeRouteLeave((to, from, next) => {
-    if(success.value === true || to.name === 'new-template') {
-        next()
-    }
-    
-    showLeaveDialog.value = true
-    pendingNext.value = next
+  if (success.value === true || to.name === 'new-template') {
+    next()
+  }
+
+  showLeaveDialog.value = true
+  pendingNext.value = next
 })
 </script>
 
 <template>
-    <div class="flex flex-col justify-between h-full">
-        <div class="flex flex-col w-full p-6">
-            <Stepper v-model:value="currentStep" linear>
-                <StepList class="flex xl:px-70! text-xl">
-                    <Step :value="1">{{ $t('new_broadcast.select_template') }}</Step>
-                    <Step :value="2">{{ $t('new_broadcast.select_audience') }}</Step>
-                    <Step :value="3">{{ $t('new_broadcast.schedule_broadcast') }}</Step>
-                </StepList>
-                <StepPanels>
-                    <StepPanel class="bg-transparent!" :value="1">
-                        <TemplateStep v-if="currentStep === 1" />
-                    </StepPanel>
-                    <StepPanel class="bg-transparent!" :value="2">
-                        <AudienceStep v-if="currentStep === 2" />
-                    </StepPanel>
-                    <StepPanel class="bg-transparent!" :value="3">
-                        <ScheduleStep v-if="currentStep === 3" />
-                    </StepPanel>
-                </StepPanels>
-            </Stepper>
-        </div>
-
-        <div 
-            v-if="currentStep === 2 || currentStep === 3" 
-            class="sticky bottom-0 w-full flex justify-end items-center py-4 px-6 bg-white shadow z-100"
-        >
-            <div v-if="currentStep === 2" class="flex items-center gap-3">
-                <div class="text-emerald-500" v-if="newBroadcast.contactGroups.length === 1">
-                    {{ $t('new_broadcast.group_selected') }}
-                </div>
-                <div class="text-emerald-500" v-else-if="newBroadcast.contactGroups.length > 1">
-                    {{ $t('new_broadcast.groups_selected', { groups: newBroadcast.contactGroups.length }) }}
-                </div>
-                <div class="text-emerald-500" v-else>
-                    {{ $t('new_broadcast.no_group_selected') }}
-                </div>
-                <Button 
-                    :disabled="newBroadcast.contactGroups.length === 0"
-                    @click="goToSchedule"
-                >
-                    <span>
-                        {{ $t('continue') }}
-                    </span>
-                </Button>
-            </div>
-
-            <div v-if="currentStep === 3" class="flex items-center gap-3">
-                <Button
-                    severity="secondary"
-                    @click="router.push({ name: 'broadcasts' })"
-                >
-                    <span>
-                        {{ $t('cancel') }}
-                    </span>
-                </Button>
-                <Button 
-                    :disabled="!canSubmit()"
-                    @click="scheduleBroadcast"
-                >
-                    <IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
-                    <span v-else>
-                        {{ $t('new_broadcast.schedule_broadcast') }}
-                    </span>
-                </Button>
-            </div>
-        </div>
-
-        <Dialog v-model:visible="showLeaveDialog" modal :header="$t('unsaved_changes')" :closable="false">
-            <p>{{ $t('unsaved_changes_message') }}</p>
-            <template #footer>
-                <Button :label="$t('cancel')" @click="cancelLeave" severity="secondary" />
-                <Button :label="$t('leave')" @click="confirmLeave" severity="danger" />
-            </template>
-        </Dialog>
+  <div class="flex flex-col justify-between h-full">
+    <div class="flex flex-col w-full p-6">
+      <Stepper v-model:value="currentStep" linear>
+        <StepList class="flex xl:px-70! text-xl">
+          <Step :value="1">{{ $t('new_broadcast.select_template') }}</Step>
+          <Step :value="2">{{ $t('new_broadcast.select_audience') }}</Step>
+          <Step :value="3">{{ $t('new_broadcast.schedule_broadcast') }}</Step>
+        </StepList>
+        <StepPanels>
+          <StepPanel class="bg-transparent!" :value="1">
+            <TemplateStep v-if="currentStep === 1" />
+          </StepPanel>
+          <StepPanel class="bg-transparent!" :value="2">
+            <AudienceStep v-if="currentStep === 2" />
+          </StepPanel>
+          <StepPanel class="bg-transparent!" :value="3">
+            <ScheduleStep v-if="currentStep === 3" />
+          </StepPanel>
+        </StepPanels>
+      </Stepper>
     </div>
+
+    <div
+      v-if="currentStep === 2 || currentStep === 3"
+      class="sticky bottom-0 w-full flex justify-end items-center py-4 px-6 bg-white shadow z-100"
+    >
+      <div v-if="currentStep === 2" class="flex items-center gap-3">
+        <div class="text-emerald-500" v-if="newBroadcast.contactGroups.length === 1">
+          {{ $t('new_broadcast.group_selected') }}
+        </div>
+        <div class="text-emerald-500" v-else-if="newBroadcast.contactGroups.length > 1">
+          {{
+            $t('new_broadcast.groups_selected', {
+              groups: newBroadcast.contactGroups.length,
+            })
+          }}
+        </div>
+        <div class="text-emerald-500" v-else>
+          {{ $t('new_broadcast.no_group_selected') }}
+        </div>
+        <Button :disabled="newBroadcast.contactGroups.length === 0" @click="goToSchedule">
+          <span>
+            {{ $t('continue') }}
+          </span>
+        </Button>
+      </div>
+
+      <div v-if="currentStep === 3" class="flex items-center gap-3">
+        <Button severity="secondary" @click="router.push({ name: 'broadcasts' })">
+          <span>
+            {{ $t('cancel') }}
+          </span>
+        </Button>
+        <Button :disabled="!canSubmit()" @click="scheduleBroadcast">
+          <IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
+          <span v-else>
+            {{ $t('new_broadcast.schedule_broadcast') }}
+          </span>
+        </Button>
+      </div>
+    </div>
+
+    <Dialog
+      v-model:visible="showLeaveDialog"
+      modal
+      :header="$t('unsaved_changes')"
+      :closable="false"
+    >
+      <p>{{ $t('unsaved_changes_message') }}</p>
+      <template #footer>
+        <Button :label="$t('cancel')" @click="cancelLeave" severity="secondary" />
+        <Button :label="$t('leave')" @click="confirmLeave" severity="danger" />
+      </template>
+    </Dialog>
+  </div>
 </template>

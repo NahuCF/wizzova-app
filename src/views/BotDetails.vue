@@ -20,80 +20,85 @@ const currentTab = ref('stats')
 const bot = ref<BotItem>()
 
 const updateConf = (newConf: BotItem) => {
-	bot.value = {
-		...bot.value,
-		...newConf
-	}
+  bot.value = {
+    ...bot.value,
+    ...newConf,
+  }
 
-	toast.add({ 
-		severity: 'success',
-		summary: 'Success', 
-		detail: t('bot_details.conf_updated'), 
-		life: 3000 
-	})
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: t('bot_details.conf_updated'),
+    life: 3000,
+  })
 }
 
 const loadBot = async () => {
-	const botId = route.params.id
+  const botId = route.params.id
 
-	if(typeof botId === 'string') {
-		try {
-			const { data: response } = await API.bot.get(botId)
-			bot.value = response.data
-		} catch(error) {
-			console.log(error)
-		}
-	}
+  if (typeof botId === 'string') {
+    try {
+      const { data: response } = await API.bot.get(botId)
+      bot.value = response.data
+    } catch (error) {
+      console.log(error)
+    }
+  }
 }
 
 watch(currentTab, () => {
-	router.replace({ query: { tab: currentTab.value } })
+  router.replace({ query: { tab: currentTab.value } })
 })
 
 loadBot()
 
-if(typeof route.query.tab === 'string') {
-	currentTab.value = route.query.tab
+if (typeof route.query.tab === 'string') {
+  currentTab.value = route.query.tab
 }
 </script>
 
 <template>
-    <div class="flex flex-col h-full">
-        <div class="flex justify-between items-center px-6 pt-6">
-			<div class="flex items-center gap-3">
-				<Button variant="text" @click="router.push({ name: 'bots' })" class="p-1!" severity="secondary">
-					<IconArrowLeft size="20" />
-				</Button>
-				<div class="text-2xl font-semibold">{{ bot?.name }}</div>
-			</div>
-			<div>
-				<Button @click="router.push({ name: 'new-botflow', params: { id: bot?.id || '' } })">
-					<IconPlus size="16" class="mr-1" />
-					<span>
-						{{ $t(`bot_details.add_a_version`) }}
-					</span>
-				</Button>
-			</div>
-		</div>
-        <Tabs v-model:value="currentTab" class="py-4" lazy>
-            <TabList class="text-lg">
-                <Tab v-for="tab in tabs" :key="tab" :value="tab">
-                    <div class="flex items-center gap-2 text-inherit">
-                        <span>{{ $t(`bot_details.tabs.${tab}`) }}</span>
-                    </div>
-                </Tab>
-            </TabList>
-            <TabPanels class="px-6! py-8!">
-                <TabPanel value="stats">
-					<StatsTab :botId="bot?.id" />
-                </TabPanel>
-				<TabPanel value="versions">
-					<VersionTab :botId="bot?.id" />
-                </TabPanel>
-				<TabPanel value="settings" class="overflow-y-auto overflow-x-hidden">
-					<SettingsTab :bot="bot" @onSave="updateConf" />
-                </TabPanel>
-            </TabPanels>
-        </Tabs>
+  <div class="flex flex-col h-full">
+    <div class="flex justify-between items-center px-6 pt-6">
+      <div class="flex items-center gap-3">
+        <Button
+          variant="text"
+          @click="router.push({ name: 'bots' })"
+          class="p-1!"
+          severity="secondary"
+        >
+          <IconArrowLeft size="20" />
+        </Button>
+        <div class="text-2xl font-semibold">{{ bot?.name }}</div>
+      </div>
+      <div>
+        <Button @click="router.push({ name: 'new-botflow', params: { id: bot?.id || '' } })">
+          <IconPlus size="16" class="mr-1" />
+          <span>
+            {{ $t(`bot_details.add_a_version`) }}
+          </span>
+        </Button>
+      </div>
     </div>
+    <Tabs v-model:value="currentTab" class="py-4" lazy>
+      <TabList class="text-lg">
+        <Tab v-for="tab in tabs" :key="tab" :value="tab">
+          <div class="flex items-center gap-2 text-inherit">
+            <span>{{ $t(`bot_details.tabs.${tab}`) }}</span>
+          </div>
+        </Tab>
+      </TabList>
+      <TabPanels class="px-6! py-8!">
+        <TabPanel value="stats">
+          <StatsTab :botId="bot?.id" />
+        </TabPanel>
+        <TabPanel value="versions">
+          <VersionTab :botId="bot?.id" />
+        </TabPanel>
+        <TabPanel value="settings" class="overflow-y-auto overflow-x-hidden">
+          <SettingsTab :bot="bot" @onSave="updateConf" />
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+  </div>
 </template>

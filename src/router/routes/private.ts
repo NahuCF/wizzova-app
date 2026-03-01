@@ -28,9 +28,9 @@ const routes = [
             path: '',
             name: 'conversations',
             meta: { titleKey: 'conversations.title' },
-            component: Conversations
-          }
-        ]
+            component: Conversations,
+          },
+        ],
       },
       {
         path: '/broadcasts',
@@ -39,21 +39,21 @@ const routes = [
             path: '',
             name: 'broadcasts',
             meta: { titleKey: 'broadcasts.title' },
-            component: Broadcasts
+            component: Broadcasts,
           },
           {
             path: 'new',
             name: 'new-broadcast',
             meta: { titleKey: 'new_broadcast.title' },
-            component: NewBroadcast
+            component: NewBroadcast,
           },
           {
             path: ':id/detail',
             name: 'broadcast-details',
             meta: { titleKey: 'broadcast_details.title' },
-            component: BroadcastDetails
-          }
-        ]
+            component: BroadcastDetails,
+          },
+        ],
       },
       {
         path: '/contacts',
@@ -62,15 +62,15 @@ const routes = [
             path: '',
             name: 'contacts',
             meta: { titleKey: 'contacts.title' },
-            component: Contacts
+            component: Contacts,
           },
           {
             path: 'import/history',
             name: 'contacts-import',
             meta: { titleKey: 'contacts.title' },
-            component: ContactImports
-          }
-        ]
+            component: ContactImports,
+          },
+        ],
       },
       {
         path: '/bots',
@@ -79,39 +79,39 @@ const routes = [
             path: '',
             name: 'bots',
             meta: { titleKey: 'bots.title' },
-            component: Bots
+            component: Bots,
           },
           {
             path: ':id/detail',
             name: 'bot-details',
             meta: { titleKey: 'bot_details.title' },
-            component: BotDetails
+            component: BotDetails,
           },
           {
             path: ':id/new',
             name: 'new-botflow',
             meta: { titleKey: 'bot_workflow.title' },
-            component: NewBotFlow
+            component: NewBotFlow,
           },
           {
             path: ':id/versions/:versionId',
             name: 'edit-botflow',
             meta: { titleKey: 'bot_workflow.title_edit' },
-            component: NewBotFlow
-          }
-        ]
+            component: NewBotFlow,
+          },
+        ],
       },
       {
         path: '/profile',
         name: 'profile',
         meta: { titleKey: 'profile.title' },
-        component: Profile
+        component: Profile,
       },
       {
         path: '/subscription',
         name: 'subscription',
         meta: { titleKey: 'subscription.title' },
-        component: Subscription
+        component: Subscription,
       },
       {
         path: '/settings',
@@ -119,11 +119,14 @@ const routes = [
           {
             path: 'users-teams-roles',
             name: 'users-teams-roles',
-            meta: { 
+            meta: {
               titleKey: 'users_teams_roles.title',
-              permissions: ['settings.manage_user_roles_and_teams', 'settings.view_user_roles_and_teams']
+              permissions: [
+                'settings.manage_user_roles_and_teams',
+                'settings.view_user_roles_and_teams',
+              ],
             },
-            component: UsersTeamsRoles
+            component: UsersTeamsRoles,
           },
           {
             path: 'contact-fields',
@@ -132,9 +135,9 @@ const routes = [
                 path: '',
                 name: 'contact-fields',
                 meta: { titleKey: 'contact_fields.title' },
-                component: ContactFields
-              }
-            ]
+                component: ContactFields,
+              },
+            ],
           },
           {
             path: 'templates',
@@ -156,12 +159,12 @@ const routes = [
                 name: 'edit-template',
                 meta: { titleKey: 'edit_template.title' },
                 component: NewTemplate,
-                props: { isEdit: true }
-              }
+                props: { isEdit: true },
+              },
             ],
           },
-        ]
-      }
+        ],
+      },
     ],
   },
 ]

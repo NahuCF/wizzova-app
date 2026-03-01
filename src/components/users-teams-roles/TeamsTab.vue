@@ -18,114 +18,111 @@ const { loading, teams, showCreateDialog, selectedTeam } = storeToRefs(teamStore
 const { t } = useI18n()
 
 const {
-    loading: loadingDrawer,
-    createOrUpdate,
-    remove
+  loading: loadingDrawer,
+  createOrUpdate,
+  remove,
 } = useCrudActions<TeamCreate>({
-    api: {
-        create: API.team.create,
-        update: API.team.update,
-        delete: API.team.delete
-    },
-    fetchData: () => {
-        fetchTeams(true)
-        fetchUsers(true)
-    },
-    i18nKeys: {
-        created: 'teams.team_created',
-        updated: 'teams.team_updated',
-        deleted: 'teams.team_deleted'
-    }
+  api: {
+    create: API.team.create,
+    update: API.team.update,
+    delete: API.team.delete,
+  },
+  fetchData: () => {
+    fetchTeams(true)
+    fetchUsers(true)
+  },
+  i18nKeys: {
+    created: 'teams.team_created',
+    updated: 'teams.team_updated',
+    deleted: 'teams.team_deleted',
+  },
 })
 
 const showDeleteDialog = ref(false)
 const teamActions = (team: TeamItem) => [
-    [
-		{
-			label: t('teams.edit'),
-			icon: IconEdit,
-			action: () => {
-                selectedTeam.value = team
-                showCreateDialog.value = true
-            }
-		}
-	],
-	[
-		{
-			label: t('delete'),
-			class: 'text-red-600',
-			icon: IconTrash,
-			action: () => {
-                selectedTeam.value = team
-                showDeleteDialog.value = true
-            }
-		}
-	]
+  [
+    {
+      label: t('teams.edit'),
+      icon: IconEdit,
+      action: () => {
+        selectedTeam.value = team
+        showCreateDialog.value = true
+      },
+    },
+  ],
+  [
+    {
+      label: t('delete'),
+      class: 'text-red-600',
+      icon: IconTrash,
+      action: () => {
+        selectedTeam.value = team
+        showDeleteDialog.value = true
+      },
+    },
+  ],
 ]
 
 const columns = computed(() => {
-    let columnList: Column[] = [
-        { header: t('teams.headers.name'), key: 'name' },
-        { header: t('teams.headers.created_by'), key: 'createdBy' },
-        { header: t('teams.headers.users_count'), key:'users_count' },
-    ]
+  let columnList: Column[] = [
+    { header: t('teams.headers.name'), key: 'name' },
+    { header: t('teams.headers.created_by'), key: 'createdBy' },
+    { header: t('teams.headers.users_count'), key: 'users_count' },
+  ]
 
-    if(hasPermission('settings.manage_user_roles_and_teams')) {
-        columnList = [
-            ...columnList,
-            { header: '', key: 'actions', type: 'ACTIONS' }
-        ]
-    }
+  if (hasPermission('settings.manage_user_roles_and_teams')) {
+    columnList = [...columnList, { header: '', key: 'actions', type: 'ACTIONS' }]
+  }
 
-    return columnList
+  return columnList
 })
 
 const transformedData = computed(() => {
-	return teams.value.map(team => ({
-		...team,
-        createdBy: team.owner.name,
-        actions: teamActions
-	}))
+  return teams.value.map((team) => ({
+    ...team,
+    createdBy: team.owner.name,
+    actions: teamActions,
+  }))
 })
 
 const onSave = (team: TeamCreate) => {
-    createOrUpdate(team, {
-        onSuccess: () => showCreateDialog.value = false
-    })
+  createOrUpdate(team, {
+    onSuccess: () => (showCreateDialog.value = false),
+  })
 }
 
 const onDelete = () => {
-	if (selectedTeam.value?.id) {
-        remove(selectedTeam.value.id, {
-            onSuccess: () => showDeleteDialog.value = false
-        })
-    }
+  if (selectedTeam.value?.id) {
+    remove(selectedTeam.value.id, {
+      onSuccess: () => (showDeleteDialog.value = false),
+    })
+  }
 }
 
 fetchTeams()
 </script>
 
 <template>
-	<div class="flex flex-col h-full">
-        <Table 
-            :data="transformedData"
-            :columns="columns"
-            emptyMessage="teams.empty"
-            :loading="loading"
-        />
+  <div class="flex flex-col h-full">
+    <Table
+      :data="transformedData"
+      :columns="columns"
+      emptyMessage="teams.empty"
+      :loading="loading"
+    />
 
-        <TeamDrawer
-            v-model:visible="showCreateDialog"
-            :title="selectedTeam ? $t('teams.edit_team') : $t('teams.create_team')"
-            :loading="loadingDrawer"
-            :teamEdited="selectedTeam"
-            @onSave="onSave"
-        />
-		<WarningDialog
-			v-model:visible="showDeleteDialog" 
-			:title="$t('teams.delete_team')"
-			:message="$t('teams.delete_message')"
-			@onConfirm="onDelete" 
-		/>
-	</div>
+    <TeamDrawer
+      v-model:visible="showCreateDialog"
+      :title="selectedTeam ? $t('teams.edit_team') : $t('teams.create_team')"
+      :loading="loadingDrawer"
+      :teamEdited="selectedTeam"
+      @onSave="onSave"
+    />
+    <WarningDialog
+      v-model:visible="showDeleteDialog"
+      :title="$t('teams.delete_team')"
+      :message="$t('teams.delete_message')"
+      @onConfirm="onDelete"
+    />
+  </div>
 </template>

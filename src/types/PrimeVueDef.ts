@@ -1,1 +1,8 @@
-export type PrimeVueSeverity =  'info' | 'success' | 'warn' | 'danger' | 'secondary' | 'contrast' | 'primary'
+export type PrimeVueSeverity =
+  | 'info'
+  | 'success'
+  | 'warn'
+  | 'danger'
+  | 'secondary'
+  | 'contrast'
+  | 'primary'

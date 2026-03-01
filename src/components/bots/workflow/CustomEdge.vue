@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { IconX } from "@tabler/icons-vue";
+import { IconX } from '@tabler/icons-vue'
 import {
   BezierEdge,
   EdgeLabelRenderer,
   getBezierPath,
   useVueFlow,
   type EdgeProps,
-} from "@vue-flow/core";
-import { computed } from "vue";
+} from '@vue-flow/core'
+import { computed } from 'vue'
 
-const props = defineProps<EdgeProps>();
+const props = defineProps<EdgeProps>()
 
-const { removeEdges } = useVueFlow();
+const { removeEdges } = useVueFlow()
 
 const path = computed(() =>
   getBezierPath({
@@ -21,17 +21,17 @@ const path = computed(() =>
     targetX: props.targetX,
     targetY: props.targetY,
     targetPosition: props.targetPosition,
-  })
-);
+  }),
+)
 
-const edgePath = computed(() => path.value[0]);
-const labelX = computed(() => path.value[1]);
-const labelY = computed(() => path.value[2]);
+const edgePath = computed(() => path.value[0])
+const labelX = computed(() => path.value[1])
+const labelY = computed(() => path.value[2])
 
 const onDelete = (evt: MouseEvent) => {
-  evt.stopPropagation();
-  removeEdges([props.id]);
-};
+  evt.stopPropagation()
+  removeEdges([props.id])
+}
 </script>
 
 <template>
@@ -48,11 +48,7 @@ const onDelete = (evt: MouseEvent) => {
       }"
       class="nodrag nopan"
     >
-      <button
-        @click="onDelete"
-        class="delete-edge-button"
-        title="Delete connection"
-      >
+      <button @click="onDelete" class="delete-edge-button" title="Delete connection">
         <IconX size="10" />
       </button>
     </div>

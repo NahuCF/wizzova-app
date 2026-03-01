@@ -10,165 +10,170 @@ const broadcastStore = useBroadcastStore()
 const { currentStep, newBroadcast, totalContactsCount } = storeToRefs(broadcastStore)
 
 const sendOptions = ref([
-    {
-        name: t('new_broadcast.send_now'),
-        value: 'SEND_NOW'
-    },
-    {
-        name: t('new_broadcast.schedule_later'),
-        value: 'SCHEDULE_LATER'
-    }
+  {
+    name: t('new_broadcast.send_now'),
+    value: 'SEND_NOW',
+  },
+  {
+    name: t('new_broadcast.schedule_later'),
+    value: 'SCHEDULE_LATER',
+  },
 ])
 
 const toPrevStep = () => {
-    currentStep.value--
+  currentStep.value--
 }
 
-watch(() => newBroadcast.value.sendOption, (newOption) => {
-    if(newOption === 'SEND_NOW') {
-        newBroadcast.value.scheduledDate = undefined
-        newBroadcast.value.scheduledTime = undefined
+watch(
+  () => newBroadcast.value.sendOption,
+  (newOption) => {
+    if (newOption === 'SEND_NOW') {
+      newBroadcast.value.scheduledDate = undefined
+      newBroadcast.value.scheduledTime = undefined
     }
-})
-</script> 
+  },
+)
+</script>
 
 <template>
-    <div class="flex gap-16 pt-2.5">
-        <div class="flex flex-col gap-10 w-full">
-            <div class="flex justify-between">
-                <div class="flex items-center gap-2">
-                    <Button class="p-1!" variant="text" @click="toPrevStep" severity="secondary">
-                        <IconArrowLeft size="22" />
-                    </Button>
-                    <h1 class="font-semibold text-2xl">{{ t('new_broadcast.schedule_broadcast') }}</h1>
-                </div>
-            </div>
-
-            <div>
-                <div class="text-lg font-bold text-gray-500 pb-2">
-                    {{ t('new_broadcast.broadcast_details') }}
-                </div>
-                <div class="flex bg-white border-1 border-slate-200 p-6 rounded-lg">
-                    <div class="flex flex-col w-full gap-8">
-                        <div class="flex items-center">
-                            <div class="flex gap-1 min-w-[30%]">
-                                <label for="name">{{ t('new_broadcast.broadcast_name') }}</label>
-                                <IconAsterisk color="red" class="mt-1" size="8" />
-                            </div>
-
-                            <InputText 
-                                v-model="newBroadcast.name"
-                                class="w-full"
-                                :placeholder="t('new_broadcast.enter_broadcast_name')"
-                            />
-                        </div>
-
-                        <div class="flex items-center">
-                            <div class="flex gap-1 min-w-[30%]">
-                                <label for="name">{{ t('new_broadcast.send_broadcast') }}</label>
-                                <IconAsterisk color="red" class="mt-1" size="8" />
-                            </div>
-
-                            <div class="flex gap-2 text-ellipsis w-full">
-                                <Select 
-                                    id="sendOptions"
-                                    class="w-full"
-                                    v-model="newBroadcast.sendOption" 
-                                    :options="sendOptions"
-                                    option-label="name"
-                                    option-value="value"
-                                />
-
-                                <DatePicker
-                                    v-if="newBroadcast.sendOption === 'SCHEDULE_LATER'"
-                                    v-model="newBroadcast.scheduledDate"
-                                    class="w-full"
-                                    showIcon
-                                    iconDisplay="input"
-                                    dateFormat="dd/mm/yy"
-                                    mask="99/99/9999"
-                                    :minDate="new Date()"
-                                    :placeholder="t('new_broadcast.schedule_on')"
-                                />
-                                <div class="w-full" v-else></div>
-
-                                <DatePicker
-                                    v-if="newBroadcast.sendOption === 'SCHEDULE_LATER'"
-                                    v-model="newBroadcast.scheduledTime"
-                                    class="w-full"
-                                    showIcon
-                                    iconDisplay="input"
-                                    :placeholder="t('new_broadcast.schedule_at')"
-                                    hourFormat="12"
-                                    :stepMinute="15"
-                                    timeOnly
-                                >
-                                    <template #inputicon="slotProps">
-                                        <IconClock size="14" @click="slotProps.clickCallback" />
-                                    </template>
-                                </DatePicker>
-                                <div class="w-full" v-else></div>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center">
-                            <div class="flex gap-1 min-w-[30%]">
-                                <label for="sendToAll" class="cursor-pointer"> 
-                                    {{ $t('new_broadcast.send_to_all_numbers') }} 
-                                </label>
-                            </div>
-							<Checkbox
-                                v-model="newBroadcast.sendToAll"
-                                binary
-                                inputId="sendToAll"
-                                name="sendToAll"
-                                size="large"
-                            />
-						</div>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <div class="text-lg font-bold text-gray-500 pb-2">
-                    {{ t('new_broadcast.target_audience') }}
-                </div>
-                <div class="flex bg-white border-1 border-slate-200 p-6 rounded-lg">
-                    <div class="flex flex-col w-full gap-6">
-                        <div class="flex items-center">
-                            <div class="min-w-[30%]">{{ t('new_broadcast.total_contacts') }}</div>
-
-                            <div class="flex gap-2">
-                                <IconUsers size="16"/>
-                                <div>{{ totalContactsCount }}</div>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center">
-                            <div class="min-w-[30%]">{{ t('new_broadcast.selected_groups') }}</div>
-
-                            <div class="flex gap-2 text-ellipsis">
-                                <Badge
-                                    v-for="group in newBroadcast.contactGroups"
-                                    class="text-base!"
-                                    severity="secondary"
-                                >
-                                    {{ group.name }}
-                                </Badge>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="flex gap-16 pt-2.5">
+    <div class="flex flex-col gap-10 w-full">
+      <div class="flex justify-between">
+        <div class="flex items-center gap-2">
+          <Button class="p-1!" variant="text" @click="toPrevStep" severity="secondary">
+            <IconArrowLeft size="22" />
+          </Button>
+          <h1 class="font-semibold text-2xl">
+            {{ t('new_broadcast.schedule_broadcast') }}
+          </h1>
         </div>
+      </div>
 
-        <div class="flex min-w-[350px]">
-            <TemplateCard
-                v-if="newBroadcast.template"
-                class="h-[420px]"
-                :template="newBroadcast.template"
-                :broadcastNumber="newBroadcast.broadcastNumber"
-            />
+      <div>
+        <div class="text-lg font-bold text-gray-500 pb-2">
+          {{ t('new_broadcast.broadcast_details') }}
         </div>
+        <div class="flex bg-white border-1 border-slate-200 p-6 rounded-lg">
+          <div class="flex flex-col w-full gap-8">
+            <div class="flex items-center">
+              <div class="flex gap-1 min-w-[30%]">
+                <label for="name">{{ t('new_broadcast.broadcast_name') }}</label>
+                <IconAsterisk color="red" class="mt-1" size="8" />
+              </div>
+
+              <InputText
+                v-model="newBroadcast.name"
+                class="w-full"
+                :placeholder="t('new_broadcast.enter_broadcast_name')"
+              />
+            </div>
+
+            <div class="flex items-center">
+              <div class="flex gap-1 min-w-[30%]">
+                <label for="name">{{ t('new_broadcast.send_broadcast') }}</label>
+                <IconAsterisk color="red" class="mt-1" size="8" />
+              </div>
+
+              <div class="flex gap-2 text-ellipsis w-full">
+                <Select
+                  id="sendOptions"
+                  class="w-full"
+                  v-model="newBroadcast.sendOption"
+                  :options="sendOptions"
+                  option-label="name"
+                  option-value="value"
+                />
+
+                <DatePicker
+                  v-if="newBroadcast.sendOption === 'SCHEDULE_LATER'"
+                  v-model="newBroadcast.scheduledDate"
+                  class="w-full"
+                  showIcon
+                  iconDisplay="input"
+                  dateFormat="dd/mm/yy"
+                  mask="99/99/9999"
+                  :minDate="new Date()"
+                  :placeholder="t('new_broadcast.schedule_on')"
+                />
+                <div class="w-full" v-else></div>
+
+                <DatePicker
+                  v-if="newBroadcast.sendOption === 'SCHEDULE_LATER'"
+                  v-model="newBroadcast.scheduledTime"
+                  class="w-full"
+                  showIcon
+                  iconDisplay="input"
+                  :placeholder="t('new_broadcast.schedule_at')"
+                  hourFormat="12"
+                  :stepMinute="15"
+                  timeOnly
+                >
+                  <template #inputicon="slotProps">
+                    <IconClock size="14" @click="slotProps.clickCallback" />
+                  </template>
+                </DatePicker>
+                <div class="w-full" v-else></div>
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <div class="flex gap-1 min-w-[30%]">
+                <label for="sendToAll" class="cursor-pointer">
+                  {{ $t('new_broadcast.send_to_all_numbers') }}
+                </label>
+              </div>
+              <Checkbox
+                v-model="newBroadcast.sendToAll"
+                binary
+                inputId="sendToAll"
+                name="sendToAll"
+                size="large"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="text-lg font-bold text-gray-500 pb-2">
+          {{ t('new_broadcast.target_audience') }}
+        </div>
+        <div class="flex bg-white border-1 border-slate-200 p-6 rounded-lg">
+          <div class="flex flex-col w-full gap-6">
+            <div class="flex items-center">
+              <div class="min-w-[30%]">{{ t('new_broadcast.total_contacts') }}</div>
+
+              <div class="flex gap-2">
+                <IconUsers size="16" />
+                <div>{{ totalContactsCount }}</div>
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <div class="min-w-[30%]">{{ t('new_broadcast.selected_groups') }}</div>
+
+              <div class="flex gap-2 text-ellipsis">
+                <Badge
+                  v-for="group in newBroadcast.contactGroups"
+                  class="text-base!"
+                  severity="secondary"
+                >
+                  {{ group.name }}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div class="flex min-w-[350px]">
+      <TemplateCard
+        v-if="newBroadcast.template"
+        class="h-[420px]"
+        :template="newBroadcast.template"
+        :broadcastNumber="newBroadcast.broadcastNumber"
+      />
+    </div>
+  </div>
 </template>

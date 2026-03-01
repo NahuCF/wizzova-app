@@ -1,20 +1,22 @@
-import type { Component } from "vue"
+import type { Component } from 'vue'
 
 export type ActionItem = {
   label: string
   icon?: Component
   class?: string
   iconClass?: string
-  disabled?: boolean,
+  disabled?: boolean
   tooltip?: string
   action: () => void | Promise<void>
-};
+}
 
-export type ActionGroup = ActionItem[];
+export type ActionGroup = ActionItem[]
 
 export type ActionGenerator<T> = (item: T) => ActionGroup[]
 
-export const createActions = <T>(config: (item: T) => (ActionGroup | null)[]): ActionGenerator<T> => {
+export const createActions = <T>(
+  config: (item: T) => (ActionGroup | null)[],
+): ActionGenerator<T> => {
   return (item: T) => {
     const groups = config(item)
 
@@ -58,10 +60,10 @@ export interface FilterCondition {
 export type ColumnType = 'TAG' | 'TAG_LIST' | 'PROGRESS' | 'ACTIONS' | 'CUSTOM'
 
 export interface Column {
-  header: string,
-  type?: ColumnType,
-  key: string,
-  bodyStyle?: Record<string, string>,
+  header: string
+  type?: ColumnType
+  key: string
+  bodyStyle?: Record<string, string>
   tooltip?: string
 }
 

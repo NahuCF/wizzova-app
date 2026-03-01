@@ -9,7 +9,7 @@ import i18n from '~/config/i18n'
 import ToastService from 'primevue/toastservice'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import Tooltip from 'primevue/tooltip'
-import VueApexCharts from "vue3-apexcharts"
+import VueApexCharts from 'vue3-apexcharts'
 import Vue3Openlayers from 'vue3-openlayers'
 
 import App from './App.vue'
@@ -30,9 +30,9 @@ app.use(PrimeVue, {
     preset: preset,
     options: {
       darkModeSelector: false || 'none',
-    }
+    },
   },
-  pt: passthrough
+  pt: passthrough,
 })
 app.use(VueApexCharts)
 app.use(Vue3Openlayers)

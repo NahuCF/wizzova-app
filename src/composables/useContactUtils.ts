@@ -1,32 +1,32 @@
-import type { ContactItem } from "~/types"
+import type { ContactItem } from '~/types'
 
 export const useContactUtils = () => {
-	const getContactName = (contact?: ContactItem) => {
-		if(!contact) return
+  const getContactName = (contact?: ContactItem) => {
+    if (!contact) return
 
-		const name = contact.fields.find(field => field.name === 'Name')?.value
+    const name = contact.fields.find((field) => field.name === 'Name')?.value
 
-		if(typeof name === 'string') {
-			return name
-		}
+    if (typeof name === 'string') {
+      return name
+    }
 
-		return
-	}
+    return
+  }
 
-	const getContactPhone = (contact: ContactItem) => {
-		if(!contact) return
-		
-		const phone = contact.fields.find(field => field.name === 'Phone')?.value
+  const getContactPhone = (contact: ContactItem) => {
+    if (!contact) return
 
-		if(phone && Array.isArray(phone) && phone.length > 0) {
-			return phone[0]
-		}
+    const phone = contact.fields.find((field) => field.name === 'Phone')?.value
 
-		return
-	}
+    if (phone && Array.isArray(phone) && phone.length > 0) {
+      return phone[0]
+    }
 
-	return {
-		getContactName,
-		getContactPhone
-	}
+    return
+  }
+
+  return {
+    getContactName,
+    getContactPhone,
+  }
 }

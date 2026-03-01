@@ -5,7 +5,7 @@ export interface Language {
 }
 
 export interface LanguageFlag {
-  name: string,
-  code: string,
+  name: string
+  code: string
   flag: string
 }

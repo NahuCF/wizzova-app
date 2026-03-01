@@ -11,13 +11,13 @@ defineEmits(['updateNodeInternals'])
 </script>
 
 <template>
-	<div
-		:id="id"
-		class="bg-white p-6 rounded-md text-emerald-500 border-2 border-emerald-500 cursor-pointer"
-		@click="() => {}"
-	>
-		<IconPlayerPlayFilled size="64" />
-	</div>
+  <div
+    :id="id"
+    class="bg-white p-6 rounded-md text-emerald-500 border-2 border-emerald-500 cursor-pointer"
+    @click="() => {}"
+  >
+    <IconPlayerPlayFilled size="64" />
+  </div>
 
-	<Handle id="source" type="source" :position="Position.Right" :connectable="1" />
+  <Handle id="source" type="source" :position="Position.Right" :connectable="1" />
 </template>

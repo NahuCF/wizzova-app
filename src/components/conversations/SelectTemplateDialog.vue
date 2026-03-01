@@ -7,148 +7,152 @@ import { API } from '~/services'
 import type { CreateMessage, TemplateItem } from '~/types'
 
 const props = defineProps<{
-    visible: boolean,
-	conversationId: string
+  visible: boolean
+  conversationId: string
 }>()
 
 const emit = defineEmits<{
-    (e: 'update:visible', value: boolean): void
-	(e: 'onConfirm', value: CreateMessage): void
+  (e: 'update:visible', value: boolean): void
+  (e: 'onConfirm', value: CreateMessage): void
 }>()
 
-const {
-    dataPage,
-    loading,
-    searchTerm,
-    fetchDataPage,
-    loadNextPage,
-    debouncedFetch,
-} = usePaginatedData<TemplateItem>(
-    (page, perPage, search) => API.template.index({ page, name: search, perPage, status: 'APPROVED' })
-        .then(res => res.data),
-    12
-)
+const { dataPage, loading, searchTerm, fetchDataPage, loadNextPage, debouncedFetch } =
+  usePaginatedData<TemplateItem>(
+    (page, perPage, search) =>
+      API.template
+        .index({ page, name: search, perPage, status: 'APPROVED' })
+        .then((res) => res.data),
+    12,
+  )
 const router = useRouter()
 
 const currentStep = ref(1)
 const selectedTemplate = ref<TemplateItem>()
 const initialMessage = ref<CreateMessage>({
-	conversation_id: props.conversationId,
-	template_id: '',
-	variables: [],
-	type: 'template',
-	to_phone: ''
+  conversation_id: props.conversationId,
+  template_id: '',
+  variables: [],
+  type: 'template',
+  to_phone: '',
 })
 
 const onTemplateSelected = (template: TemplateItem) => {
-	selectedTemplate.value = template
-	initialMessage.value.template_id = template.id
-	const variables = template.components.body.variables
-	
-	if(variables && variables.length > 0) {
-		currentStep.value++
-	}
-	else {
-		emit('onConfirm', initialMessage.value)
-	}
+  selectedTemplate.value = template
+  initialMessage.value.template_id = template.id
+  const variables = template.components.body.variables
+
+  if (variables && variables.length > 0) {
+    currentStep.value++
+  } else {
+    emit('onConfirm', initialMessage.value)
+  }
 }
 
 const toPrevStep = () => {
-	selectedTemplate.value = undefined
-	currentStep.value--
+  selectedTemplate.value = undefined
+  currentStep.value--
 }
 
 const onConfirmVariables = () => {
-	initialMessage.value.variables = selectedTemplate.value?.components.body.variables
-	emit('onConfirm', initialMessage.value)
+  initialMessage.value.variables = selectedTemplate.value?.components.body.variables
+  emit('onConfirm', initialMessage.value)
 }
 
 fetchDataPage(1)
 </script>
 
 <template>
-	<Dialog 
-        :visible="visible" 
-        @update:visible="emit('update:visible', $event)"
-        modal
-        :draggable="false"
-        :header="currentStep === 1 ? $t('new_broadcast.select_template') : $t('new_broadcast.map_variables')"
-        class="min-w-[25rem] max-w-[1088px] w-full"
-		:class="{
-			'min-h-[500px]': currentStep === 1
-		}"
-    >
-		<div v-if="currentStep === 1">
-			<div class="flex flex-col justify-center pb-6">
-				<div class="flex gap-2">
-					<div class="relative">
-						<IconSearch size="16" class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-						<InputText
-							v-model="searchTerm"
-							class="pl-8! max-w-[180px] shadow-none!"
-							name="search"
-							id="search"
-							fluid
-							:placeholder="$t('search')"
-							@input="debouncedFetch()"
-						/>
-					</div>
-
-					<Button 
-						@click="router.push({ 
-							name: 'new-template', 
-							query: { redirectTo: 'conversations' }
-						})"
-					>
-						<IconPlus size="16" class="mr-1" />
-						<span>
-							{{ $t('new_broadcast.add_template') }}
-						</span>
-					</Button>
-				</div>
-			</div>
-
-			<div 
-				v-if="dataPage.data.length === 0 && !loading"
-				class="flex flex-col justify-center items-center py-30 gap-10"
-			>
-				<div class="text-3xl font-semibold text-center max-w-[500px] leading-10">
-					{{ $t('new_broadcast.missing_template_title') }}
-				</div>
-				<div class="text-2xl font-medium text-gray-400 text-center max-w-[500px] leading-10">
-					{{ $t('new_broadcast.missing_template_description') }}
-				</div>
-				<Button
-					@click="router.push({ 
-						name: 'new-template', 
-						query: { redirectTo: 'conversations' }
-					})"
-				>
-					<span class="text">
-						{{ $t('new_broadcast.add_template') }}
-					</span>
-				</Button>
-			</div>
-
-			<TemplateCardList
-				v-else
-				:templates="dataPage.data"
-				:loading="loading"
-				:cardProps="{
-					clickable: true
-				}"
-				@reach-end="loadNextPage"
-				@select="onTemplateSelected"
-			/>
-		</div>
-		<div v-else>
-			<MapTemplateVariables
-                v-if="selectedTemplate?.components.body.variables"
-                :variables="selectedTemplate.components.body.variables"
-				:loading="false"
-                @onCancel="toPrevStep"
-                @onConfirm="onConfirmVariables"
+  <Dialog
+    :visible="visible"
+    @update:visible="emit('update:visible', $event)"
+    modal
+    :draggable="false"
+    :header="
+      currentStep === 1 ? $t('new_broadcast.select_template') : $t('new_broadcast.map_variables')
+    "
+    class="min-w-[25rem] max-w-[1088px] w-full"
+    :class="{
+      'min-h-[500px]': currentStep === 1,
+    }"
+  >
+    <div v-if="currentStep === 1">
+      <div class="flex flex-col justify-center pb-6">
+        <div class="flex gap-2">
+          <div class="relative">
+            <IconSearch
+              size="16"
+              class="mr-2 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
             />
-		</div>
-	</Dialog>
+            <InputText
+              v-model="searchTerm"
+              class="pl-8! max-w-[180px] shadow-none!"
+              name="search"
+              id="search"
+              fluid
+              :placeholder="$t('search')"
+              @input="debouncedFetch()"
+            />
+          </div>
+
+          <Button
+            @click="
+              router.push({
+                name: 'new-template',
+                query: { redirectTo: 'conversations' },
+              })
+            "
+          >
+            <IconPlus size="16" class="mr-1" />
+            <span>
+              {{ $t('new_broadcast.add_template') }}
+            </span>
+          </Button>
+        </div>
+      </div>
+
+      <div
+        v-if="dataPage.data.length === 0 && !loading"
+        class="flex flex-col justify-center items-center py-30 gap-10"
+      >
+        <div class="text-3xl font-semibold text-center max-w-[500px] leading-10">
+          {{ $t('new_broadcast.missing_template_title') }}
+        </div>
+        <div class="text-2xl font-medium text-gray-400 text-center max-w-[500px] leading-10">
+          {{ $t('new_broadcast.missing_template_description') }}
+        </div>
+        <Button
+          @click="
+            router.push({
+              name: 'new-template',
+              query: { redirectTo: 'conversations' },
+            })
+          "
+        >
+          <span class="text">
+            {{ $t('new_broadcast.add_template') }}
+          </span>
+        </Button>
+      </div>
+
+      <TemplateCardList
+        v-else
+        :templates="dataPage.data"
+        :loading="loading"
+        :cardProps="{
+          clickable: true,
+        }"
+        @reach-end="loadNextPage"
+        @select="onTemplateSelected"
+      />
+    </div>
+    <div v-else>
+      <MapTemplateVariables
+        v-if="selectedTemplate?.components.body.variables"
+        :variables="selectedTemplate.components.body.variables"
+        :loading="false"
+        @onCancel="toPrevStep"
+        @onConfirm="onConfirmVariables"
+      />
+    </div>
+  </Dialog>
 </template>

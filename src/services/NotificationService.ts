@@ -20,7 +20,7 @@ export interface NotificationResponse {
 class NotificationService {
   async getNotifications(page: number = 1, perPage: number = 10): Promise<NotificationResponse> {
     const { data } = await Http.get<NotificationResponse>('/notifications', {
-      params: { page, per_page: perPage }
+      params: { page, per_page: perPage },
     })
     return data
   }

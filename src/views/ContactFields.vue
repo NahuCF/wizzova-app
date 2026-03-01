@@ -1,6 +1,18 @@
 <script setup lang="ts">
-import { IconEdit, IconTrash, IconPlus, IconLoader2, IconToggleLeft, IconTextWrap, 
-    IconCalendar, IconUserCircle, IconHash, IconInfoCircle, IconTypography, IconCircleDot } from '@tabler/icons-vue'
+import {
+  IconEdit,
+  IconTrash,
+  IconPlus,
+  IconLoader2,
+  IconToggleLeft,
+  IconTextWrap,
+  IconCalendar,
+  IconUserCircle,
+  IconHash,
+  IconInfoCircle,
+  IconTypography,
+  IconCircleDot,
+} from '@tabler/icons-vue'
 import { ref, type Component } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePaginatedData } from '~/composables/usePaginatedData'
@@ -13,33 +25,28 @@ import { useErrorHandler } from '~/composables/useErrorHandler'
 const { t } = useI18n()
 const toast = useToast()
 const handleError = useErrorHandler()
-const {
-  dataPage,
-  loading,
-  rowsPerPage,
-  fetchDataPage,
-  loadNextPage,
-} = usePaginatedData<ContactFieldItem>(
-  (page, perPage) => API.contactField.index(page, perPage).then(res => res.data),
-  10
-)
+const { dataPage, loading, rowsPerPage, fetchDataPage, loadNextPage } =
+  usePaginatedData<ContactFieldItem>(
+    (page, perPage) => API.contactField.index(page, perPage).then((res) => res.data),
+    10,
+  )
 
 const {
-    loading: loadingDrawer,
-    createOrUpdate,
-    remove
+  loading: loadingDrawer,
+  createOrUpdate,
+  remove,
 } = useCrudActions<ContactFieldCreate>({
-    api: {
-        create: API.contactField.create,
-        update: API.contactField.update,
-        delete: API.contactField.delete,
-    },
-    fetchData: () => fetchDataPage(1, rowsPerPage.value),
-    i18nKeys: {
-        created: 'contact_fields.field_created',
-        updated: 'contact_fields.field_updated',
-        deleted: 'contact_fields.field_deleted',
-    }
+  api: {
+    create: API.contactField.create,
+    update: API.contactField.update,
+    delete: API.contactField.delete,
+  },
+  fetchData: () => fetchDataPage(1, rowsPerPage.value),
+  i18nKeys: {
+    created: 'contact_fields.field_created',
+    updated: 'contact_fields.field_updated',
+    deleted: 'contact_fields.field_deleted',
+  },
 })
 
 const popover = ref()
@@ -48,80 +55,80 @@ const showDeleteDialog = ref(false)
 const selectedField = ref<ContactFieldItem | undefined>()
 const types = ref<ContactFieldType[]>([])
 const typeIcon = ref<Record<ContactFieldType, Component>>({
-    'SELECT': IconCircleDot,
-    'NUMBER': IconHash,
-    'TEXT': IconTypography,
-    'MULTI_TEXT': IconTextWrap,
-    'USER': IconUserCircle,
-    'SWITCH': IconToggleLeft,
-    'DATE': IconCalendar
+  SELECT: IconCircleDot,
+  NUMBER: IconHash,
+  TEXT: IconTypography,
+  MULTI_TEXT: IconTextWrap,
+  USER: IconUserCircle,
+  SWITCH: IconToggleLeft,
+  DATE: IconCalendar,
 })
 
 const openFieldDrawer = (contactField?: ContactFieldItem) => {
-    selectedField.value = contactField
-    showFieldDrawer.value = true
+  selectedField.value = contactField
+  showFieldDrawer.value = true
 }
 
 const fieldActions = (contactField: ContactFieldItem) => [
-	[
-		{
-			label: t('contact_field.edit'),
-			icon: IconEdit,
-			action: () => openFieldDrawer(contactField)
-		}
-	],
-	[
-		{
-			label: t('delete'),
-			class: 'text-red-600',
-			icon: IconTrash,
-			action: () => {
-                selectedField.value = contactField
-                showDeleteDialog.value = true
-            }
-		}
-	]
+  [
+    {
+      label: t('contact_field.edit'),
+      icon: IconEdit,
+      action: () => openFieldDrawer(contactField),
+    },
+  ],
+  [
+    {
+      label: t('delete'),
+      class: 'text-red-600',
+      icon: IconTrash,
+      action: () => {
+        selectedField.value = contactField
+        showDeleteDialog.value = true
+      },
+    },
+  ],
 ]
 
 const fetchTypes = async () => {
-    const response = await API.contactField.types()
-    types.value = response.data.data
+  const response = await API.contactField.types()
+  types.value = response.data.data
 }
 
 const onSaveField = (contactField: ContactFieldCreate) => {
-    createOrUpdate(contactField, {
-        onSuccess: () => showFieldDrawer.value = false
-    })
+  createOrUpdate(contactField, {
+    onSuccess: () => (showFieldDrawer.value = false),
+  })
 }
 
 const onDeleteField = () => {
-    if (selectedField.value?.id) {
-        remove(selectedField.value.id, {
-            onSuccess: () => showDeleteDialog.value = false
-        })
-    }
+  if (selectedField.value?.id) {
+    remove(selectedField.value.id, {
+      onSuccess: () => (showDeleteDialog.value = false),
+    })
+  }
 }
 
-const handleUpdate = async <T>(action: () => Promise<T>) => {
-    try {
-        await action()
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: t('contact_fields.field_updated'),
-            life: 3000,
-        })
-    } catch (error) {
-        handleError(error)
-    }
+const handleUpdate = async <T,>(action: () => Promise<T>) => {
+  try {
+    await action()
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: t('contact_fields.field_updated'),
+      life: 3000,
+    })
+  } catch (error) {
+    handleError(error)
+  }
 }
 
 const updateStatus = (id: number, value: boolean) => {
-    return handleUpdate(() => API.contactField.changeStatus(id, value))
+  return handleUpdate(() => API.contactField.changeStatus(id, value))
 }
 
 const updateMandatory = (id: number, value: boolean) => {
-    return handleUpdate(() => API.contactField.changeMandatory(id, value))
+  return handleUpdate(() => API.contactField.changeMandatory(id, value))
 }
 
 fetchDataPage(1, rowsPerPage.value)
@@ -129,164 +136,163 @@ fetchTypes()
 </script>
 
 <template>
-    <div class="flex flex-col gap-8 custom-datatable p-6">
-        <div class="flex justify-between items-center z-2 bg-slate-100">
-			<h1 class="font-semibold text-2xl">{{ t('contact_fields.field_collection') }}</h1>
-			<Button @click="openFieldDrawer()">
-				<IconPlus size="16" />
-				<span>
-					{{ $t('contact_fields.add') }}
-				</span>
-			</Button>
-		</div>
-
-        <DataTable 
-            :value="dataPage.data"
-            dataKey="id"
-            :lazy="true"
-            :loading="loading"
-            :rows="rowsPerPage"
-            :totalRecords="dataPage.meta.total"
-            scrollable
-            scrollHeight="flex"
-            size="large"
-            :rowClass="() => 'h-[69px]'"
-        >
-            <template #empty>
-                <div class="text-center py-4 text-gray-500">
-                    {{ $t('contact_fields.not_found') }}
-                </div>
-            </template>
-            
-            <Column field="name">
-                <template #header>
-                    <div class="flex items-center gap-4">
-                        <div class="w-[20px]"></div>
-                        <div class="flex items-center gap-1 text-base uppercase">
-                            {{ $t('contact_field.name') }}
-                            <div
-                                v-tooltip.bottom="{
-                                    value: t('contact_field.name_info'),
-                                    class: 'text-sm max-w-[250px]!'
-                                }"
-                            >
-                                <IconInfoCircle class="hover:cursor-pointer" size="16" />
-                            </div>
-                        </div>
-                    </div>
-                </template>
-
-                <template #body="{ data }: { data: ContactFieldItem }">
-                    <div class="flex items-center gap-4 text-base">
-                        <div
-                            v-tooltip.bottom="{
-                                value: data.is_primary_field 
-                                    ? t('contact_field.is_primary', { field: data.name}) 
-                                    : t('contact_field.is_secondary', { field: data.name}),
-                                class: 'text-sm max-w-[250px]!'
-                            }"
-                        >
-                            <IconInfoCircle class="text-blue-500 hover:cursor-pointer" size="20" />
-                        </div>
-                        {{ data.name }}
-                    </div>
-                </template>
-            </Column>
-
-            <Column field="internal_name" headerClass="text-base uppercase" bodyClass="text-base">
-                <template #header>
-                    <div class="flex items-center gap-1 text-base uppercase">
-                        {{ $t('contact_field.internal_name') }}
-                        <div
-                            v-tooltip.bottom="{
-                                value: t('contact_field.internal_name_info'),
-                                class: 'text-sm max-w-[250px]!'
-                            }"
-                        >
-                            <IconInfoCircle class="hover:cursor-pointer" size="16" />
-                        </div>
-                    </div>
-                </template>
-            </Column>
-
-            <Column :header="$t('contact_field.type')" headerClass="text-base uppercase">
-                <template #body="{ data }: { data: ContactFieldItem }">
-                    <div class="flex flex-row items-center gap-2 text-base">
-                        <component
-                            :is="typeIcon[data.type]"
-                            class="w-[22px] h-[22px]"
-                        />
-                        {{ data.type }}
-                    </div>
-                </template>
-            </Column>
-
-            <Column :header="$t('contact_field.status')" headerClass="text-base uppercase">
-                <template #body="{ data }">
-                    <div class="flex items-center">
-                        <ToggleSwitch 
-                            :modelValue="data.is_active"
-                            @update:model-value="(value) => updateStatus(data.id, value)"
-                            :readonly="data.is_primary_field"
-                            :class="{ 'opacity-50': data.is_primary_field }" 
-                        />
-                    </div>
-                </template>
-            </Column>
-
-            <Column :header="$t('contact_field.mandatory')" headerClass="text-base uppercase">
-                <template #body="{ data }">
-                    <div class="flex items-center">
-                        <ToggleSwitch 
-                            :modelValue="data.is_mandatory"
-                            @update:model-value="(value) => updateMandatory(data.id, value)"
-                            :readonly="data.is_primary_field" 
-                            :class="{ 'opacity-50': data.is_primary_field }"
-                        />
-                    </div>
-                </template>
-            </Column>
-
-            <Column>
-                <template #body="{ data }: { data: ContactFieldItem }">
-                    <ActionButton v-if="!data.is_primary_field && fieldActions(data).length > 0" @click="(e) => popover?.show(e, data)" />
-                </template>
-            </Column>
-        </DataTable>
-
-        <div class="flex justify-center pb-20">
-            <Button @click="loadNextPage()">
-                <IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
-                <span v-else-if="dataPage.data.length === dataPage.meta.total">
-                    {{ $t('contact_fields.no_more_to_load') }}
-                </span>
-                <span v-else>
-                    {{ $t('contact_fields.load_more') }}
-                </span>
-            </Button>
-        </div>
-
-        <ActionsPopover ref="popover" :actions="fieldActions" />
-        <ContactFieldDrawer 
-            v-model:visible="showFieldDrawer"
-            :loading="loadingDrawer"
-            :types="types"
-            :contactField="selectedField"
-            @onSave="onSaveField" 
-        />
-        <WarningDialog 
-            v-model:visible="showDeleteDialog" 
-            :title="$t('contact_fields.delete_field')"
-            :message="$t('contact_fields.delete_message')"
-            :note="$t('contact_fields.delete_note')"
-            @onConfirm="onDeleteField" 
-        />
+  <div class="flex flex-col gap-8 custom-datatable p-6">
+    <div class="flex justify-between items-center z-2 bg-slate-100">
+      <h1 class="font-semibold text-2xl">{{ t('contact_fields.field_collection') }}</h1>
+      <Button @click="openFieldDrawer()">
+        <IconPlus size="16" />
+        <span>
+          {{ $t('contact_fields.add') }}
+        </span>
+      </Button>
     </div>
+
+    <DataTable
+      :value="dataPage.data"
+      dataKey="id"
+      :lazy="true"
+      :loading="loading"
+      :rows="rowsPerPage"
+      :totalRecords="dataPage.meta.total"
+      scrollable
+      scrollHeight="flex"
+      size="large"
+      :rowClass="() => 'h-[69px]'"
+    >
+      <template #empty>
+        <div class="text-center py-4 text-gray-500">
+          {{ $t('contact_fields.not_found') }}
+        </div>
+      </template>
+
+      <Column field="name">
+        <template #header>
+          <div class="flex items-center gap-4">
+            <div class="w-[20px]"></div>
+            <div class="flex items-center gap-1 text-base uppercase">
+              {{ $t('contact_field.name') }}
+              <div
+                v-tooltip.bottom="{
+                  value: t('contact_field.name_info'),
+                  class: 'text-sm max-w-[250px]!',
+                }"
+              >
+                <IconInfoCircle class="hover:cursor-pointer" size="16" />
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <template #body="{ data }: { data: ContactFieldItem }">
+          <div class="flex items-center gap-4 text-base">
+            <div
+              v-tooltip.bottom="{
+                value: data.is_primary_field
+                  ? t('contact_field.is_primary', { field: data.name })
+                  : t('contact_field.is_secondary', { field: data.name }),
+                class: 'text-sm max-w-[250px]!',
+              }"
+            >
+              <IconInfoCircle class="text-blue-500 hover:cursor-pointer" size="20" />
+            </div>
+            {{ data.name }}
+          </div>
+        </template>
+      </Column>
+
+      <Column field="internal_name" headerClass="text-base uppercase" bodyClass="text-base">
+        <template #header>
+          <div class="flex items-center gap-1 text-base uppercase">
+            {{ $t('contact_field.internal_name') }}
+            <div
+              v-tooltip.bottom="{
+                value: t('contact_field.internal_name_info'),
+                class: 'text-sm max-w-[250px]!',
+              }"
+            >
+              <IconInfoCircle class="hover:cursor-pointer" size="16" />
+            </div>
+          </div>
+        </template>
+      </Column>
+
+      <Column :header="$t('contact_field.type')" headerClass="text-base uppercase">
+        <template #body="{ data }: { data: ContactFieldItem }">
+          <div class="flex flex-row items-center gap-2 text-base">
+            <component :is="typeIcon[data.type]" class="w-[22px] h-[22px]" />
+            {{ data.type }}
+          </div>
+        </template>
+      </Column>
+
+      <Column :header="$t('contact_field.status')" headerClass="text-base uppercase">
+        <template #body="{ data }">
+          <div class="flex items-center">
+            <ToggleSwitch
+              :modelValue="data.is_active"
+              @update:model-value="(value) => updateStatus(data.id, value)"
+              :readonly="data.is_primary_field"
+              :class="{ 'opacity-50': data.is_primary_field }"
+            />
+          </div>
+        </template>
+      </Column>
+
+      <Column :header="$t('contact_field.mandatory')" headerClass="text-base uppercase">
+        <template #body="{ data }">
+          <div class="flex items-center">
+            <ToggleSwitch
+              :modelValue="data.is_mandatory"
+              @update:model-value="(value) => updateMandatory(data.id, value)"
+              :readonly="data.is_primary_field"
+              :class="{ 'opacity-50': data.is_primary_field }"
+            />
+          </div>
+        </template>
+      </Column>
+
+      <Column>
+        <template #body="{ data }: { data: ContactFieldItem }">
+          <ActionButton
+            v-if="!data.is_primary_field && fieldActions(data).length > 0"
+            @click="(e) => popover?.show(e, data)"
+          />
+        </template>
+      </Column>
+    </DataTable>
+
+    <div class="flex justify-center pb-20">
+      <Button @click="loadNextPage()">
+        <IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
+        <span v-else-if="dataPage.data.length === dataPage.meta.total">
+          {{ $t('contact_fields.no_more_to_load') }}
+        </span>
+        <span v-else>
+          {{ $t('contact_fields.load_more') }}
+        </span>
+      </Button>
+    </div>
+
+    <ActionsPopover ref="popover" :actions="fieldActions" />
+    <ContactFieldDrawer
+      v-model:visible="showFieldDrawer"
+      :loading="loadingDrawer"
+      :types="types"
+      :contactField="selectedField"
+      @onSave="onSaveField"
+    />
+    <WarningDialog
+      v-model:visible="showDeleteDialog"
+      :title="$t('contact_fields.delete_field')"
+      :message="$t('contact_fields.delete_message')"
+      :note="$t('contact_fields.delete_note')"
+      @onConfirm="onDeleteField"
+    />
+  </div>
 </template>
 
 <style lang="css">
 .custom-datatable {
   --p-datatable-column-title-font-weight: 400;
-  
 }
 </style>

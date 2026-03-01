@@ -4,7 +4,9 @@ import { useSessionStore } from '~/stores'
 import type { Channel } from 'pusher-js'
 import type { Notification } from '~/services/NotificationService'
 
-export const useNotificationChannel = (onNewNotification?: (notification: Notification) => void) => {
+export const useNotificationChannel = (
+  onNewNotification?: (notification: Notification) => void,
+) => {
   const sessionStore = useSessionStore()
   const { subscribe, unsubscribe } = usePusher()
   let channel: Channel | null = null
@@ -32,6 +34,6 @@ export const useNotificationChannel = (onNewNotification?: (notification: Notifi
   })
 
   return {
-    channel
+    channel,
   }
 }

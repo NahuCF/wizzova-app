@@ -34,7 +34,7 @@ const fullCellphone = computed({
   },
   set: (value: string) => {
     if (!profileData.value) return
-    
+
     // Extract prefix and number from the full phone number
     // This is a simple implementation - the CellphoneInput component handles the logic
     const prefixMatch = value.match(/^(\+\d{1,4})(.*)$/)
@@ -44,7 +44,7 @@ const fullCellphone = computed({
     } else {
       profileData.value.cellphone_number = value
     }
-  }
+  },
 })
 
 onMounted(async () => {
@@ -58,7 +58,7 @@ const fetchProfile = async () => {
     profileData.value = data.data
     sessionStore.updateUser({
       ...sessionStore.user!,
-      profile_img_path: data.data.profile_img_path
+      profile_img_path: data.data.profile_img_path,
     })
   } catch (error) {
     console.error(error)
@@ -66,7 +66,7 @@ const fetchProfile = async () => {
       severity: 'error',
       summary: t('error'),
       detail: t('profile.error_loading'),
-      life: 3000
+      life: 3000,
     })
   } finally {
     loading.value = false
@@ -75,7 +75,7 @@ const fetchProfile = async () => {
 
 const copyUserId = async () => {
   if (!userId.value) return
-  
+
   try {
     await navigator.clipboard.writeText(userId.value)
     copied.value = true
@@ -83,9 +83,9 @@ const copyUserId = async () => {
       severity: 'success',
       summary: t('success'),
       detail: t('profile.id_copied'),
-      life: 2000
+      life: 2000,
     })
-    
+
     setTimeout(() => {
       copied.value = false
     }, 2000)
@@ -94,7 +94,7 @@ const copyUserId = async () => {
       severity: 'error',
       summary: t('error'),
       detail: t('profile.copy_failed'),
-      life: 3000
+      life: 3000,
     })
   }
 }
@@ -106,60 +106,60 @@ const openFileDialog = () => {
 const onFileSelect = (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
-  
+
   if (!file) return
-  
+
   // Validate file size (5MB max)
   if (file.size > 5 * 1024 * 1024) {
     toast.add({
       severity: 'error',
       summary: t('error'),
       detail: t('profile.file_too_large'),
-      life: 3000
+      life: 3000,
     })
     return
   }
-  
+
   // Validate file type
   if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
     toast.add({
       severity: 'error',
       summary: t('error'),
       detail: t('profile.invalid_file_type'),
-      life: 3000
+      life: 3000,
     })
     return
   }
-  
+
   selectedFile.value = file
-  
+
   // Create preview
   const reader = new FileReader()
   reader.onload = (e) => {
     previewUrl.value = e.target?.result as string
   }
   reader.readAsDataURL(file)
-  
+
   // Auto upload
   uploadProfileImage()
 }
 
 const uploadProfileImage = async () => {
   if (!selectedFile.value) return
-  
+
   uploadLoading.value = true
   try {
     const { data } = await API.profile.uploadProfileImage(selectedFile.value)
     profileData.value = data.data
     sessionStore.updateUser({
       ...sessionStore.user!,
-      profile_img_path: data.data.profile_img_path
+      profile_img_path: data.data.profile_img_path,
     })
     toast.add({
       severity: 'success',
       summary: t('success'),
       detail: t('profile.image_uploaded'),
-      life: 3000
+      life: 3000,
     })
     selectedFile.value = null
     previewUrl.value = null
@@ -169,7 +169,7 @@ const uploadProfileImage = async () => {
       severity: 'error',
       summary: t('error'),
       detail: t('profile.upload_failed'),
-      life: 3000
+      life: 3000,
     })
   } finally {
     uploadLoading.value = false
@@ -183,13 +183,13 @@ const deleteProfileImage = async () => {
     profileData.value = data.data
     sessionStore.updateUser({
       ...sessionStore.user!,
-      profile_img_path: null
+      profile_img_path: null,
     })
     toast.add({
       severity: 'success',
       summary: t('success'),
       detail: t('profile.image_deleted'),
-      life: 3000
+      life: 3000,
     })
   } catch (error) {
     console.error(error)
@@ -197,7 +197,7 @@ const deleteProfileImage = async () => {
       severity: 'error',
       summary: t('error'),
       detail: t('profile.delete_failed'),
-      life: 3000
+      life: 3000,
     })
   } finally {
     deleteLoading.value = false
@@ -210,18 +210,18 @@ const updateProfile = async () => {
     const { data } = await API.profile.update({
       name: profileData.value?.name,
       cellphone_prefix: profileData.value?.cellphone_prefix,
-      cellphone_number: profileData.value?.cellphone_number
+      cellphone_number: profileData.value?.cellphone_number,
     })
     profileData.value = data.data
     sessionStore.updateUser({
       ...sessionStore.user!,
-      name: data.data.name
+      name: data.data.name,
     })
     toast.add({
       severity: 'success',
       summary: t('success'),
       detail: t('profile.updated'),
-      life: 3000
+      life: 3000,
     })
   } catch (error) {
     console.error(error)
@@ -229,7 +229,7 @@ const updateProfile = async () => {
       severity: 'error',
       summary: t('error'),
       detail: t('profile.update_failed'),
-      life: 3000
+      life: 3000,
     })
   } finally {
     saveLoading.value = false
@@ -245,7 +245,7 @@ const updateProfile = async () => {
           <h1 class="text-2xl font-semibold">{{ $t('profile.title') }}</h1>
         </div>
       </template>
-      
+
       <template #content>
         <div v-if="loading" class="flex justify-center p-8">
           <ProgressSpinner />
@@ -270,13 +270,13 @@ const updateProfile = async () => {
               :disabled="!userId"
             />
           </div>
-          
+
           <!-- Profile Image Section -->
           <div class="space-y-4">
             <label class="block text-sm font-medium text-gray-700">
               {{ $t('profile.profile_image') }}
             </label>
-            
+
             <div class="flex items-center gap-6">
               <!-- Current or Preview Image -->
               <div class="relative">
@@ -294,19 +294,16 @@ const updateProfile = async () => {
                   shape="circle"
                   class="w-24 h-24"
                 />
-                
+
                 <!-- Upload overlay when loading -->
                 <div
                   v-if="uploadLoading"
                   class="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center"
                 >
-                  <ProgressSpinner
-                    style="width: 30px; height: 30px"
-                    strokeWidth="4"
-                  />
+                  <ProgressSpinner style="width: 30px; height: 30px" strokeWidth="4" />
                 </div>
               </div>
-              
+
               <!-- Action Buttons -->
               <div class="flex flex-col gap-2">
                 <Button
@@ -317,7 +314,7 @@ const updateProfile = async () => {
                   @click="openFileDialog"
                   :loading="uploadLoading"
                 />
-                
+
                 <Button
                   v-if="profileImgUrl"
                   :icon="IconTrash"
@@ -328,13 +325,13 @@ const updateProfile = async () => {
                   @click="deleteProfileImage"
                   :loading="deleteLoading"
                 />
-                
+
                 <span class="text-xs text-gray-500">
                   {{ $t('profile.image_requirements') }}
                 </span>
               </div>
             </div>
-            
+
             <!-- Hidden file input -->
             <input
               ref="fileInput"
@@ -344,31 +341,23 @@ const updateProfile = async () => {
               @change="onFileSelect"
             />
           </div>
-          
+
           <!-- Profile Form -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="space-y-2">
               <label class="block text-sm font-medium text-gray-700">
                 {{ $t('profile.name') }}
               </label>
-              <InputText
-                v-model="profileData.name"
-                class="w-full"
-                :disabled="loading"
-              />
+              <InputText v-model="profileData.name" class="w-full" :disabled="loading" />
             </div>
-            
+
             <div class="space-y-2">
               <label class="block text-sm font-medium text-gray-700">
                 {{ $t('profile.email') }}
               </label>
-              <InputText
-                :modelValue="profileData?.email"
-                class="w-full"
-                disabled
-              />
+              <InputText :modelValue="profileData?.email" class="w-full" disabled />
             </div>
-            
+
             <div class="space-y-2 md:col-span-2">
               <label class="block text-sm font-medium text-gray-700">
                 {{ $t('profile.phone_number') }}
@@ -385,7 +374,7 @@ const updateProfile = async () => {
           <p>{{ $t('profile.error_loading') }}</p>
         </div>
       </template>
-      
+
       <template #footer>
         <div v-if="profileData" class="flex justify-end p-6">
           <Button

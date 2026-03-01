@@ -76,13 +76,13 @@ export default {
   signup: {
     company_name: {
       label: 'Nombre de la compañia',
-      placeholder: 'Ingresa el nombre de la compañia'
-    }
+      placeholder: 'Ingresa el nombre de la compañia',
+    },
   },
   login: {
     title: 'Iniciar sesion',
     company: 'Compañia',
-    switch: 'Cambiar'
+    switch: 'Cambiar',
   },
   choose_tenant: {
     title: 'Elige la Compañia',
@@ -92,8 +92,8 @@ export default {
     'The email has already been taken': 'El email ya ha sido tomado.',
     'The provided credentials are incorrect': 'Credenciales incorrectas',
     'Template name already exists': 'El nombre de la plantilla ya existe',
-    'template_name_already_exists': 'El nombre de la plantilla ya existe',
-    'template_name_language_already_exists': 'El nombre de la plantilla con ese idioma ya existe',
+    template_name_already_exists: 'El nombre de la plantilla ya existe',
+    template_name_language_already_exists: 'El nombre de la plantilla con ese idioma ya existe',
     'Contact already exists': 'El contacto ya existe',
     'Group name already exists': 'El nombre del grupo ya existe',
     'Broadcast name already exists': 'El nombre de la campaña ya existe',
@@ -105,16 +105,20 @@ export default {
     'A role with this name already exists': 'Ya existe un rol con este nombre',
     'This role is internal and cannot be updated': 'Este rol es interno y no puede actualizarce',
     'A team with this name already exists': 'Ya existe un equipo con este nombre',
-    'contact_has_active_broadcasts': 'No se puede modificar un contacto cuando tiene campañas activas',
-    'subscription_contact_limit_reached': 'Ha alcanzado el límite de contactos de su plan de suscripción actual. Por favor actualice su plan para agregar más contactos.',
-    'subscription_user_limit_reached': 'Ha alcanzado el límite de usuarios de su plan de suscripción actual. Por favor actualice su plan para agregar más usuarios.',
-    'subscription_whatsapp_limit_reached': 'Ha alcanzado el límite de números de WhatsApp de su plan de suscripción actual. Por favor actualice su plan para agregar más números.',
-    'bot_already_exists': 'El bot ya existe',
-    'bot_not_found': 'Bot no encontrado',
-    'bot_has_no_nodes': 'El Bot debe tener por lo menos un nodo para ser activado',
-    'conversation_is_expired': 'La conversacion expiró',
-    'bot_variable_name_already_exists': 'El nombre de la variable ya existe',
-    'flow_already_exists': 'Ya existe una versión con este nombre'
+    contact_has_active_broadcasts:
+      'No se puede modificar un contacto cuando tiene campañas activas',
+    subscription_contact_limit_reached:
+      'Ha alcanzado el límite de contactos de su plan de suscripción actual. Por favor actualice su plan para agregar más contactos.',
+    subscription_user_limit_reached:
+      'Ha alcanzado el límite de usuarios de su plan de suscripción actual. Por favor actualice su plan para agregar más usuarios.',
+    subscription_whatsapp_limit_reached:
+      'Ha alcanzado el límite de números de WhatsApp de su plan de suscripción actual. Por favor actualice su plan para agregar más números.',
+    bot_already_exists: 'El bot ya existe',
+    bot_not_found: 'Bot no encontrado',
+    bot_has_no_nodes: 'El Bot debe tener por lo menos un nodo para ser activado',
+    conversation_is_expired: 'La conversacion expiró',
+    bot_variable_name_already_exists: 'El nombre de la variable ya existe',
+    flow_already_exists: 'Ya existe una versión con este nombre',
   },
   submit_for_review: 'Enviar para revision',
   template_name: 'Nombre del template',
@@ -127,14 +131,15 @@ export default {
     TEXT: 'Texto',
     IMAGE: 'Imagen',
     VIDEO: 'Video',
-    DOCUMENT: 'Documento'
+    DOCUMENT: 'Documento',
   },
   header_tooltip: 'Haga que su mensaje se destaque con texto o contenido personalizado.',
   header_placeholder: '¿Eres nuevo en Wabox?',
   optional: 'Opcional',
   body: 'Cuerpo',
   footer: 'Pie de página',
-  footer_tooltip: 'Incluye una breve línea de texto al final de tu plantilla. Si activas el botón de cancelación de suscripción a marketing, el pie de página predeterminado aparecerá aquí automáticamente.',
+  footer_tooltip:
+    'Incluye una breve línea de texto al final de tu plantilla. Si activas el botón de cancelación de suscripción a marketing, el pie de página predeterminado aparecerá aquí automáticamente.',
   help_text_category_change:
     'Habilitando esta opción prevendrá el rechazo del template debido a la miscategorización.',
   example_footer_text: 'Ej: Gracias por elegirnos!',
@@ -167,7 +172,7 @@ export default {
         name: 'Ex: John, Ram, Riya',
         email: 'Ex: hola@email.com',
         phone: 'Ex: 9876543210',
-        default: 'Ex: 234, Valor perzonalizado'
+        default: 'Ex: 234, Valor perzonalizado',
       },
       add_variable: 'Agregar variables',
       variables_tooltip: 'Personaliza tu mensaje añadiendo variables',
@@ -180,9 +185,10 @@ export default {
         italic: 'Italico',
         strikethrough: 'Tachado',
         numbered_list: 'Lista Numerada',
-        unordered_list: 'Lista Desordenada'
+        unordered_list: 'Lista Desordenada',
       },
-      variables_info: 'Ingrese un valor de muestra para sus variables para dar contexto al equipo de aprobación de plantillas de WhatsApp.'
+      variables_info:
+        'Ingrese un valor de muestra para sus variables para dar contexto al equipo de aprobación de plantillas de WhatsApp.',
     },
     buttons: {
       quick_reply: {
@@ -222,7 +228,8 @@ export default {
     delete_message: '¿Estás seguro de que deseas eliminar esta plantilla?',
     template_deleted: '¡Plantilla eliminada con éxito!',
     active_broadcasts: 'Campañas Activas',
-    active_broadcasts_message: 'No puedes eliminar esta plantilla porque se está utilizando en las siguientes campañas activas:',
+    active_broadcasts_message:
+      'No puedes eliminar esta plantilla porque se está utilizando en las siguientes campañas activas:',
     daily_limit_reached: 'El límite diario fue alcanzado para esta plantilla',
     monthly_limit_reached: 'El límite mensual fue alcanzado para esta plantilla',
     templates_limit_reached: 'Alcanzo el limite de plantillas',
@@ -241,11 +248,11 @@ export default {
   template_status: {
     PENDING: 'Pendiente',
     REJECTED: 'Rechazada',
-    APPROVED: 'Aprobada'
+    APPROVED: 'Aprobada',
   },
   edit_template: {
     title: 'Editar Plantilla',
-    template_updated: '¡Plantilla actualizada con éxito!'
+    template_updated: '¡Plantilla actualizada con éxito!',
   },
   save: 'Guardar',
   cancel: 'Cancelar',
@@ -271,21 +278,23 @@ export default {
       is_required: 'El nombre es obligatorio.',
       no_special_char: 'El nombre no puede contener caracteres especiales ni números.',
       placeholder: 'Ingrese el nombre',
-      help: 'Nombre del campo que se mostrará en toda la plataforma.'
+      help: 'Nombre del campo que se mostrará en toda la plataforma.',
     },
     internal_name: {
       is_required: 'El nombre interno es obligatorio.',
-      no_special_char_except_underscore: 'El nombre interno no puede contener caracteres especiales ni números, excepto guiones bajos (_).',
+      no_special_char_except_underscore:
+        'El nombre interno no puede contener caracteres especiales ni números, excepto guiones bajos (_).',
       placeholder: 'Ingrese el nombre interno',
-      help: 'Nombre real del campo utilizado para acceder a los valores externamente.'
+      help: 'Nombre real del campo utilizado para acceder a los valores externamente.',
     },
     delete_field: 'Eliminar campo',
     delete_message: '¿Estás seguro de que deseas eliminar este campo?',
-    delete_note: 'NOTA: Una vez eliminado, todos los datos asociados a este campo se eliminarán de los contactos. Esta acción no se puede deshacer.',
+    delete_note:
+      'NOTA: Una vez eliminado, todos los datos asociados a este campo se eliminarán de los contactos. Esta acción no se puede deshacer.',
     field_created: '¡Valor del campo creado con éxito!',
     field_updated: '¡Valor del campo actualizado con éxito!',
     field_deleted: '¡Valor del campo eliminado con éxito!',
-    add_options: 'Agregar Opciones'
+    add_options: 'Agregar Opciones',
   },
   contact_field: {
     edit: 'Editar valor del campo',
@@ -294,11 +303,12 @@ export default {
     is_primary: '{field} es un campo principal',
     is_secondary: '{field} es un campo secundario',
     internal_name: 'Nombre interno',
-    internal_name_info: 'El nombre interno del campo utilizado para acceder a los valores externamente (por ejemplo, en APIs o integraciones).',
+    internal_name_info:
+      'El nombre interno del campo utilizado para acceder a los valores externamente (por ejemplo, en APIs o integraciones).',
     type: 'Tipo',
     status: 'Estado',
     mandatory: 'Obligatorio',
-    options: 'Opciones'
+    options: 'Opciones',
   },
   contacts: {
     title: 'Contactos',
@@ -321,18 +331,19 @@ export default {
       Email: 'Email',
       Phone: 'Teléfono',
       Tags: 'Etiquetas',
-      'Marketing OptIn': 'Marketing OptIn'
+      'Marketing OptIn': 'Marketing OptIn',
     },
     placeholder: {
       Name: 'Ingresa el nombre',
       Email: 'Ingresa el email',
       Phone: '+54',
       'Marketing OptIn': 'Seleccionar...',
-      tag: 'Ingresa una etiqueta'
+      tag: 'Ingresa una etiqueta',
     },
     add_tag: 'Agregar etiqueta',
     additional_details: 'Detalles adicionales',
-    marketing_optin_help: "Marque 'SI' si se ha obtenido el consentimiento de este contacto para recibir mensajes de marketing.",
+    marketing_optin_help:
+      "Marque 'SI' si se ha obtenido el consentimiento de este contacto para recibir mensajes de marketing.",
     contact_created: '¡Contacto creado con éxito!',
     contact_updated: '¡Contacto actualizado con éxito!',
     import_dialog: {
@@ -340,7 +351,8 @@ export default {
       steps_title: 'Completa los siguientes pasos para importar usuarios.',
       step1_title: 'Importar contactos desde archivo',
       upload_file: 'Subir archivo',
-      step1_hint: 'Puedes usar Google Sheets o Microsoft Excel para generar un archivo .xlsx (.xlsx o .xlsx UTF-8). El archivo debe incluir el número de teléfono, el código de país y el nombre. También puede tener columnas personalizadas que se pueden importar a Wabox como atributos.',
+      step1_hint:
+        'Puedes usar Google Sheets o Microsoft Excel para generar un archivo .xlsx (.xlsx o .xlsx UTF-8). El archivo debe incluir el número de teléfono, el código de país y el nombre. También puede tener columnas personalizadas que se pueden importar a Wabox como atributos.',
       download_sample: '[Descargar ejemplo de XLSX].',
       browse_hint: 'Haz clic para buscar o arrastra y suelta tu archivo de importación aquí',
       supported_formats: 'Solo se admiten archivos .xlsx, .xls, .csv',
@@ -349,8 +361,10 @@ export default {
       add_only: 'Añadir solo contactos nuevos',
       add_only_help: 'Solo se agregarán contactos que no estén actualmente en la base de datos.',
       add_update: 'Añadir contactos y actualizar existentes',
-      add_update_help: 'Los contactos existentes con los mismos números serán reemplazados con los valores del archivo XLSX.',
-      step2_description: 'Elija donde desea importar sus campos. Tenga en cuenta que “Nombre” y “Telefono” siempre son obligatorios.',
+      add_update_help:
+        'Los contactos existentes con los mismos números serán reemplazados con los valores del archivo XLSX.',
+      step2_description:
+        'Elija donde desea importar sus campos. Tenga en cuenta que “Nombre” y “Telefono” siempre son obligatorios.',
       step2_title: 'Vista previa de asignación de columnas',
       excel_column: 'Columna de Excel',
       sample_value: 'Valor',
@@ -362,14 +376,15 @@ export default {
       duplicated_field: 'El campo de contacto "{field}" está mapeado más de una vez.',
       import_failed: 'La importación falló. Por favor, inténtalo de nuevo.',
       step3_title: 'Asignación completada exitosamente',
-      step3_hint: 'Las columnas y valores se mapearon correctamente, te notificaremos por medio de la campanita cuando se haya completado la importación. Si lo deseas, puedes acceder al historial.',
+      step3_hint:
+        'Las columnas y valores se mapearon correctamente, te notificaremos por medio de la campanita cuando se haya completado la importación. Si lo deseas, puedes acceder al historial.',
       go_to_history: 'Ir al historial',
       cancel: 'Cancelar',
       back: 'Volver',
       map_columns: 'Asignar columnas',
       confirm_import: 'Confirmar importación',
-      select_placeholder: 'Seleccionar'
-    }
+      select_placeholder: 'Seleccionar',
+    },
   },
   copied_to_clipboard: 'Copiado al portapapeles',
   apply: 'Aplicar',
@@ -391,8 +406,8 @@ export default {
       before: 'Antes de',
       after: 'Después de',
       greater_than: 'Mayor que',
-      less_than: 'Menor que'
-    }
+      less_than: 'Menor que',
+    },
   },
   contact_groups: {
     add_group: 'Agregar Grupo',
@@ -405,21 +420,23 @@ export default {
       filters: 'Filtros',
       total_contacts: 'Contactos totales',
       created_by: 'Creado por',
-      last_update: 'Ultima actualización'
+      last_update: 'Ultima actualización',
     },
     dialog: {
       create_group: 'Crear Grupo',
       edit_group: 'Editar Grupo',
-      message: 'Crea grupos dinámicos con filtros de contactos que incluyan automáticamente contactos nuevos y existentes que cumplan los criterios.',
+      message:
+        'Crea grupos dinámicos con filtros de contactos que incluyan automáticamente contactos nuevos y existentes que cumplan los criterios.',
       enter_group_name: 'Ingresar nombre del grupo',
       create_group_tooltip: 'No puede guardar/crear un grupo sin contactos asociados',
-      reset: 'Resetear'
+      reset: 'Resetear',
     },
     group_created: '¡Grupo creado con éxito!',
     group_updated: '¡Grupo actualizado con éxito!',
     group_deleted: '¡Grupo eliminado con éxito!',
     async_processing_title: 'Group creado',
-    async_processing_warning: 'Este grupo contiene {count} contactos y puede tomar unos minutos en crearse. Lo procesaremos automáticamente y te notificaremos cuando esté listo.'
+    async_processing_warning:
+      'Este grupo contiene {count} contactos y puede tomar unos minutos en crearse. Lo procesaremos automáticamente y te notificaremos cuando esté listo.',
   },
   today: 'Hoy',
   yesterday: 'Ayer',
@@ -439,17 +456,17 @@ export default {
       total_contacts: 'Contactos totales',
       updated_contacts: 'Contactos actualizados',
       errored_contacts: 'Contactos con error',
-      status: 'Estado'
+      status: 'Estado',
     },
     status: {
       PENDING: 'Pendiente',
       PROCESSING: 'Procesando',
-      COMPLETED: 'Completado'
-    }
+      COMPLETED: 'Completado',
+    },
   },
   contact_import_type: {
     ADD: 'Agregar nuevos contactos',
-    ADD_AND_REPLACE: 'Agregar y actualizar contactos'
+    ADD_AND_REPLACE: 'Agregar y actualizar contactos',
   },
   broadcasts: {
     title: 'Campañas',
@@ -468,7 +485,7 @@ export default {
       readed: 'Leidos',
       failed: 'Fallidos',
       replied: 'Respondidos',
-      status: 'Estado'
+      status: 'Estado',
     },
     status: {
       queued: 'En cola',
@@ -477,14 +494,14 @@ export default {
       sent: 'Completada',
       failed: 'Fallida',
       cancelled: 'Cancelada',
-      completed: 'Completada'
+      completed: 'Completada',
     },
     download_report: 'Descargar reporte',
     repeat_broadcast: 'Repetir campaña',
     cancel_broadcast: 'Cancelar campaña',
     cancel_message: '¿Estás seguro de que deseas cancelar esta campaña?',
     broadcast_canceled: '¡Campaña cancelada con éxito!',
-    missing_template: 'No se puede repetir la campaña debido a que falta la plantilla'
+    missing_template: 'No se puede repetir la campaña debido a que falta la plantilla',
   },
   continue: 'Continuar',
   leave: 'Salir',
@@ -505,7 +522,8 @@ export default {
     groups_selected: '{groups} Grupos seleccionados',
     no_group_selected: 'Ningún grupo seleccionado',
     map_variables: 'Mapea Variables',
-    map_variables_notes: 'Nota: Si se selecciona un campo de contacto y el contacto no tiene ese campo, se usará el nombre del contacto para autocompletar la variable.',
+    map_variables_notes:
+      'Nota: Si se selecciona un campo de contacto y el contacto no tiene ese campo, se usará el nombre del contacto para autocompletar la variable.',
     variables: 'Variables',
     map: 'Mapeos',
     values: 'Valores',
@@ -530,26 +548,27 @@ export default {
     schedule_at: 'Programar la hora',
     broadcast_created: '¡Campaña creada con éxito!',
     missing_template_title: 'No se há encontrado plantillas aprobadas',
-    missing_template_description: 'Debes crear una plantilla para continuar con los pasos de la campaña.',
-    send_to_all_numbers: 'Enviar a todos los números'
+    missing_template_description:
+      'Debes crear una plantilla para continuar con los pasos de la campaña.',
+    send_to_all_numbers: 'Enviar a todos los números',
   },
   broadcast_details: {
     title: 'Detalles de campaña',
     headers: {
       name: 'Nombre',
       phone: 'Teléfono',
-      status: 'Estado'
+      status: 'Estado',
     },
     messages_empty: 'No hay mensajes para mostrar',
     groups: '{count} Grupo | {count} Grupos',
-    selected_number: 'Teléfono seleccionado'
+    selected_number: 'Teléfono seleccionado',
   },
   users_teams_roles: {
     title: 'Usuarios, Equipos y Roles',
     users_tab: 'Usuarios',
     deleted_users_tab: 'Usuarios Eliminados',
     teams_tab: 'Equipos',
-    roles_tab: 'Roles'
+    roles_tab: 'Roles',
   },
   users: {
     add: 'Agregar Usuario',
@@ -559,7 +578,7 @@ export default {
       name: 'Nombre',
       email: 'Correo Electrónico',
       role: 'Rol',
-      status: 'Estado'
+      status: 'Estado',
     },
     status: {
       SIGNED_UP: 'Registrado',
@@ -567,7 +586,7 @@ export default {
       INACTIVE: 'Inactivo',
       DELETED: 'Eliminado',
       INVITATION_SENT: 'Invitación Enviada',
-      INVITATION_ACCEPTED: 'Invitación Aceptada'
+      INVITATION_ACCEPTED: 'Invitación Aceptada',
     },
     create_user: 'Crear Usuario',
     edit_user: 'Editar Usuario',
@@ -575,39 +594,40 @@ export default {
     delete_message: '¿Estás seguro de que deseas eliminar este usuario?',
     name: {
       label: 'Nombre',
-      placeholder: 'Ingresa el nombre'
+      placeholder: 'Ingresa el nombre',
     },
     email: {
       label: 'Correo Electrónico',
-      placeholder: 'Ingresa el correo electrónico'
+      placeholder: 'Ingresa el correo electrónico',
     },
     role: {
       label: 'Rol',
-      placeholder: 'Selecciona un rol'
+      placeholder: 'Selecciona un rol',
     },
     teams: {
       label: 'Equipos',
-      placeholder: 'Selecciona equipos'
+      placeholder: 'Selecciona equipos',
     },
     wabas: {
       label: 'Wabas',
       placeholder: 'Selecciona cuentas',
-      tooltip: 'Selecciona las cuentas de WhatsApp Business a las que este usuario tendrá acceso. El usuario podrá enviar y recibir mensajes desde estas cuentas.'
+      tooltip:
+        'Selecciona las cuentas de WhatsApp Business a las que este usuario tendrá acceso. El usuario podrá enviar y recibir mensajes desde estas cuentas.',
     },
-     waba: {
+    waba: {
       label: 'WABA por defecto',
-      placeholder: 'Selecciona cuenta por defecto'
+      placeholder: 'Selecciona cuenta por defecto',
     },
     create_user_tooltip: 'Debes completar todos los campos requeridos',
     user_created: '¡Usuario creado con éxito!',
     user_updated: '¡Usuario actualizado con éxito!',
-    user_deleted: '¡Usuario eliminado con éxito!'
+    user_deleted: '¡Usuario eliminado con éxito!',
   },
   deleted_users: {
     restore: 'Restaurar',
     restore_title: 'Restaurar usuario',
     restore_message: '¿Estás seguro de que deseas restaurar este usuario?',
-    restored: 'Usuario restaurado'
+    restored: 'Usuario restaurado',
   },
   teams: {
     add: 'Agregar Equipo',
@@ -617,15 +637,15 @@ export default {
       name: 'Nombre',
       created_by: 'Creado Por',
       users_count: 'N.º de usuarios',
-      actions: 'Acciones'
+      actions: 'Acciones',
     },
     name: {
       label: 'Nombre',
-      placeholder: 'Ingresa el nombre'
+      placeholder: 'Ingresa el nombre',
     },
     users: {
       label: 'Usuarios',
-      placeholder: 'Selecciona usuarios'
+      placeholder: 'Selecciona usuarios',
     },
     create_team_tooltip: 'Debes completar todos los campos requeridos',
     create_team: 'Crear Equipo',
@@ -634,7 +654,7 @@ export default {
     delete_message: '¿Estás seguro de que deseas eliminar este equipo?',
     team_created: '¡Equipo creado con éxito!',
     team_updated: '¡Equipo actualizado con éxito!',
-    team_deleted: '¡Equipo eliminado con éxito!'
+    team_deleted: '¡Equipo eliminado con éxito!',
   },
   roles: {
     add: 'Agregar Rol',
@@ -642,12 +662,12 @@ export default {
     empty: 'No se encontraron roles',
     headers: {
       name: 'Nombre',
-      created_by: 'Creado Por'
+      created_by: 'Creado Por',
     },
     system: 'Sistema',
     name: {
       label: 'Nombre',
-      placeholder: 'Ingresa el nombre'
+      placeholder: 'Ingresa el nombre',
     },
     role_permissions: 'Permisos de rol',
     enable_all: 'Activar Todos',
@@ -658,11 +678,12 @@ export default {
     delete_message: '¿Estás seguro de que deseas eliminar este rol?',
     role_created: '¡Rol creado con éxito!',
     role_updated: '¡Rol actualizado con éxito!',
-    role_deleted: '¡Rol eliminado con éxito!'
+    role_deleted: '¡Rol eliminado con éxito!',
   },
   unauthorize_access: {
     title: 'Acceso Denegado',
-    message: 'No tienes permisos suficientes para acceder a este módulo, contacta a tu administrador'
+    message:
+      'No tienes permisos suficientes para acceder a este módulo, contacta a tu administrador',
   },
   table_empty: 'No se encontraron elementos',
   complete_profile: {
@@ -670,7 +691,8 @@ export default {
     select_account: 'Seleccionar cuenta',
     select_business: 'Seleccionar negocio',
     connect_account_title: 'Conecta tu cuenta de WhatsApp Business para comenzar',
-    connect_account_description: 'Para continuar, conecta tu cuenta de WhatsApp Business a nuestra plataforma.',
+    connect_account_description:
+      'Para continuar, conecta tu cuenta de WhatsApp Business a nuestra plataforma.',
     connect: 'Conectar',
     schedule_a_call: 'Agendar una llamada',
     select_account_title: 'Selecciona tu cuenta',
@@ -681,28 +703,32 @@ export default {
     phone_number: 'Número de teléfono',
     select_number: 'Seleccionar número',
     connect_new_number: 'Conecta tu número',
-    connect_number: 'Conectar número'
+    connect_number: 'Conectar número',
   },
   create_number: {
     requirements: 'Requerimientos',
     connect_number: 'Conectar número',
     verify: 'Verificar',
-    number_requirements: 'Un número de teléfono comercial adecuado para recibir el SMS de verificación. No debe ser tu número personal de WhatsApp.',
-    delete_number_required: 'Si actualmente estás usando WhatsApp con ese número, elimina esa cuenta.',
+    number_requirements:
+      'Un número de teléfono comercial adecuado para recibir el SMS de verificación. No debe ser tu número personal de WhatsApp.',
+    delete_number_required:
+      'Si actualmente estás usando WhatsApp con ese número, elimina esa cuenta.',
     can_connect_number: 'Cumplo con los prerrequisitos anteriores',
     whatsapp_business_display_name: 'Nombre mostrado del WhatsApp Business',
     business_name: 'Nombre de la empresa',
     select_number: 'Seleccionar número',
     verify_your_phone_number: 'Verifica tu número de teléfono',
-    receive_verification_code: 'Recibiras un codigo de verificacion por SMS para confirmar tu nuevo número.',
+    receive_verification_code:
+      'Recibiras un codigo de verificacion por SMS para confirmar tu nuevo número.',
     verification_code: 'Código de verificación',
     verication_code_length: 'El código de verificación debe tener 6 caracteres',
-    verify_code: 'Verificar código'
+    verify_code: 'Verificar código',
   },
   conversations: {
     title: 'Conversaciones',
     select_conversation: 'Selecciona una conversación',
-    select_conversation_description: 'Selecciona una de las conversaciones para ver todos sus mensajes.',
+    select_conversation_description:
+      'Selecciona una de las conversaciones para ver todos sus mensajes.',
     initiate_conversation: 'Inicia una conversación nueva',
     start_conversation: 'Empezar Conversación',
     contacts: 'Contactos',
@@ -712,7 +738,7 @@ export default {
       mine: 'Mio',
       pinned: 'Fijado',
       opened: 'Abierto',
-      resolved: 'Resuelto'
+      resolved: 'Resuelto',
     },
     filters: {
       title: 'Filters',
@@ -720,7 +746,7 @@ export default {
       resolved_chats: 'Chats resueltos',
       unread_chats: 'Chats no leídos',
       assigned_to: 'Asignado a',
-      select_user: 'Seleccionar usuario'
+      select_user: 'Seleccionar usuario',
     },
     reopen: 'Reabrir',
     solve: 'Resolver',
@@ -734,7 +760,7 @@ export default {
     write_your_message: 'Escribe tu mensaje...',
     add_private_notes: 'Agrega tus notas privadas',
     search_messages: 'Buscar Mensajes',
-    no_messages_found: 'No se encontraron mensajes'
+    no_messages_found: 'No se encontraron mensajes',
   },
   next: 'Siguiente',
   learn_more: 'Aprender más',
@@ -757,10 +783,11 @@ export default {
     delivered: 'Recibido',
     read: 'Leído',
     failed: 'Fallído',
-    deleted: 'Eliminado'
+    deleted: 'Eliminado',
   },
   chat: {
-    assigned_from_user_to_user: '{old_user_name} há asignado el chat a {new_user_name} contacto a las {time}',
+    assigned_from_user_to_user:
+      '{old_user_name} há asignado el chat a {new_user_name} contacto a las {time}',
     assigned_to_user: '{new_user_name} se há asignado el chat a las {time}',
     unassigned: '{old_user_name} há desasignado el chat a las {time}',
     resolved: '{user_name} há marcado el chat como resuelto a las {time}',
@@ -769,7 +796,7 @@ export default {
     conversation_expired: 'La conversación ha expirado a las {time}',
     message_deleted: 'Este mensaje há sido borrado',
     expires_in: 'Expira en {time}',
-    chat_expired: 'El chat expiro'
+    chat_expired: 'El chat expiro',
   },
   app_sidebar: {
     routes: {
@@ -782,9 +809,9 @@ export default {
       contact_fields: 'Campos de contacto',
       users_teams_roles: 'Usuarios, Equipos y Roles',
       profile: 'Perfil',
-      subscription: 'Subscripción'
+      subscription: 'Subscripción',
     },
-    logout: 'Salir'
+    logout: 'Salir',
   },
   bots: {
     title: 'Bots',
@@ -795,7 +822,7 @@ export default {
       sessions: 'Sesiones',
       completed: 'Terminados',
       abandoned: 'Abandonados',
-      status: 'Estado'
+      status: 'Estado',
     },
     sessions_tooltip: 'Cantidad de veces que este bot se ha disparado.',
     completed_tooltip: 'Veces que se llegó al final del bot.',
@@ -803,7 +830,7 @@ export default {
     status: {
       draft: 'Borrador',
       active: 'Activo',
-      archived: 'Archivado'
+      archived: 'Archivado',
     },
     last_updated: 'Ultima actualización {date}',
     any_message: 'Cualquier mensaje',
@@ -811,7 +838,7 @@ export default {
       edit: 'Editar',
       stats: 'Estadísticas',
       versions: 'Versiones',
-      clone: 'Clonar'
+      clone: 'Clonar',
     },
     create_bot: 'Crear bot',
     edit_bot: 'Editar bot',
@@ -824,16 +851,18 @@ export default {
       for_specific_keywords: 'Para palabra(s) clave específica(s)',
       keyword: 'Palabra clave',
       keyword_placeholder: 'Ingresa la palabra clave',
-      keyword_tooltip: 'Puedes escribir una palabra o una expresión regular (REGEX) para usar como disparador haciendo clic en la opción avanzada de regex.',
+      keyword_tooltip:
+        'Puedes escribir una palabra o una expresión regular (REGEX) para usar como disparador haciendo clic en la opción avanzada de regex.',
       exact_match: 'Coincidencia exacta',
       contains: 'Contiene',
       advanced_options: 'Opciones avanzadas',
       case_match: 'Respetar mayúsculas',
-      case_match_tooltip: 'El bot compara las palabras clave de intención exactamente, incluyendo las mayúsculas y minúsculas.\n\nCuando la coincidencia de mayúsculas está activada:\n\nPalabra clave: "Reservar Vuelo"\n\nEntrada del mensaje: "Reservar Vuelo" - coincide y el flujo se activa\n\nEntrada del mensaje: "reservar vuelo" o "RESERVAR VUELO" - no coincide y el flujo no se activa',
+      case_match_tooltip:
+        'El bot compara las palabras clave de intención exactamente, incluyendo las mayúsculas y minúsculas.\n\nCuando la coincidencia de mayúsculas está activada:\n\nPalabra clave: "Reservar Vuelo"\n\nEntrada del mensaje: "Reservar Vuelo" - coincide y el flujo se activa\n\nEntrada del mensaje: "reservar vuelo" o "RESERVAR VUELO" - no coincide y el flujo no se activa',
       regex_match: 'Usar Regex',
       add_keyword: 'Agregar palabra clave',
-      keyword_required: "Palabra clave requerida",
-	    invalid_regex: "Expresión regular invalida",
+      keyword_required: 'Palabra clave requerida',
+      invalid_regex: 'Expresión regular invalida',
     },
     delete_bot: 'Eliminar',
     delete_message: '¿Estás seguro de que deseas eliminar este bot?',
@@ -852,15 +881,15 @@ export default {
     tabs: {
       stats: 'Estadísticas',
       versions: 'Versiones',
-      settings: 'Configuración'
+      settings: 'Configuración',
     },
     add_a_version: 'Agregar una versión',
     empty_versions: 'No se encontraron versiones',
     no_active_version: 'No hay una versión activa',
-    if_client_doesnt_answer: "¿Qué debe suceder si el cliente no responde?",
+    if_client_doesnt_answer: '¿Qué debe suceder si el cliente no responde?',
     if_session_is_ending: '¿Qué debe suceder cuando una conversación está por terminar?',
     if_session_ends: '¿Qué debe suceder cuando una conversación termina?',
-    if_no_match: "¿Qué debe suceder cuando no hay coincidencia de intención?",
+    if_no_match: '¿Qué debe suceder cuando no hay coincidencia de intención?',
     if_no_more_nodes: '¿Qué debe suceder cuando no hay más nodos para procesar?',
     stats: {
       select_date_range: 'Selecciona rango de fechas',
@@ -873,21 +902,23 @@ export default {
       avg_duration: 'Duración promedio (min)',
       sessions: 'Sesiones',
       unique_users: 'Usuarios únicos',
-      avg_duration_chart: 'Duración promedio (min)'
+      avg_duration_chart: 'Duración promedio (min)',
     },
     actions: {
       edit: 'Editar',
       activate: 'Activar',
       deactivate: 'Desactivar',
-      delete: 'Eliminar'
+      delete: 'Eliminar',
     },
     activate_version: 'Activar versión',
     deactivate_version: 'Desactivar versión',
     delete_version: 'Eliminar versión',
-    activate_version_message: 'Estás seguro de que deseas activar esta versión? Cualquier versión activa previamente será desactivada.',
+    activate_version_message:
+      'Estás seguro de que deseas activar esta versión? Cualquier versión activa previamente será desactivada.',
     deactivate_version_message: '¿Estás seguro de que deseas desactivar esta versión?',
     delete_version_message: '¿Estás seguro de que deseas eliminar esta versión?',
-    delete_active_version_message: 'Esta versión está activa, si la eliminas no habrá una versión activa para este bot.',
+    delete_active_version_message:
+      'Esta versión está activa, si la eliminas no habrá una versión activa para este bot.',
     version_activated: '¡Versión activada con éxito!',
     version_deactivated: '¡Versión desactivada con éxito!',
     version_deleted: '¡Versión eliminada con éxito!',
@@ -896,7 +927,7 @@ export default {
       message: 'Enviar mensaje',
       assign_user: 'Asignar a usuario',
       assign_bot: 'Asignar a bot',
-      no_action: 'Ninguna acción'
+      no_action: 'Ninguna acción',
     },
     select_user: 'Seleccionar usuario',
     select_bot: 'Seleccionar bot',
@@ -915,7 +946,7 @@ export default {
     no_match_message: 'Mensaje sin coincidencia',
     no_match_assign_user_id: 'Cuando no haya coincidencia asignar a usuario',
     no_match_assign_bot_id: 'Cuando no haya coincidencia asignar a bot',
-    conf_updated: '¡Configuración actualizada con éxito!'
+    conf_updated: '¡Configuración actualizada con éxito!',
   },
   bot_workflow: {
     title: 'Nueva versión de bot',
@@ -923,7 +954,7 @@ export default {
     categories: {
       send_message: 'Enviar mensaje',
       question: 'Pregunta',
-      general: 'General'
+      general: 'General',
     },
     nodes: {
       message: 'Enviar mensaje',
@@ -939,17 +970,19 @@ export default {
       location: 'Ubicación',
       working_hours: 'Horas de trabajo',
       start_again: 'Empezar otra vez',
-      set_variable: 'Setear variable'
+      set_variable: 'Setear variable',
     },
     no_name: 'Sin nombre',
     premium_node_title: 'Función premium',
-    premium_node_message: 'Esta función es parte de nuestro plan premium. Actualiza tu suscripción para acceder a esta y otras funciones avanzadas.',
+    premium_node_message:
+      'Esta función es parte de nuestro plan premium. Actualiza tu suscripción para acceder a esta y otras funciones avanzadas.',
     upgrade_now: 'Cambiar plan',
     active_sessions: 'Sesiones activas',
     active_sessions_message: 'Hay {count} sesiones activas con este bot. ¿Desea cerrarlas?',
     name_required: 'El nombre de la versión es obligatorio',
     no_nodes: 'No se puede guardar una versión sin nodos',
-    unconnected_nodes: 'Todos los nodos deben estar conectados. Por favor elimine o conecte los nodos sin conexión',
+    unconnected_nodes:
+      'Todos los nodos deben estar conectados. Por favor elimine o conecte los nodos sin conexión',
     message_label: 'Mensaje',
     message_placeholder: 'Ingresa el mensaje que deseas enviar...',
     create_variable: 'Crear variable',
@@ -964,7 +997,7 @@ export default {
       unassigned: 'Chat sin asignar',
       type: 'Tipo de asignación',
       user: 'Usuario',
-      bot: 'Bot'
+      bot: 'Bot',
     },
     condition: {
       conditions: 'Condiciones',
@@ -975,7 +1008,7 @@ export default {
       value: 'Valor',
       enter_value: 'Ingresa el valor',
       on_success: 'Caso de éxito',
-      on_failure: 'Caso de fallo'
+      on_failure: 'Caso de fallo',
     },
     operators: {
       equal: 'Es igual a',
@@ -986,7 +1019,7 @@ export default {
       greater_than_or_equal: 'Mayor que o igual a',
       is_empty: 'Esta vacio',
       is_not_empty: 'No esta vacio',
-      contains: 'Contiene'
+      contains: 'Contiene',
     },
     send_media: {
       media_type: 'Tipo de archivo',
@@ -999,7 +1032,7 @@ export default {
       link: 'Enlace',
       link_placeholder: 'https://www.ejemplo.com',
       caption: 'Título',
-      caption_placeholder: 'Ingresa el título'
+      caption_placeholder: 'Ingresa el título',
     },
     question_button: {
       header_type: 'Tipo de encabezado',
@@ -1016,7 +1049,7 @@ export default {
       options: 'Opciones',
       button_title: 'Título del botón',
       button_title_placeholder: 'Ingresa el título',
-      add_option: 'Agregar opción'
+      add_option: 'Agregar opción',
     },
     set_variable: {
       variables: 'Asignaciones de Variables',
@@ -1025,28 +1058,30 @@ export default {
       value: 'Valor',
       enter_value: 'Ingresa el valor',
       add_variable: 'Agregar asignación de variable',
-      no_variables_configured: 'No hay variables configuradas'
+      no_variables_configured: 'No hay variables configuradas',
     },
     working_hours: {
       available: 'Disponible',
       unavailable: 'No disponible',
-      description: 'Esta tarjeta hace que el bot funcione según tu horario laboral configurado. Durante esas horas, se te considerará "disponible" y se ejecutará la tarjeta conectada. Fuera de ese horario, cambiará al flujo de "no disponible".',
-      unset_warning: 'Si no se establece un horario laboral, el bot asumirá que estás disponible 24/7.',
+      description:
+        'Esta tarjeta hace que el bot funcione según tu horario laboral configurado. Durante esas horas, se te considerará "disponible" y se ejecutará la tarjeta conectada. Fuera de ese horario, cambiará al flujo de "no disponible".',
+      unset_warning:
+        'Si no se establece un horario laboral, el bot asumirá que estás disponible 24/7.',
       configure_hours: 'Para configurar o gestionar tu horario laboral',
     },
     template: {
       template: 'Plantilla',
       no_template_selected: 'Plantilla no seleccionada',
       select_template: 'Seleccionar plantilla',
-      body_variables: 'Variables del cuerpo'
+      body_variables: 'Variables del cuerpo',
     },
     location: {
       name: 'Nombre',
       enter_name: 'Ingresa el nombre',
       select_location: 'Selecciona la ubicación',
       choose_location: 'Seleccionar ubicación en el mapa',
-      address: 'Dirección'
-    }
+      address: 'Dirección',
+    },
   },
   subscription: {
     title: 'Elige un plan',
@@ -1055,7 +1090,7 @@ export default {
     plan: {
       growth: 'Growth',
       scale: 'Scale',
-      pro: 'Pro'
+      pro: 'Pro',
     },
     monthly: 'Mensual',
     yearly: 'Anual',
@@ -1082,13 +1117,14 @@ export default {
     configure_plan: 'Configura Tu Plan',
     extra_users: 'Usuarios Extra',
     extra_users_cost: 'Costo de usuarios extra',
-    plan_no_extra_users: 'Este plan no permite agregar usuarios extra. Por favor actualiza a Scale o Pro para esta función.',
+    plan_no_extra_users:
+      'Este plan no permite agregar usuarios extra. Por favor actualiza a Scale o Pro para esta función.',
     order_summary: 'Resumen del Pedido',
     monthly_billing: 'Facturación mensual',
     yearly_billing: 'Facturación anual',
     total: 'Total',
     yearly_savings_message: '¡Estás ahorrando 25% con facturación anual!',
-    subscribe: 'Suscribirse'
+    subscribe: 'Suscribirse',
   },
   profile: {
     title: 'Perfil',
@@ -1110,13 +1146,13 @@ export default {
     delete_failed: 'Error al eliminar la imagen de perfil',
     updated: 'Perfil actualizado exitosamente',
     update_failed: 'Error al actualizar el perfil',
-    error_loading: 'Error al cargar los datos del perfil'
+    error_loading: 'Error al cargar los datos del perfil',
   },
   notifications: {
     title: 'Notificaciones',
     mark_all_read: 'Marcar todas como leídas',
     empty: 'No hay notificaciones aún',
     import_completed: 'Importación completada',
-    import_completed_desc: 'Tu importación de contactos se ha completado'
-  }
+    import_completed_desc: 'Tu importación de contactos se ha completado',
+  },
 }

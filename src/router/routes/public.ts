@@ -13,7 +13,7 @@ const routes = [
     children: [
       {
         path: '/login',
-        
+
         children: [
           {
             path: '',
@@ -25,9 +25,9 @@ const routes = [
             path: 'choose-tenant',
             name: 'choose-tenant',
             meta: { titleKey: 'choose_tenant.title' },
-            component: ChooseTenant
-          }
-        ]
+            component: ChooseTenant,
+          },
+        ],
       },
       {
         path: '/signup',

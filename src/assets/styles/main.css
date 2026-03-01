@@ -1,99 +1,111 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-    --p-toast-detail-font-size: 1rem;
+  --p-toast-detail-font-size: 1rem;
 }
 
 html {
-    font-size: 12px;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  font-size: 12px;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    'Noto Color Emoji';
 }
 
 @layer primevue {
-    :root {
-        --p-toast-detail-font-size: 1rem;
-    }
+  :root {
+    --p-toast-detail-font-size: 1rem;
+  }
 }
 
 @layer base {
-    body {
-        @apply text-base;
-    }
+  body {
+    @apply text-base;
+  }
 
-    .p-select-label {
-        @apply text-base;
-    }
+  .p-select-label {
+    @apply text-base;
+  }
 
-    .p-select-option {
-        @apply text-base;
-    }
+  .p-select-option {
+    @apply text-base;
+  }
 
-    .p-toast-detail {
-        font-size: 1rem;
-    }
+  .p-toast-detail {
+    font-size: 1rem;
+  }
 }
 
 label {
-    @apply text-slate-500 font-medium;
+  @apply text-slate-500 font-medium;
 }
 
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 4px;
+  background: #888;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+  background: #555;
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
+  background: #f1f1f1;
+  border-radius: 4px;
 }
 
 * {
-    scrollbar-width: thin;
-    scrollbar-color: #888 #f1f1f1;
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
 }
 
 .p-tabs {
-    height: 100%;
-    overflow: hidden;
+  height: 100%;
+  overflow: hidden;
 }
 
 .p-tabpanel {
-    height: 100%;
+  height: 100%;
 }
 
 .p-tabpanels {
-    background: transparent !important;
-    border: none;
-    height: 100%;
-    overflow-y: hidden;
+  background: transparent !important;
+  border: none;
+  height: 100%;
+  overflow-y: hidden;
 }
 
 .p-tablist-tab,
 .p-tabpanels,
 .p-tabpanel {
-    background: transparent;
-    border: none;
+  background: transparent;
+  border: none;
 }
 
 .p-tablist {
-    background: transparent !important;
+  background: transparent !important;
 }
 
 .p-tablist-tab-list {
-    background: transparent !important;
-    padding: 0 1.5rem;
-    border-bottom: 1px solid var(--p-tabs-tab-hover-border-color) !important;
+  background: transparent !important;
+  padding: 0 1.5rem;
+  border-bottom: 1px solid var(--p-tabs-tab-hover-border-color) !important;
 }
 
 .tabler-icon {
-    stroke-width: 1.5;
+  stroke-width: 1.5;
 }

@@ -2,106 +2,116 @@
 import { ref, watch } from 'vue'
 
 const props = defineProps<{
-	items: Array<{ id: string, label: string, profile_img_path?: string | null }>
-	command: (item: { id: string; label: string; profile_img_path?: string | null }) => void
+  items: Array<{ id: string; label: string; profile_img_path?: string | null }>
+  command: (item: { id: string; label: string; profile_img_path?: string | null }) => void
 }>()
 const selectedIndex = ref(0)
 
 const upHandler = () => {
-	selectedIndex.value = (selectedIndex.value + props.items.length - 1) % props.items.length
+  selectedIndex.value = (selectedIndex.value + props.items.length - 1) % props.items.length
 }
 
 const downHandler = () => {
-	selectedIndex.value = (selectedIndex.value + 1) % props.items.length
+  selectedIndex.value = (selectedIndex.value + 1) % props.items.length
 }
 
 const enterHandler = () => {
-	selectItem(selectedIndex.value)
+  selectItem(selectedIndex.value)
 }
 
 const selectItem = (index: number) => {
-	const item = props.items[index]
-	if (item) props.command({
-		id: item.id,
-		label: item.label,
-		profile_img_path: item.profile_img_path
-	})
+  const item = props.items[index]
+  if (item)
+    props.command({
+      id: item.id,
+      label: item.label,
+      profile_img_path: item.profile_img_path,
+    })
 }
 
 const onKeyDown = ({ event }: { event: KeyboardEvent }) => {
-	if (event.key === 'ArrowUp') {
-		upHandler()
-		return true
-	}
-	if (event.key === 'ArrowDown') {
-		downHandler()
-		return true
-	}
-	if (event.key === 'Enter') {
-		enterHandler()
-		return true
-	}
-	return false
+  if (event.key === 'ArrowUp') {
+    upHandler()
+    return true
+  }
+  if (event.key === 'ArrowDown') {
+    downHandler()
+    return true
+  }
+  if (event.key === 'Enter') {
+    enterHandler()
+    return true
+  }
+  return false
 }
 
-watch(() => props.items, () => (selectedIndex.value = 0))
+watch(
+  () => props.items,
+  () => (selectedIndex.value = 0),
+)
 
 defineExpose({ onKeyDown })
 </script>
 
 <template>
-	<Listbox v-show="items.length" :modelValue="items[selectedIndex]" :options="items" class="p-1">
-		<template #option="{ option }: { option: { id: string, label: string, profile_img_path?: string | null }}">
-			<a
-				v-ripple
-				class="flex items-center min-w-[200px] rounded cursor-pointer"
-				@click="selectItem(items.findIndex(i => i.id === option.id))"
-			>
-				<div class="flex items-center gap-2">
-					<Avatar
-						v-if="option.profile_img_path"
-						:image="option.profile_img_path"
-						shape="circle"
-						size="small"
-					/>
-					<Avatar
-						v-else-if="option.label"
-						:label="option.label.charAt(0).toLocaleUpperCase()"
-						shape="circle"
-						size="small"
-					/>
-					{{ option.label }}
-				</div>
-			</a>
-		</template>
-	</Listbox>
+  <Listbox v-show="items.length" :modelValue="items[selectedIndex]" :options="items" class="p-1">
+    <template
+      #option="{
+        option,
+      }: {
+        option: { id: string; label: string; profile_img_path?: string | null }
+      }"
+    >
+      <a
+        v-ripple
+        class="flex items-center min-w-[200px] rounded cursor-pointer"
+        @click="selectItem(items.findIndex((i) => i.id === option.id))"
+      >
+        <div class="flex items-center gap-2">
+          <Avatar
+            v-if="option.profile_img_path"
+            :image="option.profile_img_path"
+            shape="circle"
+            size="small"
+          />
+          <Avatar
+            v-else-if="option.label"
+            :label="option.label.charAt(0).toLocaleUpperCase()"
+            shape="circle"
+            size="small"
+          />
+          {{ option.label }}
+        </div>
+      </a>
+    </template>
+  </Listbox>
 </template>
 
 <style scoped>
 .dropdown-menu {
-	background: white;
-	border: 1px solid #ccc;
-	border-radius: 0.5rem;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-	display: flex;
-	flex-direction: column;
-	gap: 0.1rem;
-	overflow: auto;
-	padding: 0.25rem 0;
-	position: relative;
-	min-width: 120px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  overflow: auto;
+  padding: 0.25rem 0;
+  position: relative;
+  min-width: 120px;
 }
 
 button {
-	background: transparent;
-	text-align: left;
-	width: 100%;
-	padding: 0.25rem 0.5rem;
-	cursor: pointer;
+  background: transparent;
+  text-align: left;
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
 }
 
 button:hover,
 button.is-selected {
-	background-color: #e0f2fe;
+  background-color: #e0f2fe;
 }
 </style>

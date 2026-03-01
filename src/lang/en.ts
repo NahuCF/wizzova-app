@@ -76,13 +76,13 @@ export default {
   signup: {
     company_name: {
       label: 'Company name',
-      placeholder: 'Enter your company name'
-    }
+      placeholder: 'Enter your company name',
+    },
   },
   login: {
     title: 'Log In',
     company: 'Company',
-    switch: 'Switch'
+    switch: 'Switch',
   },
   choose_tenant: {
     title: 'Choose Company',
@@ -92,8 +92,8 @@ export default {
     'The email has already been taken': 'The email has already been taken.',
     'The provided credentials are incorrect': 'The provided credentials are incorrect',
     'Template name already exists': 'Template name already exists',
-    'template_name_already_exists': 'Template name already exists',
-    'template_name_language_already_exists': 'Template name and language already exists',
+    template_name_already_exists: 'Template name already exists',
+    template_name_language_already_exists: 'Template name and language already exists',
     'Contact already exists': 'Contact already exists',
     'Group name already exists': 'Group name already exists',
     'Broadcast name already exists': 'Broadcast name already exists',
@@ -105,16 +105,19 @@ export default {
     'A role with this name already exists': 'A role with this name already exists',
     'This role is internal and cannot be updated': 'This role is internal and cannot be updated',
     'A team with this name already exists': 'A team with this name already exists',
-    'contact_has_active_broadcasts': 'Cannot modify contact while it has active broadcasts',
-    'subscription_contact_limit_reached': 'You have reached the contact limit for your current subscription plan. Please upgrade to add more contacts.',
-    'subscription_user_limit_reached': 'You have reached the user limit for your current subscription plan. Please upgrade to add more users.',
-    'subscription_whatsapp_limit_reached': 'You have reached the WhatsApp number limit for your current subscription plan. Please upgrade to add more numbers.',
-    'bot_already_exists': 'Bot already exists',
-    'bot_not_found': 'Bot not found',
-    'bot_has_no_nodes': 'Bot must have at least one node to be activated',
-    'conversation_is_expired': 'Conversation is expired',
-    'bot_variable_name_already_exists': 'Bot variable name already exists',
-    'flow_already_exists': 'A version with this name already exists'
+    contact_has_active_broadcasts: 'Cannot modify contact while it has active broadcasts',
+    subscription_contact_limit_reached:
+      'You have reached the contact limit for your current subscription plan. Please upgrade to add more contacts.',
+    subscription_user_limit_reached:
+      'You have reached the user limit for your current subscription plan. Please upgrade to add more users.',
+    subscription_whatsapp_limit_reached:
+      'You have reached the WhatsApp number limit for your current subscription plan. Please upgrade to add more numbers.',
+    bot_already_exists: 'Bot already exists',
+    bot_not_found: 'Bot not found',
+    bot_has_no_nodes: 'Bot must have at least one node to be activated',
+    conversation_is_expired: 'Conversation is expired',
+    bot_variable_name_already_exists: 'Bot variable name already exists',
+    flow_already_exists: 'A version with this name already exists',
   },
   submit_for_review: 'Submit for review',
   template_name: 'Template name',
@@ -127,14 +130,15 @@ export default {
     TEXT: 'Text',
     IMAGE: 'Image',
     VIDEO: 'Video',
-    DOCUMENT: 'Document'
+    DOCUMENT: 'Document',
   },
   header_tooltip: 'Make your message stand out with personalized text or media.',
   header_placeholder: 'New to Wabox?',
   optional: 'Optional',
   body: 'Body',
   footer: 'Footer',
-  footer_tooltip: 'Include a brief line of text at the bottom of your template. If you enable the marketing opt-out button, its default footer will appear here automatically.',
+  footer_tooltip:
+    'Include a brief line of text at the bottom of your template. If you enable the marketing opt-out button, its default footer will appear here automatically.',
   help_text_category_change:
     'Enabling this option will prevent the template from being rejected due to miscategorization.',
   example_footer_text: 'Ex: Thank you for choosing us!',
@@ -168,7 +172,7 @@ Grab them today!`,
         name: 'Ex: John, Ram, Riya',
         email: 'Ex: hello@email.com',
         phone: 'Ex: 9876543210',
-        default: 'Ex: 234, Custom value'
+        default: 'Ex: 234, Custom value',
       },
       add_variable: 'Add variables',
       variables_tooltip: 'Personalize your message by adding variables',
@@ -181,9 +185,10 @@ Grab them today!`,
         italic: 'Italic',
         strikethrough: 'Strikethrough',
         numbered_list: 'Numbered List',
-        unordered_list: 'Unordered List'
+        unordered_list: 'Unordered List',
       },
-      variables_info: 'Enter a sample value for your variables to give context to the WhatsApp’s template approval team.'
+      variables_info:
+        'Enter a sample value for your variables to give context to the WhatsApp’s template approval team.',
     },
     buttons: {
       quick_reply: {
@@ -223,7 +228,8 @@ Grab them today!`,
     delete_message: 'Are you sure you want to delete this template?',
     template_deleted: 'Template deleted successfully!',
     active_broadcasts: 'Active broadcasts',
-    active_broadcasts_message: "You can't delete this template because is been use in the following active broadcasts:",
+    active_broadcasts_message:
+      "You can't delete this template because is been use in the following active broadcasts:",
     daily_limit_reached: 'Daily limit reached for this template',
     monthly_limit_reached: 'Monthly limit reached for this template',
     templates_limit_reached: 'Templates limit reached',
@@ -243,11 +249,11 @@ Grab them today!`,
   template_status: {
     PENDING: 'Pending',
     REJECTED: 'Rejected',
-    APPROVED: 'Approved'
+    APPROVED: 'Approved',
   },
   edit_template: {
     title: 'Edit template',
-    template_updated: 'Template updated successfully!'
+    template_updated: 'Template updated successfully!',
   },
   save: 'Save',
   cancel: 'Cancel',
@@ -273,21 +279,23 @@ Grab them today!`,
       is_required: 'Name is required.',
       no_special_char: "The name can't contain special characters or numbers.",
       placeholder: 'Enter the name',
-      help: 'Display field name across the platform.'
+      help: 'Display field name across the platform.',
     },
     internal_name: {
       is_required: 'Internal name is required.',
-      no_special_char_except_underscore: "The internal name can't contain special characters or numbers, except underscore (_).",
+      no_special_char_except_underscore:
+        "The internal name can't contain special characters or numbers, except underscore (_).",
       placeholder: 'Enter the internal name',
-      help: 'Actual field name to access the field values externally.'
+      help: 'Actual field name to access the field values externally.',
     },
     delete_field: 'Delete Field',
     delete_message: 'Are you sure you want to delete this field?',
-    delete_note: 'NOTE : Once deleted, all associated data for this field will be removed from the contacts. This action cannot be undone.',
+    delete_note:
+      'NOTE : Once deleted, all associated data for this field will be removed from the contacts. This action cannot be undone.',
     field_created: 'Field value created successfully!',
     field_updated: 'Field value updated successfully!',
     field_deleted: 'Field value deleted successfully!',
-    add_options: 'Add Options'
+    add_options: 'Add Options',
   },
   contact_field: {
     edit: 'Edit field value',
@@ -296,11 +304,12 @@ Grab them today!`,
     is_primary: '{field} is a primary field',
     is_secondary: '{field} is a secondary field',
     internal_name: 'Internal Name',
-    internal_name_info: 'The internal field name used to access field values externally, (e.g., in APIs or integrations).',
+    internal_name_info:
+      'The internal field name used to access field values externally, (e.g., in APIs or integrations).',
     type: 'Type',
     status: 'Status',
     mandatory: 'Mandatory',
-    options: 'Options'
+    options: 'Options',
   },
   contacts: {
     title: 'Contacts',
@@ -323,18 +332,19 @@ Grab them today!`,
       Email: 'Email',
       Phone: 'Phone',
       Tags: 'Tags',
-      'Marketing OptIn': 'Marketing OptIn'
+      'Marketing OptIn': 'Marketing OptIn',
     },
     placeholder: {
       Name: 'Enter the name',
       Email: 'Enter email',
       Phone: '+54',
       'Marketing OptIn': 'Select...',
-      tag: 'Enter tag'
+      tag: 'Enter tag',
     },
     add_tag: 'Add Tag',
     additional_details: 'Additional Details',
-    marketing_optin_help: "Mark 'YES' if consent for marketing messages has been obtained from this contact.",
+    marketing_optin_help:
+      "Mark 'YES' if consent for marketing messages has been obtained from this contact.",
     contact_created: 'Contact created successfully!',
     contact_updated: 'Contact updated successfully!',
     import_dialog: {
@@ -342,7 +352,8 @@ Grab them today!`,
       steps_title: 'Complete the below steps to import users.',
       step1_title: 'Import contacts through file',
       upload_file: 'Upload file',
-      step1_hint: 'You can use Google Sheets or Microsoft Excel to generate a xlsx file (.xlsx or .xlsx utf-8). Your file must have phone number with country code, name. It can also have custom columns that can be imported to Wabox as attributes.',
+      step1_hint:
+        'You can use Google Sheets or Microsoft Excel to generate a xlsx file (.xlsx or .xlsx utf-8). Your file must have phone number with country code, name. It can also have custom columns that can be imported to Wabox as attributes.',
       download_sample: '[Download example XLSX].',
       browse_hint: 'Click to browse or drag and drop your import file here',
       supported_formats: 'Only .xlsx, .xls, .csv files are supported',
@@ -351,8 +362,10 @@ Grab them today!`,
       add_only: 'Add only new contacts',
       add_only_help: 'Only contacts that are not currently in the database will be added.',
       add_update: 'Add contacts and update existing ones',
-      add_update_help: 'Existing contacts with the same numbers will be replaced with the values ​​from the XLSX file.',
-      step2_description: 'Choose where you want to import your fields. Please note that “Name” and “Phone” are always required.',
+      add_update_help:
+        'Existing contacts with the same numbers will be replaced with the values ​​from the XLSX file.',
+      step2_description:
+        'Choose where you want to import your fields. Please note that “Name” and “Phone” are always required.',
       excel_column: 'Excel Column',
       sample_value: 'Value',
       contact_field: 'Contact Field',
@@ -363,14 +376,15 @@ Grab them today!`,
       duplicated_field: 'Contact field "{field}" is mapped more than once.',
       import_failed: 'Import failed. Please try again.',
       step3_title: 'Mapping completed successfully',
-      step3_hint: 'The columns and values were mapped correctly, we will notify you when the import is completed. If you wish, you can access the history.',
+      step3_hint:
+        'The columns and values were mapped correctly, we will notify you when the import is completed. If you wish, you can access the history.',
       go_to_history: 'Go to history',
       cancel: 'Cancel',
       back: 'Back',
       map_columns: 'Map columns',
       confirm_import: 'Confirm import',
-      select_placeholder: 'Select'
-    }
+      select_placeholder: 'Select',
+    },
   },
   copied_to_clipboard: 'Copied to clipboard',
   apply: 'Apply',
@@ -392,8 +406,8 @@ Grab them today!`,
       before: 'Before',
       after: 'After',
       greater_than: 'Greater than',
-      less_than: 'Less than'
-    }
+      less_than: 'Less than',
+    },
   },
   contact_groups: {
     add_group: 'Add group',
@@ -406,21 +420,23 @@ Grab them today!`,
       filters: 'Filters',
       total_contacts: 'Total contacts',
       created_by: 'Created by',
-      last_update: 'Last update'
+      last_update: 'Last update',
     },
     dialog: {
       create_group: 'Create Group',
       edit_group: 'Edit Group',
-      message: 'Create dynamic groups with contact filters that automatically include new and existing contacts meeting the criteria.',
+      message:
+        'Create dynamic groups with contact filters that automatically include new and existing contacts meeting the criteria.',
       enter_group_name: 'Enter group name',
       create_group_tooltip: 'Cannot save/create a group without associated contacts',
-      reset: 'Reset'
+      reset: 'Reset',
     },
     group_created: 'Group created successfully!',
     group_updated: 'Group updated successfully!',
     group_deleted: 'Group deleted successfully!',
     async_processing_title: 'Group created',
-    async_processing_warning: "This group contains {count} contacts and may take a few minutes to be created. We will process it automatically and notify you when it’s ready."
+    async_processing_warning:
+      'This group contains {count} contacts and may take a few minutes to be created. We will process it automatically and notify you when it’s ready.',
   },
   contact_imports: {
     title: 'Import contact',
@@ -432,17 +448,17 @@ Grab them today!`,
       total_contacts: 'Total Contacts',
       updated_contacts: 'Updated Contacts',
       errored_contacts: 'Errored Contacts',
-      status: 'Status'
+      status: 'Status',
     },
     status: {
       PENDING: 'Pending',
       PROCESSING: 'Processing',
-      COMPLETED: 'Completed'
-    }
+      COMPLETED: 'Completed',
+    },
   },
   contact_import_type: {
     ADD: 'Add new contacts',
-    ADD_AND_REPLACE: 'Add and update contacts'
+    ADD_AND_REPLACE: 'Add and update contacts',
   },
   broadcasts: {
     title: 'Broadcasts',
@@ -461,7 +477,7 @@ Grab them today!`,
       readed: 'Readed',
       failed: 'Failed',
       replied: 'Replied',
-      status: 'Status'
+      status: 'Status',
     },
     status: {
       queued: 'Queued',
@@ -470,14 +486,14 @@ Grab them today!`,
       sent: 'Sent',
       failed: 'Failed',
       cancelled: 'Cancelled',
-      completed: 'Completed'
+      completed: 'Completed',
     },
     download_report: 'Download report',
     repeat_broadcast: 'Repeat broadcast',
     cancel_broadcast: 'Cancel broadcast',
     cancel_message: 'Are you sure do you want to cancel this broadcast?',
     broadcast_canceled: 'Broadcast canceled successfully!',
-    missing_template: 'The broadcast cannot be repeated due to a missing template'
+    missing_template: 'The broadcast cannot be repeated due to a missing template',
   },
   today: 'Today',
   yesterday: 'Yesterday',
@@ -496,7 +512,8 @@ Grab them today!`,
   restore: 'Restore',
   accept: 'Accept',
   invalid_session: 'Invalid Session',
-  session_override_message: 'Another login has been detected, your current session will be logged out.',
+  session_override_message:
+    'Another login has been detected, your current session will be logged out.',
   new_broadcast: {
     title: 'New Broadcast',
     select_template: 'Select Template',
@@ -506,7 +523,8 @@ Grab them today!`,
     groups_selected: '{groups} Groups selected',
     no_group_selected: 'No groups selected',
     map_variables: 'Map variables',
-    map_variables_notes: "Note: If a contact field is selected and the contact does not have that field, the contact's name will be used to autocomplete the variable.",
+    map_variables_notes:
+      "Note: If a contact field is selected and the contact does not have that field, the contact's name will be used to autocomplete the variable.",
     variables: 'Variables',
     map: 'Map',
     values: 'Values',
@@ -531,26 +549,27 @@ Grab them today!`,
     schedule_at: 'Schedule at',
     broadcast_created: 'Broadcast created successfully!',
     missing_template_title: 'Approved templates were not found',
-    missing_template_description: 'You must create a template to continue with the broadcast steps.',
-    send_to_all_numbers: 'Send to all numbers'
+    missing_template_description:
+      'You must create a template to continue with the broadcast steps.',
+    send_to_all_numbers: 'Send to all numbers',
   },
   broadcast_details: {
     title: 'Broadcast details',
     headers: {
       name: 'Name',
       phone: 'Phone',
-      status: 'Status'
+      status: 'Status',
     },
     messages_empty: 'No messages to show',
     groups: '{count} Group | {count} Groups',
-    selected_number: 'Selected number'
+    selected_number: 'Selected number',
   },
   users_teams_roles: {
     title: 'Users, Teams & Roles',
     users_tab: 'Users',
     deleted_users_tab: 'Deleted Users',
     teams_tab: 'Teams',
-    roles_tab: 'Roles'
+    roles_tab: 'Roles',
   },
   users: {
     add: 'Add User',
@@ -560,7 +579,7 @@ Grab them today!`,
       name: 'Name',
       email: 'Email',
       role: 'Role',
-      status: 'Status'
+      status: 'Status',
     },
     status: {
       SIGNED_UP: 'Signed Up',
@@ -568,7 +587,7 @@ Grab them today!`,
       INACTIVE: 'Inactive',
       DELETED: 'Deleted',
       INVITATION_SENT: 'Invitation Sent',
-      INVITATION_ACCEPTED: 'Invitation Accepted'
+      INVITATION_ACCEPTED: 'Invitation Accepted',
     },
     create_user: 'Create User',
     edit_user: 'Edit User',
@@ -576,39 +595,40 @@ Grab them today!`,
     delete_message: 'Are you sure do you want to delete this user?',
     name: {
       label: 'Name',
-      placeholder: 'Enter name'
+      placeholder: 'Enter name',
     },
     email: {
       label: 'Email',
-      placeholder: 'Enter email'
+      placeholder: 'Enter email',
     },
     role: {
       label: 'Role',
-      placeholder: 'Select role'
+      placeholder: 'Select role',
     },
     teams: {
       label: 'Teams',
-      placeholder: 'Select teams'
+      placeholder: 'Select teams',
     },
     wabas: {
       label: 'Wabas',
       placeholder: 'Select accounts',
-      tooltip: 'Select the WhatsApp Business Accounts that this user will have access to. The user will be able to send and receive messages from these accounts.'
+      tooltip:
+        'Select the WhatsApp Business Accounts that this user will have access to. The user will be able to send and receive messages from these accounts.',
     },
     waba: {
       label: 'Default WABA',
-      placeholder: 'Select default account'
+      placeholder: 'Select default account',
     },
     create_user_tooltip: 'You must fill all required fields',
     user_created: 'User created successfully!',
     user_updated: 'User updated successfully!',
-    user_deleted: 'User deleted successfully!'
+    user_deleted: 'User deleted successfully!',
   },
   deleted_users: {
     restore: 'Restore',
     restore_title: 'Restore user',
     restore_message: 'Are you sure you want to restore this user?',
-    restored: 'User restored'
+    restored: 'User restored',
   },
   teams: {
     add: 'Add Team',
@@ -618,15 +638,15 @@ Grab them today!`,
       name: 'Name',
       created_by: 'Created By',
       users_count: 'N° of users',
-      actions: 'Actions'
+      actions: 'Actions',
     },
     name: {
       label: 'Name',
-      placeholder: 'Enter name'
+      placeholder: 'Enter name',
     },
     users: {
       label: 'Users',
-      placeholder: 'Select users'
+      placeholder: 'Select users',
     },
     create_team_tooltip: 'You must fill all required fields',
     create_team: 'Create Team',
@@ -635,7 +655,7 @@ Grab them today!`,
     delete_message: 'Are you sure do you want to delete this team?',
     team_created: 'Team created successfully!',
     team_updated: 'Team updated successfully!',
-    team_deleted: 'Team deleted successfully!'
+    team_deleted: 'Team deleted successfully!',
   },
   roles: {
     add: 'Add Role',
@@ -643,12 +663,12 @@ Grab them today!`,
     empty: 'No roles found',
     headers: {
       name: 'Name',
-      created_by: 'Create By'
+      created_by: 'Create By',
     },
     system: 'System',
     name: {
       label: 'Name',
-      placeholder: 'Enter name'
+      placeholder: 'Enter name',
     },
     role_permissions: 'Role Permissions',
     enable_all: 'Enable All',
@@ -659,11 +679,12 @@ Grab them today!`,
     delete_message: 'Are you sure do you want to delete this team?',
     role_created: 'Role created successfully!',
     role_updated: 'Role updated successfully!',
-    role_deleted: 'Role deleted successfully!'
+    role_deleted: 'Role deleted successfully!',
   },
   unauthorize_access: {
     title: 'Access Denied',
-    message: 'You do not have sufficient permissions to access this module, contact your administrator.'
+    message:
+      'You do not have sufficient permissions to access this module, contact your administrator.',
   },
   table_empty: 'No items found',
   complete_profile: {
@@ -671,7 +692,8 @@ Grab them today!`,
     select_account: 'Select Account',
     select_business: 'Select Business',
     connect_account_title: 'Connect your WhatsApp Business Account to start',
-    connect_account_description: 'To proceed, please connect your WhatsApp Business Account to our platform.',
+    connect_account_description:
+      'To proceed, please connect your WhatsApp Business Account to our platform.',
     connect: 'Connect',
     schedule_a_call: 'Schedule a call',
     select_account_title: 'Select your account',
@@ -682,23 +704,26 @@ Grab them today!`,
     phone_number: 'Phone number',
     select_number: 'Select number',
     connect_new_number: 'Connect New Number',
-    connect_number: 'Connect number'
+    connect_number: 'Connect number',
   },
   create_number: {
     requirements: 'Requirements',
     connect_number: 'Connect number',
     verify: 'Verify',
-    number_requirements: 'A suitable business phone number to receive the verification SMS. This should not be your personal WhatsApp number.',
-    delete_number_required: 'If you are currently using WhatsApp with that number, please delete that account.',
+    number_requirements:
+      'A suitable business phone number to receive the verification SMS. This should not be your personal WhatsApp number.',
+    delete_number_required:
+      'If you are currently using WhatsApp with that number, please delete that account.',
     can_connect_number: 'I am ready with the above pre-requisites',
     whatsapp_business_display_name: 'WhatsApp business display name',
     business_name: 'Business name',
     select_number: 'Select number',
     verify_your_phone_number: 'Verify your phone number',
-    receive_verification_code: 'You will receive a verification code via SMS to confirm your new number.',
+    receive_verification_code:
+      'You will receive a verification code via SMS to confirm your new number.',
     verification_code: 'Verification code',
     verication_code_length: 'Verification code must be 6 characters long',
-    verify_code: 'Verify code'
+    verify_code: 'Verify code',
   },
   conversations: {
     title: 'Conversations',
@@ -713,7 +738,7 @@ Grab them today!`,
       mine: 'Mine',
       pinned: 'Pinned',
       opened: 'Opened',
-      resolved: 'Resolved'
+      resolved: 'Resolved',
     },
     filters: {
       title: 'Filters',
@@ -721,7 +746,7 @@ Grab them today!`,
       resolved_chats: 'Resolved chats',
       unread_chats: 'Unread chats',
       assigned_to: 'Assigned to',
-      select_user: 'Select user'
+      select_user: 'Select user',
     },
     reopen: 'Reopen',
     solve: 'Solve',
@@ -735,7 +760,7 @@ Grab them today!`,
     write_your_message: 'Write your message...',
     add_private_notes: 'Add your private notes',
     search_messages: 'Search Messages',
-    no_messages_found: 'No messages found'
+    no_messages_found: 'No messages found',
   },
   next: 'Next',
   learn_more: 'Learn more',
@@ -757,11 +782,12 @@ Grab them today!`,
     delivered: 'Delivered',
     read: 'Read',
     failed: 'Failed',
-    deleted: 'Deleted'
+    deleted: 'Deleted',
   },
   minutes: 'minutes',
   chat: {
-    assigned_from_user_to_user: '{old_user_name} has assigned the chat to {new_user_name} at {time}',
+    assigned_from_user_to_user:
+      '{old_user_name} has assigned the chat to {new_user_name} at {time}',
     assigned_to_user: '{new_user_name} has assigned the chat to themselves at {time}',
     unassigned: '{old_user_name} has unassigned the chat at {time}',
     resolved: '{user_name} has marked the chat as resolved at {time}',
@@ -770,7 +796,7 @@ Grab them today!`,
     conversation_expired: 'The conversation has expired at {time}',
     message_deleted: 'This message was deleted',
     expires_in: 'Expires in {time}',
-    chat_expired: 'Chat expired'
+    chat_expired: 'Chat expired',
   },
   app_sidebar: {
     routes: {
@@ -783,9 +809,9 @@ Grab them today!`,
       contact_fields: 'Contact Fields',
       users_teams_roles: 'Users, Teams & Roles',
       profile: 'Profile',
-      subscription: 'Subscription'
+      subscription: 'Subscription',
     },
-    logout: 'Logout'
+    logout: 'Logout',
   },
   bots: {
     title: 'Bots',
@@ -796,7 +822,7 @@ Grab them today!`,
       sessions: 'Sessions',
       completed: 'Completed',
       abandoned: 'Abandoned',
-      status: 'Status'
+      status: 'Status',
     },
     sessions_tooltip: 'Number of times this bot has been triggered.',
     completed_tooltip: 'Number of times the bot reached its end.',
@@ -804,7 +830,7 @@ Grab them today!`,
     status: {
       draft: 'Draft',
       active: 'Active',
-      archived: 'Archived'
+      archived: 'Archived',
     },
     last_updated: 'Last updated {date}',
     any_message: 'Any message',
@@ -812,7 +838,7 @@ Grab them today!`,
       edit: 'Edit',
       stats: 'Statistics',
       versions: 'Versions',
-      clone: 'Clone'
+      clone: 'Clone',
     },
     create_bot: 'Create bot',
     edit_bot: 'Edit bot',
@@ -825,16 +851,18 @@ Grab them today!`,
       for_specific_keywords: 'For specific keyword(s)',
       keyword: 'Keyword',
       keyword_placeholder: 'Enter the keyword',
-      keyword_tooltip: 'You can type a word or a regular expression (REGEX) to use as a trigger by clicking on the advanced regex option.',
+      keyword_tooltip:
+        'You can type a word or a regular expression (REGEX) to use as a trigger by clicking on the advanced regex option.',
       exact_match: 'Exact match',
       contains: 'Contains',
       advanced_options: 'Advanced options',
       case_match: 'Case match',
-      case_match_tooltip: 'Bot matches intent keywords exactly, including capitalization.\n\nWhen Case Match is enabled:\n\nKeyword is "Book Flight"\n\nMessage input is "Book Flight" - will match and flow triggers\n\nMessage input is "book flight" or "BOOK FLIGHT" - will not match and flow will not trigger',
+      case_match_tooltip:
+        'Bot matches intent keywords exactly, including capitalization.\n\nWhen Case Match is enabled:\n\nKeyword is "Book Flight"\n\nMessage input is "Book Flight" - will match and flow triggers\n\nMessage input is "book flight" or "BOOK FLIGHT" - will not match and flow will not trigger',
       regex_match: 'Regex match',
       add_keyword: 'Add keyword',
-      keyword_required: "Keyword is required",
-	    invalid_regex: "Invalid regular expression",
+      keyword_required: 'Keyword is required',
+      invalid_regex: 'Invalid regular expression',
     },
     delete_bot: 'Delete',
     delete_message: 'Are you sure you want to delete this bot?',
@@ -853,7 +881,7 @@ Grab them today!`,
     tabs: {
       stats: 'Statistics',
       versions: 'Versions',
-      settings: 'Settings'
+      settings: 'Settings',
     },
     add_a_version: 'Add a version',
     empty_versions: 'No versions found',
@@ -874,21 +902,24 @@ Grab them today!`,
       avg_duration: 'Average duration (min)',
       sessions: 'Sessions',
       unique_users: 'Unique users',
-      avg_duration_chart: 'Average duration (min)'
+      avg_duration_chart: 'Average duration (min)',
     },
     actions: {
       edit: 'Edit',
       activate: 'Activate',
       deactivate: 'Deactivate',
-      delete: 'Delete'
+      delete: 'Delete',
     },
     activate_version: 'Activate version',
     deactivate_version: 'Deactivate version',
     delete_version: 'Delete version',
-    activate_version_message: 'Are you sure you want to activate this version? Only one version can be active at a time.',
+    activate_version_message:
+      'Are you sure you want to activate this version? Only one version can be active at a time.',
     deactivate_version_message: 'Are you sure you want to deactivate this version?',
-    delete_version_message: 'Are you sure you want to delete this version? This action cannot be undone.',
-    delete_active_version_message: 'The version is currently active, if you delete it there will be no active version and the bot will stop working.',
+    delete_version_message:
+      'Are you sure you want to delete this version? This action cannot be undone.',
+    delete_active_version_message:
+      'The version is currently active, if you delete it there will be no active version and the bot will stop working.',
     version_activated: 'Version activated successfully!',
     version_deactivated: 'Version deactivated successfully!',
     version_deleted: 'Version deleted successfully!',
@@ -897,7 +928,7 @@ Grab them today!`,
       message: 'Send a message',
       assign_user: 'Assign to user',
       assign_bot: 'Assign to bot',
-      no_action: 'No action'
+      no_action: 'No action',
     },
     select_user: 'Select user',
     select_bot: 'Select bot',
@@ -916,7 +947,7 @@ Grab them today!`,
     no_match_message: 'No match message',
     no_match_assign_user_id: 'On no match assign user',
     no_match_assign_bot_id: 'On no match assign bot',
-    conf_updated: 'Configuration updated successfully!'
+    conf_updated: 'Configuration updated successfully!',
   },
   bot_workflow: {
     title: 'New bot version',
@@ -924,7 +955,7 @@ Grab them today!`,
     categories: {
       send_message: 'Send message',
       question: 'Question',
-      general: 'General'
+      general: 'General',
     },
     nodes: {
       message: 'Send message',
@@ -940,14 +971,16 @@ Grab them today!`,
       location: 'Location',
       working_hours: 'Working hours',
       start_again: 'Start again',
-      set_variable: 'Set variable'
+      set_variable: 'Set variable',
     },
     no_name: 'No name',
     premium_node_title: 'Premium Feature',
-    premium_node_message: 'This node is a premium feature. To use it, please upgrade your subscription plan.',
+    premium_node_message:
+      'This node is a premium feature. To use it, please upgrade your subscription plan.',
     upgrade_now: 'Upgrade now',
     active_sessions: 'Active sessions',
-    active_sessions_message: 'There are {count} active sessions with this bot. Do you wish to close them?',
+    active_sessions_message:
+      'There are {count} active sessions with this bot. Do you wish to close them?',
     name_required: 'Version name is required',
     no_nodes: 'Cannot save a version without nodes',
     unconnected_nodes: 'All nodes must be connected. Please remove or connect unconnected nodes',
@@ -965,7 +998,7 @@ Grab them today!`,
       unassigned: 'Chat unassigned',
       type: 'Type',
       user: 'User',
-      bot: 'Bot'
+      bot: 'Bot',
     },
     condition: {
       conditions: 'Conditions',
@@ -976,7 +1009,7 @@ Grab them today!`,
       value: 'Value',
       enter_value: 'Enter value',
       on_success: 'On Success',
-      on_failure: 'On Failure'
+      on_failure: 'On Failure',
     },
     operators: {
       equal: 'Equal to',
@@ -987,7 +1020,7 @@ Grab them today!`,
       greater_than_or_equal: 'Greater than or equal to',
       is_empty: 'Is empty',
       is_not_empty: 'Is not empty',
-      contains: 'Contains'
+      contains: 'Contains',
     },
     send_media: {
       media_type: 'Media type',
@@ -1000,7 +1033,7 @@ Grab them today!`,
       link: 'Link',
       link_placeholder: 'https://www.example.com',
       caption: 'Caption',
-      caption_placeholder: 'Enter caption'
+      caption_placeholder: 'Enter caption',
     },
     question_button: {
       header_type: 'Header type',
@@ -1017,7 +1050,7 @@ Grab them today!`,
       options: 'Options',
       button_title: 'Button title',
       button_title_placeholder: 'Enter button title',
-      add_option: 'Add option'
+      add_option: 'Add option',
     },
     set_variable: {
       variables: 'Variable Assignments',
@@ -1026,28 +1059,29 @@ Grab them today!`,
       value: 'Value',
       enter_value: 'Enter value',
       add_variable: 'Add variable assignment',
-      no_variables_configured: 'No variables configured'
+      no_variables_configured: 'No variables configured',
     },
     working_hours: {
       available: 'Available',
       unavailable: 'Unavailable',
-      description: 'This card makes the bot operate based on your configured working hours. During these hours, we will consider you "available" and the connected card will be executed. Outside these hours, it will switch to the "unavailable" flow',
+      description:
+        'This card makes the bot operate based on your configured working hours. During these hours, we will consider you "available" and the connected card will be executed. Outside these hours, it will switch to the "unavailable" flow',
       unset_warning: "If working hours are not set, the bot will assume you're available 24/7.",
-      configure_hours: 'To configure or manage your working hours'
+      configure_hours: 'To configure or manage your working hours',
     },
     template: {
       template: 'Template',
       no_template_selected: 'No template selected',
       select_template: 'Select template',
-      body_variables: 'Body variables'
+      body_variables: 'Body variables',
     },
     location: {
       name: 'Name',
       enter_name: 'Enter name',
       select_location: 'Select location',
       choose_location: 'Choose location on map',
-      address: 'Address'
-    }
+      address: 'Address',
+    },
   },
   subscription: {
     title: 'Subscription Management',
@@ -1056,7 +1090,7 @@ Grab them today!`,
     plan: {
       growth: 'Growth',
       scale: 'Scale',
-      pro: 'Pro'
+      pro: 'Pro',
     },
     active: 'Active',
     inactive: 'Inactive',
@@ -1095,12 +1129,12 @@ Grab them today!`,
       pending: 'Pending',
       completed: 'Completed',
       failed: 'Failed',
-      refunded: 'Refunded'
+      refunded: 'Refunded',
     },
     plan_tiers: {
       starter: 'Starter',
       growth: 'Growth',
-      enterprise: 'Enterprise'
+      enterprise: 'Enterprise',
     },
     features: {
       users: '{count} users',
@@ -1113,7 +1147,7 @@ Grab them today!`,
       unlimited_contacts: 'Unlimited contacts',
       unlimited_whatsapp: 'Unlimited WhatsApp numbers',
       extra_users_addon: 'Add extra users',
-      custom_features: 'Custom features'
+      custom_features: 'Custom features',
     },
     select_plan: 'Select Plan',
     contact_sales: 'Contact Sales',
@@ -1123,7 +1157,8 @@ Grab them today!`,
     month: 'month',
     year: 'year',
     save_25: '25% OFF',
-    cancel_confirm: 'Are you sure you want to cancel your subscription? You will still have access until the end of your current billing period.',
+    cancel_confirm:
+      'Are you sure you want to cancel your subscription? You will still have access until the end of your current billing period.',
     error: 'Error',
     success: 'Success',
     load_error: 'Failed to load subscription details',
@@ -1146,13 +1181,14 @@ Grab them today!`,
     custom_integrations: 'Custom Integrations',
     configure_plan: 'Configure Your Plan',
     extra_users_cost: 'Extra users cost',
-    plan_no_extra_users: 'This plan does not allow adding extra users. Please upgrade to Scale or Pro for this feature.',
+    plan_no_extra_users:
+      'This plan does not allow adding extra users. Please upgrade to Scale or Pro for this feature.',
     order_summary: 'Order Summary',
     monthly_billing: 'Monthly billing',
     yearly_billing: 'Yearly billing',
     total: 'Total',
     yearly_savings_message: 'You are saving 25% with yearly billing!',
-    subscribe: 'Subscribe'
+    subscribe: 'Subscribe',
   },
   profile: {
     title: 'Profile',
@@ -1174,13 +1210,13 @@ Grab them today!`,
     delete_failed: 'Failed to remove profile image',
     updated: 'Profile updated successfully',
     update_failed: 'Failed to update profile',
-    error_loading: 'Failed to load profile data'
+    error_loading: 'Failed to load profile data',
   },
   notifications: {
     title: 'Notifications',
     mark_all_read: 'Mark all as read',
     empty: 'No notifications yet',
     import_completed: 'Import completed',
-    import_completed_desc: 'Your contact import is completed'
-  }
+    import_completed_desc: 'Your contact import is completed',
+  },
 }

@@ -1,7 +1,7 @@
-import type { CountryCode } from "libphonenumber-js/min";
+import type { CountryCode } from 'libphonenumber-js/min'
 
 export interface CountryCellphone {
-    name: string,
-    code: CountryCode,
-    prefix: string
+  name: string
+  code: CountryCode
+  prefix: string
 }
