@@ -66,6 +66,15 @@ const onSave = () => {
   drawerVisible.value = false
 }
 
+const onLocationCoordinatesUpdate = (val: { lat: number; lng: number }) => {
+  newData.value.latitude = val.lat
+  newData.value.longitude = val.lng
+}
+
+const onLocationSelected = (val: { address: string }) => {
+  newData.value.address = val.address
+}
+
 watch(drawerVisible, (visible) => {
   if (visible) newData.value = structuredClone(toRaw(props.data))
 })
@@ -163,17 +172,8 @@ watch(drawerVisible, (visible) => {
             ? { lat: newData.latitude, lng: newData.longitude }
             : null
         "
-        @update:modelValue="
-          (val) => {
-            newData.latitude = val.lat
-            newData.longitude = val.lng
-          }
-        "
-        @locationSelected="
-          (val) => {
-            newData.address = val.address
-          }
-        "
+        @update:modelValue="onLocationCoordinatesUpdate"
+        @locationSelected="onLocationSelected"
       />
 
       <div>

@@ -16,6 +16,14 @@ interface Plan {
   extraUserPrice: number
   features: string[]
   allowsExtraUsers: boolean
+  previousPlanName?: string
+  popular?: boolean
+}
+
+const planStyles: Record<PlanType, { bg: string; border: string; shadow: string }> = {
+  growth: { bg: '#e6f4ff', border: '#b3d9f7', shadow: 'rgba(179, 217, 247, 0.4)' },
+  scale: { bg: '#f0fff3', border: '#b3e6c0', shadow: 'rgba(179, 230, 192, 0.4)' },
+  pro: { bg: '#f9f5ff', border: '#d4bff0', shadow: 'rgba(212, 191, 240, 0.4)' },
 }
 
 const props = defineProps<{
@@ -85,11 +93,25 @@ const setBillingCycle = (cycle: BillingCycle) => {
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div
-        v-for="plan in props.plans"
-        :key="plan.type"
-        class="border rounded-lg p-6 hover:shadow-lg transition-shadow flex flex-col"
-      >
+      <div v-for="plan in props.plans" :key="plan.type" class="flex flex-col">
+        <div
+          class="text-center text-sm font-semibold py-2.5 rounded-t-lg"
+          :class="plan.popular ? 'bg-emerald-600 text-white' : 'invisible'"
+        >
+          {{ $t('subscription.most_popular') }}
+        </div>
+        <div
+          class="rounded-lg hover:shadow-md transition-shadow flex flex-col flex-1"
+          :class="{ 'rounded-t-none': plan.popular }"
+          :style="{
+            backgroundColor: planStyles[plan.type].bg,
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            borderColor: planStyles[plan.type].border,
+            boxShadow: `0 2px 8px ${planStyles[plan.type].shadow}`,
+          }"
+        >
+        <div class="p-6 flex-1 flex flex-col">
         <div class="flex-1">
           <h3 class="text-xl font-bold mb-2">{{ plan.name }}</h3>
           <p class="text-gray-600 mb-4">{{ plan.description }}</p>
@@ -99,8 +121,9 @@ const setBillingCycle = (cycle: BillingCycle) => {
               <span class="text-3xl font-bold">${{ getPlanPrice(plan) }}</span>
               <span class="text-gray-600">/{{ $t('subscription.month') }}</span>
             </div>
-            <div v-if="plan.allowsExtraUsers" class="text-sm text-gray-500 mt-1">
-              + ${{ getExtraUserPrice(plan) }} {{ $t('subscription.per_extra_user') }}
+            <div class="text-sm mt-1" :class="plan.allowsExtraUsers ? 'text-gray-500' : 'invisible'">
+              + ${{ plan.allowsExtraUsers ? getExtraUserPrice(plan) : 0 }}
+              {{ $t('subscription.per_extra_user') }}
             </div>
           </div>
 
@@ -120,6 +143,9 @@ const setBillingCycle = (cycle: BillingCycle) => {
           </div>
 
           <div class="space-y-2 mb-6">
+            <p v-if="plan.previousPlanName" class="font-bold text-base mb-1">
+              {{ $t('subscription.everything_in_plan', { plan: plan.previousPlanName }) }}
+            </p>
             <div v-for="feature in plan.features" :key="feature" class="flex items-start gap-2">
               <IconCheck class="text-green-500 mt-0.5" size="16" />
               <span class="text-sm">{{ $t(feature) }}</span>
@@ -128,6 +154,8 @@ const setBillingCycle = (cycle: BillingCycle) => {
         </div>
 
         <Button @click="selectPlan(plan)" class="w-full" :label="$t('subscription.select_plan')" />
+        </div>
+        </div>
       </div>
     </div>
   </div>

@@ -21,6 +21,8 @@ interface Plan {
   extraUserPrice: number
   features: string[]
   allowsExtraUsers: boolean
+  previousPlanName?: string
+  popular?: boolean
 }
 
 defineProps<{
@@ -37,7 +39,7 @@ const handleError = useErrorHandler()
 
 const currentStep = ref(1)
 const loading = ref(false)
-const billingCycle = ref<BillingCycle>('monthly')
+const billingCycle = ref<BillingCycle>('yearly')
 const selectedPlan = ref<Plan | null>(null)
 const extraUsers = ref(0)
 
@@ -71,13 +73,11 @@ const plans: Plan[] = [
     maxWhatsappNumbers: 2,
     extraUserPrice: 15,
     allowsExtraUsers: true,
+    previousPlanName: 'Growth',
+    popular: true,
     features: [
-      'subscription.basic_chatbot',
       'subscription.advanced_chatbot',
-      'subscription.message_analytics',
       'subscription.user_analytics',
-      'subscription.multi_agent_chat',
-      'subscription.bulk_messaging',
       'subscription.roles_permissions',
     ],
   },
@@ -92,16 +92,8 @@ const plans: Plan[] = [
     maxWhatsappNumbers: null,
     extraUserPrice: 35,
     allowsExtraUsers: true,
-    features: [
-      'subscription.basic_chatbot',
-      'subscription.advanced_chatbot',
-      'subscription.message_analytics',
-      'subscription.user_analytics',
-      'subscription.multi_agent_chat',
-      'subscription.bulk_messaging',
-      'subscription.roles_permissions',
-      'subscription.custom_integrations',
-    ],
+    previousPlanName: 'Scale',
+    features: ['subscription.custom_integrations'],
   },
 ]
 

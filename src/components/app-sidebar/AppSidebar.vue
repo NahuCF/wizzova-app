@@ -130,7 +130,7 @@ const logout = async () => {
       @click="prefs.toggleSidebar()"
     >
       <div class="flex items-center space-x-4">
-        <img src="/favicon.ico" class="w-10 h-10 shrink-0" />
+        <img src="/logo.svg" class="w-10 h-10 shrink-0" />
         <span
           class="font-semibold text-xl truncate transition-opacity duration-300 ease-in-out"
           :class="collapsed ? 'opacity-0' : 'opacity-100'"
