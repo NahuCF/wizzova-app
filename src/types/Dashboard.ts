@@ -1,0 +1,40 @@
+export interface DashboardOverview {
+  open_conversations: number
+  resolved_conversations: number
+  total_conversations: number
+  new_contacts: number
+  user_initiated: number
+  business_initiated: number
+}
+
+export interface TimeSeriesPoint {
+  period: string
+  count: number
+}
+
+export interface MessageStatusTimeSeriesPoint {
+  period: string
+  sent: number
+  delivered: number
+  read: number
+  failed: number
+}
+
+export interface CategoryTimeSeriesPoint {
+  period: string
+  user: number
+  business: number
+}
+
+export interface DashboardData {
+  overview: DashboardOverview
+  conversations_chart?: TimeSeriesPoint[]
+  contacts_chart?: TimeSeriesPoint[]
+  messages_chart?: MessageStatusTimeSeriesPoint[]
+  category_chart?: CategoryTimeSeriesPoint[]
+}
+
+export interface DashboardFilters {
+  start_date?: string
+  end_date?: string
+}

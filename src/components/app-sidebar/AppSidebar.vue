@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import {
+  IconChartBar,
   IconSpeakerphone,
   IconLayout,
   IconUsers,
@@ -37,6 +38,11 @@ const loadingLogout = ref(false)
 const popover = ref()
 const { positionPopover } = usePopoverPosition(popover)
 const sidebarMenu: MenuItem[] = [
+  {
+    name: t('app_sidebar.routes.dashboard'),
+    path: '/dashboard',
+    icon: IconChartBar,
+  },
   {
     name: t('app_sidebar.routes.broadcasts'),
     path: '/broadcasts',

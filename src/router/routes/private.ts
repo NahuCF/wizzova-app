@@ -1,4 +1,5 @@
 import AppLayout from '~/components/layouts/AppLayout.vue'
+import Dashboard from '~/views/HomeView.vue'
 import Broadcasts from '~/views/Broadcasts.vue'
 import ContactFields from '~/views/ContactFields.vue'
 import ContactImports from '~/views/ContactImports.vue'
@@ -21,6 +22,16 @@ const routes = [
     name: 'app',
     component: AppLayout,
     children: [
+      {
+        path: '',
+        redirect: '/dashboard',
+      },
+      {
+        path: '/dashboard',
+        name: 'dashboard',
+        meta: { titleKey: 'dashboard.title' },
+        component: Dashboard,
+      },
       {
         path: '/conversations',
         children: [

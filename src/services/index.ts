@@ -1,4 +1,5 @@
 import AuthService from '~/services/AuthService'
+import DashboardService from './DashboardService'
 import CountryService from './CountryService'
 import CurrencyService from './CurrencyService'
 import IndustryService from './IndustryService'
@@ -33,6 +34,7 @@ export { default as TemplateHeaderService } from './TemplateHeaderService'
 export const API = {
   auth: AuthService,
   bot: BotService,
+  dashboard: DashboardService,
   botVersion: BotVersionService,
   broadcast: BroadcastService,
   contact: ContactService,
