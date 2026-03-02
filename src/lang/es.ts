@@ -622,6 +622,7 @@ export default {
     user_created: '¡Usuario creado con éxito!',
     user_updated: '¡Usuario actualizado con éxito!',
     user_deleted: '¡Usuario eliminado con éxito!',
+    image_requirements: 'Máx 1MB, JPG/PNG',
   },
   deleted_users: {
     restore: 'Restaurar',

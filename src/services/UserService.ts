@@ -13,6 +13,13 @@ export default {
   async update(user: UserCreate) {
     return Http.put<{ data: UserItem }>(`/users/${user.id}`, user)
   },
+  async uploadImage(userId: string, file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+    return Http.post(`/users/${userId}/upload-image`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
   async delete(id: string) {
     return Http.delete(`/users/${id}`)
   },

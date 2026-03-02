@@ -5,7 +5,7 @@
         <component :is="Component" :key="route.path" />
       </transition>
     </RouterView>
-    <Toast position="bottom-right" />
+    <Toast position="bottom-center" />
   </div>
 </template>
 

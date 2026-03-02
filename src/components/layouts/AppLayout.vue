@@ -31,7 +31,7 @@ const endSession = () => {
         </main>
       </transition>
     </RouterView>
-    <Toast position="bottom-right" />
+    <Toast position="bottom-center" />
 
     <WarningDialog
       v-model:visible="sessionStore.showOverrideDialog"

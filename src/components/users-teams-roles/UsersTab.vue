@@ -3,7 +3,9 @@ import { IconEdit, IconTrash } from '@tabler/icons-vue'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useToast } from 'primevue'
 import { useCrudActions } from '~/composables/useCrudActions'
+import { useErrorHandler } from '~/composables/useErrorHandler'
 import { API } from '~/services'
 import { useUserStore, useSessionStore, useTeamStore } from '~/stores'
 import { userStatusSeverity } from '~/types'
@@ -16,28 +18,19 @@ const { fetchTeams } = useTeamStore()
 const { loading, users, showCreateDialog, selectedUser } = storeToRefs(userStore)
 
 const { t } = useI18n()
+const toast = useToast()
+const handleError = useErrorHandler()
 
-const {
-  loading: loadingDrawer,
-  createOrUpdate,
-  remove,
-} = useCrudActions<UserCreate>({
-  api: {
-    create: API.user.create,
-    update: API.user.update,
-    delete: API.user.delete,
-  },
+const { loading: loadingDelete, remove } = useCrudActions<UserCreate>({
+  api: { delete: API.user.delete },
   fetchData: () => {
     fetchUsers(true)
     fetchTeams(true)
   },
-  i18nKeys: {
-    created: 'users.user_created',
-    updated: 'users.user_updated',
-    deleted: 'users.user_deleted',
-  },
+  i18nKeys: { deleted: 'users.user_deleted' },
 })
 
+const loadingSave = ref(false)
 const showDeleteDialog = ref(false)
 
 const userActions = (user: UserItem) => {
@@ -72,6 +65,7 @@ const userActions = (user: UserItem) => {
 
 const columns = computed(() => {
   let columnList: Column[] = [
+    { header: '', key: 'avatar', type: 'CUSTOM', bodyStyle: { width: '50px' } },
     { header: t('users.headers.name'), key: 'name' },
     { header: t('users.headers.email'), key: 'email' },
     { header: t('users.headers.role'), key: 'roleName' },
@@ -97,10 +91,34 @@ const transformedData = computed(() => {
   }))
 })
 
-const onSave = (user: UserCreate) => {
-  createOrUpdate(user, {
-    onSuccess: () => (showCreateDialog.value = false),
-  })
+const onSave = async (user: UserCreate, file?: File) => {
+  loadingSave.value = true
+  try {
+    let response
+    if (user.id) {
+      response = await API.user.update(user)
+    } else {
+      response = await API.user.create(user)
+    }
+
+    if (file) {
+      await API.user.uploadImage(response.data.data.id, file)
+    }
+
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: t(user.id ? 'users.user_updated' : 'users.user_created'),
+      life: 3000,
+    })
+    fetchUsers(true)
+    fetchTeams(true)
+    showCreateDialog.value = false
+  } catch (error) {
+    handleError(error)
+  } finally {
+    loadingSave.value = false
+  }
 }
 
 const onDelete = () => {
@@ -124,12 +142,17 @@ fetchUsers()
       :columns="columns"
       emptyMessage="users.empty"
       :loading="loading"
-    />
+    >
+      <template #avatar="{ data }">
+        <Avatar v-if="data.profile_img_path" :image="data.profile_img_path" shape="circle" />
+        <Avatar v-else :label="data.name?.charAt(0)?.toUpperCase()" shape="circle" />
+      </template>
+    </Table>
 
     <UserDrawer
       v-model:visible="showCreateDialog"
       :title="selectedUser ? $t('users.edit_user') : $t('users.create_user')"
-      :loading="loadingDrawer"
+      :loading="loadingSave"
       :userEdited="selectedUser"
       @onSave="onSave"
     />

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { IconAsterisk, IconLoader2, IconInfoCircle } from '@tabler/icons-vue'
+import { IconAsterisk, IconLoader2, IconInfoCircle, IconUpload } from '@tabler/icons-vue'
 import type { Role, TeamItem, UserCreate, UserItem, WABAItem } from '~/types'
 import { useRoleStore, useSessionStore, useTeamStore } from '~/stores'
 import { storeToRefs } from 'pinia'
@@ -14,7 +14,7 @@ const props = defineProps<{
   userEdited?: UserItem
 }>()
 const emit = defineEmits<{
-  (e: 'onSave', payload: UserCreate): void
+  (e: 'onSave', payload: UserCreate, file?: File): void
   (e: 'update:visible', value: boolean): void
 }>()
 
@@ -46,6 +46,10 @@ const user = ref<{
 })
 const emailError = ref<string | null>(null)
 const emailSchema = z.string().email({ message: 'invalid_email' })
+
+const fileInput = ref<HTMLInputElement | null>(null)
+const selectedFile = ref<File | null>(null)
+const previewUrl = ref<string | null>(null)
 
 const getRoles = computed(() => {
   return roles.value.map((role) => ({
@@ -79,16 +83,48 @@ const canSubmit = () => {
   )
 }
 
+const openFileDialog = () => {
+  fileInput.value?.click()
+}
+
+const onFileSelect = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+
+  const validTypes = ['image/jpeg', 'image/jpg', 'image/png']
+  if (!validTypes.includes(file.type)) return
+  if (file.size > 1 * 1024 * 1024) return
+
+  selectedFile.value = file
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    previewUrl.value = e.target?.result as string
+  }
+  reader.readAsDataURL(file)
+
+  input.value = ''
+}
+
+const userInitial = computed(() => {
+  return user.value.name?.charAt(0)?.toUpperCase() || '?'
+})
+
 const onConfirm = () => {
-  emit('onSave', {
-    id: user.value.id,
-    name: user.value.name,
-    email: user.value.email,
-    role: user.value.role?.name || '',
-    team_ids: user.value.teams.map((t) => t.id),
-    waba_ids: user.value.wabas.map((w) => w.id),
-    default_waba_id: user.value.defaultWaba?.id,
-  })
+  emit(
+    'onSave',
+    {
+      id: user.value.id,
+      name: user.value.name,
+      email: user.value.email,
+      role: user.value.role?.name || '',
+      team_ids: user.value.teams.map((t) => t.id),
+      waba_ids: user.value.wabas.map((w) => w.id),
+      default_waba_id: user.value.defaultWaba?.id,
+    },
+    selectedFile.value || undefined,
+  )
 }
 
 watch(
@@ -104,6 +140,8 @@ watch(
       fetchWabas(sessionStore.user.business.id)
     }
 
+    selectedFile.value = null
+
     if (props.userEdited) {
       user.value = {
         id: props.userEdited.id,
@@ -114,6 +152,7 @@ watch(
         wabas: props.userEdited.wabas ? props.userEdited.wabas : [],
         defaultWaba: props.userEdited.default_waba,
       }
+      previewUrl.value = props.userEdited.profile_img_path || null
     } else {
       user.value = {
         id: '',
@@ -122,6 +161,7 @@ watch(
         teams: [],
         wabas: [],
       }
+      previewUrl.value = null
     }
   },
 )
@@ -149,6 +189,42 @@ watch(
     <Divider class="mt-2!" />
 
     <div class="flex flex-col gap-6 pt-6">
+      <div class="flex items-center gap-4">
+        <Avatar
+          v-if="previewUrl"
+          :image="previewUrl"
+          shape="circle"
+          size="xlarge"
+        />
+        <Avatar
+          v-else
+          :label="userInitial"
+          shape="circle"
+          size="xlarge"
+        />
+        <div class="flex flex-col gap-1">
+          <div class="flex gap-2">
+            <Button
+              size="small"
+              severity="secondary"
+              outlined
+              @click="openFileDialog"
+            >
+              <IconUpload size="16" class="mr-1" />
+              {{ $t('profile.upload_image') }}
+            </Button>
+          </div>
+          <span class="text-xs text-gray-500">{{ $t('users.image_requirements') }}</span>
+        </div>
+        <input
+          ref="fileInput"
+          type="file"
+          accept="image/jpeg,image/jpg,image/png"
+          class="hidden"
+          @change="onFileSelect"
+        />
+      </div>
+
       <div class="flex flex-col gap-1 relative">
         <div class="flex gap-1">
           <label class="text-lg text-neutral-800! font-medium" for="name">{{

@@ -43,6 +43,7 @@ export interface AgentStatsItem {
   id: string
   name: string
   email: string
+  profile_img_path?: string | null
   active_conversations: number
   resolved: number
   messages_sent: number

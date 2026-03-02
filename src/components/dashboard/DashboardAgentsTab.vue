@@ -106,9 +106,13 @@ fetchAgentStats()
 
         <Column :header="t('dashboard.agents.agent')">
           <template #body="{ data }">
-            <div class="flex flex-col">
-              <span class="font-medium">{{ data.name }}</span>
-              <span class="text-sm text-gray-500">{{ data.email }}</span>
+            <div class="flex items-center gap-3">
+              <Avatar v-if="data.profile_img_path" :image="data.profile_img_path" shape="circle" />
+              <Avatar v-else :label="data.name?.charAt(0)?.toUpperCase()" shape="circle" />
+              <div class="flex flex-col">
+                <span class="font-medium">{{ data.name }}</span>
+                <span class="text-sm text-gray-500">{{ data.email }}</span>
+              </div>
             </div>
           </template>
         </Column>
