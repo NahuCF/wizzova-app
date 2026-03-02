@@ -3,7 +3,7 @@ import { IconInfoCircle } from '@tabler/icons-vue'
 
 defineProps<{
   label: string
-  count: number
+  count: number | string
   tooltip: string
   loading?: boolean
 }>()

@@ -54,6 +54,8 @@ declare module 'vue' {
     CreateBotDrawer: typeof import('./src/components/bots/CreateBotDrawer.vue')['default']
     CreateNumberDialog: typeof import('./src/components/CreateNumberDialog.vue')['default']
     CustomEdge: typeof import('./src/components/bots/workflow/CustomEdge.vue')['default']
+    DashboardAgentsTab: typeof import('./src/components/dashboard/DashboardAgentsTab.vue')['default']
+    DashboardOverviewTab: typeof import('./src/components/dashboard/DashboardOverviewTab.vue')['default']
     DashboardStatCard: typeof import('./src/components/dashboard/DashboardStatCard.vue')['default']
     DataTable: typeof import('primevue/datatable')['default']
     DatePicker: typeof import('primevue/datepicker')['default']

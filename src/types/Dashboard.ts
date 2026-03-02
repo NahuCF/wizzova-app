@@ -38,3 +38,27 @@ export interface DashboardFilters {
   start_date?: string
   end_date?: string
 }
+
+export interface AgentStatsItem {
+  id: string
+  name: string
+  email: string
+  active_conversations: number
+  resolved: number
+  messages_sent: number
+  avg_resolution_time_minutes: number | null
+  avg_first_response_time_minutes: number | null
+}
+
+export interface AgentStatsSummary {
+  total_active_conversations: number
+  total_resolved: number
+  total_messages_sent: number
+  avg_resolution_time_minutes: number | null
+  avg_first_response_time_minutes: number | null
+}
+
+export interface AgentStatsResponse {
+  summary: AgentStatsSummary
+  agents: AgentStatsItem[]
+}
