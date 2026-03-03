@@ -20,7 +20,8 @@ import { API } from '~/services'
 import type { ConversationFilters as ConversationServiceFilters } from '~/services/ConversationService'
 import { useConversationsStore } from '~/stores/conversations'
 import { useMessagesStore } from '~/stores/messages'
-import type { ConversationFilters, ConversationItem, ConversationStatus } from '~/types'
+import { useSessionStore } from '~/stores/session'
+import type { ConversationFilters, ConversationItem, ConversationStatus, WABANumber } from '~/types'
 
 const emit = defineEmits<{
   (e: 'onStartConversation'): void
@@ -37,6 +38,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const messagesStore = useMessagesStore()
 const conversationStore = useConversationsStore()
+const sessionStore = useSessionStore()
 const {
   selectedConversation,
   currentTab,
@@ -57,6 +59,7 @@ const {
   if (filters.value?.status === 'resolved') transformedFilters.only_solved = true
   if (filters.value?.assignedUser) transformedFilters.user_id = filters.value.assignedUser.id
   if (search) transformedFilters.search_type = searchType.value
+  if (selectedNumber.value?.id) transformedFilters.phone_number_id = selectedNumber.value.id
 
   const { data: response } = await API.conversation.index({
     page,
@@ -79,6 +82,9 @@ const searchTypes = ref([
 ])
 const selectOpen = ref(false)
 const conversationScroll = ref()
+const phoneNumbers = ref<WABANumber[]>([])
+const selectedNumber = ref<WABANumber | null>(null)
+const loadingNumbers = ref(false)
 
 const conversations = computed<ConversationItem[]>(() => {
   return (
@@ -159,13 +165,28 @@ const onScroll = () => {
   if (filters.value || filteredSearchTerm.value) {
     if (!loadingFiltered.value) loadNextFilteredPage()
   } else {
-    if (!loading.value) conversationStore.loadNextPage()
+    if (!loading.value) {
+      const pag = conversationStore.paginationByTab[currentTab.value]
+      if (!pag || pag.meta.current_page >= pag.meta.last_page) return
+
+      const phoneFilter = selectedNumber.value?.id
+        ? { phone_number_id: selectedNumber.value.id }
+        : undefined
+      conversationStore.fetchConversations(currentTab.value, pag.meta.current_page + 1, phoneFilter)
+    }
   }
 }
 
-const handleTabChange = (value: string | number) => {
+const handleTabChange = async (value: string | number) => {
   const tab = value.toString()
-  if (['unassigned', 'mine', 'pinned', 'opened', 'resolved'].includes(tab)) {
+  if (!['unassigned', 'mine', 'pinned', 'opened', 'resolved'].includes(tab)) return
+
+  if (selectedNumber.value?.id) {
+    currentTab.value = tab as ConversationStatus
+    await conversationStore.fetchConversations(tab as ConversationStatus, 1, {
+      phone_number_id: selectedNumber.value.id,
+    })
+  } else {
     conversationStore.setTab(tab as ConversationStatus)
   }
 }
@@ -200,7 +221,40 @@ watch(focusSearch, () => {
   filteredConversations.value.data = []
 })
 
-onMounted(() => document.addEventListener('click', handleDocumentClick))
+const fetchPhoneNumbers = async () => {
+  if (!sessionStore.defaultWaba) return
+
+  loadingNumbers.value = true
+  try {
+    const { data: response } = await API.broadcast.broadcastNumbers(sessionStore.defaultWaba.id)
+    phoneNumbers.value = response.data
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loadingNumbers.value = false
+  }
+}
+
+const refetchConversations = () => {
+  const phoneFilter = selectedNumber.value?.id
+    ? { phone_number_id: selectedNumber.value.id }
+    : undefined
+
+  conversationStore.fetchConversations(currentTab.value, 1, phoneFilter)
+
+  if (filters.value || filteredSearchTerm.value) {
+    fetchFilteredPage()
+  }
+}
+
+watch(selectedNumber, () => {
+  refetchConversations()
+})
+
+onMounted(() => {
+  document.addEventListener('click', handleDocumentClick)
+  fetchPhoneNumbers()
+})
 onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick))
 </script>
 
@@ -254,6 +308,19 @@ onBeforeUnmount(() => document.removeEventListener('click', handleDocumentClick)
           <div><IconFilter size="18" /></div>
         </Button>
       </div>
+    </div>
+
+    <div v-if="phoneNumbers.length > 1 && !focusSearch" class="px-6 pb-3">
+      <Select
+        v-model="selectedNumber"
+        :options="phoneNumbers"
+        optionLabel="verified_name"
+        :placeholder="$t('conversations.all_numbers')"
+        :loading="loadingNumbers"
+        :disabled="loadingNumbers"
+        showClear
+        fluid
+      />
     </div>
 
     <div v-if="filters?.status" class="flex flex-col gap-1 px-6 pb-6">

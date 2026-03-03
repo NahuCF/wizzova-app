@@ -754,6 +754,7 @@ export default {
     assign_to: 'Asignar a',
     not_assigned: 'Sin asignar',
     no_conversations_found: 'No se encontraron conversaciones',
+    all_numbers: 'Todos los números',
     exists: 'Conversación existente',
     navigate_to_conversation: '¿Deseas navegar a la conversación con este contacto?',
     conversation_assigned_to: 'Ya hay una conversación en curso asignada al usuario {user}',

@@ -19,6 +19,7 @@ export type ConversationFilters = {
   only_pinned?: boolean
   only_solved?: boolean
   only_opened?: boolean
+  phone_number_id?: string
 }
 
 export default {
