@@ -14,6 +14,7 @@ type SeriesData = {
 const props = defineProps<{
   startDate: string | null
   endDate: string | null
+  refreshKey: number
 }>()
 
 const { t } = useI18n()
@@ -157,7 +158,7 @@ const fetchDashboard = async () => {
 }
 
 watch(
-  () => [props.startDate, props.endDate],
+  () => [props.startDate, props.endDate, props.refreshKey],
   () => fetchDashboard(),
 )
 

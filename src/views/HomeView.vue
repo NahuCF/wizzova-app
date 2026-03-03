@@ -2,7 +2,7 @@
 import { ref, watch, nextTick } from 'vue'
 import moment from 'moment'
 import { useI18n } from 'vue-i18n'
-import { IconChartBar, IconUsers } from '@tabler/icons-vue'
+import { IconChartBar, IconUsers, IconRefresh } from '@tabler/icons-vue'
 import DashboardOverviewTab from '~/components/dashboard/DashboardOverviewTab.vue'
 import DashboardAgentsTab from '~/components/dashboard/DashboardAgentsTab.vue'
 
@@ -26,6 +26,17 @@ const settingDateFromPeriod = ref(false)
 
 const startDate = ref<string | null>(null)
 const endDate = ref<string | null>(null)
+const canRefresh = ref(true)
+const refreshKey = ref(0)
+
+const refreshData = () => {
+  if (!canRefresh.value) return
+  canRefresh.value = false
+  refreshKey.value++
+  setTimeout(() => {
+    canRefresh.value = true
+  }, 3000)
+}
 
 const computeDateStrings = () => {
   startDate.value =
@@ -88,7 +99,11 @@ watch(
   { deep: true },
 )
 
+settingDateFromPeriod.value = true
 applyPeriodDates(selectedPeriod.value)
+nextTick(() => {
+  settingDateFromPeriod.value = false
+})
 </script>
 
 <template>
@@ -98,6 +113,14 @@ applyPeriodDates(selectedPeriod.value)
 
       <div class="flex flex-col items-end gap-1">
         <div class="flex gap-3 items-center">
+          <Button
+            class="bg-white! border-slate-200! hover:bg-slate-100!"
+            severity="secondary"
+            :disabled="!canRefresh"
+            @click="refreshData"
+          >
+            <IconRefresh size="16" />
+          </Button>
           <Select
             v-model="selectedPeriod"
             :options="periodOptions"
@@ -152,10 +175,10 @@ applyPeriodDates(selectedPeriod.value)
       </TabList>
       <TabPanels class="p-6!">
         <TabPanel value="0">
-          <DashboardOverviewTab :start-date="startDate" :end-date="endDate" />
+          <DashboardOverviewTab :start-date="startDate" :end-date="endDate" :refresh-key="refreshKey" />
         </TabPanel>
         <TabPanel value="1">
-          <DashboardAgentsTab :start-date="startDate" :end-date="endDate" />
+          <DashboardAgentsTab :start-date="startDate" :end-date="endDate" :refresh-key="refreshKey" />
         </TabPanel>
       </TabPanels>
     </Tabs>
