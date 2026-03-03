@@ -1,4 +1,4 @@
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { onMounted, onBeforeUnmount } from 'vue'
 import { usePusher } from './usePusher'
 import { useSessionStore } from '~/stores'
 import type { Channel } from 'pusher-js'

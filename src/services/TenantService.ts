@@ -31,4 +31,10 @@ export default {
       phone_id: phoneId,
     })
   },
+
+  async disconnectPhoneNumber(phoneId: string) {
+    return Http.delete('/tenant/disconnect-phone', {
+      data: { phone_id: phoneId },
+    })
+  },
 }

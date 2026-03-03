@@ -26,6 +26,7 @@ import BotVersionService from './BotVersionService'
 import ProfileService from './ProfileService'
 import SubscriptionService from './SubscriptionService'
 import NotificationService from './NotificationService'
+import PhoneNumberService from './PhoneNumberService'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -47,6 +48,7 @@ export const API = {
   knownPlace: KnownPLaceService,
   message: MessageService,
   notification: NotificationService,
+  phoneNumber: PhoneNumberService,
   profile: ProfileService,
   role: RoleService,
   team: TeamService,

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { IconCreditCard } from '@tabler/icons-vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue'
 import { useErrorHandler } from '~/composables/useErrorHandler'

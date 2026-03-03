@@ -15,6 +15,8 @@ import NewBotFlow from '~/views/NewBotVersion.vue'
 import BotDetails from '~/views/BotDetails.vue'
 import Profile from '~/views/Profile.vue'
 import Subscription from '~/views/Subscription.vue'
+import WhatsAppSettings from '~/views/settings/WhatsAppSettings.vue'
+import WhatsAppDetail from '~/views/settings/WhatsAppDetail.vue'
 
 const routes = [
   {
@@ -171,6 +173,23 @@ const routes = [
                 meta: { titleKey: 'edit_template.title' },
                 component: NewTemplate,
                 props: { isEdit: true },
+              },
+            ],
+          },
+          {
+            path: 'whatsapp',
+            children: [
+              {
+                path: '',
+                name: 'whatsapp-settings',
+                meta: { titleKey: 'whatsapp_settings.title' },
+                component: WhatsAppSettings,
+              },
+              {
+                path: ':wabaId',
+                name: 'whatsapp-detail',
+                meta: { titleKey: 'whatsapp_settings.detail_title' },
+                component: WhatsAppDetail,
               },
             ],
           },

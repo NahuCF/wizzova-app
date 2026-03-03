@@ -4,7 +4,6 @@ import { IconPin, IconPinFilled } from '@tabler/icons-vue'
 import { computed, ref } from 'vue'
 import { useContactUtils } from '~/composables/useContactUtils'
 import type { ConversationItem } from '~/types'
-import { API } from '~/services'
 
 const props = defineProps<{
   conversation: ConversationItem

@@ -1,5 +1,4 @@
 import type { BotStatus } from './Bot'
-import type { FilterOperator } from './Common'
 import type { PaginationMeta, Page } from './Pagination'
 import type { UserItem } from './User'
 

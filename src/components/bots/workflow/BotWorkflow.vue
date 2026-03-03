@@ -2,7 +2,7 @@
 import { VueFlow, useVueFlow } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
-import { computed, markRaw, ref, watch, onMounted, nextTick } from 'vue'
+import { computed, markRaw, ref, watch } from 'vue'
 import { useFlowDragAndDrop } from '~/composables/workflow/useFlowDragAndDrop'
 import type { BotEdge, BotNode, BotNodeType, BotViewport } from '~/types'
 import StartingNode from '../nodes/StartingNode.vue'

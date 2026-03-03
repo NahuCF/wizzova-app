@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { IconChevronDown, IconChevronUp } from '@tabler/icons-vue'
 import type { MenuItem } from '~/types'
 import { usePopoverPosition } from '~/composables/usePopoverPosition'

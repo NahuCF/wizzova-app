@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { IconTrash, IconEdit } from '@tabler/icons-vue'
 import type { DataTablePageEvent } from 'primevue'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useContactFieldStore } from '~/stores'
 import type {

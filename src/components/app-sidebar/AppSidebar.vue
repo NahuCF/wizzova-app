@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { ref } from 'vue'
 import {
+  IconBrandWhatsapp,
   IconChartBar,
   IconSpeakerphone,
   IconLayout,
@@ -89,6 +90,11 @@ const sidebarMenu: MenuItem[] = [
         path: '/settings/users-teams-roles',
         icon: IconUsers,
         permission: 'settings.view_user_roles_and_teams',
+      },
+      {
+        name: t('app_sidebar.routes.waba_accounts'),
+        path: '/settings/whatsapp',
+        icon: IconBrandWhatsapp,
       },
     ],
   },

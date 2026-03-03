@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, nextTick } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { IconBell, IconBook, IconTrash } from '@tabler/icons-vue'
 import { usePopoverPosition } from '~/composables/usePopoverPosition'
 import { useNotificationChannel } from '~/composables/pusher/useNotificationChannel'

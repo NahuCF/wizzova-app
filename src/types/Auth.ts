@@ -54,4 +54,6 @@ export interface WABAItem {
   currency: string
   timezone_id: string
   message_template_namespace: string
+  phone_numbers_count?: number
+  business_name?: string
 }

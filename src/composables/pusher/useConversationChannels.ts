@@ -1,4 +1,4 @@
-import { computed, onMounted, onBeforeUnmount } from 'vue'
+import { onMounted, onBeforeUnmount } from 'vue'
 import { usePusher } from './usePusher'
 import { useConversationsStore } from '~/stores/conversations'
 import { useSessionStore } from '~/stores'

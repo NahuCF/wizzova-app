@@ -7,4 +7,8 @@ export default {
       params: { business_id: businessId },
     })
   },
+
+  async allForTenant() {
+    return Http.get<{ data: WABAItem[] }>('/wabas/all')
+  },
 }

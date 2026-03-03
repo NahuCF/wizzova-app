@@ -49,6 +49,16 @@ export interface WABANumber {
   is_registed: boolean
   status: WABANumberStatus
   can_send_messages: boolean
+  name_status?: string
+  is_official_business_account?: boolean
+  messaging_limit_tier?: string
+  about?: string
+  address?: string
+  description?: string
+  email?: string
+  vertical?: string
+  websites?: string[]
+  picture_url?: string
 }
 
 export type BroadcastStatus =
