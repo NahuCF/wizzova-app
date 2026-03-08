@@ -26,9 +26,12 @@ const planStyles: Record<PlanType, { bg: string; border: string; shadow: string 
   pro: { bg: '#f9f5ff', border: '#d4bff0', shadow: 'rgba(212, 191, 240, 0.4)' },
 }
 
+const planOrder: Record<PlanType, number> = { growth: 0, scale: 1, pro: 2 }
+
 const props = defineProps<{
   plans: Plan[]
   billingCycle: BillingCycle
+  currentPlanType: PlanType | null
 }>()
 
 const emit = defineEmits<{
@@ -53,7 +56,17 @@ const formatLimit = (value: number | null, suffix?: string) => {
   return suffix ? `${value} ${suffix}` : value.toString()
 }
 
+const isCurrentPlan = (plan: Plan) => {
+  return props.currentPlanType === plan.type
+}
+
+const isDowngrade = (plan: Plan) => {
+  if (!props.currentPlanType) return false
+  return planOrder[plan.type] < planOrder[props.currentPlanType]
+}
+
 const selectPlan = (plan: Plan) => {
+  if (isCurrentPlan(plan) || isDowngrade(plan)) return
   emit('selectPlan', plan)
 }
 
@@ -153,7 +166,12 @@ const setBillingCycle = (cycle: BillingCycle) => {
           </div>
         </div>
 
-        <Button @click="selectPlan(plan)" class="w-full" :label="$t('subscription.select_plan')" />
+        <Button
+          @click="selectPlan(plan)"
+          class="w-full"
+          :label="isCurrentPlan(plan) ? $t('subscription.current_plan') : $t('subscription.select_plan')"
+          :disabled="isCurrentPlan(plan) || isDowngrade(plan)"
+        />
         </div>
         </div>
       </div>

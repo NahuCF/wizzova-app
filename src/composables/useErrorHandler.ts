@@ -13,6 +13,10 @@ export const useErrorHandler = () => {
         return
       }
 
+      if (error.response?.data?.upgrade_required) {
+        return
+      }
+
       if (error.response?.status === 422 && error.response.data) {
         const errorKey =
           error.response.data.message_code || error.response.data.message?.replace('.', '')

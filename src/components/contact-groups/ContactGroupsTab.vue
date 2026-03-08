@@ -52,12 +52,8 @@ const {
   },
 })
 
-const SYNC_LIMIT = 5000
-
 const showGroupDialog = ref(false)
 const showDeleteDialog = ref(false)
-const showAsyncCreate = ref(false)
-const asyncGroupContacts = ref(0)
 const selectedGroup = ref<ContactGroupItem>()
 const columns = ref<Column[]>([
   {
@@ -146,12 +142,8 @@ const formatCondition = (contactFieldId: string, condition: FilterCondition) => 
 
 const onSave = (contact: CreateContactGroup) => {
   createOrUpdate(contact, {
-    onSuccess: (newGroup) => {
+    onSuccess: () => {
       showGroupDialog.value = false
-      if (newGroup && newGroup.data.contact_count > SYNC_LIMIT) {
-        asyncGroupContacts.value = newGroup.data.contact_count
-        showAsyncCreate.value = true
-      }
     },
   })
 }
@@ -241,14 +233,6 @@ contactFieldStore.fetchContactFields()
       :title="$t('contact_groups.delete_group')"
       :message="$t('contact_groups.delete_message')"
       @onConfirm="onDelete"
-    />
-    <WarningDialog
-      v-model:visible="showAsyncCreate"
-      :title="$t('contact_groups.async_processing_title')"
-      :message="$t('contact_groups.async_processing_warning', asyncGroupContacts)"
-      :confirm-message="$t('accept')"
-      unclosable
-      @onConfirm="showAsyncCreate = false"
     />
   </div>
 </template>

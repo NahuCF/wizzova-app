@@ -3,8 +3,10 @@ import { onMounted, ref } from 'vue'
 import { IconPlus } from '@tabler/icons-vue'
 import type { ActionGenerator, TemplateItem } from '~/types'
 import { useI18n } from 'vue-i18n'
+import { useFeatureAccess } from '~/composables/useFeatureAccess'
 
 const { t } = useI18n()
+const { requireSubscription } = useFeatureAccess()
 
 defineProps<{
   templates: TemplateItem[]
@@ -53,7 +55,7 @@ onMounted(() => {
 
       <Button
         class="w-[48px] h-[48px] bg-blue-500 hover:bg-blue-700"
-        @click="$router.push({ name: 'new-template' })"
+        @click="requireSubscription() && $router.push({ name: 'new-template' })"
         rounded
       >
         <IconPlus size="32" class="text-white" />

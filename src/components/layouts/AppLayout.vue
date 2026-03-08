@@ -1,12 +1,16 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { RouterView, useRoute, useRouter } from 'vue-router'
 import { useSessionStore } from '~/stores/session'
+import { useIdleDetection } from '~/composables/useIdleDetection'
 import UnauthorizeAccess from '~/views/UnauthorizeAccess.vue'
+import UpgradeRequiredDialog from '~/components/subscription/UpgradeRequiredDialog.vue'
 
 const router = useRouter()
 const route = useRoute()
 const sessionStore = useSessionStore()
+
+useIdleDetection()
 
 const hasAccess = computed(() => {
   const permissions = route.meta?.permissions as string[] | undefined
@@ -14,6 +18,19 @@ const hasAccess = computed(() => {
 
   return sessionStore.hasAnyPermission(permissions)
 })
+
+watch(
+  () => sessionStore.tenant?.is_profile_completed,
+  (completed, wasCompleted) => {
+    if (completed && !wasCompleted) {
+      if (!sessionStore.tenant?.subscription) {
+        router.replace({ name: 'subscription', query: { upgrade: 'true' } })
+      } else {
+        router.replace({ name: 'dashboard' })
+      }
+    }
+  },
+)
 
 const endSession = () => {
   sessionStore.$reset()
@@ -57,6 +74,7 @@ const endSession = () => {
         sessionStore.createNumber
       "
     />
+    <UpgradeRequiredDialog />
   </div>
 </template>
 

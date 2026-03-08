@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
-import { IconCopy, IconUpload, IconTrash, IconCheck } from '@tabler/icons-vue'
+import { IconCopy, IconUpload, IconTrash, IconCheck, IconLoader2 } from '@tabler/icons-vue'
+import i18n from '~/config/i18n'
 import { API } from '~/services'
 import { useSessionStore } from '~/stores'
 import type { UserItem } from '~/types'
@@ -21,6 +22,19 @@ const copied = ref(false)
 const fileInput = ref<HTMLInputElement>()
 const selectedFile = ref<File | null>(null)
 const previewUrl = ref<string | null>(null)
+
+const languageOptions = computed(() => [
+  { name: t('languages.english'), code: 'en' },
+  { name: t('languages.spanish'), code: 'es' },
+])
+const selectedLanguage = computed({
+  get: () => languageOptions.value.find((l) => l.code === i18n.global.locale) || languageOptions.value[0],
+  set: (lang) => {
+    i18n.global.locale = lang.code
+    localStorage.setItem('locale', lang.code)
+    sessionStore.updateUser({ language: lang.code })
+  },
+})
 
 const userId = computed(() => profileData.value?.id || '')
 const profileImgUrl = computed(() => profileData.value?.profile_img_path || null)
@@ -211,6 +225,7 @@ const updateProfile = async () => {
       name: profileData.value?.name,
       cellphone_prefix: profileData.value?.cellphone_prefix,
       cellphone_number: profileData.value?.cellphone_number,
+      language: selectedLanguage.value.code,
     })
     profileData.value = data.data
     sessionStore.updateUser({
@@ -248,7 +263,7 @@ const updateProfile = async () => {
 
       <template #content>
         <div v-if="loading" class="flex justify-center p-8">
-          <ProgressSpinner />
+          <IconLoader2 class="animate-spin w-8 h-8" />
         </div>
         <div v-else-if="profileData" class="space-y-6">
           <!-- User ID Section -->
@@ -374,6 +389,19 @@ const updateProfile = async () => {
               <CellphoneInput
                 v-model="fullCellphone"
                 :placeholder="$t('your_cellphone_number')"
+                :disabled="loading"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700">
+                {{ $t('profile.language') }}
+              </label>
+              <Select
+                v-model="selectedLanguage"
+                :options="languageOptions"
+                optionLabel="name"
+                class="w-full"
                 :disabled="loading"
               />
             </div>

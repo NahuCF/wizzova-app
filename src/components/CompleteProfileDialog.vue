@@ -3,7 +3,6 @@ import { IconArrowRight, IconLoader2 } from '@tabler/icons-vue'
 import { onMounted, ref, watch } from 'vue'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import { useFacebookLogin } from '~/composables/useFacebookLogin'
-import router from '~/router'
 import { API } from '~/services'
 import { useSessionStore } from '~/stores'
 import type { WABANumber, BusinessItem, WABAItem } from '~/types'
@@ -90,9 +89,6 @@ const selectWABANumber = async () => {
     const { data: response } = await API.tenant.selectWABANumber(selectedWabaNumber.value.id)
     sessionStore.user.default_phone_id = response.data.id
     sessionStore.tenant = response.meta.tenant
-
-    await router.replace({ name: 'templates' })
-    window.location.reload()
   } catch (error) {
     handleError(error)
   } finally {

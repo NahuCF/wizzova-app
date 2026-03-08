@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { IconX, IconLoader2 } from '@tabler/icons-vue'
+import { IconX, IconLoader2, IconUsers } from '@tabler/icons-vue'
 import { useContactFilters } from '~/composables/useContactFilters'
 import { useContactFieldStore } from '~/stores'
 import type {
@@ -211,7 +211,14 @@ watch(
           </Button>
         </div>
 
-        <div class="flex gap-2" v-if="filters.length > 0">
+        <div class="flex items-center gap-3" v-if="filters.length > 0">
+          <div
+            v-if="dataPage.meta.total > 0"
+            class="flex items-center gap-1.5 text-sm font-medium text-emerald-600 whitespace-nowrap"
+          >
+            <IconUsers size="16" />
+            <span>{{ dataPage.meta.total.toLocaleString() }} {{ t('contact_groups.dialog.contacts_found') }}</span>
+          </div>
           <div>
             <InputText
               v-model="name"
@@ -224,7 +231,7 @@ watch(
           </div>
           <div>
             <Button
-              :disabled="cannotConfirm() || loading"
+              :disabled="cannotConfirm() || loading || props.loading"
               @click="onConfirm"
               v-tooltip.bottom="
                 dataPage.data.length === 0 && {
@@ -233,7 +240,7 @@ watch(
                 }
               "
             >
-              <IconLoader2 v-if="loading" class="animate-spin w-6 h-6" />
+              <IconLoader2 v-if="props.loading" class="animate-spin w-6 h-6" />
               <span v-else>
                 {{
                   group

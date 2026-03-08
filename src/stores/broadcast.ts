@@ -1,7 +1,8 @@
 import moment from 'moment'
 import { defineStore } from 'pinia'
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref, watch, watchEffect } from 'vue'
 import type { WABANumber, ContactGroupItem, TemplateItem, VariableMapping } from '~/types'
+import { API } from '~/services'
 
 interface CreateBroadcast {
   name: string
@@ -34,6 +35,38 @@ export const useBroadcastStore = defineStore(
       )
     })
 
+    const recipientsCount = ref(0)
+    const loadingRecipientsCount = ref(false)
+
+    const fetchRecipientsCount = async () => {
+      const groupIds = newBroadcast.value.contactGroups.map((g) => g.id)
+      if (groupIds.length === 0) {
+        recipientsCount.value = 0
+        return
+      }
+
+      loadingRecipientsCount.value = true
+      try {
+        const { data } = await API.broadcast.recipientsCount(
+          groupIds,
+          newBroadcast.value.sendToAll,
+        )
+        recipientsCount.value = data.recipients_count
+      } catch {
+        recipientsCount.value = 0
+      } finally {
+        loadingRecipientsCount.value = false
+      }
+    }
+
+    watch(
+      () => [
+        newBroadcast.value.contactGroups.map((g) => g.id).join(','),
+        newBroadcast.value.sendToAll,
+      ],
+      () => fetchRecipientsCount(),
+    )
+
     const scheduledAt = computed(() => {
       if (!newBroadcast.value.scheduledDate || !newBroadcast.value.scheduledTime) return null
 
@@ -41,7 +74,7 @@ export const useBroadcastStore = defineStore(
         .hour(newBroadcast.value.scheduledTime.getHours())
         .minute(newBroadcast.value.scheduledTime.getMinutes())
         .second(newBroadcast.value.scheduledTime.getSeconds())
-        .toISOString()
+        .format('YYYY-MM-DD HH:mm:ss')
     })
 
     const getVariableMapping = (name: string) => {
@@ -85,6 +118,8 @@ export const useBroadcastStore = defineStore(
       newBroadcast,
       showMapDialog,
       totalContactsCount,
+      recipientsCount,
+      loadingRecipientsCount,
       scheduledAt,
       getVariableMapping,
       $reset,

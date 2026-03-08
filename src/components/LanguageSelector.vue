@@ -38,16 +38,25 @@
 import { onMounted, ref, watch } from 'vue'
 import i18n from '~/config/i18n'
 import { useI18n } from 'vue-i18n'
+import { useSessionStore } from '~/stores/session'
+import { API } from '~/services/index'
 import type { LanguageFlag } from '~/types'
 
 const { t } = useI18n()
+const sessionStore = useSessionStore()
 const selectedLanguage = ref()
 const countries = ref<LanguageFlag[]>([])
 
 watch(selectedLanguage, () => {
-  i18n.global.locale = selectedLanguage.value.code
-  localStorage.setItem('locale', selectedLanguage.value.code)
+  const code = selectedLanguage.value.code
+  i18n.global.locale = code
+  localStorage.setItem('locale', code)
   populateCountries()
+
+  if (sessionStore.isAuthenticated) {
+    API.profile.update({ language: code } as any)
+    sessionStore.updateUser({ language: code })
+  }
 })
 
 const getCountryFromCode = (code: string) => {

@@ -27,6 +27,7 @@ import ProfileService from './ProfileService'
 import SubscriptionService from './SubscriptionService'
 import NotificationService from './NotificationService'
 import PhoneNumberService from './PhoneNumberService'
+import UserAnalyticsService from './UserAnalyticsService'
 
 export { default as TemplateLanguageService } from './TemplateLanguageService'
 export { default as TemplateCategoryService } from './TemplateCategoryService'
@@ -62,4 +63,5 @@ export const API = {
   meta: MetaService,
   waba: WabaService,
   subscription: SubscriptionService,
+  userAnalytics: UserAnalyticsService,
 }

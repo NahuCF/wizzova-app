@@ -8,6 +8,10 @@ export type SubscriptionStatus =
   | 'expired'
   | 'grace_period'
   | 'suspended'
+  | 'past_due'
+  | 'incomplete'
+  | 'incomplete_expired'
+  | 'unpaid'
 export type PaymentStatus =
   | 'pending'
   | 'completed'
@@ -93,9 +97,10 @@ export interface CreateSubscriptionRequest {
   plan_type: string
   billing_cycle: string
   extra_users?: number
+  provider?: PaymentProvider
 }
 
-export interface MercadoPagoLinkResponse {
+export interface CheckoutLinkResponse {
   link: string
 }
 

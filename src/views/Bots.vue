@@ -19,6 +19,7 @@ import { useRelativeDateLabel } from '~/composables/useRelativeDateLabel'
 import { useSeverityMapper } from '~/composables/useSeverityMapper'
 import router from '~/router'
 import { API } from '~/services'
+import { useFeatureAccess } from '~/composables/useFeatureAccess'
 import type { BotActiveSessions, Column } from '~/types'
 import type { BotCreate, BotItem, BotTriggerTag } from '~/types'
 
@@ -59,6 +60,7 @@ const toast = useToast()
 const { botSeverity } = useSeverityMapper()
 const formatDate = useRelativeDateLabel()
 const handleError = useErrorHandler()
+const { requireSubscription } = useFeatureAccess()
 
 const showCreateDrawer = ref(false)
 const showCloneWarning = ref(false)
@@ -301,7 +303,7 @@ watch(rowsPerPage, () => fetchDataPage(), { immediate: true })
           @input="debouncedFetch()"
         />
       </div>
-      <Button @click="showCreateDrawer = true">
+      <Button @click="requireSubscription() && (showCreateDrawer = true)">
         <IconPlus size="16" class="mr-1" />
         <span>
           {{ $t('bots.create_bot') }}

@@ -47,6 +47,12 @@ const subtotal = computed(() => {
 
 const totalPrice = computed(() => subtotal.value)
 
+const yearlySavings = computed(() => {
+  const monthlyTotal = props.selectedPlan.monthlyPrice + props.extraUsers * props.selectedPlan.extraUserPrice
+  const yearlyTotal = props.selectedPlan.yearlyPrice + props.extraUsers * props.selectedPlan.extraUserPrice
+  return (monthlyTotal - yearlyTotal) * 12
+})
+
 const updateExtraUsers = (value: number) => {
   emit('update:extraUsers', value)
 }
@@ -73,25 +79,20 @@ const updateExtraUsers = (value: number) => {
             <div v-if="selectedPlan.allowsExtraUsers" class="space-y-2">
               <label class="font-semibold">{{ $t('subscription.extra_users') }}</label>
               <div class="flex items-center gap-4">
-                <InputNumber
-                  :model-value="extraUsers"
-                  @update:model-value="updateExtraUsers"
-                  :min="0"
-                  :max="100"
-                  showButtons
-                  :pt="{
-                    root: { class: 'w-32' },
-                  }"
-                />
+                <div class="w-32">
+                  <InputNumber
+                    :model-value="extraUsers"
+                    @update:model-value="updateExtraUsers"
+                    :min="0"
+                    :max="100"
+                    showButtons
+                    fluid
+                  />
+                </div>
                 <span class="text-sm text-gray-600">
                   ${{ getExtraUserPrice(selectedPlan) }}
                   {{ $t('subscription.per_user_month') }}
                 </span>
-              </div>
-              <div v-if="extraUsers > 0" class="text-sm text-gray-500">
-                {{ $t('subscription.extra_users_cost') }}: ${{
-                  extraUsers * getExtraUserPrice(selectedPlan)
-                }}/{{ $t('subscription.month') }}
               </div>
             </div>
 
@@ -143,9 +144,9 @@ const updateExtraUsers = (value: number) => {
               <span>${{ totalPrice }}/{{ $t('subscription.month') }}</span>
             </div>
 
-            <div v-if="isYearly" class="bg-green-50 p-3 rounded-lg">
+            <div v-if="isYearly && yearlySavings > 0" class="bg-green-50 p-3 rounded-lg">
               <p class="text-sm text-green-800">
-                {{ $t('subscription.yearly_savings_message') }}
+                {{ $t('subscription.yearly_savings_amount', { amount: yearlySavings }) }}
               </p>
             </div>
           </div>

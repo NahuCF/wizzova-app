@@ -18,6 +18,15 @@ export default {
       },
     })
   },
+  async setAvailability(isAvailable: boolean, source: 'manual' | 'idle') {
+    return Http.post<{ data: UserItem }>('/profile/set-availability', {
+      is_available: isAvailable,
+      source,
+    })
+  },
+  async heartbeat(isActive: boolean) {
+    return Http.post<{ is_available: boolean }>('/profile/heartbeat', { is_active: isActive })
+  },
   async deleteProfileImage() {
     return Http.delete<{ data: UserItem }>('/profile/image')
   },

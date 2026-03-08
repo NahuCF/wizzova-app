@@ -153,6 +153,7 @@ declare module 'vue' {
     TextAreaEditor: typeof import('./src/components/common/TextAreaEditor.vue')['default']
     Toast: typeof import('primevue/toast')['default']
     ToggleSwitch: typeof import('primevue/toggleswitch')['default']
+    UpgradeRequiredDialog: typeof import('./src/components/subscription/UpgradeRequiredDialog.vue')['default']
     UserDrawer: typeof import('./src/components/users-teams-roles/UserDrawer.vue')['default']
     UsersTab: typeof import('./src/components/users-teams-roles/UsersTab.vue')['default']
     ValueCard: typeof import('./src/components/ValueCard.vue')['default']

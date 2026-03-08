@@ -33,6 +33,12 @@ export default {
   async repeat(id: string, payload: BroadcastRepeat) {
     return Http.post<{ data: BroadcastItem }>(`/broadcasts/${id}/repeat`, payload)
   },
+  async recipientsCount(groupIds: string[], sendToAllNumbers: boolean) {
+    return Http.post<{ recipients_count: number }>('/broadcasts/recipients-count', {
+      group_ids: groupIds,
+      send_to_all_numbers: sendToAllNumbers,
+    })
+  },
   async broadcastNumbers(wabaId: string) {
     return Http.get<{ data: WABANumber[] }>('/phone-numbers', {
       params: { waba_id: wabaId },

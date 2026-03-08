@@ -14,6 +14,7 @@ export interface RegisterForm {
   cellphone_prefix: string
   work_email: string
   password: string
+  language?: string
 }
 
 export interface Tenant {

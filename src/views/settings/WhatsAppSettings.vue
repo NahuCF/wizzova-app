@@ -7,12 +7,14 @@ import { IconBrandWhatsapp, IconEdit, IconLoader2, IconArrowLeft } from '@tabler
 import { API } from '~/services'
 import { useFacebookLogin } from '~/composables/useFacebookLogin'
 import { useErrorHandler } from '~/composables/useErrorHandler'
+import { useFeatureAccess } from '~/composables/useFeatureAccess'
 import type { WABAItem, BusinessItem, Column } from '~/types'
 
 const { t } = useI18n()
 const router = useRouter()
 const toast = useToast()
 const handleError = useErrorHandler()
+const { requireSubscription } = useFeatureAccess()
 const { initialize, launchLogin } = useFacebookLogin()
 
 const wabas = ref<WABAItem[]>([])
@@ -55,7 +57,7 @@ const transformedWabas = computed(() => {
 const fetchWabas = async () => {
   loading.value = true
   try {
-    const response = await API.waba.allForTenant()
+    const response = await API.waba.index()
     wabas.value = response.data.data
   } catch (error) {
     handleError(error)
@@ -65,6 +67,7 @@ const fetchWabas = async () => {
 }
 
 const onConnect = async () => {
+  if (!requireSubscription()) return
   connecting.value = true
   try {
     const appIdResponse = await API.meta.getAppId()

@@ -21,10 +21,12 @@ import type { ContactFieldType, ContactFieldItem, ContactFieldCreate } from '~/t
 import { useToast } from 'primevue'
 import { useCrudActions } from '~/composables/useCrudActions'
 import { useErrorHandler } from '~/composables/useErrorHandler'
+import { useFeatureAccess } from '~/composables/useFeatureAccess'
 
 const { t } = useI18n()
 const toast = useToast()
 const handleError = useErrorHandler()
+const { requireSubscription } = useFeatureAccess()
 const { dataPage, loading, rowsPerPage, fetchDataPage, loadNextPage } =
   usePaginatedData<ContactFieldItem>(
     (page, perPage) => API.contactField.index(page, perPage).then((res) => res.data),
@@ -139,7 +141,7 @@ fetchTypes()
   <div class="flex flex-col gap-8 custom-datatable p-6">
     <div class="flex justify-between items-center z-2 bg-slate-100">
       <h1 class="font-semibold text-2xl">{{ t('contact_fields.field_collection') }}</h1>
-      <Button @click="openFieldDrawer()">
+      <Button @click="requireSubscription() && openFieldDrawer()">
         <IconPlus size="16" />
         <span>
           {{ $t('contact_fields.add') }}

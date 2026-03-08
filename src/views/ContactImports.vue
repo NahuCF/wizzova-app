@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DataTablePageEvent } from 'primevue'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import { IconArrowLeft, IconDownload } from '@tabler/icons-vue'
+import { IconArrowLeft, IconDownload, IconFileDownload } from '@tabler/icons-vue'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { useRelativeDateLabel } from '~/composables/useRelativeDateLabel'
 import { API } from '~/services'
@@ -26,8 +26,18 @@ const columns: Column[] = [
   { header: t('contact_imports.headers.import_type'), key: 'importTypeFormatted' },
   { header: t('contact_imports.headers.total_contacts'), key: 'total_contacts_count' },
   {
-    header: t('contact_imports.headers.updated_contacts'),
+    header: t('contact_imports.headers.added_contacts'),
     key: 'addedContactsCount',
+    type: 'PROGRESS',
+  },
+  {
+    header: t('contact_imports.headers.updated_contacts'),
+    key: 'updatedContactsCount',
+    type: 'PROGRESS',
+  },
+  {
+    header: t('contact_imports.headers.skipped_contacts'),
+    key: 'skippedContactsCount',
     type: 'PROGRESS',
   },
   {
@@ -36,6 +46,7 @@ const columns: Column[] = [
     type: 'PROGRESS',
   },
   { header: t('contact_imports.headers.status'), key: 'statusTag', type: 'TAG' },
+  { header: '', key: 'report', type: 'CUSTOM' },
 ]
 
 const transformedData = computed(() => {
@@ -48,6 +59,20 @@ const transformedData = computed(() => {
       percentage:
         item.total_contacts_count > 0
           ? Math.round((item.added_contacts_count / item.total_contacts_count) * 100)
+          : 0,
+    },
+    updatedContactsCount: {
+      count: item.updated_contacts_count,
+      percentage:
+        item.total_contacts_count > 0
+          ? Math.round((item.updated_contacts_count / item.total_contacts_count) * 100)
+          : 0,
+    },
+    skippedContactsCount: {
+      count: item.skipped_contacts_count,
+      percentage:
+        item.total_contacts_count > 0
+          ? Math.round((item.skipped_contacts_count / item.total_contacts_count) * 100)
           : 0,
     },
     errorContactsCount: {
@@ -80,6 +105,15 @@ const statusToSeverity = (status: string) => {
       return 'danger'
     default:
       return 'info'
+  }
+}
+
+const downloadReport = async (id: string) => {
+  try {
+    const { data } = await API.contact.downloadImportReport(id)
+    window.open(data.url, '_blank')
+  } catch {
+    // silently fail
   }
 }
 
@@ -153,6 +187,18 @@ onUnmounted(() => {
       :currentPageReport="currentPageReport"
       @onPage="onPage"
     >
+      <template #report="{ data }">
+        <Button
+          v-if="data.status === 'COMPLETED' || data.status === 'FAILED'"
+          variant="text"
+          severity="secondary"
+          class="p-1!"
+          v-tooltip.bottom="$t('contact_imports.download_report')"
+          @click="downloadReport(data.id)"
+        >
+          <IconFileDownload size="18" />
+        </Button>
+      </template>
       <template #createdAtFormatted="{ data }">
         <div class="flex">
           <span

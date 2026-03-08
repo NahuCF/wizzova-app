@@ -120,7 +120,7 @@ onBeforeRouteLeave((to, from, next) => {
 
     <div
       v-if="currentStep === 2 || currentStep === 3"
-      class="sticky bottom-0 w-full flex justify-end items-center py-4 px-6 bg-white shadow z-100"
+      class="sticky bottom-0 w-full flex justify-end items-center px-6 bg-white border-t border-slate-200 z-100 h-[5.1rem]"
     >
       <div v-if="currentStep === 2" class="flex items-center gap-3">
         <div class="text-emerald-500" v-if="newBroadcast.contactGroups.length === 1">

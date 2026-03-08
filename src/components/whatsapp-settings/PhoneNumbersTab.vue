@@ -5,6 +5,7 @@ import { useToast } from 'primevue'
 import { IconCircleCheck, IconEdit, IconPlugConnectedX, IconPlus } from '@tabler/icons-vue'
 import { API } from '~/services'
 import { useErrorHandler } from '~/composables/useErrorHandler'
+import { useFeatureAccess } from '~/composables/useFeatureAccess'
 import type { WABANumber, Column } from '~/types'
 import PhoneNumberProfileDrawer from './PhoneNumberProfileDrawer.vue'
 import AddNumberDialog from './AddNumberDialog.vue'
@@ -13,6 +14,7 @@ const props = defineProps<{
   phoneNumbers: WABANumber[]
   loading: boolean
   wabaId: string
+  disableRowClick?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -23,6 +25,7 @@ const { t } = useI18n()
 const toast = useToast()
 const handleError = useErrorHandler()
 
+const { requireSubscription } = useFeatureAccess()
 const selectedNumber = ref<WABANumber | null>(null)
 const drawerVisible = ref(false)
 const disconnectTarget = ref<WABANumber | null>(null)
@@ -61,9 +64,9 @@ const messagingLimitLabel = (tier?: string) => {
 const columns = computed<Column[]>(() => [
   { header: t('whatsapp_settings.headers.phone_number'), key: 'display_phone_number' },
   { header: t('whatsapp_settings.headers.verified_name'), key: 'verified_name' },
-  { header: t('whatsapp_settings.headers.quality'), key: 'qualityTag', type: 'TAG' },
+  { header: t('whatsapp_settings.headers.quality'), key: 'quality', type: 'CUSTOM' },
   { header: t('whatsapp_settings.headers.messaging_limit'), key: 'messagingLimit' },
-  { header: t('whatsapp_settings.headers.status'), key: 'statusTag', type: 'TAG' },
+  { header: t('whatsapp_settings.headers.status'), key: 'status', type: 'CUSTOM' },
   { header: t('whatsapp_settings.headers.oba'), key: 'oba', type: 'CUSTOM' },
   { header: '', key: 'actions', type: 'ACTIONS', bodyStyle: { maxWidth: '50px' } },
 ])
@@ -88,18 +91,22 @@ const numberActions = (number: WABANumber) => {
   ]
 }
 
+const statusSeverity = (status: string) => {
+  switch (status) {
+    case 'CONNECTED':
+      return 'success'
+    case 'FLAGGED':
+    case 'RESTRICTED':
+      return 'danger'
+    default:
+      return 'warn'
+  }
+}
+
 const transformedData = computed(() => {
   return props.phoneNumbers.map((number) => ({
     ...number,
-    qualityTag: {
-      label: number.quality_rating || 'UNKNOWN',
-      severity: qualitySeverity(number.quality_rating),
-    },
     messagingLimit: messagingLimitLabel(number.messaging_limit_tier),
-    statusTag: {
-      label: number.status,
-      severity: number.status === 'CONNECTED' ? 'success' : 'warn',
-    },
     actions: numberActions,
   }))
 })
@@ -147,7 +154,7 @@ const onProfileSaved = () => {
 <template>
   <div class="flex flex-col gap-4">
     <div class="flex justify-end">
-      <Button @click="showAddDialog = true" size="small">
+      <Button @click="requireSubscription() && (showAddDialog = true)">
         <IconPlus size="16" class="mr-1" />
         <span>{{ $t('whatsapp_settings.add_number') }}</span>
       </Button>
@@ -156,10 +163,32 @@ const onProfileSaved = () => {
       :data="transformedData"
       :columns="columns"
       :loading="loading"
-      :hoverable="true"
+      :hoverable="!props.disableRowClick"
       emptyMessage="whatsapp_settings.no_numbers"
-      @onRowClick="onRowClick"
+      @onRowClick="!props.disableRowClick && onRowClick($event)"
     >
+      <template #quality="{ data }: { data: WABANumber }">
+        <Tag
+          v-tooltip.bottom="{
+            value: $t(`whatsapp_settings.quality_rating.tooltip.${data.quality_rating || 'UNKNOWN'}`),
+            class: 'max-w-[300px]!',
+          }"
+          :value="$t(`whatsapp_settings.quality_rating.${data.quality_rating || 'UNKNOWN'}`)"
+          :severity="qualitySeverity(data.quality_rating)"
+          class="text-base! cursor-help"
+        />
+      </template>
+      <template #status="{ data }: { data: WABANumber }">
+        <Tag
+          v-tooltip.bottom="{
+            value: $t(`whatsapp_settings.phone_status.tooltip.${data.status}`),
+            class: 'max-w-[300px]!',
+          }"
+          :value="$t(`whatsapp_settings.phone_status.${data.status}`)"
+          :severity="statusSeverity(data.status)"
+          class="text-base! cursor-help"
+        />
+      </template>
       <template #oba="{ data }: { data: WABANumber }">
         <div class="flex justify-center">
           <IconCircleCheck

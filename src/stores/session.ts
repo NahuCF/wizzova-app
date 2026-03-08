@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import type { Tenant, UserItem, WABANumber } from '~/types'
+import { API } from '~/services'
 
 export const useSessionStore = defineStore(
   'session',
@@ -54,6 +55,21 @@ export const useSessionStore = defineStore(
       return permissions.some((p) => user.value?.permission_names.includes(p))
     }
 
+    const setAvailability = async (isAvailable: boolean, source: 'manual' | 'idle') => {
+      if (!user.value || user.value.is_available === isAvailable) return
+
+      const previous = user.value.is_available
+      user.value.is_available = isAvailable
+
+      try {
+        await API.profile.setAvailability(isAvailable, source)
+      } catch {
+        if (user.value) {
+          user.value.is_available = previous
+        }
+      }
+    }
+
     const updateUser = (updatedUser: Partial<UserItem>) => {
       if (user.value) {
         user.value = { ...user.value, ...updatedUser }
@@ -91,6 +107,7 @@ export const useSessionStore = defineStore(
       hasPermission,
       hasAllPermissions,
       hasAnyPermission,
+      setAvailability,
       updateUser,
       $reset,
     }

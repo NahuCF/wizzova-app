@@ -8,7 +8,7 @@ import {
   type BotNodeItem,
 } from '~/composables/workflow/useFlowDragAndDrop'
 import { useSessionStore } from '~/stores'
-import SubscriptionDialog from '~/components/subscription/SubscriptionDialog.vue'
+import { useFeatureAccess } from '~/composables/useFeatureAccess'
 
 const emit = defineEmits<{
   (
@@ -26,9 +26,9 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const sessionStore = useSessionStore()
+const { requireFeature } = useFeatureAccess()
 
 const searchTerm = ref('')
-const showSubscriptionDialog = ref(false)
 
 const groupedItems = computed(() => {
   const term = searchTerm.value.toLowerCase()
@@ -55,7 +55,7 @@ const groupedItems = computed(() => {
 
 const onClick = (nodeItem: BotNodeItem) => {
   if (nodeItem.isPremium && !sessionStore.hasPremiumAccess) {
-    showSubscriptionDialog.value = true
+    requireFeature('advanced_chatbot')
   } else {
     emit('addNode', nodeItem)
   }
@@ -118,7 +118,4 @@ const onDragStart = (event: DragEvent, nodeItem: BotNodeItem) => {
       </div>
     </div>
   </aside>
-
-  <!-- Subscription Dialog -->
-  <SubscriptionDialog v-model:visible="showSubscriptionDialog" />
 </template>

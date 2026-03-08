@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import DashboardStatCard from '~/components/dashboard/DashboardStatCard.vue'
+import { useDurationFormatter } from '~/composables/useDurationFormatter'
 import { API } from '~/services'
 import type { AgentStatsItem, AgentStatsSummary } from '~/types'
 
@@ -17,13 +18,7 @@ const loading = ref(false)
 const agentStats = ref<AgentStatsItem[]>([])
 const summary = ref<AgentStatsSummary | null>(null)
 
-const formatTime = (minutes: number | null): string => {
-  if (minutes === null) return '-'
-  const hours = Math.floor(minutes / 60)
-  const mins = Math.round(minutes % 60)
-  if (hours > 0) return `${hours}h ${mins}m`
-  return `${mins}m`
-}
+const { formatMinutes: formatTime } = useDurationFormatter()
 
 const fetchAgentStats = async () => {
   loading.value = true

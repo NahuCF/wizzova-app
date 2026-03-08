@@ -30,6 +30,7 @@ export const useUserStore = defineStore('user', () => {
     },
     wabas: [],
     permission_names: [],
+    is_available: true,
     is_deleted: false,
     status: 'SIGNED_UP',
   }

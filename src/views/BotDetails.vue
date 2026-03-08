@@ -8,12 +8,14 @@ import SettingsTab from '~/components/bot-details/SettingsTab.vue'
 import StatsTab from '~/components/bot-details/StatsTab.vue'
 import VersionTab from '~/components/bot-details/VersionTab.vue'
 import { API } from '~/services'
+import { useFeatureAccess } from '~/composables/useFeatureAccess'
 import type { BotItem } from '~/types'
 
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
 const { t } = useI18n()
+const { requireSubscription } = useFeatureAccess()
 
 const tabs = ref(['stats', 'versions', 'settings'])
 const currentTab = ref('stats')
@@ -72,7 +74,7 @@ if (typeof route.query.tab === 'string') {
         <div class="text-2xl font-semibold">{{ bot?.name }}</div>
       </div>
       <div>
-        <Button @click="router.push({ name: 'new-botflow', params: { id: bot?.id || '' } })">
+        <Button @click="requireSubscription() && router.push({ name: 'new-botflow', params: { id: bot?.id || '' } })">
           <IconPlus size="16" class="mr-1" />
           <span>
             {{ $t(`bot_details.add_a_version`) }}

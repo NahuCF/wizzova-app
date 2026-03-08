@@ -69,4 +69,7 @@ export default {
   async pollImportStatus(id: string) {
     return Http.get<{ data: ContactImportItem }>(`/contacts/import/${id}`)
   },
+  async downloadImportReport(id: string) {
+    return Http.get<{ url: string }>(`/contacts/import/${id}/report`)
+  },
 }

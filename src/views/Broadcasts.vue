@@ -23,8 +23,10 @@ import type { Step } from '~/components/common/SpotlightTour.vue'
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { API } from '~/services'
 import { useSessionStore } from '~/stores'
+import { useFeatureAccess } from '~/composables/useFeatureAccess'
 import type { WABANumber, BroadcastItem, BroadcastOverview, BroadcastStatus } from '~/types'
 
+const { requireSubscription } = useFeatureAccess()
 const selectedNumber = ref<WABANumber>()
 const dateRange = ref<(Date | null)[] | null>()
 const selectedFilter = ref<{
@@ -323,7 +325,7 @@ fetchBroadcastNumbers()
           :disabled="loadingNumbers"
         />
 
-        <Button ref="newBroadcastBtn" @click="router.push({ name: 'new-broadcast' })">
+        <Button ref="newBroadcastBtn" @click="requireSubscription() && router.push({ name: 'new-broadcast' })">
           <IconPlus size="16" class="mr-1" />
           <span>
             {{ $t('broadcasts.new_broadcast') }}

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref, onMounted } from 'vue'
+import i18n from '~/config/i18n'
 import { IconLoader2, IconCircleX, IconCircleCheck } from '@tabler/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
@@ -144,6 +145,7 @@ const onFormSubmit = async ({ valid }: FormSubmitEvent) => {
       cellphone_prefix: getSelectedCountry.value?.prefix ?? '',
       work_email: form.value.workEmail,
       password: form.value.password,
+      language: i18n.global.locale as string,
     })
     const { data: tenant } = response.data
 
@@ -182,6 +184,7 @@ onMounted(() => {
     </div>
     <div class="w-full flex items-center justify-center flex-1">
       <div class="rounded-md bg-white p-16 shadow-md w-full md:w-[38rem] h-screen md:h-auto">
+        <img src="/logo.svg" class="w-14 h-14 mx-auto mb-6" />
         <h1 class="text-4xl font-semibold text-center mb-8">
           {{ $t('grow_your_business_with') }}
           <span class="text-green-500">WhatsApp</span>

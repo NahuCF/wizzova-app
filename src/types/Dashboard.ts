@@ -63,3 +63,37 @@ export interface AgentStatsResponse {
   summary: AgentStatsSummary
   agents: AgentStatsItem[]
 }
+
+export interface UserAnalyticsStats {
+  active_conversations: number
+  resolved: number
+  messages_sent: number
+  avg_resolution_time_minutes: number | null
+  avg_first_response_time_minutes: number | null
+  avg_available_hours: number | null
+}
+
+export interface AvailabilityTimeSeriesPoint {
+  period: string
+  hours: number
+}
+
+export interface ConversationsUserTimeSeriesPoint {
+  period: string
+  taken: number
+  resolved: number
+}
+
+export interface UserActivityLogItem {
+  id: string
+  type: string
+  ip_address: string | null
+  user_agent: string | null
+  created_at: string
+}
+
+export interface UserAnalyticsData {
+  stats: UserAnalyticsStats
+  availability_chart?: AvailabilityTimeSeriesPoint[]
+  conversations_chart?: ConversationsUserTimeSeriesPoint[]
+}

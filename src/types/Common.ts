@@ -75,5 +75,6 @@ export interface MenuItem {
   icon: any
   collapse?: boolean
   permission?: string
+  feature?: string
   children?: MenuItem[]
 }

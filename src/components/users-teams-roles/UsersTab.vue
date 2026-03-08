@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { IconEdit, IconTrash } from '@tabler/icons-vue'
+import { IconChartBar, IconEdit, IconTrash } from '@tabler/icons-vue'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue'
+import { useRouter } from 'vue-router'
 import { useCrudActions } from '~/composables/useCrudActions'
 import { useErrorHandler } from '~/composables/useErrorHandler'
+import { useUserChannel } from '~/composables/pusher/useUserChannel'
 import { API } from '~/services'
 import { useUserStore, useSessionStore, useTeamStore } from '~/stores'
 import { userStatusSeverity } from '~/types'
 import type { Column, UserCreate, UserItem } from '~/types'
 
+const router = useRouter()
 const { hasPermission, isOwner } = useSessionStore()
 const userStore = useUserStore()
 const { fetchUsers, fetchDeletedUsers } = userStore
@@ -34,6 +37,13 @@ const loadingSave = ref(false)
 const showDeleteDialog = ref(false)
 
 const userActions = (user: UserItem) => {
+  const analyticsAction = {
+    label: t('user_analytics.analytics'),
+    icon: IconChartBar,
+    action: () => {
+      router.push({ name: 'user-analytics', params: { userId: user.id } })
+    },
+  }
   const editUser = {
     label: t('users.edit'),
     icon: IconEdit,
@@ -53,14 +63,14 @@ const userActions = (user: UserItem) => {
   }
 
   if (user.role.is_internal && user.role.name === 'Owner' && !isOwner) {
-    return []
+    return [[analyticsAction]]
   }
 
   if (user.role.is_internal && user.role.name === 'Owner') {
-    return [[editUser]]
+    return [[editUser, analyticsAction]]
   }
 
-  return [[editUser], [deleteUser]]
+  return [[editUser, analyticsAction], [deleteUser]]
 }
 
 const columns = computed(() => {
@@ -132,6 +142,13 @@ const onDelete = () => {
   }
 }
 
+useUserChannel(({ user_id, is_available }) => {
+  const user = users.value.find((u) => u.id === user_id)
+  if (user) {
+    user.is_available = is_available
+  }
+})
+
 fetchUsers()
 </script>
 
@@ -144,8 +161,14 @@ fetchUsers()
       :loading="loading"
     >
       <template #avatar="{ data }">
-        <Avatar v-if="data.profile_img_path" :image="data.profile_img_path" shape="circle" />
-        <Avatar v-else :label="data.name?.charAt(0)?.toUpperCase()" shape="circle" />
+        <div class="relative inline-flex">
+          <Avatar v-if="data.profile_img_path" :image="data.profile_img_path" shape="circle" />
+          <Avatar v-else :label="data.name?.charAt(0)?.toUpperCase()" shape="circle" />
+          <span
+            class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white"
+            :class="data.is_available ? 'bg-green-500' : 'bg-gray-300'"
+          />
+        </div>
       </template>
     </Table>
 

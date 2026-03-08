@@ -107,6 +107,8 @@ export default {
     'A team with this name already exists': 'Ya existe un equipo con este nombre',
     contact_has_active_broadcasts:
       'No se puede modificar un contacto cuando tiene campañas activas',
+    import_exceeds_contact_limit:
+      'Este archivo excede el número máximo de contactos permitidos en tu plan.',
     subscription_contact_limit_reached:
       'Ha alcanzado el límite de contactos de su plan de suscripción actual. Por favor actualice su plan para agregar más contactos.',
     subscription_user_limit_reached:
@@ -119,6 +121,33 @@ export default {
     conversation_is_expired: 'La conversacion expiró',
     bot_variable_name_already_exists: 'El nombre de la variable ya existe',
     flow_already_exists: 'Ya existe una versión con este nombre',
+    feature_not_available:
+      'Esta funcionalidad no está disponible en tu plan actual. Por favor actualiza tu plan para acceder.',
+    no_active_subscription:
+      'No tienes una suscripción activa. Por favor suscríbete a un plan.',
+    premium_bot_nodes_not_available:
+      'Los nodos premium del bot no están disponibles en tu plan actual. Por favor actualiza a Scale o superior.',
+  },
+  upgrade_modal: {
+    title: 'Actualización Requerida',
+    default_message:
+      'Esta funcionalidad no está disponible en tu plan actual. Actualiza para desbloquearla.',
+    feature_not_available:
+      'Esta funcionalidad no está incluida en tu plan actual. Actualiza para acceder.',
+    subscription_contact_limit_reached:
+      'Has alcanzado el límite de contactos de tu plan actual. Actualiza para agregar más contactos.',
+    subscription_user_limit_reached:
+      'Has alcanzado el límite de usuarios de tu plan actual. Actualiza para agregar más usuarios.',
+    subscription_whatsapp_limit_reached:
+      'Has alcanzado el límite de números de WhatsApp de tu plan actual. Actualiza para agregar más números.',
+    no_active_subscription:
+      'No tienes una suscripción activa. Suscríbete a un plan para continuar.',
+    premium_bot_nodes_not_available:
+      'Los nodos premium del bot (Template, Video, Audio, Ubicación, Horario Laboral) requieren el plan Scale o superior.',
+    current_usage: 'Uso actual',
+    available_from: 'Disponible desde el plan:',
+    maybe_later: 'Quizás después',
+    upgrade_plan: 'Actualizar Plan',
   },
   submit_for_review: 'Enviar para revision',
   template_name: 'Nombre del template',
@@ -429,6 +458,7 @@ export default {
         'Crea grupos dinámicos con filtros de contactos que incluyan automáticamente contactos nuevos y existentes que cumplan los criterios.',
       enter_group_name: 'Ingresar nombre del grupo',
       create_group_tooltip: 'No puede guardar/crear un grupo sin contactos asociados',
+      contacts_found: 'contactos encontrados',
       reset: 'Resetear',
     },
     group_created: '¡Grupo creado con éxito!',
@@ -454,7 +484,9 @@ export default {
       imported_on: 'Importado el',
       import_type: 'Tipo de importación',
       total_contacts: 'Contactos totales',
+      added_contacts: 'Contactos agregados',
       updated_contacts: 'Contactos actualizados',
+      skipped_contacts: 'Contactos omitidos',
       errored_contacts: 'Contactos con error',
       status: 'Estado',
     },
@@ -462,7 +494,9 @@ export default {
       PENDING: 'Pendiente',
       PROCESSING: 'Procesando',
       COMPLETED: 'Completado',
+      FAILED: 'Fallido',
     },
+    download_report: 'Descargar reporte de errores',
   },
   contact_import_type: {
     ADD: 'Agregar nuevos contactos',
@@ -540,6 +574,9 @@ export default {
     send_broadcast: 'Enviar campaña',
     target_audience: 'Audiencia objetivo',
     total_contacts: 'Total de contactos',
+    total_recipients: 'Total de destinatarios',
+    total_recipients_tooltip:
+      'La cantidad de números de teléfono únicos que recibirán esta campaña, eliminando duplicados entre grupos.',
     selected_groups: 'Grupos seleccionados',
     enter_broadcast_name: 'Ingrese el nombre de la campaña',
     send_now: 'Enviar ahora',
@@ -802,7 +839,7 @@ export default {
   },
   app_sidebar: {
     routes: {
-      dashboard: 'Panel de Control',
+      dashboard: 'Dashboard',
       broadcasts: 'Campañas',
       conversations: 'Conversaciones',
       contacts: 'Contactos',
@@ -815,6 +852,7 @@ export default {
       subscription: 'Subscripción',
       waba_accounts: 'Cuentas WABA',
     },
+    available: 'Disponible',
     logout: 'Salir',
   },
   whatsapp_settings: {
@@ -890,6 +928,34 @@ export default {
       TRAVEL_TRANSPORTATION: 'Viajes y Transporte',
       RESTAURANT: 'Restaurante',
       OTHER: 'Otro',
+    },
+    quality_rating: {
+      GREEN: 'Alta',
+      YELLOW: 'Media',
+      RED: 'Baja',
+      UNKNOWN: 'Desconocida',
+      tooltip: {
+        GREEN: 'Los clientes interactúan bien con tus mensajes. Baja tasa de bloqueos y reportes.',
+        YELLOW: 'Algunos clientes están bloqueando o reportando tus mensajes. La calidad puede disminuir si no se atiende.',
+        RED: 'Alta tasa de bloqueos y reportes. Los límites de mensajes pueden reducirse o el número puede ser restringido.',
+        UNKNOWN: 'Aún no se han enviado suficientes mensajes para determinar la calidad.',
+      },
+    },
+    phone_status: {
+      CONNECTED: 'Conectado',
+      PENDING: 'Pendiente',
+      OFFLINE: 'Desconectado',
+      UNVERIFIED: 'No verificado',
+      FLAGGED: 'Señalado',
+      RESTRICTED: 'Restringido',
+      tooltip: {
+        CONNECTED: 'El número está activo y puede enviar y recibir mensajes.',
+        PENDING: 'El número está registrado pero aún no está completamente configurado.',
+        OFFLINE: 'El número está registrado pero actualmente no está conectado.',
+        UNVERIFIED: 'El número no ha completado la verificación telefónica por SMS o llamada.',
+        FLAGGED: 'El número ha sido señalado por problemas de calidad. Si la calidad no mejora, puede ser restringido.',
+        RESTRICTED: 'El número ha sido restringido de enviar mensajes debido a una calidad deficiente sostenida.',
+      },
     },
     add_number: 'Agregar Número',
     add_number_title: 'Agregar Número de Teléfono',
@@ -1187,6 +1253,8 @@ export default {
     whatsapp_numbers: 'Números de WhatsApp',
     expires_on: 'Expira el',
     started_on: 'Iniciado el',
+    next_billing_date: 'Próxima fecha de cobro',
+    member_since: 'Miembro desde',
     users: 'Usuarios',
     contacts: 'Contactos',
     included_features: 'Características Incluidas',
@@ -1210,6 +1278,10 @@ export default {
     actions: 'Acciones',
     download_invoice: 'Descargar Factura',
     no_payments: 'No se encontraron pagos',
+    waiting_for_payment: 'Esperando confirmación de pago...',
+    waiting_for_payment_description: 'Estamos procesando tu pago. Esto puede tardar unos momentos.',
+    payment_confirmed: '¡Tu suscripción ha sido activada exitosamente!',
+    payment_failed: 'El pago falló. Por favor, inténtalo de nuevo.',
     payment_status: {
       pending: 'Pendiente',
       completed: 'Completado',
@@ -1276,6 +1348,7 @@ export default {
     yearly_billing: 'Facturación anual',
     total: 'Total',
     yearly_savings_message: '¡Estás ahorrando 25% con facturación anual!',
+    yearly_savings_amount: '¡Estás ahorrando ${amount}/año con facturación anual!',
     subscribe: 'Suscribirse',
   },
   profile: {
@@ -1296,6 +1369,7 @@ export default {
     upload_failed: 'Error al subir la imagen de perfil',
     image_deleted: 'Imagen de perfil eliminada exitosamente',
     delete_failed: 'Error al eliminar la imagen de perfil',
+    language: 'Idioma',
     updated: 'Perfil actualizado exitosamente',
     update_failed: 'Error al actualizar el perfil',
     error_loading: 'Error al cargar los datos del perfil',
@@ -1308,7 +1382,7 @@ export default {
     import_completed_desc: 'Tu importación de contactos se ha completado',
   },
   dashboard: {
-    title: 'Panel de Control',
+    title: 'Dashboard',
     select_date_range: 'Seleccionar rango de fechas',
     max_range_error: 'El rango de fechas no puede superar {days} días',
     tabs: {
@@ -1376,6 +1450,55 @@ export default {
       failed: 'Fallidos',
       user_initiated: 'Iniciadas por Usuario',
       business_initiated: 'Iniciadas por Negocio',
+    },
+  },
+  user_analytics: {
+    title: 'Analíticas del Usuario',
+    analytics: 'Analíticas',
+    activity_log: 'Registro de Actividad',
+    no_activity: 'No se encontró actividad',
+    stats: {
+      active_conversations: 'Conversaciones Activas',
+      resolved: 'Resueltas',
+      messages_sent: 'Mensajes Enviados',
+      avg_resolution_time: 'Tiempo Promedio de Resolución',
+      avg_first_response_time: 'Tiempo Promedio de Primera Respuesta',
+      avg_available_hours: 'Horas Promedio Disponible',
+    },
+    tooltips: {
+      active_conversations: 'Conversaciones actualmente abiertas y asignadas a este usuario',
+      resolved: 'Conversaciones resueltas por este usuario en el período seleccionado',
+      messages_sent: 'Mensajes enviados por este usuario en el período seleccionado',
+      avg_resolution_time: 'Tiempo promedio para resolver conversaciones',
+      avg_first_response_time:
+        'Tiempo promedio para enviar la primera respuesta a un mensaje del cliente',
+      avg_available_hours: 'Horas promedio disponible por día en el período seleccionado',
+    },
+    charts: {
+      available_hours: 'Horas Disponible',
+      available_hours_tooltip: 'Horas disponible por día',
+      available_hours_description:
+        'Muestra la cantidad de horas que este usuario estuvo disponible cada día en el período seleccionado.',
+      conversations: 'Conversaciones',
+      conversations_tooltip: 'Conversaciones tomadas y resueltas a lo largo del tiempo',
+      conversations_description:
+        'Muestra la cantidad de conversaciones asignadas (tomadas) y resueltas por este usuario por día.',
+      taken: 'Tomadas',
+      resolved: 'Resueltas',
+    },
+    activity_types: {
+      login: 'Inicio de sesión',
+      logout: 'Cierre de sesión',
+      available: 'Disponible',
+      unavailable: 'No disponible',
+      auto_available: 'Disponible automáticamente',
+      auto_unavailable: 'No disponible automáticamente',
+    },
+    activity_headers: {
+      type: 'Tipo',
+      ip_address: 'Dirección IP',
+      user_agent: 'Agente de Usuario',
+      date: 'Fecha',
     },
   },
 }

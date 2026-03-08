@@ -48,14 +48,23 @@ const menuItems = computed(() =>
   })),
 )
 
-const showValueInput = (op: FilterOperator | '') =>
-  op !== 'is_empty' && op !== 'is_not_empty' && op !== ''
+const isValuelessOperator = (op: FilterOperator | '') =>
+  op === 'is_empty' || op === 'is_not_empty' || op === ''
+
+const showValueInput = (op: FilterOperator | '') => !isValuelessOperator(op)
 
 const getOperatorOptions = (column: FilterColumn) =>
   column.operators.map((op) => ({
     label: t(`filters.operators.${op}`),
     value: op,
   }))
+
+const onOperatorChange = (conditionIndex: number) => {
+  const condition = currentFilter.value.conditions[conditionIndex]
+  if (!isValuelessOperator(condition.operator) && condition.value.length === 0) {
+    condition.value = ['']
+  }
+}
 
 const getOptionsForColumn = (column: FilterColumn) => column.options || []
 
@@ -232,6 +241,7 @@ const dateModel = (conditionIndex: number, valueIndex: number) =>
               optionLabel="label"
               optionValue="value"
               class="flex-1"
+              @change="onOperatorChange(index)"
             />
             <Button v-if="currentFilter.conditions.length > 1" text @click="removeCondition(index)">
               <IconTrash class="w-5 h-5 text-red-500" />

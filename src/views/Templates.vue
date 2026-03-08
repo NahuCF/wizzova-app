@@ -18,9 +18,11 @@ import type {
 import { usePaginatedData } from '~/composables/usePaginatedData'
 import { useCrudActions } from '~/composables/useCrudActions'
 import { useTemplateStore } from '~/stores/template'
+import { useFeatureAccess } from '~/composables/useFeatureAccess'
 
 const { t } = useI18n()
 const router = useRouter()
+const { requireSubscription } = useFeatureAccess()
 const {
   dataPage,
   loading,
@@ -227,7 +229,7 @@ onMounted(() => {
             class: 'text-base max-w-[300px]!',
           }
         "
-        @click="router.push({ name: 'new-template' })"
+        @click="requireSubscription() && router.push({ name: 'new-template' })"
       >
         <IconPlus size="16" />
         <span>

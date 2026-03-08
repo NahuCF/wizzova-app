@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { IconBell, IconBook, IconTrash } from '@tabler/icons-vue'
+import { IconBell, IconBook, IconSend, IconUserCheck, IconTrash } from '@tabler/icons-vue'
 import { usePopoverPosition } from '~/composables/usePopoverPosition'
 import { useNotificationChannel } from '~/composables/pusher/useNotificationChannel'
 import { API } from '~/services'
@@ -80,6 +80,7 @@ const markAllAsRead = async () => {
     await API.notification.markAllAsRead()
     notifications.value = notifications.value.map((n) => ({ ...n, is_read: true }))
     unreadCount.value = 0
+    lastClickedCount.value = 0
   } catch (error) {
     console.error('Failed to mark all notifications as read:', error)
   }
@@ -111,6 +112,8 @@ const handleScroll = async (event: Event) => {
 
 const getNotificationIcon = (type: string, icon?: string) => {
   if (icon === 'book') return IconBook
+  if (icon === 'send') return IconSend
+  if (icon === 'user-check') return IconUserCheck
   return IconBell
 }
 

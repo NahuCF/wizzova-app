@@ -72,6 +72,7 @@ export interface ContactImportItem {
   error_contacts_count: number
   total_contacts_count: number
   status: ContactImportStatus
+  has_report: boolean
   created_at: string
 }
 

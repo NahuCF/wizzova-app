@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { IconCrown } from '@tabler/icons-vue'
 import { useUserPreferencesStore } from '~/stores/userPreferences'
+import { useFeatureAccess } from '~/composables/useFeatureAccess'
 import type { MenuItem } from '~/types'
 
 const props = defineProps<{
@@ -15,8 +18,18 @@ const emit = defineEmits<{
 
 const router = useRouter()
 const prefs = useUserPreferencesStore()
+const { hasFeature, requireFeature } = useFeatureAccess()
+
+const isFeatureLocked = computed(() => {
+  return props.item.feature ? !hasFeature(props.item.feature) : false
+})
 
 const navigate = () => {
+  if (isFeatureLocked.value) {
+    requireFeature(props.item.feature!)
+    return
+  }
+
   if (props.item.path) router.push(props.item.path)
   if (props.item.collapse) prefs.setSidebarCollapsed(true)
 
@@ -40,5 +53,10 @@ const navigate = () => {
     >
       {{ item.name }}
     </span>
+    <IconCrown
+      v-if="isFeatureLocked && !collapsed"
+      class="ml-auto text-amber-400 shrink-0"
+      size="16"
+    />
   </li>
 </template>

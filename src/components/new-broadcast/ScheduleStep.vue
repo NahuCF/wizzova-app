@@ -1,13 +1,21 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { IconArrowLeft, IconUsers, IconClock, IconAsterisk } from '@tabler/icons-vue'
+import {
+  IconArrowLeft,
+  IconUsers,
+  IconClock,
+  IconAsterisk,
+  IconLoader2,
+  IconInfoCircle,
+} from '@tabler/icons-vue'
 import { useBroadcastStore } from '~/stores/broadcast'
 import { useI18n } from 'vue-i18n'
 import { ref, watch } from 'vue'
 
 const { t } = useI18n()
 const broadcastStore = useBroadcastStore()
-const { currentStep, newBroadcast, totalContactsCount } = storeToRefs(broadcastStore)
+const { currentStep, newBroadcast, totalContactsCount, recipientsCount, loadingRecipientsCount } =
+  storeToRefs(broadcastStore)
 
 const sendOptions = ref([
   {
@@ -150,9 +158,32 @@ watch(
             </div>
 
             <div class="flex items-center">
+              <div class="flex items-center gap-1 min-w-[30%]">
+                <span>{{ t('new_broadcast.total_recipients') }}</span>
+                <div
+                  class="flex items-center"
+                  v-tooltip.bottom="{
+                    value: t('new_broadcast.total_recipients_tooltip'),
+                    class: 'max-w-[300px]!',
+                  }"
+                >
+                  <IconInfoCircle class="text-slate-700 hover:cursor-pointer" size="14" />
+                </div>
+              </div>
+
+              <div class="flex gap-2">
+                <IconLoader2 v-if="loadingRecipientsCount" class="animate-spin" size="16" />
+                <template v-else>
+                  <IconUsers size="16" />
+                  <div>{{ recipientsCount }}</div>
+                </template>
+              </div>
+            </div>
+
+            <div class="flex items-center">
               <div class="min-w-[30%]">{{ t('new_broadcast.selected_groups') }}</div>
 
-              <div class="flex gap-2 text-ellipsis">
+              <div class="flex flex-wrap gap-2">
                 <Badge
                   v-for="group in newBroadcast.contactGroups"
                   class="text-base!"

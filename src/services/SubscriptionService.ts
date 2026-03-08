@@ -1,12 +1,9 @@
 import Http from '~/config/http'
-import type { CreateSubscriptionRequest, MercadoPagoLinkResponse, Subscription } from '~/types'
+import type { CreateSubscriptionRequest, CheckoutLinkResponse, Subscription } from '~/types'
 
 export default {
-  generateMercadoPagoLink(data: CreateSubscriptionRequest) {
-    return Http.post<{ data: MercadoPagoLinkResponse }>(
-      '/subscription/mercadopago/subscription-link',
-      data,
-    )
+  generateCheckoutLink(data: CreateSubscriptionRequest) {
+    return Http.post<{ data: CheckoutLinkResponse }>('/subscription/checkout-link', data)
   },
 
   getCurrentSubscription() {
@@ -19,13 +16,6 @@ export default {
 
   getPaymentHistory(params?: { rows_per_page?: number; status?: string }) {
     return Http.get<{ data: any[] }>('/subscription/payment-history', { params })
-  },
-
-  createSubscriptionLink(data: CreateSubscriptionRequest) {
-    return Http.post<{ data: MercadoPagoLinkResponse }>(
-      '/subscription/mercadopago/subscription-link',
-      data,
-    )
   },
 
   cancelSubscription() {

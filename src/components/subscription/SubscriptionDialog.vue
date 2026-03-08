@@ -24,8 +24,9 @@ interface Plan {
   popular?: boolean
 }
 
-defineProps<{
+const props = defineProps<{
   visible: boolean
+  currentPlanType: PlanType | null
 }>()
 
 const emit = defineEmits<{
@@ -120,7 +121,7 @@ const subscribe = async () => {
 
   loading.value = true
   try {
-    const { data: response } = await API.subscription.generateMercadoPagoLink({
+    const { data: response } = await API.subscription.generateCheckoutLink({
       plan_type: selectedPlan.value.type,
       billing_cycle: billingCycle.value,
       extra_users: extraUsers.value,
@@ -164,6 +165,7 @@ const subscribe = async () => {
         <SubscriptionPlanStep
           :plans="plans"
           :billingCycle="billingCycle"
+          :currentPlanType="props.currentPlanType"
           @update:billingCycle="billingCycle = $event"
           @selectPlan="selectPlan"
         />

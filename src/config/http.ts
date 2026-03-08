@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import { useSessionStore } from '~/stores/session'
+import { useSubscriptionStore } from '~/stores/subscription'
 
 const Http = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -20,12 +21,27 @@ const allowedPaths = [
 export function setupInterceptors() {
   const sessionStore = useSessionStore()
 
+  const subscriptionStore = useSubscriptionStore()
+
   Http.interceptors.response.use(
     (response) => response,
-    (error: AxiosError<{ message: string }>) => {
+    (error: AxiosError<{ message: string; upgrade_required?: boolean; message_code?: string; feature?: string; current_plan?: string; required_plan?: string; limit?: number; used?: number }>) => {
       if (error.response?.status === 401 && error.response.data.message === 'Unauthenticated.') {
         sessionStore.showOverrideDialog = true
       }
+
+      const data = error.response?.data
+      if (data?.upgrade_required) {
+        subscriptionStore.showUpgradeModal({
+          messageCode: data.message_code || 'default_message',
+          feature: data.feature,
+          currentPlan: data.current_plan,
+          requiredPlan: data.required_plan,
+          limit: data.limit,
+          used: data.used,
+        })
+      }
+
       return Promise.reject(error)
     },
   )

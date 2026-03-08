@@ -15,6 +15,7 @@ import NewBotFlow from '~/views/NewBotVersion.vue'
 import BotDetails from '~/views/BotDetails.vue'
 import Profile from '~/views/Profile.vue'
 import Subscription from '~/views/Subscription.vue'
+import UserAnalytics from '~/views/settings/UserAnalytics.vue'
 import WhatsAppSettings from '~/views/settings/WhatsAppSettings.vue'
 import WhatsAppDetail from '~/views/settings/WhatsAppDetail.vue'
 
@@ -140,6 +141,12 @@ const routes = [
               ],
             },
             component: UsersTeamsRoles,
+          },
+          {
+            path: 'users/:userId/analytics',
+            name: 'user-analytics',
+            meta: { titleKey: 'user_analytics.title' },
+            component: UserAnalytics,
           },
           {
             path: 'contact-fields',

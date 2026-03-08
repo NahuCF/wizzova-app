@@ -14,8 +14,6 @@ import { z } from 'zod'
 import { API } from '~/services'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import type { WABANumber } from '~/types'
-import { useRouter } from 'vue-router'
-
 const props = defineProps<{
   visible: boolean
 }>()
@@ -23,7 +21,6 @@ const props = defineProps<{
 const sessionStore = useSessionStore()
 const countryStore = useCountryStore()
 const handleError = useErrorHandler()
-const router = useRouter()
 
 const step = ref(1)
 const loading = ref(false)
@@ -118,9 +115,6 @@ const verifyCode = async () => {
     )
     sessionStore.user.default_phone_id = response.data.id
     sessionStore.tenant = response.meta.tenant
-
-    await router.replace({ name: 'templates' })
-    window.location.reload()
   } catch (error) {
     handleError(error)
   } finally {

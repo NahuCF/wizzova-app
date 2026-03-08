@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T">
 import type { DataTablePageEvent } from 'primevue'
 import { IconDotsVertical, IconInfoCircle } from '@tabler/icons-vue'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { ActionGenerator, Column } from '~/types'
 
 const props = withDefaults(
@@ -34,8 +34,21 @@ const emit = defineEmits<{
 const actionGenerator = ref<ActionGenerator<T>>()
 const taglistPopover = ref()
 const actionMenu = ref()
+const tableWrapper = ref<HTMLElement>()
 const hoverTags = ref<string[]>([])
+const lockedHeight = ref<string>()
 let hoverTimeout: ReturnType<typeof setTimeout> | null = null
+
+watch(
+  () => props.loading,
+  (isLoading) => {
+    if (isLoading) {
+      lockedHeight.value = tableWrapper.value ? `${tableWrapper.value.offsetHeight}px` : undefined
+    } else {
+      lockedHeight.value = undefined
+    }
+  },
+)
 
 const total = computed(() => {
   return props.totalRecords || props.data.length
@@ -68,7 +81,7 @@ const openActionMenu = (event: MouseEvent, actions: ActionGenerator<T>, item: T)
 </script>
 
 <template>
-  <div class="overflow-auto">
+  <div ref="tableWrapper" class="overflow-auto" :style="{ minHeight: lockedHeight }">
     <DataTable
       :value="data"
       :selection="selection"

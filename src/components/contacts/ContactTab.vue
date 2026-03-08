@@ -11,10 +11,12 @@ import { useCrudActions } from '~/composables/useCrudActions'
 import { useContactFilters } from '~/composables/useContactFilters'
 import axios from 'axios'
 import { useErrorHandler } from '~/composables/useErrorHandler'
+import { useFeatureAccess } from '~/composables/useFeatureAccess'
 
 const { t } = useI18n()
 const router = useRouter()
 const handleError = useErrorHandler()
+const { requireSubscription } = useFeatureAccess()
 const contactFieldStore = useContactFieldStore()
 const userStore = useUserStore()
 const { columns: contactFilters, flattenFilters } = useContactFilters()
@@ -62,7 +64,7 @@ const filters = ref<Filter[]>([])
 const importOptions = ref([
   {
     label: t('contacts.import_file'),
-    action: () => (showImportContacts.value = true),
+    action: () => requireSubscription() && (showImportContacts.value = true),
   },
   {
     label: t('contacts.import_history'),
@@ -195,7 +197,7 @@ userStore.fetchUsers()
           />
         </div>
       </div>
-      <Button @click="onCreateContact()">
+      <Button @click="requireSubscription() && onCreateContact()">
         <IconPlus size="16" class="mr-1" />
         <span>
           {{ $t('contacts.add_contact') }}

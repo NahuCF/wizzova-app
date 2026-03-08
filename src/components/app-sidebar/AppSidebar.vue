@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import {
   IconBrandWhatsapp,
   IconChartBar,
@@ -38,17 +38,11 @@ const route = useRoute()
 const loadingLogout = ref(false)
 const popover = ref()
 const { positionPopover } = usePopoverPosition(popover)
-const sidebarMenu: MenuItem[] = [
+const sidebarMenu = computed<MenuItem[]>(() => [
   {
     name: t('app_sidebar.routes.dashboard'),
     path: '/dashboard',
     icon: IconChartBar,
-  },
-  {
-    name: t('app_sidebar.routes.broadcasts'),
-    path: '/broadcasts',
-    icon: IconSpeakerphone,
-    permission: 'campaigns.view_and_manage_campaigns',
   },
   {
     name: t('app_sidebar.routes.conversations'),
@@ -56,6 +50,12 @@ const sidebarMenu: MenuItem[] = [
     icon: IconMessage,
     permission: 'conversations.view_and_manage_conversations',
     collapse: true,
+  },
+  {
+    name: t('app_sidebar.routes.broadcasts'),
+    path: '/broadcasts',
+    icon: IconSpeakerphone,
+    permission: 'campaigns.view_and_manage_campaigns',
   },
   {
     name: t('app_sidebar.routes.contacts'),
@@ -98,7 +98,7 @@ const sidebarMenu: MenuItem[] = [
       },
     ],
   },
-]
+])
 
 const hasPermission = (item: MenuItem) => {
   return item.permission ? session.hasPermission(item.permission) : true
@@ -177,7 +177,7 @@ const logout = async () => {
         class="flex items-center gap-3 px-2 py-2 rounded-md cursor-pointer hover:bg-slate-100 transition"
         @click="popover.toggle"
       >
-        <div>
+        <div class="relative shrink-0">
           <Avatar
             v-if="session.user?.profile_img_path"
             :image="session.user.profile_img_path"
@@ -189,6 +189,10 @@ const logout = async () => {
             :label="session.user?.name.charAt(0).toLocaleUpperCase()"
             size="large"
             shape="circle"
+          />
+          <span
+            class="absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white"
+            :class="session.user?.is_available ? 'bg-green-500' : 'bg-gray-300'"
           />
         </div>
         <div
@@ -231,6 +235,14 @@ const logout = async () => {
             <span class="text truncate">{{ session.user?.name }}</span>
             <span class="text-sm text-slate-500 truncate">{{ session.user?.email }}</span>
           </div>
+        </div>
+
+        <div class="flex items-center justify-between p-4">
+          <span class="truncate">{{ $t('app_sidebar.available') }}</span>
+          <ToggleSwitch
+            :modelValue="session.user?.is_available ?? false"
+            @update:modelValue="session.setAvailability(!session.user?.is_available, 'manual')"
+          />
         </div>
 
         <div

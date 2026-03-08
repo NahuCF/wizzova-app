@@ -8,6 +8,7 @@ import { useRouter } from 'vue-router'
 import { API } from '~/services/index'
 import { useSessionStore } from '~/stores/session'
 import { useToast } from 'primevue'
+import i18n from '~/config/i18n'
 import axios from 'axios'
 import type { FormSubmitEvent } from '@primevue/forms'
 import { isLoginResponse } from '~/types/guards'
@@ -57,7 +58,11 @@ const onFormSubmit = async ({ valid }: FormSubmitEvent) => {
     user.value = response.meta.user
     token.value = response.meta.token
 
-    router.replace({ name: 'templates' })
+    const userLang = response.meta.user.language
+    i18n.global.locale = userLang
+    localStorage.setItem('locale', userLang)
+
+    router.replace({ name: 'dashboard' })
   } catch (error) {
     let errorMessage = t('an_error_occurred')
 
@@ -88,6 +93,7 @@ if (savedEmail.value) {
     </div>
     <div class="w-full flex items-center justify-center flex-1">
       <div class="rounded-md bg-white p-16 shadow-md w-full md:w-[38rem] h-screen md:h-auto">
+        <img src="/logo.svg" class="w-14 h-14 mx-auto mb-6" />
         <h1 class="text-4xl text-center font-bold mb-18 text-neutral-800">
           {{ $t('log_in_to_your_account') }}
         </h1>

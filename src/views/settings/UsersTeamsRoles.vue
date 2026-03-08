@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { IconPlus, IconSearch } from '@tabler/icons-vue'
+import { IconPlus, IconSearch, IconCrown } from '@tabler/icons-vue'
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useDebounceFn } from '~/composables/useDebounceFn'
 import { useRoleStore, useSessionStore, useTeamStore, useUserStore } from '~/stores'
+import { useFeatureAccess } from '~/composables/useFeatureAccess'
 
 const { hasPermission } = useSessionStore()
+const { hasFeature, requireFeature, requireSubscription } = useFeatureAccess()
 const userStore = useUserStore()
 const teamStore = useTeamStore()
 const roleStore = useRoleStore()
@@ -16,7 +18,15 @@ const { showCreateDialog: teamDialog, selectedTeam } = storeToRefs(teamStore)
 const { showCreateDialog: roleDialog, selectedRole } = storeToRefs(roleStore)
 const currentTab = ref('users')
 
+const isRolesLocked = computed(() => !hasFeature('roles_permissions'))
+
+const onLockedTabClick = (feature: string) => {
+  requireFeature(feature)
+}
+
 const onCreate = () => {
+  if (!requireSubscription()) return
+
   switch (currentTab.value) {
     case 'users':
       userDialog.value = true
@@ -56,7 +66,15 @@ const debouncedFetchUsers = useDebounceFn(() => fetchUsers(true), 500)
             <span>{{ $t('users_teams_roles.teams_tab') }}</span>
           </div>
         </Tab>
-        <Tab value="roles">
+        <div v-if="isRolesLocked" @click="onLockedTabClick('roles_permissions')" class="cursor-pointer">
+          <Tab value="roles" :disabled="true">
+            <div class="flex items-center gap-2">
+              <span>{{ $t('users_teams_roles.roles_tab') }}</span>
+              <IconCrown class="text-amber-400" size="16" />
+            </div>
+          </Tab>
+        </div>
+        <Tab v-else value="roles">
           <div class="flex items-center gap-2 text-inherit">
             <span>{{ $t('users_teams_roles.roles_tab') }}</span>
           </div>
